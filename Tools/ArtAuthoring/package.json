@@ -1,0 +1,8 @@
+{
+  "name": "swaphunter-original-assets",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node generate-assets.mjs" },
+  "dependencies": { "three": "0.186.1" }
+}

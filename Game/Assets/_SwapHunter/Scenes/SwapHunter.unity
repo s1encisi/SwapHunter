@@ -1,0 +1,299 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &862998440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 862998442}
+  - component: {fileID: 862998441}
+  m_Layer: 0
+  m_Name: "SwapHunter \xB7 Demo director"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &862998441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862998440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0852c4d043eeac4aab059b93f172bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwapHunter.DemoGame
+  catalog:
+    version: 1
+    energyBudget: 4
+    modules: []
+    contracts: []
+  lastSettlement:
+    runId: 
+    contractId: 
+    finishedUtc: 
+    success: 0
+    mainComplete: 0
+    bonusComplete: 0
+    baseReward: 0
+    bonusReward: 0
+    totalReward: 0
+    creditsAfter: 0
+  campaignActive: 0
+  campaignBoard: 0
+  selectedContract: 
+  campaignRunId: 
+  campaignNotice: 
+  activeContract:
+    id: 
+    name: 
+    brief: 
+    stage: 0
+    reward: 0
+    bonusReward: 0
+    failureReward: 0
+  campaignMain: 0
+  campaignBonus: 0
+  bonusStation: {fileID: 0}
+  extractionStation: {fileID: 0}
+  settlementPending: 0
+  config: {fileID: 11400000, guid: 5db636b14dd6b3c42b7c1e7ccc26033d, type: 2}
+  state: 0
+  player: {fileID: 0}
+  sound: {fileID: 0}
+  world: {fileID: 0}
+  effects: {fileID: 0}
+  stage: 0
+  wave: 0
+  totalKills: 0
+  totalSwaps: 0
+  totalShots: 0
+  totalHits: 0
+  deaths: 0
+  runSeconds: 0
+  options:
+    version: 2
+    sensitivity: 1
+    verticalSensitivity: 1
+    aimSensitivity: 0.75
+    invertY: 0
+    toggleAim: 0
+    toggleSprint: 0
+    mouseDpi: 800
+    fov: 60
+    viewModelFov: 68
+    volume: 0.7
+    effectsVolume: 0.85
+    feedbackVolume: 0.75
+    shake: 0.35
+    weaponMotion: 0.65
+    difficulty: 1
+    quality: 1
+    resolution: 0
+    windowMode: 0
+    frameLimit: 1
+    vSync: 0
+    dynamicCrosshair: 1
+    crosshairDot: 1
+    hitMarkers: 1
+    crosshairSize: 5
+    crosshairGap: 4
+    crosshairThickness: 1.5
+    crosshairOpacity: 0.95
+    crosshairColor: 0
+    moveSpeedScale: 1
+    actions:
+    - primary: K:W
+      secondary: 
+    - primary: K:S
+      secondary: 
+    - primary: K:A
+      secondary: 
+    - primary: K:D
+      secondary: 
+    - primary: K:Space
+      secondary: 
+    - primary: K:LeftShift
+      secondary: 
+    - primary: K:Q
+      secondary: 
+    - primary: K:R
+      secondary: 
+    - primary: K:E
+      secondary: 
+    - primary: K:LeftAlt
+      secondary: 
+    - primary: K:Digit1
+      secondary: 
+    - primary: K:Digit2
+      secondary: 
+    - primary: M:0
+      secondary: 
+    - primary: M:1
+      secondary: 
+    - primary: W:Up
+      secondary: 
+    - primary: W:Down
+      secondary: 
+    - primary: K:Escape
+      secondary: 
+  tutorialMoved: 0
+  tutorialShot: 0
+  tutorialSwapped: 0
+  stageComplete: 0
+  combatComplete: 0
+  hasCore: 0
+  practice: 0
+  qaMode: 0
+  qaSuppressAI: 0
+  qaInputEnabled: 0
+  toast: 
+  settingsOpen: 0
+  bindingCapture: -1
+  font: {fileID: 0}
+  nearestTerminal: {fileID: 0}
+--- !u!4 &862998442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862998440}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 862998442}

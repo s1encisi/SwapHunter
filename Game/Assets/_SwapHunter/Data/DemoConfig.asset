@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00f8b4929a0832d4682faf3a33b7030b, type: 3}
+  m_Name: DemoConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SwapHunter.DemoConfig
+  playerHealth: 100
+  walkSpeed: 4.3
+  sprintSpeed: 6.2
+  jumpHeight: 1
+  swapRange: 22
+  swapCooldown: 6
+  swapWindup: 0.08
+  swapStun: 0.65
+  rifleDamage: 24
+  rifleRate: 7.5
+  rifleReload: 1.6
+  rifleMagazine: 24
+  rifleReserve: 144
+  shotgunDamage: 12
+  shotgunRate: 1.2
+  shotgunReload: 1.8
+  shotgunPellets: 8
+  shotgunMagazine: 6
+  shotgunReserve: 36
+  assaultHealth: 96
+  sniperHealth: 72
+  shieldHealth: 144
+  eliteHealth: 240
+  grenadeFuse: 2.4
+  grenadeRadius: 3.2
+  grenadeDamage: 80
+  materials:
+  - {fileID: 2100000, guid: dbd152dc2e192f841b1afbf0458e1846, type: 2}
+  - {fileID: 2100000, guid: a318beaf3111b154b9aff4ae4b649a0b, type: 2}
+  - {fileID: 2100000, guid: 3b2cd9baa7845e84285ed6fcc67f3eae, type: 2}
+  - {fileID: 2100000, guid: 054a28777af0dd94390c5bbf2ad7f46c, type: 2}
+  - {fileID: 2100000, guid: c54cd6af28c092a4bad7601a89cae52e, type: 2}
+  - {fileID: 2100000, guid: df1b469a9d7e9254d974fe952d591ec0, type: 2}
+  - {fileID: 2100000, guid: f4fe169782c427546b2180737f37f181, type: 2}
+  - {fileID: 2100000, guid: 1041e92ea44246947a7f36b6a527d555, type: 2}
+  - {fileID: 2100000, guid: 434033a75bf222d40bf7e51baf9761f6, type: 2}
+  - {fileID: 2100000, guid: b9f99eabcbc751c42a68bf2791d6934c, type: 2}
+  - {fileID: 2100000, guid: 2c75bac7257586a4eb89789c1bac604c, type: 2}
+  - {fileID: 2100000, guid: ad73f088f5f27b24e8cb3e15079dc08f, type: 2}
+  - {fileID: 2100000, guid: 9450828933d431a4fb06eb8520131eb0, type: 2}
+  uiFont: {fileID: 12800000, guid: 4d6f1160975bc604e9ed94ecedff0d1e, type: 3}
+  worldTextMaterial: {fileID: 2100000, guid: caa396cd2796820488d8144a644558bf, type: 2}
+  models: {fileID: 11400000, guid: da2fffa09f49e094d9ae9d6037ea0120, type: 2}
+  tuningVersion: 2
+  acceleration: 24
+  braking: 36
+  counterBraking: 52
+  airAcceleration: 4
+  slowSpeed: 2.2
+  stationarySpread: 0.12
+  movingSpread: 1.6
+  airborneSpread: 5.2
+  shotSpreadGrowth: 0.1
+  shortRecovery: 7
+  longRecovery: 2.4

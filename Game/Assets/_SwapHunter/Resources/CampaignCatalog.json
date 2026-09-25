@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "energyBudget": 4,
+  "modules": [
+    {
+      "id": "guard",
+      "name": "相位护幕",
+      "description": "换位后 1.6 秒，受到伤害降低 40%。",
+      "tradeoff": "常驻移速 -6%；不会免疫伤害。",
+      "cost": 0,
+      "energy": 2,
+      "effectMultiplier": 0.6,
+      "penaltyMultiplier": 0.94,
+      "duration": 1.6,
+      "range": 0
+    },
+    {
+      "id": "breach",
+      "name": "破阵脉冲",
+      "description": "换位后 2.5 秒内下一枪，8 米内伤害 +35%。",
+      "tradeoff": "任意开火消耗；超时、远距无加成。",
+      "cost": 0,
+      "energy": 2,
+      "effectMultiplier": 1.35,
+      "penaltyMultiplier": 1,
+      "duration": 2.5,
+      "range": 8
+    },
+    {
+      "id": "anchor",
+      "name": "信标耦合",
+      "description": "与信标换位后 3 秒，移动速度 +25%。",
+      "tradeoff": "仅信标触发；对敌换位无加成。",
+      "cost": 120,
+      "energy": 1,
+      "effectMultiplier": 1.25,
+      "penaltyMultiplier": 1,
+      "duration": 3,
+      "range": 0
+    },
+    {
+      "id": "scavenger",
+      "name": "战地回收",
+      "description": "弹药补给的补充量增加 50%。",
+      "tradeoff": "装填时间 +15%；不提高收益。",
+      "cost": 160,
+      "energy": 2,
+      "effectMultiplier": 1.5,
+      "penaltyMultiplier": 1.15,
+      "duration": 0,
+      "range": 0
+    },
+    {
+      "id": "stabilizer",
+      "name": "稳定支架",
+      "description": "瞄准射击时，散布降低 40%。",
+      "tradeoff": "瞄准移动速度 -20%。",
+      "cost": 180,
+      "energy": 2,
+      "effectMultiplier": 0.6,
+      "penaltyMultiplier": 0.8,
+      "duration": 0,
+      "range": 0
+    },
+    {
+      "id": "overdrive",
+      "name": "相位超载",
+      "description": "换位冷却缩短 28%。",
+      "tradeoff": "受到的伤害 +20%。",
+      "cost": 220,
+      "energy": 3,
+      "effectMultiplier": 0.72,
+      "penaltyMultiplier": 1.2,
+      "duration": 0,
+      "range": 0
+    }
+  ],
+  "contracts": [
+    {
+      "id": "yard",
+      "name": "卸货场 · 夺取控制权",
+      "brief": "清除两波守卫，启动末端控制台后回入口撤离。",
+      "stage": 1,
+      "reward": 90,
+      "bonusReward": 40,
+      "failureReward": 15
+    },
+    {
+      "id": "relay",
+      "name": "运输仓 · 双路截获",
+      "brief": "启动两处继电器后回入口撤离，无须清除所有敌人。",
+      "stage": 2,
+      "reward": 110,
+      "bonusReward": 55,
+      "failureReward": 20
+    },
+    {
+      "id": "core",
+      "name": "控制塔 · 核心回收",
+      "brief": "突破三波封锁，取得核心后回入口撤离。",
+      "stage": 3,
+      "reward": 150,
+      "bonusReward": 70,
+      "failureReward": 25
+    }
+  ]
+}

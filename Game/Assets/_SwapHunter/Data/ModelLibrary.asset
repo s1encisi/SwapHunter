@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37810dc06572085498a4acd8d2030e7c, type: 3}
+  m_Name: ModelLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SwapHunter.ModelLibrary
+  carbine: {fileID: -6903991793683717276, guid: e4e4857b0be2bbc409ead4a6041ecaba, type: 3}
+  shotgun: {fileID: 4032183278816450966, guid: ea6193972f845cc41bd156d6cad29415, type: 3}
+  arms: {fileID: -5138713710942200011, guid: ba2c5689d9bb99d458adb41bfc1cf8a9, type: 3}
+  playerBody: {fileID: -1344268107898642176, guid: 8f648c602c7e8d64ba91cfb129121603, type: 3}
+  assault: {fileID: -4716200697965791624, guid: df9535ae47d8e76428b8b74dd3ed37f9, type: 3}
+  sniper: {fileID: 5585277598663998501, guid: 06d56e4f259eb57418c7d7922bc8f384, type: 3}
+  shield: {fileID: -1829722915504213674, guid: d9b77baea496d0e44a3b075262089b4a, type: 3}
+  commander: {fileID: 2040772272492809153, guid: b33de22cd341d5e41b27756ad0fc096d, type: 3}
+  cargo: {fileID: -2574928584724492641, guid: 33252f4b10310f146a73b5ee9910d394, type: 3}
+  deck: {fileID: 2504740921283758523, guid: 4d314b9ac245c4b4d94425c3a84ca207, type: 3}
+  bulkhead: {fileID: 1065023873988352670, guid: 6cfd32313db7a214687a53a187c76279, type: 3}
+  terminal: {fileID: -6675412762410262165, guid: 02f7d6bfad93cb74d97b154e131a4edf, type: 3}
+  beacon: {fileID: -4566681342638773897, guid: 59968543e3488114cbc79a64241aeead, type: 3}
+  supply: {fileID: 8718109968023715197, guid: 0b02f6c1b1499d147b263f719aa93094, type: 3}
+  gate: {fileID: -2909065631072322609, guid: b40e0b63abfa5874baf61991be82a518, type: 3}
+  coordinateCorrection: {x: -1, y: 1, z: 1}
