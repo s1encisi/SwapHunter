@@ -13,7 +13,7 @@ namespace SwapHunter
     public sealed class CampaignQA : MonoBehaviour
     {
         [Serializable] public sealed class Check { public string name, detail; public bool passed; }
-        [Serializable] public sealed class Report { public string version = "0.3.0", kind = "Scripted contract integration, not human playtesting"; public bool passed; public List<Check> checks = new List<Check>(); }
+        [Serializable] public sealed class Report { public string version = "0.3.1", kind = "Scripted contract integration, not human playtesting"; public bool passed; public List<Check> checks = new List<Check>(); }
         Report report = new Report(); string output; float started; bool finished;
         DemoGame G => DemoGame.I;
         PlayerMotor P => G.player;
@@ -224,3 +224,4 @@ namespace SwapHunter
         void OnDestroy() { Application.logMessageReceived -= OnLog; }
     }
 }
+

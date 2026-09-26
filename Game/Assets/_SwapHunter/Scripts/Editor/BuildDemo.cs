@@ -82,7 +82,7 @@ namespace SwapHunter.Editor
                 GameObject boot = new GameObject("SwapHunter · Demo director"); boot.AddComponent<DemoGame>().config = config;
                 const string scenePath = "Assets/_SwapHunter/Scenes/SwapHunter.unity";
                 EditorSceneManager.SaveScene(scene, scenePath); EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(scenePath, true) };
-                PlayerSettings.companyName = "SwapHunter"; PlayerSettings.productName = "SwapHunter"; PlayerSettings.bundleVersion = "0.3.0";
+                PlayerSettings.companyName = "SwapHunter"; PlayerSettings.productName = "SwapHunter"; PlayerSettings.bundleVersion = "0.3.1";
                 PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
                 PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64, false);
                 PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64, new[] { GraphicsDeviceType.Direct3D11 });
@@ -99,3 +99,4 @@ namespace SwapHunter.Editor
         }
     }
 }
+

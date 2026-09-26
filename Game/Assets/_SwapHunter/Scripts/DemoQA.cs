@@ -14,7 +14,7 @@ namespace SwapHunter
         [Serializable] public sealed class Check { public string name; public bool passed; public string detail; }
         [Serializable] public sealed class Report
         {
-            public string version = "0.3.0", kind = "Scripted native-player integration checks; not a human playtest";
+            public string version = "0.3.1", kind = "Scripted native-player integration checks; not a human playtest";
             public string graphicsDevice, graphicsApi;
             public int width, height;
             public List<Check> checks = new List<Check>();
@@ -184,7 +184,39 @@ namespace SwapHunter
             G.EnterStage(3, true); G.qaSuppressAI = false; var samples = new List<float>();
             for (int i = 0; i < 180; i++) { yield return null; samples.Add(Time.unscaledDeltaTime * 1000); }
             samples.Sort(); report.frameP50Ms = samples[samples.Count / 2]; report.frameP95Ms = samples[Mathf.FloorToInt((samples.Count - 1) * .95f)];
-            G.qaSuppressAI = true; CheckThat("runtime_rendering", SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null, report.graphicsDevice); yield return V02Checks(); Finish();
+            G.qaSuppressAI = true; CheckThat("runtime_rendering", SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null, report.graphicsDevice); yield return V02Checks(); yield return ShieldFeedbackChecks(); Finish();
+        }
+        IEnumerator ShieldFeedbackChecks()
+        {
+            foreach (var kind in new[] { EnemyKind.Shield, EnemyKind.Elite })
+            {
+                G.StartRun(); G.EnterStage(0, true); G.qaSuppressAI = true;
+                var foe = EnemyActor.Spawn(kind, new Vector3(3, 0, 16), 0); foe.suppressAI = true;
+                CheckThat("shield_collider_identity_" + kind, !foe.IsShieldCollider(foe.GetComponent<CapsuleCollider>()) && foe.IsShieldCollider(foe.GetComponentInChildren<BoxCollider>()), "Body and shield are identified by collider reference, never GameObject name");
+                P.SetFeet(new Vector3(3, .03f, 12)); Aim(foe.AimPoint); yield return new WaitForSeconds(.4f);
+                float before = foe.health; bool fired = P.Fire(); yield return new WaitForSeconds(.12f);
+                CheckThat("shield_front_feedback_" + kind, fired && foe.health == before && P.blockFlash > 0 && P.hitFlash == 0 && P.AimingAtShield, "Front plate blocks with distinct feedback");
+                P.Hurt(1, P.transform.position + Vector3.right * 3);
+                yield return Capture("shield-front-" + kind);
+                P.SetFeet(new Vector3(-1, .03f, 16)); Aim(foe.AimPoint); yield return new WaitForSeconds(.5f);
+                before = foe.health; fired = P.Fire(); yield return null;
+                CheckThat("shield_side_damage_" + kind, fired && foe.health < before && P.hitFlash > 0 && P.blockFlash == 0 && !P.AimingAtShield, "Side body shot damages and clears block feedback");
+                P.SetFeet(new Vector3(3, .03f, 20)); Aim(foe.AimPoint); yield return new WaitForSeconds(.5f);
+                before = foe.health; fired = P.Fire(); yield return null;
+                CheckThat("shield_back_damage_" + kind, fired && foe.health < before && P.hitFlash > 0 && !P.AimingAtShield, "Back body shot damages");
+                yield return Capture("shield-back-" + kind);
+                P.SetFeet(new Vector3(3, .03f, 12)); Aim(foe.AimPoint); yield return new WaitForSeconds(.5f);
+                P.Fire(); P.cooldown = 0; yield return new WaitForSeconds(.05f);
+                CheckThat("shield_swap_clears_block_" + kind, P.RequestSwap(foe), P.ValidateSwap(foe));
+                yield return new WaitForSeconds(.18f);
+                CheckThat("shield_swap_block_hint_reset_" + kind, P.blockFlash == 0, "Previous block message does not follow successful swap");
+                Aim(foe.AimPoint); before = foe.health; fired = P.Fire(); yield return null;
+                CheckThat("shield_swap_then_turn_damage_" + kind, fired && foe.health < before, "Swap, turn and shoot body actually damages");
+                int killsBefore = G.totalKills;
+                for (int shot = 0; foe.Alive && shot < 20; shot++) { yield return new WaitForSeconds(.15f); Aim(foe.AimPoint); P.Fire(); }
+                CheckThat("shield_body_can_be_killed_" + kind, !foe.Alive && G.totalKills == killsBefore + 1, "Normal body shots produce a real kill and update run statistics");
+            }
+            G.SetState(RunState.Menu);
         }
         IEnumerator V02Checks()
         {
@@ -299,4 +331,7 @@ namespace SwapHunter
         void OnDestroy() { Application.logMessageReceived -= LogError; }
     }
 }
+
+
+
 

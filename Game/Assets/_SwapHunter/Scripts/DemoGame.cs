@@ -89,7 +89,7 @@ namespace SwapHunter
             menuCamera.backgroundColor = new Color(.08f, .14f, .20f); menuCamera.clearFlags = CameraClearFlags.Skybox; menuCamera.fieldOfView = 57;
             menuCamera.transform.position = new Vector3(-12, 5.6f, 34); menuCamera.transform.LookAt(new Vector3(4, 3.5f, 57));
             ApplySettings(!qaMode); SetState(RunState.Menu);
-            Record("boot", "SwapHunter 0.3 / " + Application.unityVersion);
+            Record("boot", "SwapHunter 0.3.1 / " + Application.unityVersion);
             if (avReview) gameObject.AddComponent<AVReview>();
             else if (campaignQA) gameObject.AddComponent<CampaignQA>();
             else if (benchmark) gameObject.AddComponent<DemoBenchmark>();
@@ -296,7 +296,7 @@ namespace SwapHunter
                 else { int[] widths = { 1280, 1600, 1920 }, heights = { 720, 900, 1080 }; Screen.SetResolution(widths[options.resolution], heights[options.resolution], FullScreenMode.Windowed); }
             }
         }
-        [Serializable] sealed class LogEntry { public string build = "0.3.0"; public string evt, detail; public float time; public int stage; }
+        [Serializable] sealed class LogEntry { public string build = "0.3.1"; public string evt, detail; public float time; public int stage; }
         public void Record(string evt, string detail)
         {
             if (recorder == null) return;
@@ -307,6 +307,7 @@ namespace SwapHunter
         void OnApplicationQuit() { if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterAVReview") < 0) SaveSettings(); }
     }
 }
+
 
 
 

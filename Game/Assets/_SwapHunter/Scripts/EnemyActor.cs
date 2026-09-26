@@ -24,6 +24,8 @@ namespace SwapHunter
         MaterialPropertyBlock impactBlock;
         bool wasFlashing;
         Collider body;
+        BoxCollider shieldCollider;
+        public bool IsShieldCollider(Collider candidate) => candidate && candidate == shieldCollider;
         float fireAt, grenadeAt, nextPath, flashLeft, age, deathAge; bool dying; Vector3 hitDirection, deathPosition; Quaternion deathRotation;
         int burstLeft;
         Vector3 shotLock, home;
@@ -57,7 +59,7 @@ namespace SwapHunter
             {
                 var shield = new GameObject("Shield"); shield.layer = Layers.Actor; shield.transform.SetParent(transform, false);
                 shield.transform.localPosition = new Vector3(-.12f, .99f, .57f) * modelScale;
-                var box = shield.AddComponent<BoxCollider>(); box.size = new Vector3(1, 1.42f, .16f) * modelScale;
+                var box = shield.AddComponent<BoxCollider>(); shieldCollider = box; box.size = new Vector3(1, 1.42f, .16f) * modelScale;
             }
             weaponPivot = ImportedModels.Find(model, "weapon_pivot"); shotMuzzle = ImportedModels.Find(model, "EnemyMuzzle");
             bodyRenderers = model.GetComponentsInChildren<Renderer>();
@@ -145,9 +147,9 @@ namespace SwapHunter
         public bool Hit(float damage, Vector3 point, Collider collider, Vector3 source)
         {
             if (!Alive) return false;
-            if ((kind == EnemyKind.Shield || kind == EnemyKind.Elite) && collider && collider.name == "Shield")
+            if (IsShieldCollider(collider))
             {
-                Shapes.Impact(point, (point - source).normalized * -1, true); G.Toast("盾牌挡住了子弹 · 换位或绕侧", .8f); return false;
+                Shapes.Impact(point, (point - source).normalized * -1, true); return false;
             }
             hitDirection = transform.InverseTransformDirection((point - source).normalized); Damage(damage); return true;
         }
@@ -210,3 +212,4 @@ namespace SwapHunter
         }
     }
 }
+

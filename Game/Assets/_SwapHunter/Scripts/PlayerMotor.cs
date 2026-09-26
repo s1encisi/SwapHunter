@@ -20,7 +20,8 @@ namespace SwapHunter
         public SwapTarget target;
         public bool preparing;
         public bool IsAiming { get; private set; }
-        public float hitFlash, hurtFlash, phaseFlash, killFlash;
+        public float hitFlash, hurtFlash, phaseFlash, killFlash, blockFlash;
+        public bool AimingAtShield { get; private set; }
         public Vector3 lastThreat, lastSwapTarget;
         public float targetArrowTime;
         public bool Grounded => controller && controller.enabled && verticalSpeed <= .1f && Physics.Raycast(transform.position + Vector3.up * .14f, Vector3.down, .22f, Layers.WorldMask);
@@ -115,7 +116,7 @@ namespace SwapHunter
             cooldown = 0; verticalSpeed = 0; horizontal = Vector3.zero; weapon = 0; nextShot = 0; visualKick = 0; travel = stepDistance = 0;
             recoilAngles = Vector2.zero; shotBloom = 0; burstCount = 0; lastShotAt = -100; targetArrowTime = 0; target = null;
             ammo[0] = G.config.rifleMagazine; ammo[1] = G.config.shotgunMagazine; reserve[0] = G.config.rifleReserve; reserve[1] = G.config.shotgunReserve;
-            hitFlash = hurtFlash = phaseFlash = killFlash = 0; rifleModel.gameObject.SetActive(true); shotgunModel.gameObject.SetActive(false);
+            hitFlash = hurtFlash = phaseFlash = killFlash = blockFlash = 0; AimingAtShield = false; rifleModel.gameObject.SetActive(true); shotgunModel.gameObject.SetActive(false);
             muzzle = ImportedModels.Find(rifleModel, "Muzzle"); weaponPosition = new Vector3(.23f, -.28f, .53f); SetLook(0, 0);
         }
         public void CancelActions()
@@ -135,7 +136,7 @@ namespace SwapHunter
             if (!G.IsPlaying) return;
             float dt = Time.deltaTime; float oldCooldown = cooldown; cooldown = Mathf.Max(0, cooldown - dt);
             if (oldCooldown > 0 && cooldown == 0) G.sound.Play("confirm");
-            hitFlash = Mathf.Max(0, hitFlash - dt); killFlash = Mathf.Max(0, killFlash - dt); hurtFlash = Mathf.Max(0, hurtFlash - dt); phaseFlash = Mathf.Max(0, phaseFlash - dt); targetArrowTime = Mathf.Max(0, targetArrowTime - dt);
+            blockFlash = Mathf.Max(0, blockFlash - dt); hitFlash = Mathf.Max(0, hitFlash - dt); killFlash = Mathf.Max(0, killFlash - dt); hurtFlash = Mathf.Max(0, hurtFlash - dt); phaseFlash = Mathf.Max(0, phaseFlash - dt); targetArrowTime = Mathf.Max(0, targetArrowTime - dt);
             if (Time.time - lastShotAt > .12f)
             {
                 float recoveryStep = Mathf.Min(dt, Time.time - lastShotAt - .12f);
@@ -283,13 +284,13 @@ namespace SwapHunter
                         G.totalHits += damaged ? 1 : 0; G.tutorialShot = true;
                     }
                     if (!enemy) { anySurface = true; surfacePoint = hit.point; }
-                    if (impactCount++ < 3) Shapes.Impact(hit.point, hit.normal, enemy && hit.collider.name == "Shield");
+                    if (impactCount++ < 3) Shapes.Impact(hit.point, hit.normal, enemy && enemy.IsShieldCollider(hit.collider));
                 }
                 if (weapon == 1 || shots % 2 == 1) Shapes.Trace(TracerOrigin(), endpoint, new Color(1,.84f,.55f), .035f, .010f);
             }
-            if (anyKill) { killFlash = hitFlash = .25f; G.sound.Play("kill"); }
-            else if (anyDamage) { hitFlash = .12f; G.sound.Play("impact"); }
-            else if (anyShield) G.sound.Play("shield");
+            if (anyKill) { blockFlash = 0; killFlash = hitFlash = .25f; G.sound.Play("kill"); }
+            else if (anyDamage) { blockFlash = 0; hitFlash = .12f; G.sound.Play("impact"); }
+            else if (anyShield) { hitFlash = killFlash = 0; blockFlash = .6f; G.sound.Play("shield"); G.Record("shot_blocked", "shield"); }
             else if (anySurface) G.sound.Play("surface", surfacePoint);
             G.ConsumeModuleShot();
             burstCount++; lastShotAt = Time.time; muzzleFlashUntil = Time.time + .035f;
@@ -317,8 +318,11 @@ namespace SwapHunter
         // The proven swap transaction and placement checks are appended unchanged.
         public SwapTarget FindTarget()
         {
+            AimingAtShield = false;
             if (!CombatRay.Cast(Eye.position, Eye.forward, 70, transform, out var hit)) return null;
-            return hit.collider.GetComponentInParent<SwapTarget>();
+            var candidate = hit.collider.GetComponentInParent<SwapTarget>();
+            AimingAtShield = candidate is EnemyActor enemy && enemy.Alive && enemy.IsShieldCollider(hit.collider);
+            return candidate;
         }
         public string ValidateSwap(SwapTarget candidate)
         {
@@ -392,7 +396,7 @@ namespace SwapHunter
                 SetFeet(oldPlayer); candidate.MoveTo(oldTarget); horizontal = oldVelocity; verticalSpeed = oldVertical;
                 swapRoutine = null; G.Toast("换位取消：导航恢复失败", 1.5f); G.Record("swap_rollback", "navigation"); yield break;
             }
-            verticalSpeed = 0; candidate.AfterSwap(); cooldown = G.CampaignCooldown; G.OnCampaignSwap(candidate);
+            verticalSpeed = 0; blockFlash = 0; candidate.AfterSwap(); cooldown = G.CampaignCooldown; G.OnCampaignSwap(candidate);
             swapCount++; G.totalSwaps++; G.tutorialSwapped = true; phaseFlash = .18f; lastSwapTarget = oldPlayer; targetArrowTime = 2;
             Shapes.Echo(oldPlayer); Shapes.Echo(oldTarget); Shapes.Trace(oldPlayer + Vector3.up, oldTarget + Vector3.up, new Color(.2f, 1, .9f), .13f, .09f);
             G.sound.Play("phase"); G.Record("swap_success", oldPlayer + " -> " + oldTarget); swapRoutine = null;

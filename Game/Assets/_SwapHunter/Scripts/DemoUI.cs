@@ -54,7 +54,7 @@ namespace SwapHunter
         {
             Fill(new Rect(0, 0, 660, 900), new Color(.025f, .045f, .060f, .95f));
             Fill(new Rect(65, 74, 45, 4), Cyan);
-            Text("SWAPHUNTER   /   OPERATIONS DEMO 0.3", new Rect(65, 95, 520, 32), 16, Cyan);
+            Text("SWAPHUNTER   /   OPERATIONS DEMO 0.3.1", new Rect(65, 95, 520, 32), 16, Cyan);
             Text("换位猎手", new Rect(59, 172, 560, 92), 68);
             Text("抢的不是火力，\n而是开火的位置。", new Rect(65, 276, 510, 95), 28, new Color(.82f, .88f, .89f));
             Text("穿过空中货运港，夺取相位核心。\n首次行动，建议先完成基础教学。", new Rect(65, 395, 520, 80), 19, Muted);
@@ -84,6 +84,16 @@ namespace SwapHunter
             Color reticle = player.target && player.swapReason == "可换位" ? Cyan : Color.white;
             DrawCrosshair(x, y, options, player.CurrentSpreadDegrees);
             if (player.hitFlash > 0 && options.hitMarkers) Text(player.killFlash > 0 ? "×" : "+", new Rect(x - 20, y - 27, 40, 54), 36, player.killFlash > 0 ? new Color(1, .67f, .24f) : Color.white, TextAnchor.MiddleCenter);
+            if (player.blockFlash > 0 && options.hitMarkers)
+            {
+                Fill(new Rect(x + 85, 432, 245, 36), new Color(.025f, .035f, .04f, .95f));
+                Text("格挡 · 未造成伤害", new Rect(x + 95, 434, 225, 32), 18, Amber, TextAnchor.MiddleCenter);
+            }
+            if (player.AimingAtShield)
+            {
+                Fill(new Rect(x - 290, 704, 580, 39), new Color(.025f, .035f, .04f, .94f));
+                Text("盾牌不可击碎 · 绕侧，或 " + KeyName(6) + " 换位后转身射击身体", new Rect(x - 278, 709, 556, 30), 18, Amber, TextAnchor.MiddleCenter);
+            }
             if (player.target && player.target.Alive)
             {
                 Vector3 point = player.cameraView.WorldToViewportPoint(player.target.AimPoint);
@@ -101,7 +111,7 @@ namespace SwapHunter
                 if (point.z <= 0 || point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) continue;
                 float sx = point.x * viewWidth, sy = (1 - point.y) * 900;
                 Fill(new Rect(sx - 103, sy - 25, 206, 26), new Color(.018f, .025f, .03f, .85f));
-                Text(enemy.Label, new Rect(sx - 100, sy - 25, 200, 26), 16, enemy.kind == EnemyKind.Elite ? new Color(1, .72f, .43f) : Muted, TextAnchor.MiddleCenter);
+                Text(enemy.Label + (enemy.kind == EnemyKind.Shield || enemy.kind == EnemyKind.Elite ? " · 盾牌挡弹" : ""), new Rect(sx - 100, sy - 25, 200, 26), 16, enemy.kind == EnemyKind.Elite ? new Color(1, .72f, .43f) : Muted, TextAnchor.MiddleCenter);
                 Fill(new Rect(sx - 40, sy + 3, 80, 4), new Color(.02f, .03f, .04f, .7f));
                 Fill(new Rect(sx - 40, sy + 3, 80 * enemy.health / enemy.maximumHealth, 4), enemy.stunLeft > 0 ? Cyan : new Color(1, .46f, .25f));
                 if (enemy.warningLeft > 0) Text("狙击锁定", new Rect(sx - 80, sy - 52, 160, 26), 15, new Color(1, .3f, .24f), TextAnchor.MiddleCenter);
@@ -181,3 +191,5 @@ namespace SwapHunter
         static string FormatTime(float seconds) => ((int)seconds / 60).ToString("00") + ":" + ((int)seconds % 60).ToString("00");
     }
 }
+
+
