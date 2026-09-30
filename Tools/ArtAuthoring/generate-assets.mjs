@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createTacticalWeapon} from './tactical-weapons-v052.mjs';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -53,6 +54,7 @@ function optimize(g){
   for(const {material,geometries}of sets.values()){const merged=mergeGeometries(geometries,false);merged.computeBoundingBox();merged.computeBoundingSphere();const m=new THREE.Mesh(merged,material);m.name=g.name+' / '+material.name;g.add(m);}
 }
 function weapon(scatter=false,enemy=false){
+  if(!enemy)return createTacticalWeapon(scatter);
   const root=group(scatter?'S12 Scattergun':'CX24 Carbine');const body=group('receiver',root);
   box(body,[.125,.145,.39],[0,.015,.065],M.graphite,.028);
   box(body,[.14,.072,.30],[0,.085,.04],M.darksteel,.012);
@@ -82,6 +84,8 @@ function weapon(scatter=false,enemy=false){
     cyl(body,.016,.006,[x,.035,.756],M.rubber,'z',24);
     for(let j=0;j<4;j++)box(body,[.007,.012,.024],[x+.029,.035,.69+j*.014],M.rubber,.002);
   }
+  // Physical front-sight pedestal bridges the fore-end (.070m) and sight post (.1325m).
+  box(body,[.045,.070,.048],[0,.100,.41],M.darksteel,.005);
   box(body,[.027,.065,.026],[0,.165,.41],M.darksteel,.005);
   strip(body,[0,.2,.397],[.008,.012,.004],M.cyan);
   const sight=group('rear_sight',root);box(sight,[.075,.027,.052],[0,.15,-.025],M.darksteel,.009);
@@ -291,9 +295,13 @@ const assets=[
   ['control-terminal',terminal(),[1.02,1.45,.8]],['phase-beacon',beacon(),[.84,1.4,.84]],['supply-case',supply(),[.55,.42,.46]],['security-gate',gate(),[6.6,4,.3]]
 ];
 const report={generator:'Three.js '+THREE.REVISION,authoring:'independent procedural hard-surface models; silhouette and material hierarchy revision 0.3',units:'meters',inputs:'source code only; no external game assets',assets:[]};
+const onlyArg=process.argv.indexOf('--only');
+const selected=new Set(onlyArg>=0?(process.argv[onlyArg+1]||'').split(','):[]);
+if(selected.size){try{const previous=JSON.parse(await fs.readFile(path.join(out,'asset-manifest.json'),'utf8'));report.assets=previous.assets.filter(x=>!selected.has(x.name));}catch{}}
 for(const [name,root,nominalSize]of assets){
+  if(selected.size&&!selected.has(name))continue;
   marker(root,'AxisRight',[1,0,0]);marker(root,'AxisForward',[0,0,1]);
-  root.userData={project:'SwapHunter',asset:name,version:'0.3.0',source:'Tools/ArtAuthoring/generate-assets.mjs',nominalSize};
+  root.userData={project:'SwapHunter',asset:name,version:root.userData.version??'0.3.0',source:root.userData.source??'Tools/ArtAuthoring/generate-assets.mjs',nominalSize};
   optimize(root);root.updateMatrixWorld(true);
   let triangles=0,meshes=0,vertices=0;root.traverse(node=>{if(node.isMesh){meshes++;vertices+=node.geometry.attributes.position.count;triangles+=node.geometry.index?node.geometry.index.count/3:node.geometry.attributes.position.count/3;}});
   const data=await new GLTFExporter().parseAsync(root,{binary:true,trs:true,onlyVisible:true});
@@ -302,6 +310,7 @@ for(const [name,root,nominalSize]of assets){
   report.assets.push({name,meshes,triangles,vertices,bytes:data.byteLength,nominalSize,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray(),size:size.toArray()}});
   console.log(`${name}: ${meshes} meshes, ${triangles} triangles, ${data.byteLength} bytes`);
 }
+report.assets.sort((a,b)=>assets.findIndex(x=>x[0]===a.name)-assets.findIndex(x=>x[0]===b.name));
 await fs.writeFile(path.join(out,'asset-manifest.json'),JSON.stringify(report,null,2));
 await fs.copyFile(path.join(here,'node_modules/three/LICENSE'),path.join(out,'THREE-LICENSE.txt'));
 console.log('Export complete: '+out);

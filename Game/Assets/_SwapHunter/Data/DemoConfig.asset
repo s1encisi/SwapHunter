@@ -17,7 +17,7 @@ MonoBehaviour:
   sprintSpeed: 6.2
   jumpHeight: 1
   swapRange: 22
-  swapCooldown: 6
+  swapCooldown: 3.5
   swapWindup: 0.08
   swapStun: 0.65
   rifleDamage: 24
@@ -55,7 +55,7 @@ MonoBehaviour:
   uiFont: {fileID: 12800000, guid: 4d6f1160975bc604e9ed94ecedff0d1e, type: 3}
   worldTextMaterial: {fileID: 2100000, guid: caa396cd2796820488d8144a644558bf, type: 2}
   models: {fileID: 11400000, guid: da2fffa09f49e094d9ae9d6037ea0120, type: 2}
-  tuningVersion: 2
+  tuningVersion: 5
   acceleration: 24
   braking: 36
   counterBraking: 52

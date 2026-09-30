@@ -14,3 +14,11 @@ Detailed resource provenance is retained in [Game/THIRD_PARTY_NOTICES.md](Game/T
 All game-specific geometry and synthesized sound in this repository were independently authored for this project with AI assistance. No Counter-Strike installed files, code, maps, models, textures or audio are included.
 
 Noto Sans SC font copyright notice: © 2014–2021 Adobe (http://www.adobe.com/). The bundled font retains its original metadata and SIL OFL license.
+
+
+## v0.5 additional original assets and footage
+
+- `combat-knife-v05`: original Blender geometry authored by this project; generator, editable `.blend`, GLB and manifest are included in `Tools/BlenderAuthoring`.
+- `swaphunter-key-art-v05.png`: original AI-generated concept illustration made with the built-in image-generation tool on 2026-09-27, with no third-party reference image supplied. It is concept art, not a gameplay screenshot.
+- New gameplay clips are captured from this project's Unity player. Automatic inputs and preconfigured Boss mechanism demonstrations are labeled in the video and storyboard. No third-party game footage is used.
+- Trailer audio uses the game's original procedural sound bank and PhaseScore, reconstructed from emitted sound-event timing and remixed for the trailer. It is not a hardware-loopback recording. Noto font and existing dependency notices above continue to apply.

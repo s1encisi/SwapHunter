@@ -1,0 +1,809 @@
+{
+  "generator": "Blender 5.2.2 LTS",
+  "version": "0.4.0",
+  "units": "meters",
+  "author_axes": "X right,Y up,Z forward",
+  "blender_mapping": "(x,-z,y); export_yup=True",
+  "inputs": "original authored geometry only; no external game files",
+  "assets": [
+    {
+      "id": "weapon_02",
+      "kind": "burst-rifle",
+      "meshes": 12,
+      "vertices": 4522,
+      "triangles": 8776,
+      "bytes": 250420,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_02.blend",
+      "bounds": {
+        "min": [
+          -0.0885000005364418,
+          -0.28109487891197205,
+          -0.4125000238418579
+        ],
+        "max": [
+          0.1264999955892563,
+          0.2680000066757202,
+          0.6554999947547913
+        ],
+        "size": [
+          0.2149999961256981,
+          0.5490948855876923,
+          1.0680000185966492
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "weapon_03",
+      "kind": "heavy-rifle",
+      "meshes": 12,
+      "vertices": 5434,
+      "triangles": 10536,
+      "bytes": 300092,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_03.blend",
+      "bounds": {
+        "min": [
+          -0.07750000059604645,
+          -0.28109487891197205,
+          -0.45100003480911255
+        ],
+        "max": [
+          0.12449999898672104,
+          0.19099999964237213,
+          0.965499997138977
+        ],
+        "size": [
+          0.2019999995827675,
+          0.4720948785543442,
+          1.4165000319480896
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "weapon_04",
+      "kind": "smg",
+      "meshes": 11,
+      "vertices": 4624,
+      "triangles": 9088,
+      "bytes": 254008,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_04.blend",
+      "bounds": {
+        "min": [
+          -0.07750000059604645,
+          -0.28109487891197205,
+          -0.43549999594688416
+        ],
+        "max": [
+          0.11649999767541885,
+          0.20399999618530273,
+          0.4755000174045563
+        ],
+        "size": [
+          0.1939999982714653,
+          0.4850948750972748,
+          0.9110000133514404
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "weapon_05",
+      "kind": "double-barrel",
+      "meshes": 22,
+      "vertices": 4472,
+      "triangles": 8736,
+      "bytes": 247940,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_05.blend",
+      "bounds": {
+        "min": [
+          -0.09059999883174896,
+          -0.28109487891197205,
+          -0.45100000500679016
+        ],
+        "max": [
+          0.09387999773025513,
+          0.12200000137090683,
+          0.8955000638961792
+        ],
+        "size": [
+          0.1844799965620041,
+          0.4030948802828789,
+          1.3465000689029694
+        ]
+      },
+      "nodes": [
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "break_action",
+        "AimFront",
+        "Ejection",
+        "GripLeft",
+        "magazine",
+        "MagazineGrip",
+        "shell_L",
+        "shell_R",
+        "Muzzle",
+        "muzzle",
+        "charging_handle",
+        "bolt",
+        "GripRight",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ],
+      "reload_rig": {
+        "revision": "0.5.2",
+        "type": "break-action",
+        "hinge": "break_action",
+        "pivot": [
+          0,
+          -0.027,
+          0.146
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "suggestedOpenDegrees": 35,
+        "supply": "magazine",
+        "supplyExitDirection": [
+          0,
+          0,
+          -1
+        ],
+        "grip": "MagazineGrip",
+        "rounds": [
+          "shell_L",
+          "shell_R"
+        ]
+      }
+    },
+    {
+      "id": "weapon_06",
+      "kind": "dmr",
+      "meshes": 15,
+      "vertices": 5716,
+      "triangles": 11184,
+      "bytes": 296028,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_06.blend",
+      "bounds": {
+        "min": [
+          -0.06499999761581421,
+          -0.28109487891197205,
+          -0.4429999589920044
+        ],
+        "max": [
+          0.12449999898672104,
+          0.3060000240802765,
+          1.0490000247955322
+        ],
+        "size": [
+          0.18949999660253525,
+          0.5870949029922485,
+          1.4919999837875366
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "weapon_07",
+      "kind": "bolt-sniper",
+      "meshes": 14,
+      "vertices": 6436,
+      "triangles": 12664,
+      "bytes": 330900,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_07.blend",
+      "bounds": {
+        "min": [
+          -0.07894054800271988,
+          -0.28109487891197205,
+          -0.4429999589920044
+        ],
+        "max": [
+          0.1600000113248825,
+          0.3149999976158142,
+          1.1855000257492065
+        ],
+        "size": [
+          0.2389405593276024,
+          0.5960948765277863,
+          1.628499984741211
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "weapon_08",
+      "kind": "lmg",
+      "meshes": 18,
+      "vertices": 4650,
+      "triangles": 9036,
+      "bytes": 260796,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_08.blend",
+      "bounds": {
+        "min": [
+          -0.20800000429153442,
+          -0.28109487891197205,
+          -0.4509999752044678
+        ],
+        "max": [
+          0.1445000022649765,
+          0.26600000262260437,
+          1.0155000686645508
+        ],
+        "size": [
+          0.3525000065565109,
+          0.5470948815345764,
+          1.4665000438690186
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "ammo_belt",
+        "BeltFeedPoint",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "feed_cover",
+        "FeedCoverGrip",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "MagazineGrip",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ],
+      "reload_rig": {
+        "revision": "0.5.2",
+        "type": "belt-box",
+        "hinge": "feed_cover",
+        "pivot": [
+          0,
+          0.118,
+          -0.145
+        ],
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "suggestedOpenDegrees": -55,
+        "supply": "magazine",
+        "supplyExitDirection": [
+          0,
+          -1,
+          0
+        ],
+        "grip": "MagazineGrip",
+        "belt": "ammo_belt",
+        "coverGrip": "FeedCoverGrip"
+      }
+    },
+    {
+      "id": "weapon_09",
+      "kind": "grenade-launcher",
+      "meshes": 27,
+      "vertices": 6478,
+      "triangles": 12724,
+      "bytes": 323700,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_09.blend",
+      "bounds": {
+        "min": [
+          -0.13199999928474426,
+          -0.28109487891197205,
+          -0.4355000853538513
+        ],
+        "max": [
+          0.13199999928474426,
+          0.21400000154972076,
+          0.7055000066757202
+        ],
+        "size": [
+          0.2639999985694885,
+          0.4950948804616928,
+          1.1410000920295715
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "cylinder_hinge",
+        "magazine",
+        "chamber_01",
+        "chamber_02",
+        "chamber_03",
+        "chamber_04",
+        "reload_rounds",
+        "MagazineGrip",
+        "round_01",
+        "round_02",
+        "round_03",
+        "round_04",
+        "SpeedLoaderGrip",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ],
+      "reload_rig": {
+        "revision": "0.5.2",
+        "type": "swing-cylinder",
+        "hinge": "cylinder_hinge",
+        "pivot": [
+          -0.09,
+          0.02,
+          0.03
+        ],
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "suggestedOpenDegrees": -65,
+        "cylinder": "magazine",
+        "supply": "reload_rounds",
+        "supplyExitDirection": [
+          0,
+          0,
+          -1
+        ],
+        "grip": "MagazineGrip",
+        "chambers": 4
+      }
+    },
+    {
+      "id": "weapon_10",
+      "kind": "charge-rifle",
+      "meshes": 14,
+      "vertices": 4908,
+      "triangles": 9580,
+      "bytes": 270472,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_10.blend",
+      "bounds": {
+        "min": [
+          -0.10850000381469727,
+          -0.28109487891197205,
+          -0.4429999589920044
+        ],
+        "max": [
+          0.12449999898672104,
+          0.1899999976158142,
+          0.9054999947547913
+        ],
+        "size": [
+          0.2330000028014183,
+          0.47109487652778625,
+          1.3484999537467957
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "weapon_11",
+      "kind": "phase-marker",
+      "meshes": 12,
+      "vertices": 2964,
+      "triangles": 5816,
+      "bytes": 160888,
+      "blend_source": "Tools/BlenderAuthoring/blend/weapon_11.blend",
+      "bounds": {
+        "min": [
+          -0.11800000071525574,
+          -0.28109487891197205,
+          -0.43550002574920654
+        ],
+        "max": [
+          0.1445000022649765,
+          0.2370000183582306,
+          0.6175915598869324
+        ],
+        "size": [
+          0.26250000298023224,
+          0.5180948972702026,
+          1.053091585636139
+        ]
+      },
+      "nodes": [
+        "AimFront",
+        "AimRear",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "charging_handle",
+        "bolt",
+        "Ejection",
+        "GripLeft",
+        "GripRight",
+        "magazine",
+        "Muzzle",
+        "muzzle",
+        "receiver",
+        "pistol_grip",
+        "sight"
+      ]
+    },
+    {
+      "id": "operative-arms-v04",
+      "kind": "arms",
+      "meshes": 16,
+      "vertices": 5532,
+      "triangles": 10816,
+      "bytes": 295932,
+      "blend_source": "Tools/BlenderAuthoring/blend/operative-arms-v04.blend",
+      "bounds": {
+        "min": [
+          -0.3489999771118164,
+          -0.45194998383522034,
+          -0.36900001764297485
+        ],
+        "max": [
+          0.2198430448770523,
+          -0.004873479716479778,
+          0.4660329520702362
+        ],
+        "size": [
+          0.5688430219888687,
+          0.44707650411874056,
+          0.8350329697132111
+        ]
+      },
+      "nodes": [
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "elbow_L",
+        "elbow_R",
+        "forearm_L",
+        "forearm_R",
+        "hand_L",
+        "hand_R",
+        "wrist_L",
+        "wrist_R"
+      ]
+    },
+    {
+      "id": "robot-assault-v04",
+      "kind": "assault",
+      "meshes": 63,
+      "vertices": 12674,
+      "triangles": 24708,
+      "bytes": 680472,
+      "blend_source": "Tools/BlenderAuthoring/blend/robot-assault-v04.blend",
+      "bounds": {
+        "min": [
+          -0.4169999957084656,
+          4.842877388000488e-08,
+          -0.2784999907016754
+        ],
+        "max": [
+          0.4169999957084656,
+          1.714500069618225,
+          0.7658500075340271
+        ],
+        "size": [
+          0.8339999914169312,
+          1.7145000211894512,
+          1.0443499982357025
+        ]
+      },
+      "nodes": [
+        "arm_L",
+        "elbow_L",
+        "forearm_L",
+        "hand_L",
+        "arm_R",
+        "elbow_R",
+        "forearm_R",
+        "hand_R",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "foot_L",
+        "foot_R",
+        "head",
+        "hips",
+        "leg_L",
+        "knee_L",
+        "shin_L",
+        "leg_R",
+        "knee_R",
+        "shin_R",
+        "torso",
+        "weapon_pivot",
+        "integrated_enemy_weapon",
+        "EnemyMuzzle",
+        "magazine",
+        "pistol_grip"
+      ]
+    },
+    {
+      "id": "robot-sniper-v04",
+      "kind": "sniper",
+      "meshes": 64,
+      "vertices": 14354,
+      "triangles": 28016,
+      "bytes": 770688,
+      "blend_source": "Tools/BlenderAuthoring/blend/robot-sniper-v04.blend",
+      "bounds": {
+        "min": [
+          -0.4169999957084656,
+          4.842877388000488e-08,
+          -0.2784999907016754
+        ],
+        "max": [
+          0.4169999957084656,
+          1.8964368104934692,
+          0.8638499975204468
+        ],
+        "size": [
+          0.8339999914169312,
+          1.8964367620646954,
+          1.1423499882221222
+        ]
+      },
+      "nodes": [
+        "arm_L",
+        "elbow_L",
+        "forearm_L",
+        "hand_L",
+        "arm_R",
+        "elbow_R",
+        "forearm_R",
+        "hand_R",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "foot_L",
+        "foot_R",
+        "head",
+        "hips",
+        "leg_L",
+        "knee_L",
+        "shin_L",
+        "leg_R",
+        "knee_R",
+        "shin_R",
+        "torso",
+        "weapon_pivot",
+        "integrated_enemy_weapon",
+        "EnemyMuzzle",
+        "magazine",
+        "pistol_grip"
+      ]
+    },
+    {
+      "id": "robot-shield-v04",
+      "kind": "shield",
+      "meshes": 68,
+      "vertices": 13030,
+      "triangles": 25396,
+      "bytes": 698588,
+      "blend_source": "Tools/BlenderAuthoring/blend/robot-shield-v04.blend",
+      "bounds": {
+        "min": [
+          -0.5499999523162842,
+          4.842877388000488e-08,
+          -0.2784999907016754
+        ],
+        "max": [
+          0.4169999957084656,
+          1.714500069618225,
+          0.7658500075340271
+        ],
+        "size": [
+          0.9669999480247498,
+          1.7145000211894512,
+          1.0443499982357025
+        ]
+      },
+      "nodes": [
+        "arm_L",
+        "elbow_L",
+        "forearm_L",
+        "hand_L",
+        "arm_R",
+        "elbow_R",
+        "forearm_R",
+        "hand_R",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "foot_L",
+        "foot_R",
+        "head",
+        "hips",
+        "leg_L",
+        "knee_L",
+        "shin_L",
+        "leg_R",
+        "knee_R",
+        "shin_R",
+        "shield_visual",
+        "torso",
+        "weapon_pivot",
+        "integrated_enemy_weapon",
+        "EnemyMuzzle",
+        "magazine",
+        "pistol_grip"
+      ]
+    },
+    {
+      "id": "robot-commander-v04",
+      "kind": "commander",
+      "meshes": 70,
+      "vertices": 13310,
+      "triangles": 25936,
+      "bytes": 709936,
+      "blend_source": "Tools/BlenderAuthoring/blend/robot-commander-v04.blend",
+      "bounds": {
+        "min": [
+          -0.5499999523162842,
+          4.842877388000488e-08,
+          -0.2784999907016754
+        ],
+        "max": [
+          0.45000001788139343,
+          1.725000023841858,
+          0.7658500075340271
+        ],
+        "size": [
+          0.9999999701976776,
+          1.724999975413084,
+          1.0443499982357025
+        ]
+      },
+      "nodes": [
+        "arm_L",
+        "elbow_L",
+        "forearm_L",
+        "hand_L",
+        "arm_R",
+        "elbow_R",
+        "forearm_R",
+        "hand_R",
+        "AxisForward",
+        "AxisRight",
+        "AxisUp",
+        "foot_L",
+        "foot_R",
+        "head",
+        "hips",
+        "leg_L",
+        "knee_L",
+        "shin_L",
+        "leg_R",
+        "knee_R",
+        "shin_R",
+        "shield_visual",
+        "torso",
+        "weapon_pivot",
+        "integrated_enemy_weapon",
+        "EnemyMuzzle",
+        "magazine",
+        "pistol_grip"
+      ]
+    }
+  ]
+}

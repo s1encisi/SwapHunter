@@ -15,9 +15,14 @@ namespace SwapHunter
     [Serializable]
     public sealed class GameOptions
     {
-        public int version = 2;
+        public const int CurrentVersion = 5;
+        public int version = CurrentVersion;
         public float sensitivity = 1, verticalSensitivity = 1, aimSensitivity = .75f;
-        public bool invertY, toggleAim, toggleSprint;
+        public bool invertY, toggleAim, toggleSprint, toggleCrouch;
+        public bool muteWhenUnfocused = true, dynamicResolution;
+        public int displayIndex, resolutionWidth = 1280, resolutionHeight = 720, refreshRateHz;
+        public float renderScale = .85f, dynamicResolutionMin = .60f, uiScale = 1;
+        public float musicVolume = .45f, ambientVolume = .50f, uiVolume = .70f;
         public int mouseDpi = 800;
         public float fov = 60, viewModelFov = 68, volume = .7f, effectsVolume = .85f, feedbackVolume = .75f, shake = .35f, weaponMotion = .65f;
         public int difficulty = 1, quality = 1, resolution = 0, windowMode = 0, frameLimit = 1;
@@ -26,17 +31,27 @@ namespace SwapHunter
         public int crosshairColor = 0;
         public float moveSpeedScale = 1;
         public ActionBinding[] actions = DefaultBindings();
-        public static readonly string[] ActionNames = { "前进", "后退", "左移", "右移", "跳跃", "冲刺", "相位换位", "装填", "交互", "慢走", "卡宾枪", "霰弹枪", "开火", "瞄准", "上一把武器", "下一把武器", "暂停" };
+        public static readonly string[] ActionNames = { "前进", "后退", "左移", "右移", "跳跃 / 翻越", "冲刺", "相位换位", "装填", "交互", "慢走", "主武器", "副武器", "开火", "瞄准", "上一把武器", "下一把武器", "暂停", "蹲伏", "战术背包", "使用消耗品", "A盾 / 定向屏障", "战术刀 / 近战", "投掷沉默飞刀", "召回飞刀" };
         public static ActionBinding[] DefaultBindings() => new[]
         {
             new ActionBinding("K:W"),new ActionBinding("K:S"),new ActionBinding("K:A"),new ActionBinding("K:D"),
             new ActionBinding("K:Space"),new ActionBinding("K:LeftShift"),new ActionBinding("K:Q"),new ActionBinding("K:R"),
             new ActionBinding("K:E"),new ActionBinding("K:LeftAlt"),new ActionBinding("K:Digit1"),new ActionBinding("K:Digit2"),
-            new ActionBinding("M:0"),new ActionBinding("M:1"),new ActionBinding("W:Up"),new ActionBinding("W:Down"),new ActionBinding("K:Escape")
+            new ActionBinding("M:0"),new ActionBinding("M:1"),new ActionBinding("W:Up"),new ActionBinding("W:Down"),new ActionBinding("K:Escape"),
+            new ActionBinding("K:LeftCtrl"),new ActionBinding("K:Tab"),new ActionBinding("K:F"),new ActionBinding("K:C"),new ActionBinding("K:V"),new ActionBinding("K:G"),new ActionBinding("K:X")
         };
         public GameOptions Clone() => JsonUtility.FromJson<GameOptions>(JsonUtility.ToJson(this));
         public void Validate()
         {
+            if (version < 4)
+            {
+                int oldResolution = Mathf.Clamp(resolution, 0, 2);
+                resolutionWidth = new[] { 1280, 1600, 1920 }[oldResolution];
+                resolutionHeight = new[] { 720, 900, 1080 }[oldResolution];
+                renderScale = new[] { .7f, .85f, 1f }[Mathf.Clamp(quality, 0, 2)];
+                musicVolume = .45f; ambientVolume = effectsVolume; uiVolume = feedbackVolume;
+                dynamicResolutionMin = .60f; muteWhenUnfocused = true;
+            }
             var defaultsForNumbers = new GameOptions();
             foreach (var field in typeof(GameOptions).GetFields())
                 if (field.FieldType == typeof(float)) { float value = (float)field.GetValue(this); if (float.IsNaN(value) || float.IsInfinity(value)) field.SetValue(this, field.GetValue(defaultsForNumbers)); }
@@ -44,18 +59,38 @@ namespace SwapHunter
             aimSensitivity = Mathf.Clamp(aimSensitivity, .2f, 1.5f); mouseDpi = Mathf.Clamp(mouseDpi, 100, 32000);
             fov = Mathf.Clamp(fov, 50, 85); viewModelFov = Mathf.Clamp(viewModelFov, 55, 90);
             volume = Mathf.Clamp01(volume); effectsVolume = Mathf.Clamp01(effectsVolume); feedbackVolume = Mathf.Clamp01(feedbackVolume);
+            musicVolume = Mathf.Clamp01(musicVolume); ambientVolume = Mathf.Clamp01(ambientVolume); uiVolume = Mathf.Clamp01(uiVolume);
+            if(uiScale<=0)uiScale=1;uiScale=Mathf.Clamp(uiScale,.8f,1);
+            renderScale = Mathf.Clamp(renderScale, .5f, 1.2f); dynamicResolutionMin = Mathf.Clamp(dynamicResolutionMin, .5f, renderScale);
+            displayIndex = Mathf.Max(0, displayIndex); resolutionWidth = Mathf.Clamp(resolutionWidth, 640, 7680); resolutionHeight = Mathf.Clamp(resolutionHeight, 480, 4320); refreshRateHz = Mathf.Clamp(refreshRateHz, 0, 500);
             shake = Mathf.Clamp01(shake); weaponMotion = Mathf.Clamp01(weaponMotion); moveSpeedScale = Mathf.Clamp(moveSpeedScale, .75f, 1.25f);
             difficulty = Mathf.Clamp(difficulty, 0, 2); quality = Mathf.Clamp(quality, 0, 2); resolution = Mathf.Clamp(resolution, 0, 2);
             windowMode = Mathf.Clamp(windowMode, 0, 1); frameLimit = Mathf.Clamp(frameLimit, 0, 4); crosshairColor = Mathf.Clamp(crosshairColor, 0, 4);
             crosshairSize = Mathf.Clamp(crosshairSize, 2, 12); crosshairGap = Mathf.Clamp(crosshairGap, 1, 12); crosshairThickness = Mathf.Clamp(crosshairThickness, 1, 4); crosshairOpacity = Mathf.Clamp(crosshairOpacity, .3f, 1);
             var defaults = DefaultBindings();
-            if (actions == null || actions.Length != defaults.Length) actions = defaults;
+            if (actions == null) actions = defaults;
+            else if (actions.Length != defaults.Length)
+            {
+                int preserved = Mathf.Min(actions.Length, defaults.Length);
+                var migrated = new ActionBinding[defaults.Length];
+                Array.Copy(actions, migrated, preserved);
+                for (int i = preserved; i < migrated.Length; i++)
+                {
+                    string binding = defaults[i].primary;
+                    // Preserve previous custom keys; a new action cannot take an occupied binding.
+                    for (int j = 0; j < i; j++)
+                        if (migrated[j] != null && (migrated[j].primary == binding || migrated[j].secondary == binding)) { binding = ""; break; }
+                    migrated[i] = new ActionBinding(binding);
+                }
+                actions = migrated;
+            }
             for (int i = 0; i < actions.Length; i++)
             {
                 if (actions[i] == null) actions[i] = defaults[i];
                 if (!string.IsNullOrEmpty(actions[i].primary) && !BindingInput.Valid(actions[i].primary)) actions[i].primary = defaults[i].primary;
                 if (!string.IsNullOrEmpty(actions[i].secondary) && !BindingInput.Valid(actions[i].secondary)) actions[i].secondary = "";
             }
+            version = CurrentVersion;
         }
         public int Conflict(string code, int action, int slot)
         {
@@ -113,27 +148,57 @@ namespace SwapHunter
     }
     public static class SettingsStore
     {
-        public static string FilePath => Path.Combine(RunStorage.Root, "settings-v2.json");
+        public static string FilePath => Path.Combine(RunStorage.Root, "settings-v5.json");
+        public static string LegacyFilePath => Path.Combine(RunStorage.Root, "settings-v4.json");
+        public static string OldestFilePath => Path.Combine(RunStorage.Root,"settings-v2.json");
+        public static string LastWarning { get; private set; } = "";
         public static GameOptions Load()
         {
-            GameOptions settings;
-            if (File.Exists(FilePath))
+            LastWarning="";bool readFailed=false;
+            foreach(string loadPath in new[]{FilePath,LegacyFilePath,OldestFilePath})
             {
-                try { settings = JsonUtility.FromJson<GameOptions>(File.ReadAllText(FilePath)); if (settings == null) throw new IOException("Empty settings"); settings.Validate(); return settings; }
-                catch { File.Copy(FilePath, FilePath + ".backup-" + DateTime.Now.ToString("yyyyMMddHHmmss"), true); }
+                if(!File.Exists(loadPath))continue;
+                try
+                {
+                    var loaded=LoadFromPath(loadPath);
+                    if(readFailed)LastWarning="设置主文件无法读取，已恢复旧版配置；原文件已保留。";
+                    return loaded;
+                }
+                catch(Exception e) when(e is IOException || e is UnauthorizedAccessException || e is ArgumentException)
+                {
+                    readFailed=true;
+                    try{File.Copy(loadPath,loadPath+".backup-"+DateTime.UtcNow.ToString("yyyyMMddHHmmssfff")+"-"+Guid.NewGuid().ToString("N"));}
+                    catch(Exception backupError) when(backupError is IOException || backupError is UnauthorizedAccessException)
+                    {Debug.LogWarning("设置备份无法写入，原文件未改变："+backupError.Message);}
+                }
             }
-            settings = new GameOptions();
+            if(readFailed)LastWarning="设置文件无法读取，已使用兼容默认值；原文件已保留。";
+            var settings = new GameOptions();
             settings.sensitivity = PlayerPrefs.GetFloat("SH.sensitivity", 1); settings.fov = PlayerPrefs.GetFloat("SH.fov", 60);
             settings.volume = PlayerPrefs.GetFloat("SH.volume", .7f); settings.shake = PlayerPrefs.GetFloat("SH.shake", .35f);
             settings.invertY = PlayerPrefs.GetInt("SH.invert", 0) != 0; settings.difficulty = PlayerPrefs.GetInt("SH.difficulty", 1); settings.quality = PlayerPrefs.GetInt("SH.quality", 1);
             for (int i = 0; i < 9; i++) { string key = PlayerPrefs.GetString("SH.key" + i, ""); if (BindingInput.Valid("K:" + key)) settings.actions[i].primary = "K:" + key; }
             settings.Validate(); return settings;
         }
+        public static void SaveToPath(GameOptions settings, string path)
+        {
+            settings.Validate(); Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
+            string temporary = path + ".tmp"; File.WriteAllText(temporary, JsonUtility.ToJson(settings, true));
+            File.Copy(temporary, path, true); File.Delete(temporary);
+        }
+        public static GameOptions LoadFromPath(string path)
+        {
+            var settings = JsonUtility.FromJson<GameOptions>(File.ReadAllText(path));
+            if (settings == null) throw new IOException("Empty settings");
+            settings.Validate(); return settings;
+        }
         public static void Save(GameOptions settings)
         {
-            settings.Validate(); Directory.CreateDirectory(RunStorage.Root);
-            string temporary = FilePath + ".tmp"; File.WriteAllText(temporary, JsonUtility.ToJson(settings, true));
-            File.Copy(temporary, FilePath, true); File.Delete(temporary);
+            SaveToPath(settings, FilePath); LastWarning="";
         }
     }
 }
+
+
+
+

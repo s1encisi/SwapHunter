@@ -8,7 +8,7 @@ namespace SwapHunter
         void RuleLine(float x, float y, float width) { Fill(new Rect(x, y, width, 1), new Color(.20f, .30f, .34f)); }
         void CampaignBoardUI()
         {
-            Fill(new Rect(0, 0, viewWidth, 900), new Color(.018f, .032f, .045f, .98f));
+            Fill(FullScreenGuiRect, new Color(.018f, .032f, .045f, .98f));
             float left = 48, gap = 28, lw = (viewWidth - 124) * .37f, right = left + lw + gap, rw = viewWidth - right - 48;
             Text("SWAPHUNTER  /  OPERATIONS", new Rect(left, 35, 700, 28), 16, Cyan);
             Text("行动准备", new Rect(left, 70, 600, 65), 43);
@@ -77,7 +77,7 @@ namespace SwapHunter
 
         void CampaignSettlementUI()
         {
-            Fill(new Rect(0, 0, viewWidth, 900), new Color(.018f, .035f, .045f, 1));
+            Fill(FullScreenGuiRect, new Color(.018f, .035f, .045f, 1));
             float x = viewWidth / 2 - 440;
             Text("OPERATIONS  /  AFTER ACTION", new Rect(x, 126, 880, 32), 16, Cyan);
             Text(lastSettlement.success ? "行动完成" : "行动中断", new Rect(x, 179, 880, 73), 49, lastSettlement.success ? Color.white : Amber);
@@ -124,3 +124,4 @@ namespace SwapHunter
         }
     }
 }
+

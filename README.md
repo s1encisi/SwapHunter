@@ -1,83 +1,74 @@
-# SwapHunter · 换位猎手
+# 换位猎手 / SwapHunter
 
-以空间换位为核心机制的 Unity 单人战术 FPS 原型，也是一个系统策划作品集项目。
+**以“交换双方位置”为核心机制的离线单人 FPS 原型。** 玩家保留各自朝向、生命与装备，通过换位改变掩体、高低差和交叉火力关系，再配合射击、定向护盾与可召回飞刀完成行动。
 
-玩家与敌人或相位信标交换位置，利用高低差、掩体、敌方手雷和短暂攻击窗口完成目标。合约玩法把战斗连接到战术装配、风险选择、撤离结算与横向解锁。
+项目将空间战斗机制扩展为可游玩的教学、章节与成长循环，同时实现碰撞校验、敌人行为、存档结算、程序化资产导入和原生玩家构建验证。当前源码版本为 **v0.5.2**。
 
-![合约准备界面](docs/media/loadout.png)
+## 可以体验什么
 
-## 玩法与系统
+- **空间换位战斗**：支持地面和空中换位；执行前检查视线、双方占用空间及目标附属碰撞体，导航移动失败时回滚双方位置。
+- **12 关相位行动与 12 把武器**：双武器装备、不同开火机制、配件取舍、专精成长、章节间补给，以及主目标、可选数据与撤离结算。
+- **战术工具与敌人应对**：定向 A 盾、近战、投刀与召回；敌人包含推进、探角和预警部署逻辑，终局 Boss 使用分阶段空间技能。
+- **可操作的教学与设置**：分步实战教学、键盘/鼠标菜单导航、按键重绑、显示及音量设置；旧战役、合约与试招入口继续保留。
+- **武器表现与原创资产**：按供弹结构区分装填动作，取消装填会恢复部件状态；Three.js / Blender 生成模型，经 GLB 导入 Unity，游戏碰撞体与装饰网格分开。
 
-- 双向换位：视线、距离、双方落点、附属盾牌碰撞及导航条件检查；不交换朝向、生命或弹药。
-- 两种武器与多类机器人：卡宾枪、霰弹枪、突击兵、狙击手、盾卫和指挥官。
-- 三份合约：卸货场控制权、运输仓继电器、控制塔核心回收。
-- 六种战术模块：两槽、四能量预算，收益与代价由配置表驱动。
-- 风险收益：可选数据终端呼叫增援，成功撤离才兑现额外收益。
-- 成长与存档：研究点解锁模块、一次性结算收据、原子保存、备份恢复和中断补偿。
-- 基础教学、完整战役、自由试招及可重绑的键鼠设置。
+![SwapHunter 实机画面](docs/media/gameplay.png)
 
-![原生战斗画面](docs/media/gameplay.png)
+*仓库已有的 v0.3 实机截图，展示换位战斗场景；v0.5.2 的武器模型与界面已有更新。*
 
-## 盾兵的应对方式
+## 值得阅读的实现
 
-盾牌本身完全挡弹且不可击碎，暴露的身体可以正常受伤。绕到侧背面射击，或按换位键交换位置后转身攻击；换位不会自动改变视角朝向。命中盾牌时会显示独立的格挡提示，避免与有效伤害混淆。v0.3.1 修复了普通盾兵身体因同名对象被误判为盾牌的问题。
+| 设计 | 实现入口 | 解决的问题 |
+|---|---|---|
+| 换位先校验、执行前复核、失败回滚 | [PlayerMotor.cs](Game/Assets/_SwapHunter/Scripts/PlayerMotor.cs) | 避免换位准备期间目标变化、双方穿入障碍或导航失败造成位置不一致 |
+| 章节状态与幂等结算 | [ExpeditionData.cs](Game/Assets/_SwapHunter/Scripts/ExpeditionData.cs)、[CampaignData.cs](Game/Assets/_SwapHunter/Scripts/CampaignData.cs) | 使用 runId 与结算收据阻止重复发奖；先落盘后更新内存，保留损坏存档和可恢复备份 |
+| 数据与表现分离 | [WeaponCatalog.cs](Game/Assets/_SwapHunter/Scripts/WeaponCatalog.cs)、[PlayerWeaponPresentation.cs](Game/Assets/_SwapHunter/Scripts/PlayerWeaponPresentation.cs) | 武器数值/开火机制与供弹部件动画分别管理，弹药在装填完成时结算 |
+| 原生运行验证与存档隔离 | [RunStorage.cs](Game/Assets/_SwapHunter/Scripts/RunStorage.cs)、[验证脚本](Tools/Validate-Demo-v052.ps1) | QA 使用独立目录和检查点，不写入玩家进度；结果输出为 JSON 和日志 |
+| 可再生成的美术资产 | [Three.js 工具](Tools/ArtAuthoring/README.md)、[Blender 工具](Tools/BlenderAuthoring/README.md) | 保留生成器、原始模型、GLB 和 Unity 引用，检查轴向、几何及功能节点 |
 
-## 打开工程
+运行入口是 `DemoGame`，主要流程分布在 `ExpeditionRun`、`DemoCampaign`、`TutorialCourse`；场景和敌人由 `WorldBuilder`、`ExpeditionWorld` 及对应行为组件组织。
 
-1. 安装 **Unity 6000.3.25f1 LTS** 和 Windows 构建支持。
-2. 在 Unity Hub 中添加并打开 `Game/`，等待 Package Manager 导入锁定依赖。
-3. 打开 `Game/Assets/_SwapHunter/Scenes/SwapHunter.unity`，点击 Play。
+## 从源码运行
 
-地图在运行时生成；编辑模式中的启动场景不是最终完整地图。所需 GLB、字体及原创建模源码已包含在仓库中，日常打开工程不需要先运行 Node.js。
+需要 **Unity 6000.3.25f1** 与 Windows 构建支持。项目使用 URP 17.3.0、Input System 1.14.2、AI Navigation 2.0.9 和 glTFast 6.15.0，依赖锁定在 `Game/Packages/`。首次打开需要获取 Unity 包。
 
-默认操作：WASD 移动，鼠标观察，左键开火，右键瞄准，Shift 冲刺，Alt 慢走，Space 跳跃，Q 换位，R 装填，E 交互，1/2 或滚轮切枪，Esc 暂停。
-
-## 构建与验证
-
-PowerShell 中指定本机 Unity 编辑器路径：
-
-```powershell
-./Tools/Build-Demo-v03.ps1 -EditorPath 'C:\Program Files\Unity\Hub\Editor\6000.3.25f1\Editor\Unity.exe'
-./Tools/Build-Demo-v03.ps1 -EditorPath '<Unity.exe完整路径>' -RunQA
-```
-
-也可以设置 `SWAPHUNTER_UNITY_EDITOR` 环境变量。输出位于 `Builds/SwapHunter-v0.3/`，不提交构建产物和 Unity 缓存。
-
-其他原生验证入口：
+1. 用 Unity Hub 添加仓库中的 `Game` 项目。
+2. 打开 `Assets/_SwapHunter/Scenes/SwapHunter.unity` 并进入 Play Mode，或在仓库根目录构建 Windows 玩家：
 
 ```powershell
-./Builds/SwapHunter-v0.3/SwapHunter.exe -swapHunterCampaignQA -qaOutput ./Logs/CampaignQA
-./Builds/SwapHunter-v0.3/SwapHunter.exe -swapHunterAVReview -qaOutput ./Logs/AVReview
+$env:SWAPHUNTER_UNITY_EDITOR = 'C:\Program Files\Unity\Hub\Editor\6000.3.25f1\Editor\Unity.exe'
+.\Tools\Build-Demo-v052.ps1
 ```
 
-验证模式将设置、日志与成长数据隔离，测试检查点保存在进程内存。普通游戏沿用自身的持久化目录。
+输出为 `Builds/SwapHunter-v0.5.2/SwapHunter.exe`。运行时保留同目录的 `SwapHunter_Data`、`UnityPlayer.dll` 与 `MonoBleedingEdge`。已导入模型随源码提供，普通构建不需要安装 Node.js 或 Blender；重新生成资产时再使用对应工具说明。
 
-## 原创建模
+首次游玩建议选择“逐步实战教学”，再进入“相位行动”。
 
-```powershell
-cd Tools/ArtAuthoring
-npm ci --ignore-scripts
-npm run build
-```
-
-使用 Three.js 0.186.1 和 GLTFExporter 生成 GLB，再经 Unity glTFast 导入。保留 `.meta` 文件以维持资源引用。视觉模型与玩法碰撞体分离。
-
-## 项目结构
-
-| 目录 | 内容 |
+| 默认按键 | 功能 |
 |---|---|
-| `Game/Assets/_SwapHunter/Scripts` | 玩法、UI、存档、验证与构建代码 |
-| `Game/Assets/_SwapHunter/Resources/CampaignCatalog.json` | 模块与合约运行配置 |
-| `Game/Assets/_SwapHunter/Art/ThreeModels` | 原创 GLB 模型与导出统计 |
-| `Tools/ArtAuthoring` | Three.js 建模生成器及锁定依赖 |
-| `docs/system-design-v03.md` | 系统规则、数值与设计取舍 |
-| `docs/validation.md` | 已验证范围和当前限制 |
+| WASD / 鼠标 | 移动 / 观察 |
+| 左键 / 右键 / R | 开火 / 瞄准 / 装填 |
+| Q / C | 相位换位 / 定向 A 盾 |
+| V / G / X | 近战 / 投刀 / 召回（需对应研究） |
+| Space / E / Esc | 跳跃或翻越 / 交互 / 暂停与设置 |
+| 1、2 / 滚轮 | 切换已装备武器 |
 
-## 状态与贡献
+## 验证
 
-当前为 v0.3.1 原型，持续进行体验评审。代码、程序化美术及测试使用 AI 辅助制作；自动检查和 AI 评审不等于真人试玩。验证结果及边界见 [验证说明](docs/validation.md)。
+构建后可运行后台检查：
 
-## 许可
+```powershell
+.\Tools\Validate-Demo-v052.ps1 -Suite Gunplay
+.\Tools\Validate-Demo-v052.ps1 -Suite Review
+.\Tools\Validate-Demo-v052.ps1 -Suite Flow
+```
 
-项目原创代码、文档、模型和合成音效采用 [MIT](LICENSE)。第三方字体、Unity 软件包及其他第三方内容保留各自许可，详见 [第三方声明](THIRD_PARTY_NOTICES.md)。Unity Editor 和软件包缓存不随本仓库分发。
+Gunplay 覆盖装填部件、取消恢复、弹药结算及弹丸呈现；Review 覆盖核心机制、系统、关卡与存储；Flow 覆盖教学/行动流程和追兵撤离。报告默认保存在 `Logs/V052/`。脚本默认使用 Background 模式；路线画面和性能套件需要另选 Foreground 模式。
 
+本次源码整理后已完成 Windows 原生构建及后台检查（2026-09-30）：Gunplay: 285 checks; Review: 100 checks; Flow: 15 checks，退出码均为 0。
+
+自动检查用于验证程序行为。主观枪感、首次游玩体验与跨硬件性能仍需实际试玩；后台结果不作为画面或帧率测量。
+
+## 许可证与资源
+
+原创代码、程序化几何与合成音效使用 [MIT License](LICENSE)。字体、Unity 包和 Three.js 等组件遵循各自许可证，见 [第三方声明](THIRD_PARTY_NOTICES.md)。项目包含 AI 辅助编写的代码及原创生成素材；菜单概念图属于插画，本文展示的图片为游戏实机截图。

@@ -30,12 +30,7 @@ namespace SwapHunter
             {
                 catalog = CampaignCatalog.Load();
                 selectedContract = catalog.contracts[0].id;
-                string directory = Path.Combine(Application.persistentDataPath, "Campaign-v3");
-                if (qaMode)
-                {
-                    var args = Environment.GetCommandLineArgs(); int at = Array.IndexOf(args, "-qaOutput");
-                    directory = Path.Combine(at >= 0 && at + 1 < args.Length ? args[at + 1] : RunStorage.Root, "campaign-test-" + Guid.NewGuid().ToString("N"));
-                }
+                string directory = Path.Combine(RunStorage.Root, "Campaign-v3");
                 campaignStore = new CampaignStore(directory, catalog);
                 lastSettlement = campaignStore.RecoverInterrupted();
                 selectedContract = catalog.contracts[0].id;
@@ -50,6 +45,7 @@ namespace SwapHunter
             {
                 var definition = catalog.Contract(id);
                 string run = campaignStore.Begin(id);
+                if (tutorialCourse) tutorialCourse.End();
                 ClearCampaignStations(); campaignRunId = run; activeContract = definition;
                 campaignActive = true; campaignMain = campaignBonus = false; practice = false;
                 campaignBoard = false; abandonConfirm = false; lastSettlement = null;
@@ -90,7 +86,7 @@ namespace SwapHunter
         public void OpenCampaignBoard()
         {
             if (campaignActive) return;
-            ClearCampaignStations(); SetState(RunState.Menu); campaignBoard = true; abandonConfirm = false;
+            expeditionBoard = false; ClearCampaignStations(); SetState(RunState.Menu); campaignBoard = true; abandonConfirm = false;
         }
         public CampaignStation FindCampaignStation()
         {
@@ -120,8 +116,8 @@ namespace SwapHunter
             {
                 campaignStore.MarkBonusComplete(campaignRunId); campaignBonus = true;
                 float z = stage == 1 ? 57 : stage == 2 ? 103 : 146;
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(5, 0, z), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(-8, 0, z - 6), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(5, 0, z), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(-8, 0, z - 6), stage);
                 sound.Play("warning", station.Point); Toast("数据已取得 · 两名增援抵达 · 成功撤离才获得额外收益", 4);
                 Record("contract_bonus", activeContract.id); return true;
             }
@@ -154,6 +150,7 @@ namespace SwapHunter
         public string CampaignObjective => campaignMain ? "主目标完成 · 返回入口的青色终端撤离" : ObjectiveClassic;
         public void OnCampaignSwap(SwapTarget target)
         {
+            OnExpeditionSwap(target);
             if (!campaignActive) return;
             if (HasModule("guard")) guardUntil = Time.time + Module("guard").duration;
             if (HasModule("breach")) breachUntil = Time.time + Module("breach").duration;
@@ -191,4 +188,6 @@ namespace SwapHunter
         }
     }
 }
+
+
 

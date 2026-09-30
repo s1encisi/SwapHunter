@@ -7,6 +7,7 @@ namespace SwapHunter
     public static class Shapes
     {
         public static DemoConfig Config;
+        public static int EffectBudget => !DemoGame.I ? 120 : DemoGame.I.quality == 0 ? 60 : DemoGame.I.quality == 1 ? 90 : 120;
         public static Material Mat(int id) => Config.materials[Mathf.Clamp(id, 0, Config.materials.Length - 1)];
         public static GameObject Make(string name, PrimitiveType type, Transform parent, Vector3 position, Vector3 scale, int material, bool solid = false, int layer = 0)
         {
@@ -50,7 +51,7 @@ namespace SwapHunter
         }
         public static void Burst(Vector3 point, Color color, float size = .5f)
         {
-            for (int i = 0; i < 7 && ImpactSpark.ActiveCount < 120; i++)
+            for (int i = 0; i < 7 && ImpactSpark.ActiveCount < EffectBudget; i++)
             {
                 Vector3 direction = VisualDirection();
                 var line = Line(DemoGame.I.effects, point, point + direction * size * .35f, color, .018f);
@@ -62,7 +63,7 @@ namespace SwapHunter
         {
             normal = normal.sqrMagnitude > .01f ? normal.normalized : Vector3.up;
             Color color = shield ? new Color(1, .92f, .70f) : new Color(1, .68f, .32f);
-            for (int i = 0; i < 5 && ImpactSpark.ActiveCount < 120; i++)
+            for (int i = 0; i < 5 && ImpactSpark.ActiveCount < EffectBudget; i++)
             {
                 Vector3 random = VisualDirection();
                 Vector3 direction = shield ? (normal * .35f + Vector3.ProjectOnPlane(random, normal)).normalized : (normal * 1.5f + random).normalized;
@@ -121,13 +122,15 @@ namespace SwapHunter
         readonly AudioSource[] voices = new AudioSource[Limit];
         readonly string[] names = new string[Limit];
         readonly float[] starts = new float[Limit];
-        AudioSource ambient; AudioClip ambientClip; int variation;
+        AudioSource ambient, music; AudioClip ambientClip, musicClip; int variation; readonly float[] voiceGains = new float[Limit];
         public int VoiceLimit => Limit;
         public bool ReviewExportSucceeded { get; private set; }
         public int ActiveVoiceCount { get { int n = 0; foreach (var v in voices) if (v && v.isPlaying) n++; return n; } }
         void Awake()
         {
             foreach (string id in new[] { "rifle","shotgun","phase","impact","death","warning","explosion","confirm","shield","kill","reload","reload_out","reload_in","reload_bolt","empty","step","land","player_hit","surface" }) clips[id] = Render(id);
+            foreach (string id in new[] { "head_hit", "limb_hit", "vault", "crouch", "knife_swipe", "knife_throw", "knife_recall", "silence" }) clips[id] = Render(id);
+            for (int w = 2; w < 12; w++) clips["weapon_" + w.ToString("00")] = Render("weapon_" + w.ToString("00"));
             for (int i = 0; i < Limit; i++)
             {
                 var go = new GameObject("Audio voice " + i); go.transform.SetParent(transform, false);
@@ -138,23 +141,49 @@ namespace SwapHunter
             for (int i = 0; i < bed.Length; i++) { float t = i / (float)Rate; bed[i] = .012f * Tone(50,t) + .006f * Tone(100,t) + .007f * Tone(157f/6,t) * (.6f+.4f*Tone(1f/6,t)); }
             ambientClip = AudioClip.Create("port_ambience",bed.Length,1,Rate,false); ambientClip.SetData(bed,0);
             ambient = gameObject.AddComponent<AudioSource>(); ambient.clip = ambientClip; ambient.loop = true; ambient.priority = 240; ambient.volume = 0; ambient.Play();
+            musicClip = PhaseScore.Create(); music = gameObject.AddComponent<AudioSource>(); music.clip = musicClip; music.loop = true; music.priority = 245; music.volume = 0; music.Play();
             string[] args = Environment.GetCommandLineArgs(); int ix = Array.IndexOf(args,"-swapHunterAudioReview");
             if (ix >= 0) ExportReview(ix+1 < args.Length && !args[ix+1].StartsWith("-") ? args[ix+1] : System.IO.Path.Combine(RunStorage.Root,"AudioReview"));
         }
-        void Update() { if (DemoGame.I) ambient.volume = Mathf.MoveTowards(ambient.volume, DemoGame.I.IsPlaying ? .19f * DemoGame.I.options.effectsVolume : 0, Time.unscaledDeltaTime*.22f); }
+        void Update()
+        {
+            if(!DemoGame.I)return;var o=DemoGame.I.options;
+            ambient.volume=Mathf.MoveTowards(ambient.volume,DemoGame.I.IsPlaying?.19f*o.ambientVolume:0,Time.unscaledDeltaTime*.22f);
+            music.volume=Mathf.MoveTowards(music.volume,(DemoGame.I.IsPlaying?.38f:.62f)*o.musicVolume,Time.unscaledDeltaTime*.3f);
+            for(int i=0;i<Limit;i++)if(voices[i]&&voices[i].isPlaying)voices[i].volume=voiceGains[i]*MixVolume(names[i]);
+        }
+        static float MixVolume(string key)
+        {if(string.IsNullOrEmpty(key)||!DemoGame.I)return 0;var o=DemoGame.I.options;if(key.StartsWith("confirm_"))return o.uiVolume;return Feedback(key.Replace("_world","").Replace("_local",""))?o.feedbackVolume:o.effectsVolume;}
         static uint Seed(string text) { unchecked { uint s=2166136261; foreach(char c in text) { s^=c; s*=16777619; } return s; } }
         static float Noise(ref uint s) { unchecked { s^=s<<13; s^=s>>17; s^=s<<5; } return (s&0xFFFFFF)/8388607.5f-1; }
         static float Tone(float hz,float t) => Mathf.Sin(2*Mathf.PI*hz*t);
         static float E(float t,float speed) => Mathf.Exp(-t*speed);
         static float Tap(float t,float delay,float hz,float gain) => t<delay ? 0 : Tone(hz,t-delay)*E(t-delay,95)*gain;
+        static readonly float[] WeaponFundamentals={112,63,142,74,185,49,105,43,89,54,265,410};
         static AudioClip Render(string id)
         {
-            float duration=id=="shotgun"?.52f:id=="rifle"?.32f:id=="explosion"?.95f:id=="phase"?.46f:id=="death"?.62f:.26f;
+            bool weaponEvent=id.StartsWith("weapon_"); int weaponId=weaponEvent?int.Parse(id.Substring(7)):0;
+            float duration=weaponEvent?.6f:id=="shotgun"?.52f:id=="rifle"?.32f:id=="explosion"?.95f:id=="phase"?.46f:id=="death"?.62f:.26f;
             float[] data=new float[Mathf.CeilToInt(Rate*duration)]; uint seed=Seed(id); float low=0,mid=0,phase=0;
             for(int i=0;i<data.Length;i++)
             {
                 float t=i/(float)Rate,n=Noise(ref seed); low+=(n-low)*.032f; mid+=(n-mid)*.23f; float high=n-mid,v;
-                if(id=="rifle"||id=="shotgun")
+                if(weaponEvent)
+                {
+                    float hz=WeaponFundamentals[weaponId];
+                    float decay=weaponId==4?46:weaponId==5||weaponId==7?14:25;
+                    v=high*E(t,180)*.9f+Tone(hz,t)*E(t,decay)*.7f+mid*E(t,decay*.8f)*.75f+low*E(t,9)*.35f;
+                    if(weaponId>=10)v=(Tone(hz+1100*t,t)*.3f+Tone(hz*1.5f,t)*.14f+mid*.14f)*E(t,8);
+                    if(weaponId==9)v=Tone(54,t)*E(t,13)*.6f+low*E(t,12)+Tap(t,.1f,460,.2f);
+                    if(weaponId==7)v+=Tap(t,.27f,700,.22f);
+                }
+                else if(id=="knife_swipe"||id=="knife_throw")v=(mid*.7f+high*.16f)*Mathf.Sin(Mathf.PI*t/duration)*E(t,5)+Tap(t,.11f,2200,.08f);
+                else if(id=="knife_recall")v=(Tone(700+1400*t,t)*.13f+mid*.11f)*Mathf.Sin(Mathf.PI*t/duration);
+                else if(id=="silence")v=(Tone(430-900*t,t)*.16f+Tone(650-1000*t,t)*.09f)*E(t,10);
+                else if(id=="head_hit")v=(Tone(1250,t)*.17f+Tone(1875,t)*.09f+high*.15f)*E(t,40);
+                else if(id=="limb_hit")v=(Tone(260,t)*.15f+mid*.5f)*E(t,58);
+                else if(id=="vault"||id=="crouch")v=(low*.6f+mid*.15f+Tone(85,t)*.06f)*E(t,id=="vault"?13:30);
+                else if(id=="rifle"||id=="shotgun")
                 {
                     bool sg=id=="shotgun";
                     v=high*E(t,sg?155:220)*1.1f + Tone(sg?63:112,t)*E(t,sg?23:42)*.64f
@@ -177,7 +206,7 @@ namespace SwapHunter
             }
             AudioClip clip=AudioClip.Create(id,data.Length,1,Rate,false); clip.SetData(data,0); return clip;
         }
-        static bool Feedback(string id) => id=="impact"||id=="kill"||id=="shield"||id=="confirm";
+        static bool Feedback(string id) => id=="impact"||id=="kill"||id=="shield"||id=="confirm"||id=="head_hit"||id=="limb_hit";
         static int Priority(string id) => id=="warning"||id=="phase"||id=="player_hit"?32:id=="rifle"||id=="shotgun"||id=="kill"?64:id=="step"||id=="surface"?180:100;
         public void Play(string id,Vector3? at=null)
         {
@@ -185,7 +214,7 @@ namespace SwapHunter
             if(!clips.TryGetValue(id,out var clip)){id="confirm";clip=clips[id];}
             string key=id+(at.HasValue?"_world":"_local"); float cooldown=id=="surface"?.075f:id=="impact"||id=="shield"?.045f:id=="step"?.08f:.008f;
             if(last.TryGetValue(key,out float old)&&Time.unscaledTime-old<cooldown)return; last[key]=Time.unscaledTime;
-            float volume=Feedback(id)?DemoGame.I.options.feedbackVolume:DemoGame.I.options.effectsVolume; if(volume<=0)return;
+            float volume=MixVolume(key); if(volume<=0)return;
             int pick=-1,same=0; float oldest=float.MaxValue;
             for(int i=0;i<Limit;i++){if(!voices[i].isPlaying){if(pick<0)pick=i;continue;}if(names[i]==key)same++;}
             int max=at.HasValue&&id=="rifle"?8:id=="rifle"||id=="shotgun"?4:3;
@@ -197,8 +226,8 @@ namespace SwapHunter
             if(pick<0)return;
             var source=voices[pick];source.Stop();source.transform.position=at??transform.position;source.spatialBlend=at.HasValue?1:0;
             float obstruction=at.HasValue&&DemoGame.I.player&&Physics.Linecast(at.Value,DemoGame.I.player.Eye.position,Layers.WorldMask)?.48f:1;
-            source.volume=volume*.58f*obstruction;source.priority=Priority(id);source.pitch=id=="rifle"||id=="step"||id=="surface"?1+((variation++%5)-2)*.012f:1;
-            source.clip=clip;names[pick]=key;starts[pick]=Time.unscaledTime;source.Play();
+            voiceGains[pick]=.58f*obstruction;source.volume=volume*voiceGains[pick];source.priority=Priority(id);source.pitch=id=="rifle"||id=="step"||id=="surface"?1+((variation++%5)-2)*.012f:1;
+            source.clip=clip;names[pick]=key;starts[pick]=Time.unscaledTime;source.Play();ShowcaseCapture.Sound(id,source.volume*AudioListener.volume,source.pitch,at);
         }
         [Serializable] public sealed class ClipMeasurement { public string id,sha256; public int sampleRate,sampleCount; public float seconds,peak,rms,dcOffset; public bool finite; }
         [Serializable] public sealed class ReviewManifest { public string note="Original synthesis; PCM16 48kHz. Measurements do not validate listening quality."; public int voiceLimit=Limit; public ClipMeasurement[] clips; }
@@ -206,7 +235,7 @@ namespace SwapHunter
         {
             ReviewExportSucceeded = false;
             System.IO.Directory.CreateDirectory(directory);var list=new System.Collections.Generic.List<ClipMeasurement>();
-            foreach(var pair in clips)list.Add(WriteWave(directory,pair.Key,pair.Value));list.Add(WriteWave(directory,"port_ambience",ambientClip));
+            foreach(var pair in clips)list.Add(WriteWave(directory,pair.Key,pair.Value));list.Add(WriteWave(directory,"port_ambience",ambientClip));list.Add(WriteWave(directory,"phase_score",musicClip));
             System.IO.File.WriteAllText(System.IO.Path.Combine(directory,"audio-review.json"),JsonUtility.ToJson(new ReviewManifest{clips=list.ToArray()},true));
             Debug.Log("Audio review exported: "+directory);
             ReviewExportSucceeded = true;
@@ -229,7 +258,7 @@ namespace SwapHunter
             using(var sha=System.Security.Cryptography.SHA256.Create())result.sha256=BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
             System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory,id+".wav"),bytes);return result;
         }
-        void OnDestroy(){foreach(var pair in clips)if(pair.Value)Destroy(pair.Value);if(ambientClip)Destroy(ambientClip);}
+        void OnDestroy(){foreach(var pair in clips)if(pair.Value)Destroy(pair.Value);if(ambientClip)Destroy(ambientClip);if(musicClip)Destroy(musicClip);}
     }
     public sealed class Bolt : MonoBehaviour
     {
@@ -237,14 +266,18 @@ namespace SwapHunter
         public EnemyActor owner;
         public static Bolt Spawn(EnemyActor source, Vector3 origin, Vector3 direction, float speed, float damage)
         {
-            GameObject go = Shapes.Make("Enemy projectile", PrimitiveType.Sphere, DemoGame.I.effects, origin, Vector3.one * .12f, 5);
+            GameObject go = new GameObject("Enemy projectile"); go.layer = Layers.Effects;
+            go.transform.SetParent(DemoGame.I.effects, false); go.transform.localPosition = origin;
             Bolt bolt = go.AddComponent<Bolt>(); bolt.owner = source; bolt.velocity = direction.normalized * speed; bolt.damage = damage;
+            EnemyProjectileVisual.Attach(bolt);
             return bolt;
         }
         void Update()
         {
             if (!DemoGame.I.IsPlaying) return;
             Vector3 old = transform.position; Vector3 travel = velocity * Time.deltaTime;
+            var tactics=DemoGame.I.player?DemoGame.I.player.tactics:null;
+            if(tactics&&tactics.Intercept(old,old+travel,out var barrierHit)){transform.position=barrierHit;Destroy(gameObject);return;}
             if (CombatRay.Cast(old, travel.normalized, travel.magnitude, owner ? owner.transform : null, out RaycastHit hit))
             {
                 PlayerMotor player = hit.collider.GetComponentInParent<PlayerMotor>();
@@ -323,4 +356,8 @@ namespace SwapHunter
         }
     }
 }
+
+
+
+
 

@@ -62,9 +62,9 @@ namespace SwapHunter
             bool avReview = Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterAVReview") >= 0;
             bool legacyQA = Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterQA") >= 0;
             bool audioOnly = Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterAudioReview") >= 0 && !avReview && !campaignQA && !benchmark && !legacyQA;
-            qaMode = RunStorage.IsValidation;
+            qaMode = RunStorage.IsValidation && Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterInteractiveReview") < 0;
             if (qaMode) InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
-            LoadSettings(); InitializeCampaign(); Shapes.Config = config; ImportedModels.Library = config.models;
+            LoadSettings(); InitializeCampaign(); InitializeExpedition(); Shapes.Config = config; ImportedModels.Library = config.models;
             if (qaMode) Debug.Log("SWAPHUNTER_VALIDATION_ROOT=" + RunStorage.Root);
             if (!config.models) throw new InvalidOperationException("Three.js model library was not prepared");
             try { font = config.uiFont ? config.uiFont : Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei UI", "Microsoft YaHei", "SimHei", "Arial" }, 24); }
@@ -82,15 +82,33 @@ namespace SwapHunter
             Physics.IgnoreLayerCollision(Layers.Grenade, Layers.Actor, true); Physics.IgnoreLayerCollision(Layers.Grenade, Layers.Grenade, true);
             yield return null;
             WorldBuilder.Build(this);
-            GameObject go = new GameObject("Player"); player = go.AddComponent<PlayerMotor>(); player.Initialize();
+            GameObject go = new GameObject("Player"); player = go.AddComponent<PlayerMotor>(); player.Initialize();player.tactics=go.AddComponent<PlayerTactics>();player.tactics.Initialize(player);player.combatTools=go.AddComponent<PlayerCombatTools>();player.combatTools.Initialize(player);
             var cameraData = player.cameraView.GetUniversalAdditionalCameraData(); cameraData.renderPostProcessing = false;
             menuCamera = new GameObject("Menu overview").AddComponent<Camera>(); menuCamera.nearClipPlane = .1f; menuCamera.farClipPlane = 400;
             menuCamera.cullingMask &= ~(1 << Layers.ViewModel);
             menuCamera.backgroundColor = new Color(.08f, .14f, .20f); menuCamera.clearFlags = CameraClearFlags.Skybox; menuCamera.fieldOfView = 57;
             menuCamera.transform.position = new Vector3(-12, 5.6f, 34); menuCamera.transform.LookAt(new Vector3(4, 3.5f, 57));
             ApplySettings(!qaMode); SetState(RunState.Menu);
-            Record("boot", "SwapHunter 0.3.1 / " + Application.unityVersion);
-            if (avReview) gameObject.AddComponent<AVReview>();
+            Record("boot", "SwapHunter "+Application.version+" / " + Application.unityVersion);
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterGunplayQA") >= 0) gameObject.AddComponent<GunplayPresentationQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterReviewFixQA") >= 0) gameObject.AddComponent<ReviewFixQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterNaturalBossQA") >= 0) gameObject.AddComponent<NaturalBossQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterBossPerformanceQA") >= 0) gameObject.AddComponent<BossPerformanceQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterShowcaseCapture") >= 0) gameObject.AddComponent<ShowcaseCapture>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterBattlefieldQA") >= 0) gameObject.AddComponent<BattlefieldQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterTutorialQA") >= 0) gameObject.AddComponent<TutorialQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterShopUIQA") >= 0) gameObject.AddComponent<ShopUIQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterDeploymentQA") >= 0) gameObject.AddComponent<DeploymentQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterTacticalAIQA") >= 0) gameObject.AddComponent<TacticalAIQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterCombatToolsQA") >= 0) gameObject.AddComponent<CombatToolsQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterBossSkillsQA") >= 0) gameObject.AddComponent<BossSkillsQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterTacticsQA") >= 0) gameObject.AddComponent<TacticsQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterBossQA") >= 0) gameObject.AddComponent<BossQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterMotionQA") >= 0) gameObject.AddComponent<MotionQA>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterExpeditionBenchmark") >= 0) gameObject.AddComponent<ExpeditionBenchmark>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterRouteQA") >= 0) gameObject.AddComponent<ExpeditionRouteRunner>();
+            else if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterExpeditionQA") >= 0) gameObject.AddComponent<ExpeditionQA>();
+            else if (avReview) gameObject.AddComponent<AVReview>();
             else if (campaignQA) gameObject.AddComponent<CampaignQA>();
             else if (benchmark) gameObject.AddComponent<DemoBenchmark>();
             else if (legacyQA) gameObject.AddComponent<DemoQA>();
@@ -106,21 +124,34 @@ namespace SwapHunter
         void Update()
         {
             if (state == RunState.Loading) return;
+            UpdateAdaptiveResolution();UpdateDeployments();
             if ((!qaMode || qaInputEnabled) && KeyboardDevice != null && KeyboardDevice.f12Key.wasPressedThisFrame)
             {
                 string path = Path.Combine(RunStorage.Root, "Screenshot-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".png");
                 ScreenCapture.CaptureScreenshot(path); Toast("截图已保存", 2);
             }
             if (settingsOpen) { UpdateSettingsInput(); return; }
+            if (expeditionActive)
+            {
+                if (Pressed(16) || ((!qaMode || qaInputEnabled) && KeyboardDevice != null && KeyboardDevice.escapeKey.wasPressedThisFrame))
+                {
+                    if (expeditionInventory) { expeditionInventory = false; SetState(RunState.Playing); }
+                    else if (state == RunState.Playing) SetState(RunState.Paused);
+                    else if (state == RunState.Paused && !expeditionPending) SetState(RunState.Playing);
+                }
+                UpdateExpedition(); return;
+            }
             if (Pressed(16) || ((!qaMode || qaInputEnabled) && KeyboardDevice != null && KeyboardDevice.escapeKey.wasPressedThisFrame))
             {
                 if (state == RunState.Playing) SetState(RunState.Paused);
                 else if (state == RunState.Paused) SetState(RunState.Playing);
                 else if (state == RunState.Menu && campaignBoard) campaignBoard = false;
+                else if (state == RunState.Menu && expeditionBoard) expeditionBoard = false;
             }
             if (!IsPlaying) return;
             runSeconds += Time.deltaTime;
             nearestTerminal = FindTerminal();
+            if(tutorialCourse&&tutorialCourse.Active)return;
             if ((stage == 1 || stage == 3) && !combatComplete)
             {
                 if (AliveEnemies == 0 && nextWaveAt < 0)
@@ -144,12 +175,13 @@ namespace SwapHunter
         }
         public int AliveEnemies
         {
-            get { int count = 0; foreach (var enemy in enemies) if (enemy && enemy.Alive && enemy.arena == stage) count++; return count; }
+            get { int count = 0; foreach(var deployment in deployments)if(deployment.arena==stage)count++; foreach (var enemy in enemies) if (enemy && enemy.Alive && enemy.arena == stage) count++; return count; }
         }
         public void StartRun(bool training = false, bool resume = false)
         {
-            if (campaignActive) return;
-            campaignBoard = false; lastSettlement = null; ClearCampaignStations();
+            if (campaignActive || expeditionActive) return;
+            expeditionBoard = false; campaignBoard = false; lastSettlement = null; ClearCampaignStations();
+            if(tutorialCourse)tutorialCourse.End();
             practice = training; totalKills = totalSwaps = totalHits = totalShots = deaths = 0; runSeconds = 0;
             tutorialMoved = tutorialShot = tutorialSwapped = false; hasCore = false;
             EnterStage(training ? 1 : resume ? Mathf.Clamp(RunStorage.Checkpoint, 0, 4) : 0, true);
@@ -157,7 +189,7 @@ namespace SwapHunter
         }
         public void EnterStage(int number, bool respawn)
         {
-            stage = number; stageComplete = combatComplete = false; wave = 0; nextWaveAt = -1; hasCore = number == 4;
+            ClearDeployments();stage = number; stageComplete = combatComplete = false; wave = 0; nextWaveAt = -1; hasCore = number == 4;
             foreach (EnemyActor enemy in enemies) if (enemy) { enemy.gameObject.SetActive(false); Destroy(enemy.gameObject); }
             enemies.Clear();
             foreach (Transform child in effects) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
@@ -179,26 +211,26 @@ namespace SwapHunter
             wave++;
             if (stage == 1)
             {
-                EnemyActor.Spawn(EnemyKind.Sniper, new Vector3(10, 4, 50.5f), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(-9, 0, 51), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(4, 0, 60), stage);
-                if (wave > 1) EnemyActor.Spawn(EnemyKind.Shield, new Vector3(-2, 0, 56), stage);
+                QueueDeployment(EnemyKind.Sniper, new Vector3(10, 4, 50.5f), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(-9, 0, 51), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(4, 0, 60), stage);
+                if (wave > 1) QueueDeployment(EnemyKind.Shield, new Vector3(-2, 0, 56), stage);
             }
             else if (stage == 2)
             {
-                EnemyActor.Spawn(EnemyKind.Sniper, new Vector3(-11, 4, 90), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(0, 0, 94), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(12, 0, 103), stage);
-                EnemyActor.Spawn(EnemyKind.Shield, new Vector3(2, 0, 85), stage);
-                EnemyActor.Spawn(EnemyKind.Shield, new Vector3(-5, 0, 103), stage);
+                QueueDeployment(EnemyKind.Sniper, new Vector3(-11, 4, 90), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(0, 0, 94), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(12, 0, 103), stage);
+                QueueDeployment(EnemyKind.Shield, new Vector3(2, 0, 85), stage);
+                QueueDeployment(EnemyKind.Shield, new Vector3(-5, 0, 103), stage);
             }
             else if (stage == 3)
             {
-                EnemyActor.Spawn(EnemyKind.Sniper, new Vector3(-12, 7, 146.5f), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(12, 3.5f, 138), stage);
-                EnemyActor.Spawn(EnemyKind.Assault, new Vector3(-5, 0, 131), stage);
-                EnemyActor.Spawn(wave >= 3 ? EnemyKind.Elite : EnemyKind.Shield, new Vector3(1, 0, 146), stage);
-                if (wave == 2) EnemyActor.Spawn(EnemyKind.Assault, new Vector3(-13, 0, 141), stage);
+                QueueDeployment(EnemyKind.Sniper, new Vector3(-12, 7, 146.5f), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(12, 3.5f, 138), stage);
+                QueueDeployment(EnemyKind.Assault, new Vector3(-5, 0, 131), stage);
+                QueueDeployment(wave >= 3 ? EnemyKind.Elite : EnemyKind.Shield, new Vector3(1, 0, 146), stage);
+                if (wave == 2) QueueDeployment(EnemyKind.Assault, new Vector3(-13, 0, 141), stage);
             }
             Record("wave_spawn", stage + ":" + wave);
         }
@@ -221,6 +253,8 @@ namespace SwapHunter
         }
         public bool Interact()
         {
+            if(tutorialCourse&&tutorialCourse.Active)return tutorialCourse.Interact();
+            if (expeditionActive) return UseExpeditionNode(FindExpeditionNode());
             if (campaignActive) { var station = FindCampaignStation(); if (station) return UseCampaignStation(station); }
             Terminal terminal = FindTerminal();
             if (!terminal) return false;
@@ -239,11 +273,12 @@ namespace SwapHunter
             stageComplete = true; gates[stage].SetOpen(true);
             Toast(stage == 3 ? "核心已取得 · 前往撤离点" : "通路已开启 · 向前推进", 4); return true;
         }
-        public void Die() { deaths++; Record("death", stage.ToString()); if (campaignActive) FinishContract(false); else SetState(RunState.Dead); }
-        public void Retry() { if (campaignActive || lastSettlement != null) return; EnterStage(stage, true); SetState(RunState.Playing); Record("retry", stage.ToString()); }
+        public void Die() { deaths++; Record("death", stage.ToString()); if (expeditionActive) FinishExpedition(false); else if (campaignActive) FinishContract(false); else SetState(RunState.Dead); }
+        public void Retry() { if(tutorialCourse&&tutorialCourse.Active){tutorialCourse.RetryCheckpoint();return;} if (campaignActive || lastSettlement != null) return; EnterStage(stage, true); SetState(RunState.Playing); Record("retry", stage.ToString()); }
         public void SetState(RunState next)
         {
-            if (settlementPending && next != RunState.Paused) return;
+            if ((settlementPending || expeditionPending) && next != RunState.Paused) return;
+            if (next == RunState.Menu && tutorialCourse) tutorialCourse.End();
             state = next; CancelSettings();
             Time.timeScale = next == RunState.Playing || next == RunState.Menu ? 1 : 0;
             bool playing = next == RunState.Playing;
@@ -252,10 +287,10 @@ namespace SwapHunter
             if (menuCamera) menuCamera.enabled = next == RunState.Menu;
         }
         public void HandleFocusLoss() { if (IsPlaying) SetState(RunState.Paused); }
-        void OnApplicationFocus(bool focus) { if (!focus && !qaMode) HandleFocusLoss(); }
+        void OnApplicationFocus(bool focus) { if (!qaMode) { AudioListener.pause = !focus && options.muteWhenUnfocused; if (!focus) HandleFocusLoss(); } }
         public void Toast(string message, float duration = 2) { toast = message; toastUntil = Time.unscaledTime + duration; }
         public bool ToastVisible => Time.unscaledTime < toastUntil;
-        public string Objective => campaignActive ? CampaignObjective : ObjectiveClassic;
+        public string Objective => tutorialCourse&&tutorialCourse.Active?tutorialCourse.Instruction:expeditionActive ? ExpeditionObjective : campaignActive ? CampaignObjective : ObjectiveClassic;
         public string ObjectiveClassic
         {
             get
@@ -281,24 +316,22 @@ namespace SwapHunter
         public void SaveSettings() { SettingsStore.Save(options); ApplySettings(); }
         public void ApplySettings(bool display = false)
         {
-            options.Validate(); AudioListener.volume = options.volume;
+            options.Validate(); AudioListener.volume = options.volume; AudioListener.pause = !qaMode && !Application.isFocused && options.muteWhenUnfocused;
             QualitySettings.vSyncCount = options.vSync ? 1 : 0;
             Application.targetFrameRate = new[] { 60, 120, 144, 240, -1 }[options.frameLimit];
             if (UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset asset)
             {
-                asset.renderScale = quality == 0 ? .7f : quality == 1 ? .85f : 1;
-                asset.shadowDistance = quality == 0 ? 30 : 65;
+                asset.renderScale = options.renderScale;
+                asset.shadowDistance = quality == 0 ? 25 : quality == 1 ? 55 : 80;
+                asset.msaaSampleCount = quality == 0 ? 1 : quality == 1 ? 2 : 4;
             }
             if (player) player.ApplyViewSettings();
-            if (display)
-            {
-                if (options.windowMode == 1) Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, FullScreenMode.FullScreenWindow);
-                else { int[] widths = { 1280, 1600, 1920 }, heights = { 720, 900, 1080 }; Screen.SetResolution(widths[options.resolution], heights[options.resolution], FullScreenMode.Windowed); }
-            }
+            if (display && !qaMode) ApplyDisplayOptions();
         }
-        [Serializable] sealed class LogEntry { public string build = "0.3.1"; public string evt, detail; public float time; public int stage; }
+        [Serializable] sealed class LogEntry { public string build = Application.version; public string evt, detail; public float time; public int stage; }
         public void Record(string evt, string detail)
         {
+            ShowcaseCapture.Event(evt,detail);
             if (recorder == null) return;
             try { recorder.WriteLine(JsonUtility.ToJson(new LogEntry { evt = evt, detail = detail, time = runSeconds, stage = stage })); }
             catch (IOException e) { Debug.LogWarning("Playtest logging stopped: " + e.Message); try { recorder.Dispose(); } catch (IOException) { } recorder = null; }
@@ -307,6 +340,12 @@ namespace SwapHunter
         void OnApplicationQuit() { if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterAVReview") < 0) SaveSettings(); }
     }
 }
+
+
+
+
+
+
 
 
 

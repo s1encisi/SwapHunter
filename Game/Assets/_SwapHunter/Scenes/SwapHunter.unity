@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &862998440
+--- !u!1 &2087010711
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 862998442}
-  - component: {fileID: 862998441}
+  - component: {fileID: 2087010713}
+  - component: {fileID: 2087010712}
   m_Layer: 0
   m_Name: "SwapHunter \xB7 Demo director"
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &862998441
+--- !u!114 &2087010712
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 862998440}
+  m_GameObject: {fileID: 2087010711}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0852c4d043eeac4aab059b93f172bff, type: 3}
@@ -197,13 +197,26 @@ MonoBehaviour:
   deaths: 0
   runSeconds: 0
   options:
-    version: 2
+    version: 5
     sensitivity: 1
     verticalSensitivity: 1
     aimSensitivity: 0.75
     invertY: 0
     toggleAim: 0
     toggleSprint: 0
+    toggleCrouch: 0
+    muteWhenUnfocused: 1
+    dynamicResolution: 0
+    displayIndex: 0
+    resolutionWidth: 1280
+    resolutionHeight: 720
+    refreshRateHz: 0
+    renderScale: 0.85
+    dynamicResolutionMin: 0.6
+    uiScale: 1
+    musicVolume: 0.45
+    ambientVolume: 0.5
+    uiVolume: 0.7
     mouseDpi: 800
     fov: 60
     viewModelFov: 68
@@ -262,6 +275,20 @@ MonoBehaviour:
       secondary: 
     - primary: K:Escape
       secondary: 
+    - primary: K:LeftCtrl
+      secondary: 
+    - primary: K:Tab
+      secondary: 
+    - primary: K:F
+      secondary: 
+    - primary: K:C
+      secondary: 
+    - primary: K:V
+      secondary: 
+    - primary: K:G
+      secondary: 
+    - primary: K:X
+      secondary: 
   tutorialMoved: 0
   tutorialShot: 0
   tutorialSwapped: 0
@@ -277,13 +304,35 @@ MonoBehaviour:
   bindingCapture: -1
   font: {fileID: 0}
   nearestTerminal: {fileID: 0}
---- !u!4 &862998442
+  expeditionActive: 0
+  expeditionBoard: 0
+  expeditionInventory: 0
+  expeditionPending: 0
+  expeditionBonus: 0
+  expeditionJammer: 0
+  expeditionLevel: 0
+  expeditionSelected: 0
+  expeditionObjectives: 0
+  expeditionWave: 0
+  expeditionMedkits: 0
+  expeditionAmmoPacks: 0
+  expeditionReceipt:
+    runId: 
+    level: 0
+    reward: 0
+    success: 0
+    first: 0
+    bonus: 0
+    seconds: 0
+  expeditionNotice: 
+  tutorialCourse: {fileID: 0}
+--- !u!4 &2087010713
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 862998440}
+  m_GameObject: {fileID: 2087010711}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -296,4 +345,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 862998442}
+  - {fileID: 2087010713}

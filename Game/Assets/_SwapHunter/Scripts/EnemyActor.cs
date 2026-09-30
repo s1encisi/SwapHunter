@@ -3,12 +3,26 @@ using UnityEngine.AI;
 
 namespace SwapHunter
 {
-    public sealed class EnemyActor : SwapTarget
+    public enum EnemyHitRegion { Torso, Head, Limb, Shield }
+    public sealed class EnemyHitPart : MonoBehaviour { public EnemyActor owner; }
+    public sealed partial class EnemyActor : SwapTarget
     {
         public EnemyKind kind;
         public NavMeshAgent agent;
-        public float health, maximumHealth, stunLeft, warningLeft;
+        public EnemyMotion motion;
+        public BossEncounter boss;
+        public EnemyTacticalAI tactical;
+        public float health, maximumHealth, stunLeft, warningLeft, silenceLeft;
+        public bool Silenced=>silenceLeft>0;
+        public void ApplySilence(float seconds)
+        {
+            if(!Alive||seconds<=0)return;
+            if(boss&&!boss.TryReceiveSilence(seconds))return;
+            if(silenceLeft<=0)DemoGame.I.sound.Play("silence",AimPoint);
+            silenceLeft=Mathf.Max(silenceLeft,seconds);DemoGame.I.Record("enemy_silenced",kind+":"+seconds);
+        }
         public int arena;
+        public bool expeditionOptional;
         public int shotsFired;
         public int grenadesThrown;
         public bool suppressAI;
@@ -16,7 +30,8 @@ namespace SwapHunter
         public override float Radius => kind == EnemyKind.Elite ? .45f : .36f;
         public override float Height => kind == EnemyKind.Elite ? 2.1f : 1.8f;
         public override Vector3 AimPoint => transform.position + Vector3.up * (Height * .62f);
-        public string Label => kind == EnemyKind.Training ? "训练机" : kind == EnemyKind.Sniper ? "哨戒狙击手" : kind == EnemyKind.Shield ? "盾卫" : kind == EnemyKind.Elite ? "封锁指挥官" : "突击掷弹兵";
+        public string Label => (Marked ? BaseLabel + " · 已标记" : BaseLabel)+(Silenced?" · 沉默":"");
+        string BaseLabel => kind == EnemyKind.Training ? "训练机" : kind == EnemyKind.Sniper ? "哨戒狙击手" : kind == EnemyKind.Shield ? "盾卫" : kind == EnemyKind.Elite ? "封锁指挥官" : "突击掷弹兵";
         Transform model, leftLeg, rightLeg, weaponPivot, shotMuzzle;
         Renderer[] bodyRenderers;
         Transform torso;
@@ -24,32 +39,58 @@ namespace SwapHunter
         MaterialPropertyBlock impactBlock;
         bool wasFlashing;
         Collider body;
+        readonly System.Collections.Generic.Dictionary<Collider,EnemyHitRegion> hurtboxes=new System.Collections.Generic.Dictionary<Collider,EnemyHitRegion>();
+        float markedUntil;
+        public bool Marked => Alive && Time.time<markedUntil;
+        public EnemyHitRegion LastHitRegion { get; private set; }
+        public string LastHitRegionLabel => LastHitRegion==EnemyHitRegion.Head?"头部":LastHitRegion==EnemyHitRegion.Limb?"四肢":LastHitRegion==EnemyHitRegion.Shield?"盾牌":"躯干";
+        public void MarkPhase(float seconds){if(Alive){markedUntil=Mathf.Max(markedUntil,Time.time+Mathf.Clamp(seconds,0,10));stunLeft=Mathf.Max(stunLeft,.2f);}}
+        public EnemyHitRegion RegionOf(Collider c)=>IsShieldCollider(c)?EnemyHitRegion.Shield:c&&hurtboxes.TryGetValue(c,out var region)?region:EnemyHitRegion.Torso;
         BoxCollider shieldCollider;
-        public bool IsShieldCollider(Collider candidate) => candidate && candidate == shieldCollider;
+        public bool HasPhysicalShield => shieldCollider && shieldCollider.enabled;
+        public bool IsShieldCollider(Collider candidate) => HasPhysicalShield && candidate && candidate == shieldCollider;
         float fireAt, grenadeAt, nextPath, flashLeft, age, deathAge; bool dying; Vector3 hitDirection, deathPosition; Quaternion deathRotation;
         int burstLeft;
         Vector3 shotLock, home;
-        Vector3 lastKnownPlayer;
+        Vector3 lastKnownPlayer, gaitPrevious;
+        float gaitPhase, gaitWeight;
+        public float GaitPhase=>gaitPhase;
+        public float GaitWeight=>gaitWeight;
         float lastSawPlayer = -100;
         LineRenderer laser;
         DemoGame G => DemoGame.I;
 
         public static EnemyActor Spawn(EnemyKind kind, Vector3 feet, int arena)
         {
-            if (NavMesh.SamplePosition(feet, out var hit, 1, NavMesh.AllAreas)) feet = hit.position;
+            if (!EnemyMotion.FindSpawn(kind,feet,out var valid)) { DemoGame.I.Record("spawn_rejected",kind+":"+feet); return null; }
+            feet=valid;
             GameObject go = new GameObject(kind.ToString()); go.layer = Layers.Actor; go.transform.position = feet;
             EnemyActor enemy = go.AddComponent<EnemyActor>(); enemy.kind = kind; enemy.arena = arena;
-            enemy.Initialize(); DemoGame.I.enemies.Add(enemy); return enemy;
+            enemy.Initialize(); DemoGame.I.enemies.Add(enemy);
+            if(kind==EnemyKind.Elite&&DemoGame.I.expeditionActive&&DemoGame.I.expeditionLevel==11)enemy.EnableBoss();
+            return enemy;
+        }
+        public BossEncounter EnableBoss()
+        {
+            if(boss)return boss;
+            DisableShieldMeleePresentation();
+            if(shieldCollider)shieldCollider.enabled=false;
+            var shieldVisual=ImportedModels.Find(model,"shield_visual");
+            if(shieldVisual)shieldVisual.gameObject.SetActive(false);
+            boss=gameObject.AddComponent<BossEncounter>();boss.Initialize(this);return boss;
         }
         void Initialize()
         {
             maximumHealth = kind == EnemyKind.Sniper ? G.config.sniperHealth : kind == EnemyKind.Shield ? G.config.shieldHealth : kind == EnemyKind.Elite ? G.config.eliteHealth : G.config.assaultHealth;
             health = maximumHealth; home = transform.position;
-            CapsuleCollider capsule = gameObject.AddComponent<CapsuleCollider>(); capsule.radius = Radius; capsule.height = Height; capsule.center = Vector3.up * Height * .5f; body = capsule;
+            CharacterController capsule = gameObject.AddComponent<CharacterController>(); capsule.radius = Radius; capsule.height = Height; capsule.center = Vector3.up * Height * .5f; capsule.skinWidth=.02f;capsule.stepOffset=.32f;capsule.slopeLimit=48;capsule.minMoveDistance=0; body = capsule;
             agent = gameObject.AddComponent<NavMeshAgent>(); agent.height = Height; agent.radius = Radius; agent.baseOffset = 0;
-            agent.speed = kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 2.3f : 3.4f; agent.acceleration = 18; agent.angularSpeed = 150; agent.updateRotation = false;
+            agent.speed=kind==EnemyKind.Elite?2.05f:kind==EnemyKind.Shield?2.3f:kind==EnemyKind.Sniper?2.9f:3.4f;
+            agent.acceleration=kind==EnemyKind.Elite?7:kind==EnemyKind.Shield?8:kind==EnemyKind.Sniper?11:12;
+            agent.autoBraking=true;agent.angularSpeed=150;agent.updateRotation=false;
             agent.stoppingDistance = kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 3 : 9;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
+            motion=gameObject.AddComponent<EnemyMotion>();motion.Initialize(this,capsule);
             GameObject prefab = kind == EnemyKind.Training ? G.config.models.playerBody : kind == EnemyKind.Sniper ? G.config.models.sniper : kind == EnemyKind.Shield ? G.config.models.shield : kind == EnemyKind.Elite ? G.config.models.commander : G.config.models.assault;
             float modelScale = kind == EnemyKind.Elite ? 1.16f : 1;
             model = ImportedModels.Create(prefab, transform, Vector3.zero, Vector3.one * modelScale).transform;
@@ -60,26 +101,42 @@ namespace SwapHunter
                 var shield = new GameObject("Shield"); shield.layer = Layers.Actor; shield.transform.SetParent(transform, false);
                 shield.transform.localPosition = new Vector3(-.12f, .99f, .57f) * modelScale;
                 var box = shield.AddComponent<BoxCollider>(); shieldCollider = box; box.size = new Vector3(1, 1.42f, .16f) * modelScale;
+                Physics.IgnoreCollision(capsule,box,true);
             }
+            BuildHurtboxes(modelScale);
             weaponPivot = ImportedModels.Find(model, "weapon_pivot"); shotMuzzle = ImportedModels.Find(model, "EnemyMuzzle");
             bodyRenderers = model.GetComponentsInChildren<Renderer>();
             torso = ImportedModels.Find(model, "torso"); if (torso) torsoRest = torso.localRotation;
             impactBlock = new MaterialPropertyBlock();
             fireAt = Time.time + 1.7f + Random.value; grenadeAt = Time.time + 5 + Random.value * 2;
-            transform.rotation = Quaternion.Euler(0, 180, 0);
+            transform.rotation = Quaternion.Euler(0, 180, 0); gaitPrevious=transform.position;
+            if(kind==EnemyKind.Assault||kind==EnemyKind.Shield){tactical=gameObject.AddComponent<EnemyTacticalAI>();tactical.Initialize(this);}
+            if(kind==EnemyKind.Shield)InitializeShieldMeleePresentation();
         }
         void Update()
         {
             if (dying) { AnimateDeath(); return; }
             if (!Alive || !G.IsPlaying) return;
-            float dt = Time.deltaTime; age += dt; stunLeft = Mathf.Max(0, stunLeft - dt); flashLeft = Mathf.Max(0, flashLeft - dt);
+            float dt = Time.deltaTime; age += dt; silenceLeft=Mathf.Max(0,silenceLeft-dt); stunLeft = Mathf.Max(0, stunLeft - dt); flashLeft = Mathf.Max(0, flashLeft - dt);
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training;
-            float moving = agent.enabled && agent.isOnNavMesh ? Mathf.Min(agent.velocity.magnitude, 4) : 0;
-            leftLeg.localRotation = Quaternion.Euler(Mathf.Sin(age * 9) * moving * 7, 0, 0);
-            rightLeg.localRotation = Quaternion.Euler(-Mathf.Sin(age * 9) * moving * 7, 0, 0);
-            model.localPosition = Vector3.up * (Mathf.Abs(Mathf.Sin(age * 9)) * moving * .008f);
+            Vector3 displacement=Vector3.ProjectOnPlane(transform.position-gaitPrevious,Vector3.up);
+            gaitPrevious=transform.position;float strideDistance=displacement.magnitude;
+            // Locomotion phase follows actual distance; teleport/warp is not a stride.
+            float actualSpeed=strideDistance<1&&dt>.0001f?strideDistance/dt:0;
+            if(strideDistance<1)gaitPhase+=strideDistance*(Mathf.PI*2/.95f);
+            float targetGait=Mathf.Clamp01(actualSpeed/3.4f);
+            gaitWeight=Mathf.MoveTowards(gaitWeight,targetGait,dt*(targetGait>gaitWeight?4:7));
+            float heavy=kind==EnemyKind.Shield||kind==EnemyKind.Elite?.76f:1;
+            float swing=Mathf.Sin(gaitPhase)*24*gaitWeight*heavy;
+            leftLeg.localRotation=Quaternion.Slerp(leftLeg.localRotation,Quaternion.Euler(swing,0,0),1-Mathf.Exp(-18*dt));
+            rightLeg.localRotation=Quaternion.Slerp(rightLeg.localRotation,Quaternion.Euler(-swing,0,0),1-Mathf.Exp(-18*dt));
+            model.localPosition=Vector3.Lerp(model.localPosition,Vector3.up*(Mathf.Abs(Mathf.Sin(gaitPhase))*.028f*gaitWeight),1-Mathf.Exp(-15*dt));
+            Vector3 localMotion=transform.InverseTransformDirection(displacement/Mathf.Max(.0001f,dt));
+            float lean=Mathf.Clamp(-localMotion.x*2.3f,-7,7)*gaitWeight;
+            model.localRotation=Quaternion.Slerp(model.localRotation,Quaternion.Euler(2.2f*gaitWeight,0,lean),1-Mathf.Exp(-7*dt));
             UpdateHitVisual();
             if (stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training) { ClearLaser(); return; }
+            if(boss){boss.Tick(dt);return;}
             Vector3 playerAim = G.player.transform.position + Vector3.up * 1.1f;
             if (weaponPivot)
             {
@@ -88,11 +145,12 @@ namespace SwapHunter
             }
             Vector3 toPlayer = playerAim - AimPoint;
             Vector3 flat = Vector3.ProjectOnPlane(toPlayer, Vector3.up);
-            if (flat.sqrMagnitude > .01f) transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145));
+            if (flat.sqrMagnitude > .01f) FaceSafely(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145)));
+            if(tactical){tactical.Tick(dt);return;}
             bool visible = !Physics.Linecast(AimPoint, playerAim, Layers.WorldMask);
             if (visible) { lastKnownPlayer = G.player.transform.position; lastSawPlayer = Time.time; }
             float distance = toPlayer.magnitude;
-            agent.stoppingDistance = visible ? (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 3 : 9) : 1;
+            if(agent.enabled)agent.stoppingDistance = visible ? (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 3 : 9) : 1;
             if (agent.enabled && agent.isOnNavMesh && Time.time >= nextPath)
             {
                 nextPath = Time.time + .45f;
@@ -105,7 +163,7 @@ namespace SwapHunter
                 }
                 else agent.ResetPath();
             }
-            if (kind == EnemyKind.Assault && G.stage >= 2 && distance > 5 && distance < 20 && Time.time > grenadeAt && Time.time - lastSawPlayer < 6)
+            if (!Silenced && kind == EnemyKind.Assault && (G.stage >= 2 || G.expeditionActive && G.expeditionLevel>=3) && distance > 5 && distance < 20 && Time.time > grenadeAt && Time.time - lastSawPlayer < 6)
             {
                 grenadeAt = Time.time + 10 + Random.value * 3; grenadesThrown++;
                 GrenadeActor.Spawn(AimPoint + transform.forward * .8f + Vector3.up * .4f, lastKnownPlayer + Vector3.up * .15f);
@@ -136,6 +194,7 @@ namespace SwapHunter
                 else fireAt = Time.time + .23f;
             }
         }
+        public void ShootAt(Vector3 point,float damage,float speed){Shoot(point,damage,speed);}
         void Shoot(Vector3 point, float damage, float speed)
         {
             shotsFired++;
@@ -147,16 +206,63 @@ namespace SwapHunter
         public bool Hit(float damage, Vector3 point, Collider collider, Vector3 source)
         {
             if (!Alive) return false;
+            LastHitRegion=RegionOf(collider);
             if (IsShieldCollider(collider))
             {
                 Shapes.Impact(point, (point - source).normalized * -1, true); return false;
             }
-            hitDirection = transform.InverseTransformDirection((point - source).normalized); Damage(damage); return true;
+            hitDirection = transform.InverseTransformDirection((point - source).normalized);
+            float regionMultiplier=LastHitRegion==EnemyHitRegion.Head?1.5f:LastHitRegion==EnemyHitRegion.Limb?.8f:1;
+            Damage(damage*regionMultiplier*(Marked?1.2f:1)); return true;
+        }
+        void BuildHurtboxes(float scale)
+        {
+            // Triggers are for precise weapon queries only. They never alter the actor capsule,
+            // physical navigation, ground detection, or the swap landing-volume transaction.
+            Part("Head hurtbox",EnemyHitRegion.Head,new Vector3(0,1.59f,0),new Vector3(.34f,.36f,.34f),scale,true);
+            Part("Torso hurtbox",EnemyHitRegion.Torso,new Vector3(0,1.05f,0),new Vector3(.57f,.70f,.40f),scale);
+            Part("Left arm hurtbox",EnemyHitRegion.Limb,new Vector3(-.38f,1.08f,.03f),new Vector3(.21f,.64f,.26f),scale);
+            Part("Right arm hurtbox",EnemyHitRegion.Limb,new Vector3(.38f,1.08f,.03f),new Vector3(.21f,.64f,.26f),scale);
+            Part("Left leg hurtbox",EnemyHitRegion.Limb,new Vector3(-.15f,.37f,0),new Vector3(.23f,.68f,.27f),scale);
+            Part("Right leg hurtbox",EnemyHitRegion.Limb,new Vector3(.15f,.37f,0),new Vector3(.23f,.68f,.27f),scale);
+        }
+        void Part(string label,EnemyHitRegion region,Vector3 position,Vector3 size,float scale,bool sphere=false)
+        {
+            var go=new GameObject(label);go.layer=Layers.Actor;go.transform.SetParent(transform,false);go.transform.localPosition=position*scale;
+            Collider collider;
+            if(sphere){var c=go.AddComponent<SphereCollider>();c.radius=size.y*.5f*scale;collider=c;}
+            else{var c=go.AddComponent<BoxCollider>();c.size=size*scale;collider=c;}
+            collider.isTrigger=true;hurtboxes.Add(collider,region);go.AddComponent<EnemyHitPart>().owner=this;
+        }
+        public static bool CastWeaponRay(Vector3 origin,Vector3 direction,float distance,Transform ignore,out RaycastHit hit)
+        {
+            bool found=CombatRay.Cast(origin,direction,distance,ignore,out hit);
+            float nearest=found?hit.distance:distance;
+            // Enables hits on arms just outside the locomotion capsule without changing physics.
+            foreach(var h in Physics.RaycastAll(origin,direction,distance,1<<Layers.Actor,QueryTriggerInteraction.Collide))
+            {
+                var part=h.collider.GetComponent<EnemyHitPart>();
+                if(!part||!part.owner||!part.owner.Alive||h.distance>=nearest)continue;
+                if(ignore&&(h.collider.transform==ignore||h.collider.transform.IsChildOf(ignore)))continue;
+                hit=h;nearest=h.distance;found=true;
+            }
+            return found;
+        }
+        public Collider ResolveHitCollider(Ray ray,Collider fallback,ref Vector3 point)
+        {
+            if(IsShieldCollider(fallback)||hurtboxes.ContainsKey(fallback))return fallback;
+            float nearest=90;Collider selected=null;
+            if(Physics.Raycast(ray,out var wall,nearest,Layers.WorldMask,QueryTriggerInteraction.Ignore))nearest=wall.distance;
+            foreach(var pair in hurtboxes)
+                if(pair.Key&&pair.Key.enabled&&pair.Key.Raycast(ray,out var h,nearest)){nearest=h.distance;point=h.point;selected=pair.Key;}
+            return selected?selected:fallback;
         }
         public void Damage(float damage)
         {
             if (!Alive) return;
+            if(boss)damage=boss.Absorb(damage);
             health = Mathf.Max(0, health - damage); flashLeft = .12f;
+            if(boss)boss.RefreshPhase();
             if (health > 0) return;
             ClearLaser(); flashLeft = 0; UpdateHitVisual(); agent.enabled = false;
             foreach (Collider collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
@@ -180,13 +286,39 @@ namespace SwapHunter
         }
         public override bool MoveTo(Vector3 feet)
         {
-            if (!agent || !agent.enabled || !NavMesh.SamplePosition(feet, out var hit, .4f, NavMesh.AllAreas)) return false;
-            if (!agent.Warp(hit.position)) return false;
-            agent.ResetPath(); Physics.SyncTransforms(); return true;
+            if(!motion||!motion.Relocate(feet))return false;
+            gaitPrevious=transform.position;Physics.SyncTransforms();return true;
+        }
+        public void FaceSafely(Quaternion rotation)
+        {
+            if(HasPhysicalShield)
+            {
+                Quaternion delta=rotation*Quaternion.Inverse(transform.rotation);
+                Vector3 center=transform.position+delta*(shieldCollider.transform.TransformPoint(shieldCollider.center)-transform.position);
+                Vector3 half=Vector3.Scale(shieldCollider.size,shieldCollider.transform.lossyScale)*.5f;
+                if(Physics.CheckBox(center,half,delta*shieldCollider.transform.rotation,Layers.WorldMask,QueryTriggerInteraction.Ignore))return;
+            }
+            transform.rotation=rotation;
+        }
+        public Vector3 ConstrainShieldMotion(Vector3 delta)
+        {
+            if(!HasPhysicalShield||delta.sqrMagnitude<.000001f)return delta;
+            Vector3 half=Vector3.Scale(shieldCollider.size,shieldCollider.transform.lossyScale)*.5f;
+            Vector3 center=shieldCollider.transform.TransformPoint(shieldCollider.center);
+            if(Physics.BoxCast(center,half,delta.normalized,out var hit,shieldCollider.transform.rotation,delta.magnitude+.02f,Layers.WorldMask,QueryTriggerInteraction.Ignore))
+            {
+                Vector3 first=delta.normalized*Mathf.Min(delta.magnitude,Mathf.Max(0,hit.distance-.025f));
+                Vector3 slide=Vector3.ProjectOnPlane(delta-first,hit.normal);
+                if(slide.sqrMagnitude<.000001f)return first;
+                if(Physics.BoxCast(center+first,half,slide.normalized,out var sideHit,shieldCollider.transform.rotation,slide.magnitude+.025f,Layers.WorldMask,QueryTriggerInteraction.Ignore))
+                    slide=slide.normalized*Mathf.Min(slide.magnitude,Mathf.Max(0,sideHit.distance-.025f));
+                return first+slide;
+            }
+            return delta;
         }
         public override void AfterSwap()
         {
-            stunLeft = G.config.swapStun; warningLeft = 0; ClearLaser();
+            stunLeft = G.config.swapStun; warningLeft = 0; ClearLaser();if(tactical)tactical.Invalidate();
             fireAt = Mathf.Max(fireAt, Time.time + stunLeft + .25f);
             if (agent.enabled && agent.isOnNavMesh) { agent.ResetPath(); agent.isStopped = true; }
         }

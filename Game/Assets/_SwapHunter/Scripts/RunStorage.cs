@@ -8,7 +8,9 @@ namespace SwapHunter
     public static class RunStorage
     {
         static readonly string[] Arguments = Environment.GetCommandLineArgs();
-        public static readonly bool IsValidation = Array.IndexOf(Arguments, "-swapHunterQA") >= 0
+        public static readonly bool IsValidation = Array.IndexOf(Arguments, "-swapHunterNaturalBossQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterInteractiveReview") >= 0 || Array.IndexOf(Arguments, "-swapHunterBossPerformanceQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterShowcaseCapture") >= 0 || Array.IndexOf(Arguments, "-swapHunterBattlefieldQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterTutorialQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterShopUIQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterDeploymentQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterTacticalAIQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterCombatToolsQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterBossSkillsQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterTacticsQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterBossQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterMotionQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterExpeditionBenchmark") >= 0 || Array.IndexOf(Arguments, "-swapHunterRouteQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterExpeditionQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterQA") >= 0
+            || Array.IndexOf(Arguments, "-swapHunterGunplayQA") >= 0
+            || Array.IndexOf(Arguments, "-swapHunterReviewFixQA") >= 0
             || Array.IndexOf(Arguments, "-swapHunterCampaignQA") >= 0
             || Array.IndexOf(Arguments, "-swapHunterBenchmark") >= 0
             || Array.IndexOf(Arguments, "-swapHunterAVReview") >= 0
@@ -44,3 +46,6 @@ namespace SwapHunter
         }
     }
 }
+
+
+

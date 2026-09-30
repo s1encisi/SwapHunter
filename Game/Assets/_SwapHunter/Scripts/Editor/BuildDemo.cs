@@ -20,8 +20,9 @@ namespace SwapHunter.Editor
                 const string configPath = "Assets/_SwapHunter/Data/DemoConfig.asset";
                 DemoConfig config = AssetDatabase.LoadAssetAtPath<DemoConfig>(configPath);
                 if (!config) { config = ScriptableObject.CreateInstance<DemoConfig>(); AssetDatabase.CreateAsset(config, configPath); }
-                config.models = AssetImportAudit.Prepare();
+                config.models = AssetImportAudit.Prepare(); BlenderAssetAudit.Prepare(config.models);
                 if (config.tuningVersion < 2) { config.walkSpeed = 4.3f; config.sprintSpeed = 6.2f; config.jumpHeight = 1.0f; config.tuningVersion = 2; }
+                if(config.tuningVersion<5){config.swapCooldown=3.5f;config.tuningVersion=5;}
                 const string uiFontPath = "Assets/_SwapHunter/Fonts/NotoSansSC-Regular.otf";
                 var fontImporter = AssetImporter.GetAtPath(uiFontPath) as TrueTypeFontImporter;
                 if (fontImporter && (!fontImporter.includeFontData || fontImporter.fontTextureCase != FontTextureCase.Dynamic))
@@ -82,14 +83,15 @@ namespace SwapHunter.Editor
                 GameObject boot = new GameObject("SwapHunter · Demo director"); boot.AddComponent<DemoGame>().config = config;
                 const string scenePath = "Assets/_SwapHunter/Scenes/SwapHunter.unity";
                 EditorSceneManager.SaveScene(scene, scenePath); EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(scenePath, true) };
-                PlayerSettings.companyName = "SwapHunter"; PlayerSettings.productName = "SwapHunter"; PlayerSettings.bundleVersion = "0.3.1";
+                PlayerSettings.companyName = "SwapHunter"; PlayerSettings.productName = "SwapHunter"; PlayerSettings.bundleVersion = "0.5.2";
                 PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
                 PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64, false);
                 PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64, new[] { GraphicsDeviceType.Direct3D11 });
                 PlayerSettings.fullScreenMode = FullScreenMode.Windowed; PlayerSettings.defaultScreenWidth = 1280; PlayerSettings.defaultScreenHeight = 720;
                 PlayerSettings.runInBackground = true; PlayerSettings.resizableWindow = true;
                 AssetDatabase.SaveAssets();
-                string output = Path.GetFullPath("../Builds/SwapHunter-v0.3/SwapHunter.exe"); Directory.CreateDirectory(Path.GetDirectoryName(output));
+                string[] args = Environment.GetCommandLineArgs(); int outputIndex = Array.IndexOf(args,"-buildOutput");
+                string output = Path.GetFullPath(outputIndex>=0 && outputIndex+1<args.Length ? args[outputIndex+1] : "../Builds/SwapHunter-v0.5.2/SwapHunter.exe"); Directory.CreateDirectory(Path.GetDirectoryName(output));
                 bool development = Array.IndexOf(Environment.GetCommandLineArgs(), "-development") >= 0;
                 BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = new[] { scenePath }, locationPathName = output, target = BuildTarget.StandaloneWindows64, options = development ? BuildOptions.Development : BuildOptions.None });
                 Debug.Log("SWAPHUNTER_BUILD=" + report.summary.result + "; bytes=" + report.summary.totalSize);
@@ -99,4 +101,6 @@ namespace SwapHunter.Editor
         }
     }
 }
+
+
 

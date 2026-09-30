@@ -45,7 +45,7 @@ namespace SwapHunter.Editor
                 if (Vector3.Distance(Vector3.Scale(item.rightAxis, report.correction), Vector3.right) > .001f || Vector3.Distance(Vector3.Scale(item.forwardAxis, report.correction), Vector3.forward) > .001f)
                     throw new InvalidOperationException("Inconsistent imported axes: " + item.name);
             EditorUtility.SetDirty(library); AssetDatabase.SaveAssets();
-            string folder = Path.GetFullPath("../Logs/V03"); Directory.CreateDirectory(folder); File.WriteAllText(Path.Combine(folder, "asset-import.json"), JsonUtility.ToJson(report, true));
+            string folder = Path.GetFullPath("../Logs/V052"); Directory.CreateDirectory(folder); File.WriteAllText(Path.Combine(folder, "asset-import.json"), JsonUtility.ToJson(report, true));
             Debug.Log("THREE_MODELS_IMPORTED=" + assets.Count + "; correction=" + library.coordinateCorrection);
             return library;
         }

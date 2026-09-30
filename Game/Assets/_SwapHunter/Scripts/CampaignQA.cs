@@ -13,7 +13,7 @@ namespace SwapHunter
     public sealed class CampaignQA : MonoBehaviour
     {
         [Serializable] public sealed class Check { public string name, detail; public bool passed; }
-        [Serializable] public sealed class Report { public string version = "0.3.1", kind = "Scripted contract integration, not human playtesting"; public bool passed; public List<Check> checks = new List<Check>(); }
+        [Serializable] public sealed class Report { public string version = Application.version, kind = "Scripted contract integration, not human playtesting"; public bool passed; public List<Check> checks = new List<Check>(); }
         Report report = new Report(); string output; float started; bool finished;
         DemoGame G => DemoGame.I;
         PlayerMotor P => G.player;
@@ -31,7 +31,7 @@ namespace SwapHunter
             if (G.campaignStore == null) { Finish(); yield break; }
             DomainChecks();
             foreach (var check in CampaignDataQA.Run(G.catalog, output)) Assert(check.name, check.passed, check.detail);
-            G.BeginContract(G.catalog.contracts[0].id); yield return new WaitForSeconds(.15f);
+            G.BeginContract(G.catalog.contracts[0].id); yield return WaitDeployments(); yield return new WaitForSeconds(.15f);
             using (var locked = new FileStream(G.campaignStore.SavePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
             {
                 P.Hurt(10000, P.transform.position); G.SetState(RunState.Playing);
@@ -101,7 +101,7 @@ namespace SwapHunter
                 bool equipped = G.campaignStore.Equip(module.id, 0, out error);
                 Assert("equip_runtime_" + module.id, equipped, error ?? "");
                 if (!equipped) continue;
-                G.BeginContract(G.catalog.contracts[0].id); yield return new WaitForSeconds(.15f);
+                G.BeginContract(G.catalog.contracts[0].id); yield return WaitDeployments(); yield return new WaitForSeconds(.15f);
                 Assert("failed_swap_no_module_window_" + module.id, !P.RequestSwap(null) && !G.GuardReady && !G.BreachReady, "Invalid swap does not activate a module");
                 SwapTarget swapTarget;
                 if (module.id == "anchor")
@@ -137,6 +137,11 @@ namespace SwapHunter
             G.StartRun(true); yield return new WaitForSeconds(.2f);
             Assert("practice_neutral", !G.campaignActive && !G.HasModule("overdrive") && G.ModuleMovement == 1, "Practice does not inherit campaign modifiers");
             G.SetState(RunState.Menu); Finish();
+        }
+        IEnumerator WaitDeployments()
+        {
+            float end=Time.time+10;while(G.PendingDeployments>0&&Time.time<end)yield return null;
+            Assert("warned_deployments_complete",G.PendingDeployments==0,"pending="+G.PendingDeployments);
         }
         void DomainChecks()
         {
@@ -224,4 +229,5 @@ namespace SwapHunter
         void OnDestroy() { Application.logMessageReceived -= OnLog; }
     }
 }
+
 

@@ -1,0 +1,9 @@
+{
+  "asset": "combat-knife-v05",
+  "version": "0.5.0",
+  "generator": "5.2.2 LTS",
+  "source": "blend/combat-knife-v05.blend",
+  "license": "MIT",
+  "inputs": "original authored mesh; no external assets",
+  "vertices": 645
+}

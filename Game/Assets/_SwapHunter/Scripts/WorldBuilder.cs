@@ -219,7 +219,7 @@ namespace SwapHunter
         }
         static void Crate(Vector3 feet, Vector3 scale, int mat)
         {
-            var proxy = Solid("Cargo container", feet + Vector3.up * scale.y / 2, scale, mat == 5 ? 12 : mat);
+            var proxy = Solid("Cargo container", feet + Vector3.up * scale.y / 2, scale, mat == 5 ? 12 : mat);proxy.AddComponent<CoverSite>();
             ImportedModels.ReplaceBox(proxy, G.config.models.cargo, new Vector3(4, 2.4f, 3));
         }
         public static void Sign(string text, Vector3 point, float scale, Color color)

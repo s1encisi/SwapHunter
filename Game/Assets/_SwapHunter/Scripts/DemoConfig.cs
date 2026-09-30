@@ -6,7 +6,7 @@ namespace SwapHunter
     public sealed class DemoConfig : ScriptableObject
     {
         public float playerHealth = 100, walkSpeed = 5.5f, sprintSpeed = 8, jumpHeight = 1.1f;
-        public float swapRange = 22, swapCooldown = 6, swapWindup = .08f, swapStun = .65f;
+        public float swapRange = 22, swapCooldown = 3.5f, swapWindup = .08f, swapStun = .65f;
         public float rifleDamage = 24, rifleRate = 7.5f, rifleReload = 1.6f;
         public int rifleMagazine = 24, rifleReserve = 144;
         public float shotgunDamage = 12, shotgunRate = 1.2f, shotgunReload = 1.8f;

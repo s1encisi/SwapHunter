@@ -14,7 +14,7 @@ namespace SwapHunter
         [Serializable] public sealed class Check { public string name; public bool passed; public string detail; }
         [Serializable] public sealed class Report
         {
-            public string version = "0.3.1", kind = "Scripted native-player integration checks; not a human playtest";
+            public string version = Application.version, kind = "Scripted native-player integration checks; not a human playtest";
             public string graphicsDevice, graphicsApi;
             public int width, height;
             public List<Check> checks = new List<Check>();
@@ -78,7 +78,7 @@ namespace SwapHunter
             P.RequestSwap(target); yield return new WaitForSeconds(.18f);
             CheckThat("swap_exchange", Near(P.transform.position, oldTarget) && Near(target.transform.position, oldPlayer), "Both feet positions exchanged");
             CheckThat("swap_state_preserved", P.health == hp && P.ammo[0] == 20 && P.reloadLeft > 0 && Mathf.Abs(Mathf.DeltaAngle(P.yaw, yaw)) < .1f && Mathf.Abs(Mathf.DeltaAngle(target.transform.eulerAngles.y, enemyYaw)) < .1f, "Health, magazine, reload and headings preserved");
-            CheckThat("swap_cooldown", P.cooldown > 5 && !P.RequestSwap(target), P.cooldown.ToString("F2"));
+            CheckThat("swap_cooldown", P.cooldown > G.CampaignCooldown-.5f && !P.RequestSwap(target), P.cooldown.ToString("F2"));
             CheckThat("navigation_recovered", target.agent.isOnNavMesh, "Agent remains on navigation");
             yield return new WaitForSeconds(1.5f); CheckThat("reload_completes", P.ammo[0] == 24 && P.reserve[0] == oldReserve - 4, "Reload survives swap");
             P.ammo[0] = 10; oldReserve = P.reserve[0]; P.Reload(); yield return new WaitForSeconds(.2f); P.SwitchWeapon(1);
@@ -86,7 +86,7 @@ namespace SwapHunter
             P.cooldown = 0; P.SetFeet(new Vector3(0, .03f, 36));
             CheckThat("swap_range_rejection", P.ValidateSwap(target).Contains("22") && !P.RequestSwap(target) && P.cooldown == 0, P.ValidateSwap(target));
             P.SetFeet(new Vector3(0, 3, 8)); P.verticalSpeed = 0;
-            CheckThat("swap_airborne_rejection", P.ValidateSwap(target) == "落地后可换位", P.ValidateSwap(target));
+            CheckThat("swap_airborne_available", P.ValidateSwap(target) == "可换位", P.ValidateSwap(target));
             P.SetFeet(new Vector3(0, .03f, 8)); target.MoveTo(new Vector3(0, 0, 13)); P.verticalSpeed = 0; Aim(target.AimPoint); yield return new WaitForSeconds(.2f);
             GameObject wall = Fixture(new Vector3(0, 1.5f, 10.5f), new Vector3(2, 3, .3f));
             CheckThat("swap_wall_rejection", P.ValidateSwap(target) == "视线被挡" && !P.RequestSwap(target) && P.cooldown == 0, P.ValidateSwap(target)); RemoveFixture(wall); yield return null;
@@ -98,7 +98,7 @@ namespace SwapHunter
             P.SetFeet(new Vector3(0, .03f, 8)); P.cooldown = 0; oldPlayer = P.transform.position;
             P.RequestSwap(target); target.Damage(1000); yield return new WaitForSeconds(.2f);
             CheckThat("swap_target_dies_during_windup", Near(P.transform.position, oldPlayer) && P.cooldown == 0 && !P.preparing, "No one-sided teleport or cooldown");
-            G.EnterStage(1, true); yield return new WaitForSeconds(.4f);
+            G.EnterStage(1, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f);
             var entrySniper = G.enemies.Find(e => e.kind == EnemyKind.Sniper); Aim(entrySniper.AimPoint); yield return null;
             CheckThat("high_ground_readable_from_entry", P.FindTarget() == entrySniper && P.ValidateSwap(entrySniper) == "可换位", P.ValidateSwap(entrySniper));
             target = G.enemies.Find(e => e.kind == EnemyKind.Sniper); P.SetFeet(new Vector3(4, .03f, 35)); Aim(target.AimPoint); yield return new WaitForSeconds(.2f);
@@ -116,8 +116,8 @@ namespace SwapHunter
             G.EnterStage(0, true); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 10)); target = G.enemies[0]; Aim(target.AimPoint);
             P.SwitchWeapon(1); yield return new WaitForSeconds(.3f); initialEnemyHealth = target.health; initialAmmo = P.ammo[1]; P.Fire(); yield return new WaitForSeconds(.15f);
             CheckThat("shotgun_damage_and_ammo", target.health <= initialEnemyHealth - 48 && P.ammo[1] == initialAmmo - 1, "health=" + target.health + ", ammo=" + P.ammo[1]);
-            G.EnterStage(2, true); yield return new WaitForSeconds(.4f);
-            target = G.enemies.Find(e => e.kind == EnemyKind.Shield); P.SetFeet(new Vector3(2, .03f, 81)); Aim(target.AimPoint); yield return new WaitForSeconds(.3f);
+            G.EnterStage(2, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f);
+            target = G.enemies.Find(e => e.kind == EnemyKind.Shield && Vector3.Distance(e.transform.position,new Vector3(2,0,85))<3); P.SetFeet(new Vector3(2, .03f, 81)); Aim(target.AimPoint); yield return new WaitForSeconds(.3f);
             initialEnemyHealth = target.health; bool shieldShot = P.Fire(); yield return new WaitForSeconds(.2f);
             CheckThat("shield_blocks_front_bullet", shieldShot && target.health == initialEnemyHealth, "Shield health=" + target.health + "; fired=" + shieldShot);
             CheckThat("shield_is_swappable", P.FindTarget() == target && P.ValidateSwap(target) == "可换位", P.ValidateSwap(target));
@@ -127,15 +127,15 @@ namespace SwapHunter
             CheckThat("shield_shape_destination_rejection", P.ValidateSwap(target) == "落点受阻", P.ValidateSwap(target)); RemoveFixture(shieldBlock); yield return null;
             oldTarget = target.transform.position; P.RequestSwap(target); yield return new WaitForSeconds(.2f);
             CheckThat("shield_exchange", Near(P.transform.position, oldTarget), P.transform.position.ToString()); yield return Capture("04-transfer-hall");
-            G.EnterStage(1, true); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 35));
+            G.EnterStage(1, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 35));
             target = EnemyActor.Spawn(EnemyKind.Sniper, new Vector3(0, 0, 40), 1); target.suppressAI = true; Aim(target.AimPoint);
             hp = P.health; var grenade = GrenadeActor.Spawn(P.transform.position + Vector3.up * .15f, P.transform.position + Vector3.up * .15f, .6f);
             P.RequestSwap(target); yield return new WaitForSeconds(.18f);
             CheckThat("grenade_fuse_survives_swap", grenade && grenade.remaining < .6f && grenade.remaining > 0, grenade ? grenade.remaining.ToString("F2") : "missing");
             yield return new WaitForSeconds(.7f);
             CheckThat("real_grenade_reverse_kill", target && !target.Alive && P.health == hp, "Explosion at old position kills swapped enemy");
-            G.EnterStage(2, true); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 84));
-            target = G.enemies.Find(e => e.kind == EnemyKind.Assault);
+            G.EnterStage(2, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 84));
+            target = G.enemies.Find(e => e.kind == EnemyKind.Assault && Vector3.Distance(e.transform.position,new Vector3(0,0,94))<3);
             foreach (var enemy in G.enemies) enemy.suppressAI = enemy != target;
             target.agent.speed = 0; int previousDifficulty = G.difficulty; G.difficulty = 0; G.qaSuppressAI = false;
             yield return new WaitForSeconds(3);
@@ -147,7 +147,7 @@ namespace SwapHunter
             var lobbed = G.effects.GetComponentInChildren<GrenadeActor>(); yield return new WaitForSeconds(1.7f);
             CheckThat("grenade_clears_cover", lobbed && lobbed.transform.position.z < 88, lobbed ? lobbed.transform.position.ToString() : "missing");
             RemoveFixture(grenadeCover); G.difficulty = previousDifficulty;
-            G.EnterStage(1, true); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 35));
+            G.EnterStage(1, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 35));
             foreach (var enemy in G.enemies) enemy.suppressAI = true;
             target = EnemyActor.Spawn(EnemyKind.Assault, new Vector3(0, 0, 40), 1); G.qaSuppressAI = false;
             hp = P.health; yield return new WaitForSeconds(5);
@@ -179,9 +179,9 @@ namespace SwapHunter
             yield return UseTerminal(3, 0); CheckThat("core_acquired", G.hasCore && G.gates[3].open, "Core unlocks extraction");
             P.SetFeet(new Vector3(0, .03f, 165)); yield return new WaitForSeconds(.25f);
             yield return UseTerminal(4, 0); CheckThat("campaign_victory", G.state == RunState.Victory, G.state.ToString()); yield return Capture("08-victory");
-            G.StartRun(true); G.qaSuppressAI = true; yield return new WaitForSeconds(.4f);
+            G.StartRun(true); G.qaSuppressAI = true; yield return WaitDeployments(); yield return new WaitForSeconds(.4f);
             CheckThat("practice_mode", G.practice && G.stage == 1 && G.AliveEnemies > 0, "Repeatable combat entry");
-            G.EnterStage(3, true); G.qaSuppressAI = false; var samples = new List<float>();
+            G.EnterStage(3, true); yield return WaitDeployments(); G.qaSuppressAI = false; var samples = new List<float>();
             for (int i = 0; i < 180; i++) { yield return null; samples.Add(Time.unscaledDeltaTime * 1000); }
             samples.Sort(); report.frameP50Ms = samples[samples.Count / 2]; report.frameP95Ms = samples[Mathf.FloorToInt((samples.Count - 1) * .95f)];
             G.qaSuppressAI = true; CheckThat("runtime_rendering", SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null, report.graphicsDevice); yield return V02Checks(); yield return ShieldFeedbackChecks(); Finish();
@@ -288,12 +288,17 @@ namespace SwapHunter
             CheckThat("v02_rebound_fire_executes", P.ammo[0] < ammo, "Fire action follows configured mouse button");
             G.qaInputEnabled = false; InputSystem.RemoveDevice(keyboard); InputSystem.RemoveDevice(mouse); G.qaKeyboard = null; G.qaMouse = null;
             G.options = new GameOptions(); G.SyncLegacyBindings(); G.ApplySettings();
-            G.EnterStage(1, true); G.qaSuppressAI = true; yield return new WaitForSeconds(.3f);
+            G.EnterStage(1, true); yield return WaitDeployments(); G.qaSuppressAI = true; yield return new WaitForSeconds(.3f);
             yield return Capture("v02-gameplay");
             P.SetLook(0,78); yield return new WaitForSeconds(.25f); yield return Capture("v02-player-body");
             G.SetState(RunState.Menu); yield return Capture("v02-menu");
         }
 
+        IEnumerator WaitDeployments()
+        {
+            float end=Time.time+10;while(G.PendingDeployments>0&&Time.time<end)yield return null;
+            CheckThat("warned_deployments_complete",G.PendingDeployments==0,"pending="+G.PendingDeployments);
+        }
         IEnumerator ClearWaves()
         {
             bool eliteObserved = false; float timeout = Time.time + 25;
@@ -331,6 +336,7 @@ namespace SwapHunter
         void OnDestroy() { Application.logMessageReceived -= LogError; }
     }
 }
+
 
 
 

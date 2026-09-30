@@ -5,7 +5,7 @@ Source: https://github.com/notofonts/noto-cjk/tree/main/Sans/SubsetOTF/SC
 Downloaded from a CDN mirror of the same public repository:
 https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf
 
-License: SIL Open Font License 1.1. The unmodified license is provided in `Assets/_SwapHunter/Fonts/OFL.txt` in the source project and `Licenses/Noto-OFL.txt` in the player distribution. No font files copied from Windows are included in the distribution.
+License: SIL Open Font License 1.1. The unmodified license is provided in `Assets/_SwapHunter/Fonts/OFL.txt` in the source project and `Licenses/NotoSansSC-OFL.txt` in the player distribution. No font files copied from Windows are included in the distribution.
 
 ## Unity packages and templates
 

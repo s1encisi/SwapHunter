@@ -4,16 +4,28 @@ namespace SwapHunter
 {
     public sealed partial class DemoGame
     {
-        static readonly Color Cyan = new Color(.29f, .94f, .84f), Muted = new Color(.76f, .82f, .86f), Ink = new Color(.035f, .055f, .07f, .98f);
+        static readonly Color Cyan = new Color(.40f, .78f, 1f), Muted = new Color(.72f, .78f, .88f), Ink = new Color(.016f, .026f, .055f, .98f);
         GUIStyle textStyle, buttonStyle;
-        float viewWidth;
+        float viewWidth, uiScaleFactor=1, uiOffsetY;
+        Matrix4x4 lastUiMatrix=Matrix4x4.identity;
+        Rect FullScreenGuiRect => new Rect(0,-uiOffsetY/uiScaleFactor,viewWidth,Screen.height/uiScaleFactor);
+        Vector2 ViewportToUi(Vector3 point) => new Vector2(point.x*viewWidth,((1-point.y)*Screen.height-uiOffsetY)/uiScaleFactor);
+        internal Vector2 HudMarkerScreenPosition(Vector3 worldPoint)
+        {
+            Vector2 point=ViewportToUi(player.cameraView.WorldToViewportPoint(worldPoint));
+            Vector3 screen=lastUiMatrix.MultiplyPoint3x4(new Vector3(point.x,point.y,0));return new Vector2(screen.x,screen.y);
+        }
+        internal Rect HudScreenMaskBounds
+        {
+            get { Rect r=FullScreenGuiRect;Vector3 a=lastUiMatrix.MultiplyPoint3x4(new Vector3(r.xMin,r.yMin,0)),b=lastUiMatrix.MultiplyPoint3x4(new Vector3(r.xMax,r.yMax,0));return Rect.MinMaxRect(a.x,a.y,b.x,b.y); }
+        }
         void Styles()
         {
             if (textStyle != null) return;
             textStyle = new GUIStyle(GUI.skin.label) { font = font, wordWrap = true, richText = false, clipping = TextClipping.Overflow };
             buttonStyle = new GUIStyle(GUI.skin.button) { font = font, fontSize = 20, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(20, 16, 8, 8) };
             buttonStyle.normal.background = Texture2D.whiteTexture; buttonStyle.hover.background = Texture2D.whiteTexture; buttonStyle.active.background = Texture2D.whiteTexture;
-            buttonStyle.hover.background = UITexture(new Color(.19f,.34f,.36f)); buttonStyle.active.background = UITexture(new Color(.10f,.58f,.51f));
+            buttonStyle.hover.background = UITexture(new Color(.12f,.29f,.55f)); buttonStyle.active.background = UITexture(new Color(.08f,.39f,.94f));
             buttonStyle.normal.textColor = Color.white; buttonStyle.hover.textColor = Color.white; buttonStyle.active.textColor = Color.white;
         }
         static Texture2D UITexture(Color color) { var t = new Texture2D(1,1); t.SetPixel(0,0,color); t.Apply(); return t; }
@@ -22,73 +34,74 @@ namespace SwapHunter
         {
             textStyle.fontSize = size; textStyle.normal.textColor = color ?? Color.white; textStyle.alignment = align; GUI.Label(r, value, textStyle);
         }
-        bool Button(string value, Rect r, bool primary = false)
+        // Shared by settings, campaign and expedition screens.
+        void DrawUiPanel(Rect r, bool accent = false)
         {
-            bool enabled = GUI.enabled;
-            bool hover = r.Contains(Event.current.mousePosition) && enabled;
-            GUI.enabled = true;
-            Color background = primary ? new Color(.07f, .43f, .39f) : new Color(.11f, .16f, .19f);
-            if (hover) background = Color.Lerp(background, Cyan, .24f);
-            if (!enabled) background *= .6f;
-            Fill(r, background);
-            Fill(new Rect(r.x, r.yMax - 2, r.width, 2), hover ? Cyan : new Color(.16f, .25f, .28f));
-            Text(value, new Rect(r.x + 12, r.y, r.width - 24, r.height), r.width < 160 ? 16 : 20, enabled ? Color.white : Muted, TextAnchor.MiddleLeft);
-            GUI.enabled = enabled;
-            return GUI.Button(r, GUIContent.none, GUIStyle.none);
+            Fill(r,new Color(.025f,.045f,.09f,.94f));
+            Fill(new Rect(r.x,r.y,r.width,1),new Color(.20f,.29f,.43f,.75f));
+            if(accent)Fill(new Rect(r.x,r.y,4,r.height),Cyan);
         }
+        void SlashBand(Rect r, Color color, float angle)
+        {
+            Matrix4x4 saved=GUI.matrix;
+            GUIUtility.RotateAroundPivot(angle,r.center); Fill(r,color); GUI.matrix=saved;
+        }
+        bool Button(string value, Rect r, bool primary = false)=>NavigationButton(value,r,primary);
         void OnGUI()
         {
-            if (!font) return; Styles();
-            Matrix4x4 previous = GUI.matrix; float scale = Screen.height / 900f; GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1)); viewWidth = Screen.width / scale;
-            if (state == RunState.Loading) { Fill(new Rect(0, 0, viewWidth, 900), Ink); Text("正在准备相位装置…", new Rect(80, 390, 700, 60), 32); GUI.matrix = previous; return; }
-            bool uiEnabled = GUI.enabled;
-            if (settingsOpen) GUI.enabled = false;
-            if (state == RunState.Menu) { if (campaignBoard) CampaignBoardUI(); else Menu(); }
-            else if (state == RunState.Playing || state == RunState.Paused && !settlementPending || state == RunState.Dead && lastSettlement == null) Hud();
-            if (state == RunState.Paused || state == RunState.Dead || state == RunState.Victory) Overlay();
-            GUI.enabled = uiEnabled;
-            if (settingsOpen) Settings();
-            GUI.matrix = previous;
+            if (!font) return; Styles();BeginUiNavigation();
+            Matrix4x4 previous=GUI.matrix; bool previousEnabled=GUI.enabled;
+            float scale=Screen.height/900f*options.uiScale;float margin=(Screen.height-900*scale)*.5f;
+            if(margin>0&&(state==RunState.Menu||settingsOpen||expeditionInventory))
+            {Fill(new Rect(0,0,Screen.width,margin),Ink);Fill(new Rect(0,Screen.height-margin,Screen.width,margin),Ink);}
+            GUI.matrix=Matrix4x4.TRS(new Vector3(0,margin,0),Quaternion.identity,new Vector3(scale,scale,1));viewWidth=Screen.width/scale;
+            uiScaleFactor=scale;uiOffsetY=margin;lastUiMatrix=GUI.matrix;
+            try
+            {
+                if(state==RunState.Loading)
+                {
+                    Fill(FullScreenGuiRect,Ink);Fill(new Rect(0,440,viewWidth*.38f,8),Cyan);
+                    Text("正在接入相位信标",new Rect(64,345,800,70),38);
+                    Text("准备行动区域…",new Rect(68,468,800,36),18,Muted);return;
+                }
+                if(settingsOpen)GUI.enabled=false;
+                bool expeditionScreen=DrawExpeditionScreen();
+                if(!expeditionScreen)
+                {
+                    if(state==RunState.Menu){if(campaignBoard)CampaignBoardUI();else Menu();}
+                    else if(state==RunState.Playing||state==RunState.Paused&&!settlementPending||state==RunState.Dead&&lastSettlement==null)Hud();
+                    if(state==RunState.Paused||state==RunState.Dead||state==RunState.Victory){if(!DrawTutorialCompletion())Overlay();}
+                }
+                GUI.enabled=previousEnabled;
+                if(settingsOpen)Settings();
+            }
+            finally { GUI.enabled=previousEnabled;GUI.matrix=previous; }
         }
-        void Menu()
-        {
-            Fill(new Rect(0, 0, 660, 900), new Color(.025f, .045f, .060f, .95f));
-            Fill(new Rect(65, 74, 45, 4), Cyan);
-            Text("SWAPHUNTER   /   OPERATIONS DEMO 0.3.1", new Rect(65, 95, 520, 32), 16, Cyan);
-            Text("换位猎手", new Rect(59, 172, 560, 92), 68);
-            Text("抢的不是火力，\n而是开火的位置。", new Rect(65, 276, 510, 95), 28, new Color(.82f, .88f, .89f));
-            Text("穿过空中货运港，夺取相位核心。\n首次行动，建议先完成基础教学。", new Rect(65, 395, 520, 80), 19, Muted);
-            if (Button("合约行动 / 配置与成长     →", new Rect(65, 493, 450, 58), true)) OpenCampaignBoard();
-            if (Button("基础教学与完整战役", new Rect(65, 564, 450, 48))) StartRun();
-            if (RunStorage.Checkpoint > 0 && Button("继续上次检查点", new Rect(65, 623, 450, 42))) StartRun(false, true);
-            float y = RunStorage.Checkpoint > 0 ? 677 : 625;
-            if (Button("自由试招", new Rect(65, y, 214, 48))) StartRun(true);
-            if (Button("设置", new Rect(294, y, 221, 48))) OpenSettings();
-            if (Button("退出", new Rect(65, y + 62, 450, 44))) Application.Quit();
-            Text(KeyName(0) + "/" + KeyName(1) + "/" + KeyName(2) + "/" + KeyName(3) + " 移动    " + KeyName(12) + " 开火\n" + KeyName(6) + " 换位    " + KeyName(7) + " 装填    " + KeyName(10) + "/" + KeyName(11) + " 切枪    " + KeyName(8) + " 交互", new Rect(65, 797, 560, 64), 16, Muted);
-            Text("选择合约 / 战术装配 / 撤离成长", new Rect(viewWidth - 460, 832, 395, 30), 16, Color.white, TextAnchor.MiddleRight);
-        }
+        void Menu(){BrandedMenu();}
         void Hud()
         {
             if (!player) return;
-            Fill(new Rect(20, 20, Mathf.Min(700, viewWidth * .49f), 141), new Color(.025f, .04f, .05f, .65f));
-            Fill(new Rect(viewWidth - 382, 22, 362, 100), new Color(.025f, .04f, .05f, .65f));
+            DrawUiPanel(new Rect(20,20,Mathf.Min(700,viewWidth*.49f),141),true);
+            DrawUiPanel(new Rect(viewWidth-302,22,282,88));
             Fill(new Rect(32, 30, 5, 68), Cyan);
-            Text(stage.ToString("00") + "  /  " + areaNames[stage], new Rect(49, 29, 540, 28), 16, Cyan);
-            Text(campaignActive ? activeContract.name : stageNames[stage], new Rect(49, 57, 500, 40), 30);
+            Text(expeditionActive?"相位行动  /  "+(expeditionLevel+1).ToString("00"):stage.ToString("00")+"  /  "+areaNames[stage],new Rect(49,29,540,28),16,Cyan);
+            Text(tutorialCourse&&tutorialCourse.Active?tutorialCourse.Title:expeditionActive ? ExpeditionTitle : campaignActive ? activeContract.name : stageNames[stage], new Rect(49, 57, 500, 40), 30);
             Text(Objective, new Rect(49, 109, Mathf.Min(644, viewWidth * .49f - 54), 60), 19, new Color(.84f, .90f, .92f));
             Text(FormatTime(runSeconds), new Rect(viewWidth - 195, 32, 150, 35), 25, Color.white, TextAnchor.MiddleRight);
-            if (stage > 0 && stage < 4) Text("在场敌人  " + AliveEnemies + "    /    第 " + wave + " 波", new Rect(viewWidth - 365, 77, 320, 36), 16, Muted, TextAnchor.MiddleRight);
+            if(expeditionActive) Text("必需 "+ExpeditionRequiredEnemies+" / 数据追兵 "+ExpeditionOptionalEnemies,new Rect(viewWidth-345,74,300,30),16,Muted,TextAnchor.MiddleRight);
+            else if (AliveEnemies>0) Text("在场敌人  "+AliveEnemies,new Rect(viewWidth-275,74,230,30),16,Muted,TextAnchor.MiddleRight);
 
             float x = viewWidth / 2, y = 450;
             Color reticle = player.target && player.swapReason == "可换位" ? Cyan : Color.white;
             DrawCrosshair(x, y, options, player.CurrentSpreadDegrees);
             if (player.hitFlash > 0 && options.hitMarkers) Text(player.killFlash > 0 ? "×" : "+", new Rect(x - 20, y - 27, 40, 54), 36, player.killFlash > 0 ? new Color(1, .67f, .24f) : Color.white, TextAnchor.MiddleCenter);
-            if (player.blockFlash > 0 && options.hitMarkers)
+            if (player.blockFlash > 0)
             {
                 Fill(new Rect(x + 85, 432, 245, 36), new Color(.025f, .035f, .04f, .95f));
                 Text("格挡 · 未造成伤害", new Rect(x + 95, 434, 225, 32), 18, Amber, TextAnchor.MiddleCenter);
             }
+            if(player.hitFlash>0&&!string.IsNullOrEmpty(player.HitRegionLabel)&&options.hitMarkers)
+                Text(player.HitRegionLabel,new Rect(x+40,y-13,145,30),16,player.killFlash>0?Amber:Color.white);
             if (player.AimingAtShield)
             {
                 Fill(new Rect(x - 290, 704, 580, 39), new Color(.025f, .035f, .04f, .94f));
@@ -99,7 +112,7 @@ namespace SwapHunter
                 Vector3 point = player.cameraView.WorldToViewportPoint(player.target.AimPoint);
                 if (point.z > 0)
                 {
-                    float sx = point.x * viewWidth, sy = (1 - point.y) * 900;
+                    Vector2 projected=ViewportToUi(point);float sx=projected.x,sy=projected.y;
                     Text("[       ]", new Rect(sx - 58, sy - 31, 116, 62), 42, reticle, TextAnchor.MiddleCenter);
                     Text(player.swapReason == "可换位" ? KeyName(6) + " 交换位置" : player.swapReason, new Rect(sx - 135, sy + 45, 270, 32), 17, reticle, TextAnchor.MiddleCenter);
                 }
@@ -109,33 +122,36 @@ namespace SwapHunter
                 if (!enemy || !enemy.Alive || Vector3.Distance(player.transform.position, enemy.transform.position) > 28 || Physics.Linecast(player.Eye.position, enemy.AimPoint, Layers.WorldMask)) continue;
                 Vector3 point = player.cameraView.WorldToViewportPoint(enemy.transform.position + Vector3.up * (enemy.Height + .35f));
                 if (point.z <= 0 || point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) continue;
-                float sx = point.x * viewWidth, sy = (1 - point.y) * 900;
+                Vector2 projected=ViewportToUi(point);float sx=projected.x,sy=projected.y;
                 Fill(new Rect(sx - 103, sy - 25, 206, 26), new Color(.018f, .025f, .03f, .85f));
-                Text(enemy.Label + (enemy.kind == EnemyKind.Shield || enemy.kind == EnemyKind.Elite ? " · 盾牌挡弹" : ""), new Rect(sx - 100, sy - 25, 200, 26), 16, enemy.kind == EnemyKind.Elite ? new Color(1, .72f, .43f) : Muted, TextAnchor.MiddleCenter);
+                Text(enemy.Label + (enemy.boss ? (enemy.boss.Energy>0 ? " · 能量护层" : " · 核心暴露") : enemy.HasPhysicalShield ? " · 盾牌挡弹" : ""), new Rect(sx - 100, sy - 25, 200, 26), 16, enemy.kind == EnemyKind.Elite ? new Color(1, .72f, .43f) : Muted, TextAnchor.MiddleCenter);
                 Fill(new Rect(sx - 40, sy + 3, 80, 4), new Color(.02f, .03f, .04f, .7f));
                 Fill(new Rect(sx - 40, sy + 3, 80 * enemy.health / enemy.maximumHealth, 4), enemy.stunLeft > 0 ? Cyan : new Color(1, .46f, .25f));
                 if (enemy.warningLeft > 0) Text("狙击锁定", new Rect(sx - 80, sy - 52, 160, 26), 15, new Color(1, .3f, .24f), TextAnchor.MiddleCenter);
             }
-            Fill(new Rect(32, 778, 280, 94), new Color(.025f, .04f, .05f, .82f));
+            DrawUiPanel(new Rect(32,778,280,94),true);
             Text("生命", new Rect(49, 790, 70, 25), 15, Muted);
             Text(Mathf.CeilToInt(player.health).ToString("000"), new Rect(48, 811, 105, 44), 33);
             Fill(new Rect(163, 830, 126, 8), new Color(.2f, .27f, .29f));
             Fill(new Rect(163, 830, 126 * player.health / config.playerHealth, 8), player.health < 30 ? new Color(1, .3f, .22f) : Cyan);
-            Fill(new Rect(viewWidth - 308, 778, 276, 94), new Color(.025f, .04f, .05f, .82f));
-            Text(player.weapon == 0 ? "01 / 脉冲卡宾枪" : "02 / 破门霰弹枪", new Rect(viewWidth - 289, 790, 240, 25), 15, Muted);
-            Text(player.ammo[player.weapon].ToString("00"), new Rect(viewWidth - 289, 814, 80, 44), 34);
-            Text("/ " + player.reserve[player.weapon], new Rect(viewWidth - 208, 828, 120, 30), 19, Muted);
+            DrawUiPanel(new Rect(viewWidth-348,778,316,94),true);
+            Text(player.CurrentWeaponName,new Rect(viewWidth-329,790,278,25),16,Muted);
+            Text(player.ammo[player.weapon].ToString("00"), new Rect(viewWidth - 329, 814, 95, 44), 34);
+            Text("/ " + player.reserve[player.weapon], new Rect(viewWidth - 229, 828, 170, 30), 19, Muted);
             if (player.reloadLeft > 0) Text("装填中…", new Rect(viewWidth - 300, 735, 260, 32), 19, Cyan, TextAnchor.MiddleRight);
             float abilityX = x - 139;
-            Fill(new Rect(abilityX, 796, 278, 77), new Color(.025f, .04f, .05f, .82f));
+            DrawUiPanel(new Rect(abilityX,796,278,77),true);
             Text(KeyName(6) + "  相位换位", new Rect(abilityX + 17, 808, 200, 26), 20, Cyan);
             Text(player.cooldown > 0 ? player.cooldown.ToString("F1") + " s" : "就绪", new Rect(abilityX + 185, 808, 75, 27), 19, Color.white, TextAnchor.MiddleRight);
             Fill(new Rect(abilityX + 17, 848, 244, 5), new Color(.20f, .27f, .29f));
-            Fill(new Rect(abilityX + 17, 848, 244 * Mathf.Clamp01(1 - player.cooldown / CampaignCooldown), 5), Cyan);
+            Fill(new Rect(abilityX + 17, 848, 244 * Mathf.Clamp01(1 - player.cooldown / Mathf.Max(.01f,CampaignCooldown*ExpeditionCooldownMultiplier)), 5), Cyan);
             if (ToastVisible)
             {
-                Fill(new Rect(x - 350, campaignActive ? 273 : 195, 700, 53), new Color(.02f, .045f, .06f, .9f));
-                Text(toast, new Rect(x - 333, campaignActive ? 283 : 205, 666, 35), 19, Color.white, TextAnchor.MiddleCenter);
+                bool bossPresent=false;
+                foreach(var enemy in enemies)if(enemy&&enemy.Alive&&enemy.boss){bossPresent=true;break;}
+                Rect notice=bossPresent?new Rect(32,178,Mathf.Clamp(viewWidth-692,240,650),64):new Rect(x-350,campaignActive?273:195,700,53);
+                Fill(notice, new Color(.02f, .045f, .06f, .9f));
+                Text(toast, new Rect(notice.x+17,notice.y+10,notice.width-34,notice.height-20),bossPresent?18:19,Color.white,TextAnchor.MiddleCenter);
             }
             if (nearestTerminal && !nearestTerminal.activated)
                 Text(KeyName(8) + "  " + (stage == 2 ? "接通继电器" : stage == 3 ? "获取核心" : stage == 4 ? "确认撤离" : "启动控制台"), new Rect(x - 190, 609, 380, 38), 23, Cyan, TextAnchor.MiddleCenter);
@@ -152,17 +168,20 @@ namespace SwapHunter
                 string label = Mathf.Abs(direction) > 135 ? "后方受击" : direction > 35 ? "右侧受击" : direction < -35 ? "左侧受击" : "前方受击";
                 Text(label, new Rect(x - 100, y + 95, 200, 34), 18, new Color(1,.55f,.4f), TextAnchor.MiddleCenter);
                 Color damage = new Color(1, .1f, .07f, player.hurtFlash * .6f);
-                Fill(new Rect(0, 0, 25, 900), damage); Fill(new Rect(viewWidth - 25, 0, 25, 900), damage); Fill(new Rect(0, 875, viewWidth, 25), damage);
+                Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,25,bounds.height),damage);Fill(new Rect(viewWidth-25,bounds.yMin,25,bounds.height),damage);Fill(new Rect(0,bounds.yMax-25,viewWidth,25),damage);
             }
-            if (player.phaseFlash > 0) { Color phase = new Color(.1f, 1, .8f, player.phaseFlash * 1.2f); Fill(new Rect(0, 0, 12, 900), phase); Fill(new Rect(viewWidth - 12, 0, 12, 900), phase); }
-            CampaignHudUI();
+            if (player.phaseFlash > 0) { Color phase = new Color(.1f, 1, .8f, player.phaseFlash * 1.2f); Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,12,bounds.height),phase);Fill(new Rect(viewWidth-12,bounds.yMin,12,bounds.height),phase); }
+            CampaignHudUI();DrawBossHud();DrawTacticsHud();
+            if(!string.IsNullOrEmpty(player.ActionLabel))Text(player.ActionLabel,new Rect(33,738,330,32),18,Cyan);
+            if(player.ChargeProgress>0){Fill(new Rect(x-72,y+35,144,4),new Color(.1f,.16f,.24f));Fill(new Rect(x-72,y+35,144*player.ChargeProgress,4),Cyan);}
             Text(KeyName(10) + " / " + KeyName(11) + " 切枪     " + KeyName(7) + " 装填     Esc 暂停", new Rect(35, 875, 600, 22), 16, Muted, TextAnchor.MiddleLeft);
         }
         void Overlay()
         {
+            if(expeditionActive){DrawExpeditionOverlay();return;}
             if (settlementPending)
             {
-                Fill(new Rect(0, 0, viewWidth, 900), Ink); float pendingX = viewWidth / 2 - 320;
+                Fill(FullScreenGuiRect, Ink); float pendingX = viewWidth / 2 - 320;
                 Text("行动已结束 · 等待保存", new Rect(pendingX, 270, 680, 70), 36, Amber);
                 Text(campaignNotice, new Rect(pendingX, 362, 640, 135), 21);
                 Text("战斗已冻结。保存成功后显示结算，不会重复发奖。", new Rect(pendingX, 509, 640, 70), 19, Muted);
@@ -170,7 +189,9 @@ namespace SwapHunter
                 return;
             }
             if (lastSettlement != null && (state == RunState.Dead || state == RunState.Victory)) { CampaignSettlementUI(); return; }
-            Fill(new Rect(0, 0, viewWidth, 900), new Color(.018f, .035f, .045f, .88f)); float x = viewWidth / 2 - 255;
+            Fill(FullScreenGuiRect,new Color(.009f,.015f,.035f,.89f)); float x=Mathf.Max(60,viewWidth*.17f);
+            SlashBand(new Rect(viewWidth*.68f,-90,90,1100),new Color(.07f,.27f,.70f,.48f),-12);
+            Fill(new Rect(x,183,52,5),state==RunState.Dead?Amber:Cyan);
             Text(state == RunState.Paused ? "暂停行动" : state == RunState.Dead ? "相位信号中断" : "撤离成功", new Rect(x, 224, 550, 73), 46, state == RunState.Dead ? new Color(1, .56f, .4f) : Color.white);
             Text(state == RunState.Paused ? "下一次换位，先想好落点。" : state == RunState.Dead ? "检查点已保留。观察威胁，换一个位置再来。" : "相位核心已回收。你带走了开火的位置。", new Rect(x, 312, 540, 65), 19, Muted);
             if (state == RunState.Victory)
@@ -187,9 +208,16 @@ namespace SwapHunter
             if (campaignActive && !string.IsNullOrEmpty(campaignNotice)) Text(campaignNotice, new Rect(x, bottom + 190, 560, 70), 17, Amber);
         }
         void Settings() { DrawSettingsV2(); }
-        public string KeyName(int i) => BindingInput.Label(options.actions[i].primary).Replace("鼠标左键", "M1").Replace("鼠标右键", "M2").Replace("鼠标侧键 ", "M").Replace("鼠标中键", "M3");
+        public string KeyName(int i) => BindingInput.Label(options.actions!=null&&i>=0&&i<options.actions.Length&&options.actions[i]!=null?options.actions[i].primary:"").Replace("鼠标左键", "M1").Replace("鼠标右键", "M2").Replace("鼠标侧键 ", "M").Replace("鼠标中键", "M3");
         static string FormatTime(float seconds) => ((int)seconds / 60).ToString("00") + ":" + ((int)seconds % 60).ToString("00");
     }
 }
+
+
+
+
+
+
+
 
 
