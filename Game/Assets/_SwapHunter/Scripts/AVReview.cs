@@ -146,7 +146,7 @@ namespace SwapHunter
 
             G.EnterStage(1, true); yield return new WaitForSecondsRealtime(.4f);
             target = G.enemies.Find(e => e.kind == EnemyKind.Sniper); Aim(target.AimPoint); P.cooldown = 0;
-            Mark("swap_start", P.ValidateSwap(target)); Require(P.RequestSwap(target), "high-platform swap rejected");
+            Mark("swap_start", P.ValidateSwap(target).ToString()); Require(P.RequestSwap(target), "high-platform swap rejected");
             yield return new WaitForSecondsRealtime(.14f); yield return Frame("10-swap-arrival");
             Aim(target.AimPoint); yield return new WaitForSecondsRealtime(.35f); yield return Frame("11-high-platform-view");
 

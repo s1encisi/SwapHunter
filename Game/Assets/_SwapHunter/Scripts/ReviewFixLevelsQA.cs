@@ -29,7 +29,7 @@ namespace SwapHunter
     var training=G.enemies.Find(e=>e&&e.Alive&&e.kind==EnemyKind.Training);
     P.SetFeet(new Vector3(5,.04f,16));P.verticalSpeed=0;P.cooldown=0;Aim(training.AimPoint);yield return null;
     Vector3 entrance=P.transform.position;int swaps=P.swapCount;
-    Check("enemy_first_crossing_valid",P.RequestSwap(training),P.ValidateSwap(training));yield return new WaitForSeconds(.25f);
+    Check("enemy_first_crossing_valid",P.RequestSwap(training),P.ValidateSwap(training).ToString());yield return new WaitForSeconds(.25f);
     Check("enemy_first_crossing_exchanges_both_ends",P.swapCount==swaps+1&&P.transform.position.z>30&&Vector3.Distance(training.transform.position,entrance)<.2f,"player="+P.transform.position+"; training="+training.transform.position);
     training.Damage(10000);yield return null;
     Check("entrance_enemy_killed_anchors_still_across",!training.Alive&&map.anchors.TrueForAll(a=>a.transform.position.z>27),"The historical risky branch has no remaining target on the entrance island.");

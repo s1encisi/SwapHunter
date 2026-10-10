@@ -1,0 +1,83 @@
+{
+  "source": {
+    "url": "https://opengameart.org/sites/default/files/ultimate_modular_sci-fi_-_feb_2021.zip",
+    "page": "https://opengameart.org/content/lowpoly-modular-sci-fi-environments",
+    "acquiredUtc": "2026-10-10T02:42:15.187261+00:00",
+    "sha256": "65bc932f0cf00831df6d5094e115fc049f632d7ba8494b4a37eefba59ed40b43",
+    "bytes": 10534387
+  },
+  "licenseFile": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/License-OGA.txt",
+  "status": "acquired_for_conversion",
+  "files": [
+    {
+      "name": "Door_Single",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Door_Single.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Door_Single.blend",
+      "sha256": "8f1acb40fdfe13d6abde1147e3e39f2154bf12251d350c80fc9d1186175f3b9a",
+      "bytes": 585900
+    },
+    {
+      "name": "Props_Base",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Base.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Base.blend",
+      "sha256": "72f017d315c65aeff55d1160080e9546b0986df089738b3de035d0902485c314",
+      "bytes": 534032
+    },
+    {
+      "name": "Props_Capsule",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Capsule.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Capsule.blend",
+      "sha256": "7b502bed947eecc5fe7aa41359939d60d8151f67d7687da3d5d3f2cabb24dbad",
+      "bytes": 577116
+    },
+    {
+      "name": "Props_Chest",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Chest.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Chest.blend",
+      "sha256": "0a9bc2d8863f0f21fb90d631e03f5d472ffc2f9ce3dbaa23c0753a8f7c10dc64",
+      "bytes": 776860
+    },
+    {
+      "name": "Props_Computer",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Computer.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Computer.blend",
+      "sha256": "fa949d38ed317e94ce4eb49b213694a8797a0fbbcfc233d7c0f498878c59e6a0",
+      "bytes": 571144
+    },
+    {
+      "name": "Props_Crate",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Crate.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Crate.blend",
+      "sha256": "0978cc03577739b68bc5ced50a0c63dab946d15e3d819384a6eb864a90836c4d",
+      "bytes": 646660
+    },
+    {
+      "name": "Props_Teleporter_1",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Teleporter_1.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Teleporter_1.blend",
+      "sha256": "e72d88e989baeaef80a553cd8039765581d455d278b33f039de26c7f7ed28ad6",
+      "bytes": 540192
+    },
+    {
+      "name": "Props_Laser",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Laser.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Laser.blend",
+      "sha256": "1af1ce9262dac3857a7cad138b8c6661832e35d041a55fffd3798201d5018904",
+      "bytes": 585808
+    },
+    {
+      "name": "RoofTile_Empty",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/RoofTile_Empty.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/RoofTile_Empty.blend",
+      "sha256": "f4570a03d028cf057e0d64e3a43da7df016746d5e4cfcced2ffa2dc04ddd9998",
+      "bytes": 506824
+    },
+    {
+      "name": "Props_Vessel_Tall",
+      "file": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Vessel_Tall.blend",
+      "archiveMember": "Ultimate Modular Sci-Fi - Feb 2021/Blends/Props_Vessel_Tall.blend",
+      "sha256": "1d70ae147a839353bbf06762989f3a34fde637ebb5264418c28cc5ae6b004dc4",
+      "bytes": 545748
+    }
+  ]
+}

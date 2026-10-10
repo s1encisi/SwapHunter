@@ -56,7 +56,7 @@ namespace SwapHunter
     knifeRepositioned=false;PlaceTarget(EnemyKind.Training,new Vector3(0,0,17));
     recallDummy=EnemyActor.Spawn(EnemyKind.Training,new Vector3(-4,0,15),0);
     var go=new GameObject("Tutorial recall anchor");go.layer=Layers.Actor;go.transform.SetParent(props);go.transform.position=new Vector3(-8,.03f,13);
-    RecallAnchor=go.AddComponent<PhaseAnchor>();var c=go.AddComponent<CapsuleCollider>();c.radius=.32f;c.height=1.4f;c.center=Vector3.up*.7f;ImportedModels.Create(G.config.models.beacon,go.transform,Vector3.zero);
+    RecallAnchor=go.AddComponent<PhaseAnchor>();var c=go.AddComponent<CapsuleCollider>();c.radius=.32f;c.height=1.4f;c.center=Vector3.up*.7f;FinalEnvironmentModels.Anchor(go.transform);
     Mark(go.transform.position);P.cooldown=0;
    }
    if(Step==8){if(recallDummy){recallDummy.gameObject.SetActive(false);Destroy(recallDummy.gameObject);}if(RecallAnchor){RecallAnchor.gameObject.SetActive(false);Destroy(RecallAnchor.gameObject);}PlaceTarget(EnemyKind.Shield,new Vector3(0,0,13));Mark(new Vector3(-6,0,15));P.health=G.config.playerHealth;P.cooldown=0;}

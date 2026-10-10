@@ -1,0 +1,75 @@
+{
+  "title": "换位猎手｜机制导览",
+  "disclosure": "原生离屏截图导览，非实时游玩录像",
+  "capture_note": "测试镜头，敌人行为暂停；不包含屏幕HUD。",
+  "sections": [
+    {
+      "frame_id": "chapter02-overview",
+      "seconds": 5,
+      "title": "先看站位，再决定换谁",
+      "caption": "盾卫朝向、侧向射线和退路，决定一次交换的收益。",
+      "source_label": "第2关 / 场景观察镜头"
+    },
+    {
+      "frame_id": "chapter07-both-endpoints",
+      "seconds": 6,
+      "title": "换位改变两端的位置关系",
+      "caption": "观察双端预览与朝向箭头，再选择源位置和目标。",
+      "source_label": "第7关 / 双端预览夹具"
+    },
+    {
+      "frame_id": "chapter07-before-swap",
+      "seconds": 4,
+      "title": "危险留在世界：换位前",
+      "caption": "测试夹具在玩家源位置放置了一枚真实手雷。",
+      "source_label": "第7关 / Q 前静帧"
+    },
+    {
+      "frame_id": "chapter07-after-swap",
+      "seconds": 5,
+      "title": "危险留在世界：换位后",
+      "caption": "实际 Q 完成后的静帧；锚点与手雷留在玩家原位置。",
+      "source_label": "第7关 / Q 后静帧；与上一帧作状态对照"
+    },
+    {
+      "frame_id": "chapter06-objective-hit",
+      "seconds": 4,
+      "title": "封锁装置可以被真实攻击",
+      "caption": "实际卡宾枪命中后的耐久与受击反馈。",
+      "source_label": "第6关 / 实际射击反馈"
+    },
+    {
+      "frame_id": "chapter06-objective-destroyed",
+      "seconds": 4,
+      "title": "破坏推进任务，也改变通路",
+      "caption": "实际武器摧毁装置后的状态；本段不展示完整交战。",
+      "source_label": "第6关 / 目标破坏后的静帧"
+    },
+    {
+      "frame_id": "chapter11-inside-field",
+      "seconds": 5,
+      "title": "局部干扰：检查源点与目标点",
+      "caption": "玩家脚下位于左侧干扰区，源点检查不通过。",
+      "source_label": "第11关 / 局部场内状态"
+    },
+    {
+      "frame_id": "chapter11-one-field-closed",
+      "seconds": 5,
+      "title": "关闭一处，只改变这一处",
+      "caption": "实际 E 交互关闭左侧场区，右侧场区仍然开启。",
+      "source_label": "第11关 / 单个场区关闭状态"
+    },
+    {
+      "frame_id": null,
+      "seconds": 7,
+      "title": "从中文入口开始",
+      "caption": "先试第2、6、7关，再挑战第12关。",
+      "source_label": "体验说明卡 · 不是游戏界面",
+      "steps": [
+        "按同包中文说明，启动独立演示。",
+        "选择章节后，用正常规则亲自体验。",
+        "演示档 · 不写正式进度"
+      ]
+    }
+  ]
+}

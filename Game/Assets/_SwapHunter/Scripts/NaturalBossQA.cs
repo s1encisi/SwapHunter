@@ -33,7 +33,7 @@ namespace SwapHunter
      if((boss.SkillStep==BossSkillStep.Telegraph||boss.SkillStep==BossSkillStep.Execute)&&(boss.Skill==BossSkill.Attraction||boss.Skill==BossSkill.SweepLaser||boss.Skill==BossSkill.GroundWave)&&P.cooldown<=0)
      {
       bool exposed=boss.Skill==BossSkill.Attraction?Vector3.Distance(P.transform.position,boss.DangerCenter)<4.8f:P.transform.position.y<1.2f;
-      if(exposed){PhaseAnchor best=null;float height=-100;foreach(var anchor in G.expeditionMap.anchors)if(anchor&&anchor.transform.position.y>height&&P.ValidateSwap(anchor)=="可换位"){best=anchor;height=anchor.transform.position.y;}if(best)P.RequestSwap(best);}
+      if(exposed){PhaseAnchor best=null;float height=-100;foreach(var anchor in G.expeditionMap.anchors)if(anchor&&anchor.transform.position.y>height&&P.ValidateSwap(anchor).IsValid){best=anchor;height=anchor.transform.position.y;}if(best)P.RequestSwap(best);}
      }
     }
     if(P.ammo[P.weapon]<=0)P.Reload();else P.Fire();

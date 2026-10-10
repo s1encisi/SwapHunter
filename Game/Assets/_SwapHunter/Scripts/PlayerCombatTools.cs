@@ -13,7 +13,9 @@ namespace SwapHunter
   public int MeleeHits {get;private set;}
   public int Throws {get;private set;}
   public int ReturnHits {get;private set;}
-  public int KnifeRank=>DemoGame.I.expeditionActive?DemoGame.I.expeditionStore.Profile.knifeRank:3;
+  public int KnifeRank=>PlayerClassSkill.IsTacticalFlow?(G.expeditionStore.EquippedGeneralSkill==TacticalPrototypeRules.KnifeGeneralIndex?G.expeditionStore.EquippedGeneralSkillLevel:0):G.expeditionActive?G.expeditionStore.Profile.knifeRank:3;
+  public bool CanRecallKnife=>PlayerClassSkill.IsTacticalFlow?KnifeRank>=1:KnifeRank>=3;
+  public bool KnifeEquipped=>!PlayerClassSkill.IsTacticalFlow||(G.expeditionStore.EquippedGeneralSkill==TacticalPrototypeRules.KnifeGeneralIndex&&KnifeRank>=1);
   public ThrownKnife Knife=>knife;
   public string KnifeStatus=>knife?(knife.Returning?"回收中":knife.Flying?"飞行中":"已落点"):throwCooldown>0?"冷却 "+throwCooldown.ToString("F1"):"就绪";
   DemoGame G=>DemoGame.I;
@@ -41,7 +43,9 @@ namespace SwapHunter
   public bool Melee()
   {
    if(!G.IsPlaying||owner.health<=0||meleeCooldown>0||owner.reloadLeft>0)return false;
-   meleeCooldown=.75f;pose=poseDuration=.38f;throwingPose=false;G.sound.Play("knife_swipe");
+   meleeCooldown=.75f;pose=poseDuration=.38f;throwingPose=false;
+   if(owner.classSkill)owner.classSkill.EndForAttack("melee");
+   G.sound.Play("knife_swipe");
    foreach(var e in G.enemies.ToArray())
    {
     if(!e||!e.Alive)continue;Vector3 delta=e.AimPoint-owner.Eye.position;
@@ -51,17 +55,28 @@ namespace SwapHunter
     MeleeHits++;if(e.Alive){e.stunLeft=Mathf.Max(e.stunLeft,.35f);e.motion.Push(Vector3.ProjectOnPlane(delta,Vector3.up).normalized*.85f);}
     Shapes.Impact(hit.point,-delta.normalized);G.sound.Play("hit",hit.point);
    }
+   foreach(var objective in DamageableObjective.ActiveSnapshot())
+   {
+    if(!objective||!objective.Alive)continue;Vector3 delta=objective.AimPoint-owner.Eye.position;
+    if(delta.magnitude>2.5f||Vector3.Dot(delta.normalized,owner.Eye.forward)<.65f)continue;
+    if(!CombatRay.Cast(owner.Eye.position,delta.normalized,delta.magnitude+.2f,owner.transform,out var hit)||hit.collider.GetComponentInParent<DamageableObjective>()!=objective)continue;
+    if(!objective.ApplyDamage(24,owner.Eye.position))continue;
+    MeleeHits++;Shapes.Impact(hit.point,-delta.normalized);G.sound.Play("hit",hit.point);
+   }
    G.Record("player_melee","hits="+MeleeHits);return true;
   }
   public bool Throw()
   {
+   if(!KnifeEquipped){G.Toast("当前通用技能槽未装配飞刀",2);return false;}
    if(!G.IsPlaying||owner.health<=0||throwCooldown>0||knife||owner.reloadLeft>0)return false;
-   pose=poseDuration=.3f;throwingPose=true;throwCooldown=1.3f;Throws++;knife=ThrownKnife.Launch(this,owner,owner.Eye.position,owner.Eye.forward,KnifeRank);
+   pose=poseDuration=.3f;throwingPose=true;throwCooldown=1.3f;Throws++;knife=ThrownKnife.Launch(this,owner,owner.Eye.position,owner.Eye.forward,KnifeRank,PlayerClassSkill.IsTacticalFlow);
+   if(owner.classSkill)owner.classSkill.EndForAttack("throw");
    G.sound.Play("knife_throw");G.Record("knife_throw","rank="+KnifeRank);return true;
   }
   public bool Recall()
   {
-   if(!G.IsPlaying||!knife||KnifeRank<3||knife.Returning)return false;
+   if(!KnifeEquipped){G.Toast("当前通用技能槽未装配飞刀",2);return false;}
+   if(!G.IsPlaying||!knife||!CanRecallKnife||knife.Returning)return false;
    knife.BeginReturn();G.sound.Play("knife_recall");G.Record("knife_recall",knife.transform.position+" -> "+owner.Eye.position);return true;
   }
   internal void ReturnedHit(){ReturnHits++;}
@@ -70,12 +85,7 @@ namespace SwapHunter
  }
  public static class KnifeGeometry
  {
-  public static Transform Create(Transform parent,string name)
-  {
-   var prefab=Resources.Load<GameObject>("BlenderActors/combat-knife-v05");
-   if(!prefab)throw new System.InvalidOperationException("Required original Blender phase knife is missing");
-   var root=ImportedModels.Create(prefab,parent,Vector3.zero);root.name=name;return root.transform;
-  }
+  public static Transform Create(Transform parent,string name) => ActorEquipmentVisuals.CreateBlade(parent,name);
  }
  public sealed class ThrownKnife:MonoBehaviour
  {
@@ -85,12 +95,14 @@ namespace SwapHunter
   public int RecallHits {get;private set;}
   public int WallStops {get;private set;}
   public Vector3 LaunchPoint {get;private set;}
-  PlayerCombatTools tools;PlayerMotor owner;int rank;Vector3 direction;float distance,age;bool returnStarted;
+  PlayerCombatTools tools;PlayerMotor owner;Vector3 direction;float distance,age;bool returnStarted;
+  public bool HitSilence {get;private set;}
+  public bool AreaSilence {get;private set;}
   readonly HashSet<int> hitThisLeg=new HashSet<int>();
-  public static ThrownKnife Launch(PlayerCombatTools tools,PlayerMotor p,Vector3 origin,Vector3 dir,int rank)
+  public static ThrownKnife Launch(PlayerCombatTools tools,PlayerMotor p,Vector3 origin,Vector3 dir,int rank,bool tacticalRules=false)
   {
    Transform root=KnifeGeometry.Create(DemoGame.I.effects,"Silence knife / outbound");root.position=origin;root.rotation=Quaternion.LookRotation(dir);
-   var k=root.gameObject.AddComponent<ThrownKnife>();k.tools=tools;k.owner=p;k.rank=rank;k.direction=dir.normalized;k.LaunchPoint=origin;return k;
+   var k=root.gameObject.AddComponent<ThrownKnife>();k.tools=tools;k.owner=p;k.HitSilence=rank>=(tacticalRules?2:1);k.AreaSilence=rank>=(tacticalRules?3:2);k.direction=dir.normalized;k.LaunchPoint=origin;return k;
   }
   public void BeginReturn(){Returning=true;Flying=false;if(!returnStarted)hitThisLeg.Clear();returnStarted=true;gameObject.name="Silence knife / recall";}
   void Update()
@@ -116,14 +128,20 @@ namespace SwapHunter
    System.Array.Sort(hits,(a,b)=>a.distance.CompareTo(b.distance));
    foreach(var hit in hits)
    {
+    var objective=hit.collider.GetComponentInParent<DamageableObjective>();
+    if(objective&&objective.Alive)
+    {
+     if(hitThisLeg.Add(objective.GetInstanceID()))objective.ApplyDamage(Returning?22:28,old);
+     allowed=Mathf.Min(allowed,hit.distance);wall=true;break;
+    }
     var e=hit.collider.GetComponentInParent<EnemyActor>();if(!e||!e.Alive)continue;
     // Physical shields stop both directions, including after this leg has hit the owner's body.
     if(e.IsShieldCollider(hit.collider)){allowed=Mathf.Min(allowed,hit.distance);wall=true;break;}
     if(hitThisLeg.Contains(e.GetInstanceID()))continue;
     hitThisLeg.Add(e.GetInstanceID());e.Damage(Returning?22:28);
     if(Returning){RecallHits++;tools.ReturnedHit();}else OutboundHits++;
-    if(rank>=1)e.ApplySilence(3.2f);
-    if(rank>=2)foreach(var nearby in DemoGame.I.enemies)
+    if(HitSilence)e.ApplySilence(3.2f);
+    if(AreaSilence)foreach(var nearby in DemoGame.I.enemies)
      if(nearby&&nearby.Alive&&Vector3.Distance(nearby.AimPoint,hit.point)<4&&!Physics.Linecast(hit.point,nearby.AimPoint,Layers.WorldMask))nearby.ApplySilence(3.2f);
     Shapes.Burst(hit.point,new Color(.3f,.85f,1),.3f);DemoGame.I.sound.Play("hit",hit.point);
     if(!Returning){allowed=Mathf.Min(allowed,hit.distance);Flying=false;break;}

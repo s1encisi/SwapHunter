@@ -92,6 +92,11 @@ namespace SwapHunter
     Owner.ShootAt(G.player.Eye.position,8,38);burst++;attackAt=Time.time+(burst>=3?1.7f:.25f);if(burst>=3)burst=0;
    }
   }
+  public bool InterruptBasicBurst()
+  {
+   if(!G.IsPlaying||!Owner||!Owner.Alive||Phase==BossPhase.EnergyMelee||Phase==BossPhase.Defeated||windup>0||burst<=0||SkillStep==BossSkillStep.Telegraph||SkillStep==BossSkillStep.Execute)return false;
+   burst=0;attackAt=Mathf.Max(attackAt,Time.time+1.7f);G.Record("boss_basic_burst_interrupted","shock;spatial state unchanged");return true;
+  }
   void ClearWarning(){windup=0;Warning="";if(telegraph)Destroy(telegraph.gameObject);telegraph=null;}
   void OnDisable(){ClearWarning();CancelSpatialSkill();}
  }

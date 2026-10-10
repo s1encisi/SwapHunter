@@ -178,7 +178,7 @@ namespace SwapHunter
             var go = new GameObject(extraction ? "Contract extraction" : "Optional data / reinforcements");
             go.transform.SetParent(game.world); go.transform.position = position;
             var station = go.AddComponent<CampaignStation>(); station.extract = extraction;
-            ImportedModels.Create(game.config.models.terminal, go.transform, Vector3.zero);
+            FinalEnvironmentModels.Terminal(go.transform);
             go.layer = Layers.World;
             var body = go.AddComponent<BoxCollider>(); body.center = new Vector3(0, .7f, 0); body.size = new Vector3(1.02f, 1.4f, .8f);
             var obstacle = go.AddComponent<NavMeshObstacle>(); obstacle.shape = NavMeshObstacleShape.Box;

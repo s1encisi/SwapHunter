@@ -16,6 +16,15 @@ namespace SwapHunter
         public static List<CampaignDataCheck> Run(CampaignCatalog catalog, string outputDirectory)
         {
             string root = Path.Combine(Path.GetFullPath(outputDirectory), "campaign-data-fixtures-" + Guid.NewGuid().ToString("N"));
+            return RunInNewDirectory(catalog, root);
+        }
+
+        // Reuse the full existing suite inside a caller-owned NEW fixture directory.
+        // StorageV06QA avoids stacking long GUID directory names on Windows/Mono.
+        public static List<CampaignDataCheck> RunInNewDirectory(CampaignCatalog catalog, string fixtureDirectory)
+        {
+            string root = Path.GetFullPath(fixtureDirectory);
+            if (Directory.Exists(root) || File.Exists(root)) throw new IOException("Existing campaign fixture preserved: " + root);
             Directory.CreateDirectory(root);
             var results = new List<CampaignDataCheck>();
             void Check(string name, Action action)

@@ -264,32 +264,59 @@ namespace SwapHunter
     {
         public Vector3 velocity; public float damage, life = 3;
         public EnemyActor owner;
-        public static Bolt Spawn(EnemyActor source, Vector3 origin, Vector3 direction, float speed, float damage)
+        public static long TotalCreated { get; private set; }
+        public static long TotalRetired { get; private set; }
+        bool retired;
+        BoltPool pool;
+        EnemyProjectileVisual visual;
+        public bool IsRetired => retired;
+        public EnemyProjectileStyle VisualStyle { get; private set; }
+        public static Bolt Spawn(EnemyActor source, Vector3 origin, Vector3 direction, float speed, float damage, EnemyProjectileStyle visualStyle = EnemyProjectileStyle.Auto)
         {
-            GameObject go = new GameObject("Enemy projectile"); go.layer = Layers.Effects;
-            go.transform.SetParent(DemoGame.I.effects, false); go.transform.localPosition = origin;
-            Bolt bolt = go.AddComponent<Bolt>(); bolt.owner = source; bolt.velocity = direction.normalized * speed; bolt.damage = damage;
-            EnemyProjectileVisual.Attach(bolt);
+            Transform effects = DemoGame.I.effects; var cache = BoltPool.For(effects);
+            var bolt = cache.Take();
+            if (!bolt)
+            {
+                GameObject go = new GameObject("Enemy projectile"); TotalCreated++; go.layer = Layers.Effects;
+                go.SetActive(false); go.transform.SetParent(effects, false);
+                bolt = go.AddComponent<Bolt>(); bolt.visual = EnemyProjectileVisual.Attach(bolt);
+            }
+            bolt.pool = cache; bolt.retired = false; bolt.owner = source; bolt.VisualStyle = visualStyle;
+            bolt.velocity = direction.normalized * speed; bolt.damage = damage; bolt.life = 3;
+            bolt.enabled = true; bolt.gameObject.layer = Layers.Effects;
+            bolt.transform.SetParent(effects, false); bolt.transform.localPosition = origin;
+            bolt.transform.localScale = Vector3.one; bolt.transform.localRotation = Quaternion.identity;
+            bolt.visual.ResetForShot(); bolt.gameObject.SetActive(true);
             return bolt;
+        }
+        // All production releases and frozen allocation diagnostics use this same entry point.
+        public void Retire()
+        {
+            if (retired) return;
+            retired = true; TotalRetired++;
+            gameObject.SetActive(false); owner = null; velocity = Vector3.zero; damage = 0; life = 0; VisualStyle = EnemyProjectileStyle.Auto;
+            if (!pool || !pool.Retain(this)) Destroy(gameObject);
         }
         void Update()
         {
-            if (!DemoGame.I.IsPlaying) return;
+            if (retired || !DemoGame.I.IsPlaying) return;
             Vector3 old = transform.position; Vector3 travel = velocity * Time.deltaTime;
             var tactics=DemoGame.I.player?DemoGame.I.player.tactics:null;
-            if(tactics&&tactics.Intercept(old,old+travel,out var barrierHit)){transform.position=barrierHit;Destroy(gameObject);return;}
+            if(tactics&&tactics.Intercept(old,old+travel,out var barrierHit)){transform.position=barrierHit;Retire();return;}
             if (CombatRay.Cast(old, travel.normalized, travel.magnitude, owner ? owner.transform : null, out RaycastHit hit))
             {
                 PlayerMotor player = hit.collider.GetComponentInParent<PlayerMotor>();
                 EnemyActor enemy = hit.collider.GetComponentInParent<EnemyActor>();
                 if (player) player.Hurt(damage, old);
                 else if (enemy && enemy != owner) enemy.Hit(damage, hit.point, hit.collider, old);
-                Shapes.Impact(hit.point, hit.normal); if (!player && !enemy) DemoGame.I.sound.Play("surface", hit.point); Destroy(gameObject); return;
+                else {var objective=hit.collider.GetComponentInParent<DamageableObjective>();if(objective)objective.ApplyDamage(damage,old);}
+                Shapes.Impact(hit.point, hit.normal); if (!player && !enemy) DemoGame.I.sound.Play("surface", hit.point); Retire(); return;
             }
             transform.position += travel; life -= Time.deltaTime;
-            if (life <= 0) Destroy(gameObject);
+            if (life <= 0) Retire();
         }
     }
+
     public static class CombatRay
     {
         public static bool Cast(Vector3 origin, Vector3 direction, float range, Transform ignore, out RaycastHit nearest)
@@ -306,7 +333,9 @@ namespace SwapHunter
     public sealed class GrenadeActor : MonoBehaviour
     {
         public float remaining;
-        LineRenderer ring; Rigidbody body;
+        LineRenderer ring; Rigidbody body; bool exploded;
+        public bool Live => !exploded && isActiveAndEnabled;
+        public Vector3 BlastCenter => transform.position + Vector3.up * .15f;
         public static GrenadeActor Spawn(Vector3 origin, Vector3 destination, float fuse = -1)
         {
             GameObject go = Shapes.Make("LIVE GRENADE", PrimitiveType.Sphere, DemoGame.I.effects, origin, Vector3.one * .22f, 6, true, Layers.Grenade);
@@ -331,11 +360,14 @@ namespace SwapHunter
         }
         public void Explode()
         {
+            if(exploded)return;exploded=true;
             var game = DemoGame.I; Vector3 center = transform.position + Vector3.up * .15f;
             float radius = game.config.grenadeRadius;
             if (game.player) Blast(game.player.transform.position, game.player.Eye.position, d => game.player.Hurt(d, center));
             foreach (EnemyActor enemy in game.enemies.ToArray())
                 if (enemy && enemy.Alive) Blast(enemy.transform.position, enemy.AimPoint, d => enemy.Damage(d));
+            foreach(var objective in DamageableObjective.ActiveSnapshot())
+                if(objective&&objective.Alive) Blast(objective.transform.position,objective.AimPoint,d=>objective.ApplyDamage(d,center));
             Shapes.Burst(center, new Color(1, .6f, .12f), radius);
             Shapes.Ring(game.effects, center, radius, new Color(1, .7f, .2f), .1f).gameObject.AddComponent<TimedEffect>().life = .25f;
             game.sound.Play("explosion", center); game.Record("grenade_explode", center.ToString());

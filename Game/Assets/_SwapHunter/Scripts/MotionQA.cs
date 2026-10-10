@@ -25,7 +25,7 @@ public sealed class MotionQA:MonoBehaviour {
  while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
  G.StartRun();G.qaSuppressAI=true;yield return new WaitForSeconds(.3f);
  var target=G.enemies[0];P.SetFeet(new Vector3(0,3,8));P.verticalSpeed=0;P.cooldown=0;Aim(target.AimPoint);
- CheckThat("airborne_swap_valid",P.ValidateSwap(target)=="可换位",P.ValidateSwap(target));
+ CheckThat("airborne_swap_valid",P.ValidateSwap(target).IsValid,P.ValidateSwap(target).ToString());
  bool begin=P.RequestSwap(target);yield return new WaitForSeconds(.15f);
  CheckThat("airborne_exchange_actual",begin&&P.swapCount>0&&target.transform.position.y>1,"enemy="+target.transform.position+";player="+P.transform.position);
  Aim(target.AimPoint);yield return Capture("01-airborne-exchange");yield return new WaitForSeconds(1.1f);

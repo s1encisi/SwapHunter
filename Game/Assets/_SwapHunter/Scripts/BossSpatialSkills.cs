@@ -10,6 +10,12 @@ namespace SwapHunter
   public int SpatialCasts {get;private set;}
   public int SpatialSwaps {get;private set;}
   public Vector3 DangerCenter=>skillCenter;
+  public LineRenderer DangerOutline=>zone;
+  public LineRenderer SwapPathPreview=>pathPreview;
+  public Vector3 DangerForward=>skillForward;
+  public Vector3 SpatialDestination=>skillDestination;
+  public float DangerGroundY=>groundY;
+  public float SkillAgeSeconds=>skillAge;
   public SwapTarget SpatialTarget=>skillTarget;
   public float SkillSeconds=>skillTime;
   float skillTime,nextSkillAt,skillAge,pulseAt,groundY;
@@ -69,12 +75,12 @@ namespace SwapHunter
    skillCenter.y=groundY+.06f;
    skillForward=Vector3.ProjectOnPlane(skillCenter-transform.position,Vector3.up).normalized;
    if(skillForward.sqrMagnitude<.1f)skillForward=Vector3.forward;
-   skillTime=(skill==BossSkill.SweepLaser||skill==BossSkill.Attraction)?Mathf.Max(1.5f,G.player.cooldown+.45f):skill==BossSkill.OmniFire?1.2f:1.5f;
+   skillTime=(skill==BossSkill.SweepLaser||skill==BossSkill.Attraction)?Mathf.Max(1.5f,G.player.cooldown+.45f):skill==BossSkill.OmniFire?1.2f:skill==BossSkill.GroundWave&&G.expeditionActive&&G.expeditionLevel==11?2.5f:1.5f;
    switch(skill)
    {
     case BossSkill.SweepLaser:Warning="扫地激光 · 危险带已锁定，换位离开";zone=Shapes.Line(G.effects,skillCenter-Vector3.Cross(Vector3.up,skillForward)*15,skillCenter+Vector3.Cross(Vector3.up,skillForward)*15,Danger,.12f);break;
     case BossSkill.Attraction:Warning="牵引场 · 换位离开橙色区域";zone=Shapes.Ring(G.effects,skillCenter,4.8f,Danger,.09f);break;
-    case BossSkill.GroundWave:Warning="撼地波 · 换至高点或大跳，A盾无效";skillCenter=new Vector3(transform.position.x,groundY+.06f,transform.position.z);zone=Shapes.Ring(G.effects,skillCenter,2,Danger,.12f);break;
+    case BossSkill.GroundWave:Warning="撼地波 · 沿坡道上高位，或换位/大跳；A盾无效";skillCenter=new Vector3(transform.position.x,groundY+.06f,transform.position.z);zone=Shapes.Ring(G.effects,skillCenter,2,Danger,.12f);break;
     case BossSkill.OmniFire:Warning="全向火力 · A盾朝向指挥官，或进入掩体";zone=Shapes.Ring(G.effects,transform.position+Vector3.up*.1f,2.4f,Danger,.1f);break;
     default:Warning=skill==BossSkill.SwapElbow?"换位肘击 · 离开标记目标附近":"指挥官即将换位 · 观察橙色落点";zone=Shapes.Ring(G.effects,skillDestination+Vector3.up*.08f,3.4f,Danger,.09f);pathPreview=Shapes.Line(G.effects,Owner.AimPoint,skillTarget.AimPoint,Danger,.06f);break;
    }
@@ -166,21 +172,21 @@ namespace SwapHunter
     if(zone){zone.SetPosition(0,center-side*15);zone.SetPosition(1,center+side*15);zone.startWidth=zone.endWidth=.23f;}
     Vector3 offset=player-skillCenter;float along=Vector3.Dot(offset,skillForward);
     if(!skillHit&&along>=a-.4f&&along<=b+.4f&&Mathf.Abs(Vector3.Dot(offset,side))<15.3f&&player.y<groundY+1.2f&&player.y>groundY-1.8f)
-    {skillHit=true;G.player.Hurt(28,center+Vector3.up*.3f);}
+    {skillHit=true;G.player.Hurt(28,center+Vector3.up*.3f,kind:PlayerDamageKind.Spatial);}
    }
    else if(Skill==BossSkill.GroundWave)
    {
     float radius=skillAge*12,previous=Mathf.Max(0,(skillAge-dt)*12);DrawRing(zone,skillCenter,radius);
     float distance=Vector3.ProjectOnPlane(player-skillCenter,Vector3.up).magnitude;
     if(!skillHit&&distance>=previous-.45f&&distance<=radius+.45f&&player.y<groundY+1.15f&&player.y>groundY-1.8f)
-    {skillHit=true;G.player.Hurt(26,skillCenter,shieldBlockable:false);}
+    {skillHit=true;G.player.Hurt(26,skillCenter,shieldBlockable:false,kind:PlayerDamageKind.Spatial);}
    }
    else if(Skill==BossSkill.OmniFire&&skillAge>=pulseAt)
    {
     pulseAt+=.24f;Vector3 source=Owner.AimPoint+Vector3.up*.25f;
-    for(int i=0;i<24;i++){float angle=(i*15+skillAge*12)*Mathf.Deg2Rad;Bolt.Spawn(Owner,source,new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle)),23,5);}
+    for(int i=0;i<24;i++){float angle=(i*15+skillAge*12)*Mathf.Deg2Rad;Bolt.Spawn(Owner,source,new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle)),23,5,EnemyProjectileStyle.OmniRing);}
     // The coherent aimed stream keeps A-shield and cover meaningful at any azimuth.
-    Bolt.Spawn(Owner,source,G.player.Eye.position-source,32,7);G.sound.Play("rifle",source);
+    Bolt.Spawn(Owner,source,G.player.Eye.position-source,32,7,EnemyProjectileStyle.OmniAimed);G.sound.Play("rifle",source);
    }
    else if(Skill==BossSkill.SwapElbow&&skillTime<=0)
    {

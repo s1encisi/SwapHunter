@@ -1,0 +1,35 @@
+name: Source contracts
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Dependencies, links, GUIDs, nodes and configuration
+        run: python Tools/check_project_v06.py
+      - name: Negative fixtures for source contracts
+        run: python Tools/test_check_project_v06.py
+      - name: Build identity contracts with inert fixtures
+        shell: pwsh
+        run: ./Tools/Test-BuildSupport-v06.ps1
+      - name: Parse PowerShell scripts without executing them
+        shell: pwsh
+        run: |
+          $failures = @()
+          Get-ChildItem Tools/*v06.ps1 | ForEach-Object {
+            $tokens = $null; $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            $failures += $errors
+          }
+          if ($failures.Count) { $failures | Format-List; throw 'PowerShell parse failure' }

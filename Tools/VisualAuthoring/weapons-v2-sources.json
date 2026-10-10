@@ -1,0 +1,342 @@
+{
+  "obtainedUtc": "2026-10-10T02:49:51.715419+00:00",
+  "sources": [
+    {
+      "name": "Quaternius Ultimate Gun Pack",
+      "license": "CC0-1.0",
+      "authorPage": "https://opengameart.org/content/low-poly-guns-pack",
+      "archiveUrl": "https://opengameart.org/sites/default/files/ultimate_gun_pack_by_quaternius.zip",
+      "archiveSha256": "6bbae4cd42a520bd2ed95881394293e90804a63abdaf121e3b55fa08b7311737",
+      "licenseBasis": "Author publication page; OGA archive does not include a separate license text"
+    },
+    {
+      "name": "Kenney Blaster Kit 2.1",
+      "license": "CC0-1.0",
+      "authorPage": "https://kenney.nl/assets/blaster-kit",
+      "archiveUrl": "https://kenney.nl/media/pages/assets/blaster-kit/261d80a716-1753959510/kenney_blaster-kit_2.1.zip",
+      "archiveSha256": "91e3093e95427d59625e7e2ce2d0399b861600160fd0b4ada7714796b67cea8c",
+      "licenseBasis": "Unmodified archive License.txt"
+    }
+  ],
+  "files": [
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/AssaultRifle_1.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/AssaultRifle_1.blend",
+      "bytes": 576376,
+      "sha256": "f2ba5fc57776661d237734959c7972f3b5962ed698de6a2af6e6c172048d4e69"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Shotgun_2.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/Shotgun_2.blend",
+      "bytes": 553832,
+      "sha256": "77302549dff954324c14f6139cea29ed1086a159c4dd5f07f5bf50d089387578"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Bullpup_2.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/Bullpup_2.blend",
+      "bytes": 616340,
+      "sha256": "60a0aaa523990480e68084e529ffbc6111a7e6585e26fc792a4430c315008c57"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/AssaultRifle2_3.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/AssaultRifle2_3.blend",
+      "bytes": 649452,
+      "sha256": "2d87b84fa7773d5c521782c9850563717d1f2f8260595e1bf21aa7daf0ba5af9"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/SubmachineGun_1.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/SubmachineGun_1.blend",
+      "bytes": 564696,
+      "sha256": "b0547980843ac1d5e68790029ddfd34cba85bc66c88b9005fa7397d6354f0185"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Shotgun_SawedOff.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/Shotgun_SawedOff.blend",
+      "bytes": 563476,
+      "sha256": "858c40a5199d21d1f883dc5229cecf52229250c40e95d779f9d49c4925362b93"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/SniperRifle_2.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/SniperRifle_2.blend",
+      "bytes": 597284,
+      "sha256": "d6d150f129ed77b1dfbdd164fc1ac81606009b7416f65eb64a9aab1b671f951e"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/SniperRifle_5.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/SniperRifle_5.blend",
+      "bytes": 601380,
+      "sha256": "434a5dda7f0ee2ec53e5d71e5fc429ec6c1c3f21f3c7a1d9b1b59de48344ba41"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/AssaultRifle2_4.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/AssaultRifle2_4.blend",
+      "bytes": 623724,
+      "sha256": "663b22d08b94f7249b805613a83e6552d2968b120741767e8e8586c57913f147"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Accessories/Bayonet.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/Accessories/Bayonet.blend",
+      "bytes": 526496,
+      "sha256": "b74cdc09ec0c8b5cc0c78fb187c3dfa2d43b32986446755a6a806d26ef0be7a4"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Accessories/Bipod.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/Accessories/Bipod.blend",
+      "bytes": 523928,
+      "sha256": "8e6df0d2560ae724b98d10e4c6eca9c939e83c15f571fdb591eb4686849dae18"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Accessories/Scope_2.blend",
+      "sourceMember": "Ultimate Gun Pack - July 2019/Blends/Accessories/Scope_2.blend",
+      "bytes": 529992,
+      "sha256": "057aa22f4d51bed19083096dea2a08984cf578527511dc17e07f05f64ca9c96d"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-a.glb",
+      "sourceMember": "Models/GLB format/blaster-a.glb",
+      "bytes": 44992,
+      "sha256": "d6d6fe0ec5baf21d7717449220799d45b95d2d663ace7b22612b255dc1a8b308"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-b.glb",
+      "sourceMember": "Models/GLB format/blaster-b.glb",
+      "bytes": 34380,
+      "sha256": "7df4457ed864bc0714fc33059ac56d198304092093b1e78dc407b6c829945a4f"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-c.glb",
+      "sourceMember": "Models/GLB format/blaster-c.glb",
+      "bytes": 36232,
+      "sha256": "1c4c53f201597b2845c3d71717e0c465af1c21d8f8c30c0e1b4358dc33133d35"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-d.glb",
+      "sourceMember": "Models/GLB format/blaster-d.glb",
+      "bytes": 45072,
+      "sha256": "c05bf6af6cded1bc76e32e455507f5d1a21cd58503ce66de33ca39e597b28280"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-e.glb",
+      "sourceMember": "Models/GLB format/blaster-e.glb",
+      "bytes": 75444,
+      "sha256": "df3e35c9286d7bfe8bde2ff7231ef40ff89b1e7caa52fbf80ea685cb601de3ca"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-f.glb",
+      "sourceMember": "Models/GLB format/blaster-f.glb",
+      "bytes": 72460,
+      "sha256": "ea389c88b7d90ede2763e1f2b5834b9fbaaaa56b8a51ebdf21f61ec46d716320"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-g.glb",
+      "sourceMember": "Models/GLB format/blaster-g.glb",
+      "bytes": 56240,
+      "sha256": "1798d7ff656116d04df516dffceceea3be174598a384a48d632b0ef1adf204cd"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-h.glb",
+      "sourceMember": "Models/GLB format/blaster-h.glb",
+      "bytes": 28380,
+      "sha256": "f124a4ffd990a248e801aa451ab7ec4abde71a18c121b571f9bb52206609b36b"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-i.glb",
+      "sourceMember": "Models/GLB format/blaster-i.glb",
+      "bytes": 38604,
+      "sha256": "d78880a941fed7785df22c5846f553b7b7560a7b9f307d2993892b0103f7d514"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-j.glb",
+      "sourceMember": "Models/GLB format/blaster-j.glb",
+      "bytes": 50632,
+      "sha256": "d0d077820b8b840e0f41947dcb4d05960d94ede7431ae3c5e137847771a2f6a1"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-k.glb",
+      "sourceMember": "Models/GLB format/blaster-k.glb",
+      "bytes": 35676,
+      "sha256": "f8df17fe6377c6cff52c8ce59d10a5a182f5ba7de4ff291843f3238698471036"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-l.glb",
+      "sourceMember": "Models/GLB format/blaster-l.glb",
+      "bytes": 41848,
+      "sha256": "2739ae04bcb1e396b599cbf4af774df73b7708512bde2a054b2918d1161f16df"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-m.glb",
+      "sourceMember": "Models/GLB format/blaster-m.glb",
+      "bytes": 41532,
+      "sha256": "ff3f1196f2e9acabbdc44143dc3b93f79f4c5e8176e54514479bd2b788477c80"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-n.glb",
+      "sourceMember": "Models/GLB format/blaster-n.glb",
+      "bytes": 38376,
+      "sha256": "e3faa048f8a90fe57fe838a7f86609bd91815358a1ac3a8dd26432f8010590f6"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-o.glb",
+      "sourceMember": "Models/GLB format/blaster-o.glb",
+      "bytes": 59396,
+      "sha256": "52da12866542e6d9948af535e8070f5cc924783ffefa32222762ee17e2bb7e98"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-p.glb",
+      "sourceMember": "Models/GLB format/blaster-p.glb",
+      "bytes": 80460,
+      "sha256": "2ffc94c6d8f12d45410012b13169988b70929c7e6ae7d4f868a188265210e49a"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-q.glb",
+      "sourceMember": "Models/GLB format/blaster-q.glb",
+      "bytes": 55856,
+      "sha256": "e2062bf76cf9ea7690acbb5ae18c9d92be5f7623ec3a2f4b363eb926d1017522"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-r.glb",
+      "sourceMember": "Models/GLB format/blaster-r.glb",
+      "bytes": 48920,
+      "sha256": "ab0b5f51ecff405238727626d558414750a9946d5e255cd1dc8bf81eebe1f1e2"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam-thick.glb",
+      "sourceMember": "Models/GLB format/bullet-foam-thick.glb",
+      "bytes": 4124,
+      "sha256": "ac12699af02e969be9860794d20f1750505273128864a27bff9393d7d6d3786f"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam-tip-thick.glb",
+      "sourceMember": "Models/GLB format/bullet-foam-tip-thick.glb",
+      "bytes": 5756,
+      "sha256": "27cedf72c41ff00ca1034eca4fb71b9d6e096f538f86f1f0221f9aa4350b6b58"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam-tip.glb",
+      "sourceMember": "Models/GLB format/bullet-foam-tip.glb",
+      "bytes": 5744,
+      "sha256": "e3f99099d6ec946f053c23cba0f83f6d5b674f217e4f46325659f4dfa6747d3a"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam.glb",
+      "sourceMember": "Models/GLB format/bullet-foam.glb",
+      "bytes": 4112,
+      "sha256": "af03c14f053f64c9d351643ec3d5d0a05210e1234fcd2534f7dac3deab7fa515"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/clip-large.glb",
+      "sourceMember": "Models/GLB format/clip-large.glb",
+      "bytes": 7808,
+      "sha256": "47dff38cf9636abf15cf518324f1612d9409e6b1066d99da249047219e41379e"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/clip-small.glb",
+      "sourceMember": "Models/GLB format/clip-small.glb",
+      "bytes": 7808,
+      "sha256": "3501c4c2a1671379643219fc1ea581c9162da0986363cf0f7b1a214c647b5c37"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/crate-medium.glb",
+      "sourceMember": "Models/GLB format/crate-medium.glb",
+      "bytes": 59344,
+      "sha256": "187c32592fedaecbbb84152102bbf536f733cbc0c2cfee60828fb18a4803619c"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/crate-small.glb",
+      "sourceMember": "Models/GLB format/crate-small.glb",
+      "bytes": 59020,
+      "sha256": "00ed47c02a5016c11ce5ea0bd54888d120f3a112c5eab79dc4bd4ab878ceb805"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/crate-wide.glb",
+      "sourceMember": "Models/GLB format/crate-wide.glb",
+      "bytes": 59404,
+      "sha256": "0a17a51b274d238c09ade21674b70742bd5f1703f7b0e8974b6d0b2b92a58c8b"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/grenade-a.glb",
+      "sourceMember": "Models/GLB format/grenade-a.glb",
+      "bytes": 19280,
+      "sha256": "8b67f9500005efee816f3fe72eb00bcded0282f7a9916f4436bf923877d8a89f"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/grenade-b.glb",
+      "sourceMember": "Models/GLB format/grenade-b.glb",
+      "bytes": 16216,
+      "sha256": "d36dfabf6c8b5d40ffead1d421934b4aae126f0e55a500d78f1b7d3ddaa4c7cc"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/scope-large-a.glb",
+      "sourceMember": "Models/GLB format/scope-large-a.glb",
+      "bytes": 19476,
+      "sha256": "bf83b1cff0bc56b9a11f2956c8c8eb23ef66624dd357e8f3eeb63d0481323928"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/scope-large-b.glb",
+      "sourceMember": "Models/GLB format/scope-large-b.glb",
+      "bytes": 21932,
+      "sha256": "0d612ce9f4d5c4bc196df8eadd38e875d80d42021a2af14ef0c18826a023dc8f"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/scope-small.glb",
+      "sourceMember": "Models/GLB format/scope-small.glb",
+      "bytes": 19480,
+      "sha256": "e7fed68bd5477b214e5af2c29aca55481bffa9b0fd9db5be4cfb1c2bf3a52a65"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/silencer-larger.glb",
+      "sourceMember": "Models/GLB format/silencer-larger.glb",
+      "bytes": 11412,
+      "sha256": "21532245b41bd9e5fa1b3768d1880a80b948b5dc2755b8a63d4216931d8a1689"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/silencer-small.glb",
+      "sourceMember": "Models/GLB format/silencer-small.glb",
+      "bytes": 8960,
+      "sha256": "ebfc350c024eda0e8a26f79bccea4d7a12fba792d008496739f5a693dbbf15db"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/smoke.glb",
+      "sourceMember": "Models/GLB format/smoke.glb",
+      "bytes": 12520,
+      "sha256": "6dbf3e971ce419dbbcdee5fccfaa0c059a0333058484cc0949f490d0e21a8b86"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-detail.glb",
+      "sourceMember": "Models/GLB format/target-detail.glb",
+      "bytes": 15168,
+      "sha256": "639c45fbdde41d9e8c6bc3d11fa23afe622225728a389215f7fa8fd5d858f88f"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-fragment-large.glb",
+      "sourceMember": "Models/GLB format/target-fragment-large.glb",
+      "bytes": 4600,
+      "sha256": "e6292ccc645c678b40863eeb5d17e19c7d8831f06eec7cc5b87898daec5227ea"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-fragment-small.glb",
+      "sourceMember": "Models/GLB format/target-fragment-small.glb",
+      "bytes": 2996,
+      "sha256": "7bf18ac45f838c27956b8f32163a72914b1514fa4f593c38d17478a1631a9118"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-large.glb",
+      "sourceMember": "Models/GLB format/target-large.glb",
+      "bytes": 7568,
+      "sha256": "e55c0b3652823909268ffeda38f08f53e900ea259ff5834a3e35e386a9220e88"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-small.glb",
+      "sourceMember": "Models/GLB format/target-small.glb",
+      "bytes": 7592,
+      "sha256": "6f2e8fe26b13c8fdeecaab2c4a3309ec3243e17ce4a22c40951b14e0c14833dc"
+    },
+    {
+      "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/Textures/colormap.png",
+      "sourceMember": "Models/GLB format/Textures/colormap.png",
+      "bytes": 10223,
+      "sha256": "4d0867c3c3c8c539106f91fbc0987d0e1b7d2811362d1daed593169c7d3b0fdc"
+    }
+  ],
+  "notes": "New upstream source assets. No archive script executed. Drive quota was respected; Quaternius source obtained through the author's OGA publication."
+}

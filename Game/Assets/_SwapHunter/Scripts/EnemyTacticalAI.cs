@@ -29,6 +29,8 @@ namespace SwapHunter
   bool Move(Vector3 p,float stop=.15f)
   {
    if(!owner.agent.enabled||!owner.agent.isOnNavMesh)return false;
+   var territory=owner.GetComponent<MissionEncounterAgent>();
+   if(territory&&!territory.Allows(p)){Stop();return false;}
    owner.agent.stoppingDistance=stop;owner.agent.isStopped=false;
    if(Time.time>=rethink){owner.agent.SetDestination(p);rethink=Time.time+.35f;}
    return Vector3.ProjectOnPlane(transform.position-p,Vector3.up).magnitude<stop+.22f;
@@ -38,7 +40,10 @@ namespace SwapHunter
   bool Reachable(Vector3 requested,out Vector3 point)
   {
    point=requested;if(!NavMesh.SamplePosition(requested,out var hit,.6f,NavMesh.AllAreas)||Mathf.Abs(hit.position.y-requested.y)>.5f)return false;
-   point=hit.position;if(!EnemyMotion.ClearVolume(point,owner.Radius,owner.Height,transform))return false;
+   point=hit.position;
+   var territory=owner.GetComponent<MissionEncounterAgent>();
+   if(territory&&!territory.Allows(point))return false;
+   if(!EnemyMotion.ClearVolume(point,owner.Radius,owner.Height,transform))return false;
    var path=new NavMeshPath();return NavMesh.CalculatePath(transform.position,point,NavMesh.AllAreas,path)&&path.status==NavMeshPathStatus.PathComplete;
   }
   bool SelectCover()

@@ -14,7 +14,7 @@ namespace SwapHunter
         [Serializable] public sealed class Check { public string name; public bool passed; public string detail; }
         [Serializable] public sealed class Report
         {
-            public string version = Application.version, kind = "Scripted native-player integration checks; not a human playtest";
+            public string version, kind = "Scripted native-player integration checks; not a human playtest";
             public string graphicsDevice, graphicsApi;
             public int width, height;
             public List<Check> checks = new List<Check>();
@@ -26,7 +26,7 @@ namespace SwapHunter
         int originalCheckpoint; GameOptions originalOptions;
         DemoGame G => DemoGame.I;
         PlayerMotor P => G.player;
-        void Awake() { started = Time.realtimeSinceStartup; Application.logMessageReceived += LogError; }
+        void Awake() { report.version = Application.version;  started = Time.realtimeSinceStartup; Application.logMessageReceived += LogError; }
         void Update() { if (!finished && Time.realtimeSinceStartup - started > 180) { CheckThat("watchdog", false, "Integration run exceeded 180 seconds"); Finish(); } }
         void LogError(string message, string stack, LogType type)
         {
@@ -74,7 +74,7 @@ namespace SwapHunter
             P.ammo[0] = 20; int oldReserve = P.reserve[0]; CheckThat("reload_start", P.Reload(), "Partial magazine starts reload");
             yield return new WaitForSeconds(.2f); CheckThat("reload_no_early_ammo", P.ammo[0] == 20 && P.reserve[0] == oldReserve, "Ammo committed at completion");
             P.cooldown = 0; Vector3 oldPlayer = P.transform.position, oldTarget = target.transform.position; float yaw = P.yaw, enemyYaw = target.transform.eulerAngles.y, hp = P.health;
-            string reason = P.ValidateSwap(target); CheckThat("swap_available", reason == "可换位", reason);
+            var reason = P.ValidateSwap(target); CheckThat("swap_available", reason.IsValid, reason.ToString());
             P.RequestSwap(target); yield return new WaitForSeconds(.18f);
             CheckThat("swap_exchange", Near(P.transform.position, oldTarget) && Near(target.transform.position, oldPlayer), "Both feet positions exchanged");
             CheckThat("swap_state_preserved", P.health == hp && P.ammo[0] == 20 && P.reloadLeft > 0 && Mathf.Abs(Mathf.DeltaAngle(P.yaw, yaw)) < .1f && Mathf.Abs(Mathf.DeltaAngle(target.transform.eulerAngles.y, enemyYaw)) < .1f, "Health, magazine, reload and headings preserved");
@@ -84,28 +84,28 @@ namespace SwapHunter
             P.ammo[0] = 10; oldReserve = P.reserve[0]; P.Reload(); yield return new WaitForSeconds(.2f); P.SwitchWeapon(1);
             CheckThat("switch_cancels_reload_without_ammo", P.reloadLeft == 0 && P.ammo[0] == 10 && P.reserve[0] == oldReserve, "No free ammunition"); P.SwitchWeapon(0);
             P.cooldown = 0; P.SetFeet(new Vector3(0, .03f, 36));
-            CheckThat("swap_range_rejection", P.ValidateSwap(target).Contains("22") && !P.RequestSwap(target) && P.cooldown == 0, P.ValidateSwap(target));
+            CheckThat("swap_range_rejection", P.ValidateSwap(target).Code == SwapFailureReason.OutOfRange && !P.RequestSwap(target) && P.cooldown == 0, P.ValidateSwap(target).ToString());
             P.SetFeet(new Vector3(0, 3, 8)); P.verticalSpeed = 0;
-            CheckThat("swap_airborne_available", P.ValidateSwap(target) == "可换位", P.ValidateSwap(target));
+            CheckThat("swap_airborne_available", P.ValidateSwap(target).IsValid, P.ValidateSwap(target).ToString());
             P.SetFeet(new Vector3(0, .03f, 8)); target.MoveTo(new Vector3(0, 0, 13)); P.verticalSpeed = 0; Aim(target.AimPoint); yield return new WaitForSeconds(.2f);
             GameObject wall = Fixture(new Vector3(0, 1.5f, 10.5f), new Vector3(2, 3, .3f));
-            CheckThat("swap_wall_rejection", P.ValidateSwap(target) == "视线被挡" && !P.RequestSwap(target) && P.cooldown == 0, P.ValidateSwap(target)); RemoveFixture(wall); yield return null;
+            CheckThat("swap_wall_rejection", P.ValidateSwap(target).Code == SwapFailureReason.LineOfSightBlocked && !P.RequestSwap(target) && P.cooldown == 0, P.ValidateSwap(target).ToString()); RemoveFixture(wall); yield return null;
             GameObject ceiling = Fixture(target.transform.position + Vector3.up * 2, new Vector3(2, .6f, 2));
-            CheckThat("swap_occupied_destination", P.ValidateSwap(target) == "落点受阻" && !P.RequestSwap(target), P.ValidateSwap(target)); RemoveFixture(ceiling); yield return null;
+            CheckThat("swap_occupied_destination", P.ValidateSwap(target).Code == SwapFailureReason.DestinationBlocked && !P.RequestSwap(target), P.ValidateSwap(target).ToString()); RemoveFixture(ceiling); yield return null;
             P.SetFeet(new Vector3(3, .03f, 5)); EnemyActor large = EnemyActor.Spawn(EnemyKind.Elite, new Vector3(3, 0, 16), 0); large.suppressAI = true;
             ceiling = Fixture(P.transform.position + Vector3.up * 2.1f, new Vector3(2, .28f, 2));
-            CheckThat("swap_checks_both_body_sizes", P.ValidateSwap(large) == "落点受阻", P.ValidateSwap(large)); RemoveFixture(ceiling); large.gameObject.SetActive(false); Destroy(large.gameObject); yield return null;
+            CheckThat("swap_checks_both_body_sizes", P.ValidateSwap(large).Code == SwapFailureReason.DestinationBlocked, P.ValidateSwap(large).ToString()); RemoveFixture(ceiling); large.gameObject.SetActive(false); Destroy(large.gameObject); yield return null;
             P.SetFeet(new Vector3(0, .03f, 8)); P.cooldown = 0; oldPlayer = P.transform.position;
             P.RequestSwap(target); target.Damage(1000); yield return new WaitForSeconds(.2f);
             CheckThat("swap_target_dies_during_windup", Near(P.transform.position, oldPlayer) && P.cooldown == 0 && !P.preparing, "No one-sided teleport or cooldown");
             G.EnterStage(1, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f);
             var entrySniper = G.enemies.Find(e => e.kind == EnemyKind.Sniper); Aim(entrySniper.AimPoint); yield return null;
-            CheckThat("high_ground_readable_from_entry", P.FindTarget() == entrySniper && P.ValidateSwap(entrySniper) == "可换位", P.ValidateSwap(entrySniper));
+            CheckThat("high_ground_readable_from_entry", P.FindTarget() == entrySniper && P.ValidateSwap(entrySniper).IsValid, P.ValidateSwap(entrySniper).ToString());
             target = G.enemies.Find(e => e.kind == EnemyKind.Sniper); P.SetFeet(new Vector3(4, .03f, 35)); Aim(target.AimPoint); yield return new WaitForSeconds(.2f);
             Route("cargo_stair_route", new Vector3(0, 0, 32), new Vector3(10, 4, 55));
             Route("warehouse_stair_route", new Vector3(0, 0, 76), new Vector3(-11, 4, 100));
             Route("tower_high_route", new Vector3(0, 0, 120), new Vector3(-12, 7, 149));
-            reason = P.ValidateSwap(target); CheckThat("high_platform_swap_available", reason == "可换位", reason);
+            reason = P.ValidateSwap(target); CheckThat("high_platform_swap_available", reason.IsValid, reason.ToString());
             oldTarget = target.transform.position; oldPlayer = P.transform.position; enemyYaw = target.transform.eulerAngles.y;
             P.RequestSwap(target); yield return new WaitForSeconds(.2f);
             CheckThat("high_platform_exchange", Near(P.transform.position, oldTarget) && Near(target.transform.position, oldPlayer), P.transform.position.ToString());
@@ -120,11 +120,11 @@ namespace SwapHunter
             target = G.enemies.Find(e => e.kind == EnemyKind.Shield && Vector3.Distance(e.transform.position,new Vector3(2,0,85))<3); P.SetFeet(new Vector3(2, .03f, 81)); Aim(target.AimPoint); yield return new WaitForSeconds(.3f);
             initialEnemyHealth = target.health; bool shieldShot = P.Fire(); yield return new WaitForSeconds(.2f);
             CheckThat("shield_blocks_front_bullet", shieldShot && target.health == initialEnemyHealth, "Shield health=" + target.health + "; fired=" + shieldShot);
-            CheckThat("shield_is_swappable", P.FindTarget() == target && P.ValidateSwap(target) == "可换位", P.ValidateSwap(target));
+            CheckThat("shield_is_swappable", P.FindTarget() == target && P.ValidateSwap(target).IsValid, P.ValidateSwap(target).ToString());
             var shield = target.GetComponentInChildren<BoxCollider>();
             Vector3 shieldAtDestination = shield.transform.TransformPoint(shield.center) + P.transform.position - target.transform.position;
             var shieldBlock = Fixture(shieldAtDestination, new Vector3(.8f, .8f, .1f));
-            CheckThat("shield_shape_destination_rejection", P.ValidateSwap(target) == "落点受阻", P.ValidateSwap(target)); RemoveFixture(shieldBlock); yield return null;
+            CheckThat("shield_shape_destination_rejection", P.ValidateSwap(target).Code == SwapFailureReason.DestinationBlocked, P.ValidateSwap(target).ToString()); RemoveFixture(shieldBlock); yield return null;
             oldTarget = target.transform.position; P.RequestSwap(target); yield return new WaitForSeconds(.2f);
             CheckThat("shield_exchange", Near(P.transform.position, oldTarget), P.transform.position.ToString()); yield return Capture("04-transfer-hall");
             G.EnterStage(1, true); yield return WaitDeployments(); yield return new WaitForSeconds(.4f); P.SetFeet(new Vector3(0, .03f, 35));
@@ -207,7 +207,7 @@ namespace SwapHunter
                 yield return Capture("shield-back-" + kind);
                 P.SetFeet(new Vector3(3, .03f, 12)); Aim(foe.AimPoint); yield return new WaitForSeconds(.5f);
                 P.Fire(); P.cooldown = 0; yield return new WaitForSeconds(.05f);
-                CheckThat("shield_swap_clears_block_" + kind, P.RequestSwap(foe), P.ValidateSwap(foe));
+                CheckThat("shield_swap_clears_block_" + kind, P.RequestSwap(foe), P.ValidateSwap(foe).ToString());
                 yield return new WaitForSeconds(.18f);
                 CheckThat("shield_swap_block_hint_reset_" + kind, P.blockFlash == 0, "Previous block message does not follow successful swap");
                 Aim(foe.AimPoint); before = foe.health; fired = P.Fire(); yield return null;

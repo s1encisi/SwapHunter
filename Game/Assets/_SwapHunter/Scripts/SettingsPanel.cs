@@ -76,7 +76,15 @@ namespace SwapHunter
         public void ApplyDraft()
         {
             if (settingsDraft == null) return;
-            options = settingsDraft.Clone(); options.Validate(); SyncLegacyBindings(); SaveSettings(); ApplySettings(true);
+            var previous = options;
+            options = settingsDraft.Clone(); options.Validate(); SyncLegacyBindings();
+            if (!SaveSettings())
+            {
+                options = previous; SyncLegacyBindings();
+                settingsNotice = SettingsStore.LastWarning;
+                return;
+            }
+            ApplySettings(true);
             settingsDraft = options.Clone(); numberFields.Clear(); settingsNotice = "设置已应用并保存。";
         }
         void DrawSettingsV2()

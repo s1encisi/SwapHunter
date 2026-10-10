@@ -1,0 +1,501 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "name": "Quaternius Ultimate Guns — final weapon visuals",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/low-poly-guns-pack",
+      "archiveUrl": "https://opengameart.org/sites/default/files/ultimate_gun_pack_by_quaternius.zip",
+      "archiveSha256": "6bbae4cd42a520bd2ed95881394293e90804a63abdaf121e3b55fa08b7311737",
+      "paths": [
+        "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_00.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_01.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_02.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_03.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_04.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_05.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_06.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_07.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_08.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/phase_blade.glb",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_00.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_01.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_02.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_03.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_04.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_05.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_06.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_07.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_08.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/phase_blade.blend"
+      ],
+      "licenseFiles": [
+        "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/License.txt"
+      ],
+      "licenseBasis": "Author publication page; OGA archive does not include a separate license text",
+      "allowSource": true,
+      "allowPlayer": true,
+      "usedFor": "New weapon IDs 0..8 and phase blade (nine distinct gun bases plus Bayonet)",
+      "modifications": "Unit/axis normalization; real source mesh islands split into movable mechanisms; static groups merged. New project-authored ammunition/action handles/LMG feed/bipod/sight geometry. Upstream base colours retained; optical glass alpha adapted for FPS.",
+      "verification": "Original source bytes retained. Native white-material issue traced to legacy shader graphs; original flat RGB/PBR restored from Blend nodes with GLB BIN/non-material JSON unchanged. New runtime pose/direction fixes await root's next native verification.",
+      "files": [
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/AssaultRifle2_3.blend",
+          "sha256": "2d87b84fa7773d5c521782c9850563717d1f2f8260595e1bf21aa7daf0ba5af9",
+          "bytes": 649452
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/AssaultRifle2_4.blend",
+          "sha256": "663b22d08b94f7249b805613a83e6552d2968b120741767e8e8586c57913f147",
+          "bytes": 623724
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/AssaultRifle_1.blend",
+          "sha256": "f2ba5fc57776661d237734959c7972f3b5962ed698de6a2af6e6c172048d4e69",
+          "bytes": 576376
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Bullpup_2.blend",
+          "sha256": "60a0aaa523990480e68084e529ffbc6111a7e6585e26fc792a4430c315008c57",
+          "bytes": 616340
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/License.txt",
+          "sha256": "b6760c584802097410c83388404a03a89571f72249ca7b17648ff5661bb92edd",
+          "bytes": 582
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Shotgun_2.blend",
+          "sha256": "77302549dff954324c14f6139cea29ed1086a159c4dd5f07f5bf50d089387578",
+          "bytes": 553832
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Shotgun_SawedOff.blend",
+          "sha256": "858c40a5199d21d1f883dc5229cecf52229250c40e95d779f9d49c4925362b93",
+          "bytes": 563476
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/SniperRifle_2.blend",
+          "sha256": "d6d150f129ed77b1dfbdd164fc1ac81606009b7416f65eb64a9aab1b671f951e",
+          "bytes": 597284
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/SniperRifle_5.blend",
+          "sha256": "434a5dda7f0ee2ec53e5d71e5fc429ec6c1c3f21f3c7a1d9b1b59de48344ba41",
+          "bytes": 601380
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/SubmachineGun_1.blend",
+          "sha256": "b0547980843ac1d5e68790029ddfd34cba85bc66c88b9005fa7397d6354f0185",
+          "bytes": 564696
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Accessories/Bayonet.blend",
+          "sha256": "b74cdc09ec0c8b5cc0c78fb187c3dfa2d43b32986446755a6a806d26ef0be7a4",
+          "bytes": 526496
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Accessories/Bipod.blend",
+          "sha256": "8e6df0d2560ae724b98d10e4c6eca9c939e83c15f571fdb591eb4686849dae18",
+          "bytes": 523928
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/Accessories/Scope_2.blend",
+          "sha256": "057aa22f4d51bed19083096dea2a08984cf578527511dc17e07f05f64ca9c96d",
+          "bytes": 529992
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_00.glb",
+          "sha256": "6ee88932d4530854a9cdeb64b1c19de4fe004b094853967f2c1ca73aaf8a09a2",
+          "bytes": 71096
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_01.glb",
+          "sha256": "1a96c903f293faef7b3b1c301d5ec93deaa2f19bdbf63b6ab798103257341466",
+          "bytes": 55244
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_02.glb",
+          "sha256": "9b8a938fd252dff86494b2522e876fb13b2d7aab4220abb268796030766e1435",
+          "bytes": 134468
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_03.glb",
+          "sha256": "36327b65b97dd4ade65535834612af016e99e36616ac7d7c23b13564131b5daf",
+          "bytes": 112576
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_04.glb",
+          "sha256": "0fe4f8ca520a772fc1b3f83c984ebe544d0657cc349b757eecfa84dcba1f540d",
+          "bytes": 65144
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_05.glb",
+          "sha256": "205e09867a7496042786c03160e2270e9e373a04c80e8909f42909d4be139a68",
+          "bytes": 66620
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_06.glb",
+          "sha256": "34983dacc065e721b48e59551a9631c2c9510e635c70708ead880b4061a424f5",
+          "bytes": 96148
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_07.glb",
+          "sha256": "be145299dd45254b80c366e4714b260345df7666ac9390de0cfb1136834dcfbf",
+          "bytes": 104208
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_08.glb",
+          "sha256": "53c639fdd3476ecab0d1975b6982c7a57cc21f0647433190715996a20d49d2b2",
+          "bytes": 114648
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/phase_blade.glb",
+          "sha256": "053a9434b288c24e3702305ded538a0f0f70d5fcb1a25c9ca1916ac7f7a444ff",
+          "bytes": 15472
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_00.blend",
+          "sha256": "201dca829d20b34a4ef939360d25fc84f378037673c1d8b6aa5c245e49c75310",
+          "bytes": 124028
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_01.blend",
+          "sha256": "1099e06bd383680efa154c85bb48cf8f739f649e0c29f827a090c324b4294ad3",
+          "bytes": 119701
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_02.blend",
+          "sha256": "087f43f8c9807d2e60a453fca126f99afe49820b9dba11c513f87674fae44256",
+          "bytes": 132147
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_03.blend",
+          "sha256": "5eb36383ce5fefcec1709de77800d6cb5a6ab7ca7fb36ff691d41bd94b47fb6e",
+          "bytes": 135604
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_04.blend",
+          "sha256": "f3b52505ef9d01bb34e43b1fb4e07e5692178522eb291163e1ff2b4e43a772b4",
+          "bytes": 117755
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_05.blend",
+          "sha256": "1518e7aa7996435bd40652334cff80e189c5d1ea9b0a0818ce77ad6e400da436",
+          "bytes": 122669
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_06.blend",
+          "sha256": "d3df167b3935b312f9f93d5cd7565ca7212454674bd350b40737d40174f2e664",
+          "bytes": 130932
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_07.blend",
+          "sha256": "2301a7f475e4235c0b0323f5f83be7ea040470cc6933c6ac4f94076fe932bcfd",
+          "bytes": 134246
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_08.blend",
+          "sha256": "eb58aae775c16da978f2e8b7b35a006297f376debe04ae7ee7cda74da8ac9197",
+          "bytes": 132626
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/phase_blade.blend",
+          "sha256": "7767176b157c038b171778ec7a4bbaa6dd5569ce3bd9c456abf602d949644f85",
+          "bytes": 103704
+        }
+      ],
+      "licenseDigests": [
+        {
+          "path": "Tools/VisualAuthoring/Sources/QuaterniusUltimateGuns/License.txt",
+          "sha256": "b6760c584802097410c83388404a03a89571f72249ca7b17648ff5661bb92edd",
+          "bytes": 582
+        }
+      ],
+      "materialProof": "Tools/VisualAuthoring/weapons-v2-material-report.json"
+    },
+    {
+      "name": "Kenney Blaster Kit 2.1 — final weapon visuals",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://kenney.nl/assets/blaster-kit",
+      "archiveUrl": "https://kenney.nl/media/pages/assets/blaster-kit/261d80a716-1753959510/kenney_blaster-kit_2.1.zip",
+      "archiveSha256": "91e3093e95427d59625e7e2ce2d0399b861600160fd0b4ada7714796b67cea8c",
+      "paths": [
+        "Tools/VisualAuthoring/Sources/KenneyBlasterKit",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_09.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_10.glb",
+        "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_11.glb",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_09.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_10.blend",
+        "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_11.blend"
+      ],
+      "licenseFiles": [
+        "Tools/VisualAuthoring/Sources/KenneyBlasterKit/License.txt"
+      ],
+      "licenseBasis": "Unmodified archive License.txt",
+      "allowSource": true,
+      "allowPlayer": true,
+      "usedFor": "New weapon IDs 9..11 using blaster-m/g/r; extra source kit parts retained as originals",
+      "modifications": "Original colormap included; three distinct new bodies adapted with project-authored grenade rounds, energy cells/coils and phase emitter; texture preserved and embedded in derivatives.",
+      "verification": "Original archive and selected source hashes recorded. Corrected static Blender exports completed; Unity/native validation is root-owned and not claimed by this record.",
+      "files": [
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-a.glb",
+          "sha256": "d6d6fe0ec5baf21d7717449220799d45b95d2d663ace7b22612b255dc1a8b308",
+          "bytes": 44992
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-b.glb",
+          "sha256": "7df4457ed864bc0714fc33059ac56d198304092093b1e78dc407b6c829945a4f",
+          "bytes": 34380
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-c.glb",
+          "sha256": "1c4c53f201597b2845c3d71717e0c465af1c21d8f8c30c0e1b4358dc33133d35",
+          "bytes": 36232
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-d.glb",
+          "sha256": "c05bf6af6cded1bc76e32e455507f5d1a21cd58503ce66de33ca39e597b28280",
+          "bytes": 45072
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-e.glb",
+          "sha256": "df3e35c9286d7bfe8bde2ff7231ef40ff89b1e7caa52fbf80ea685cb601de3ca",
+          "bytes": 75444
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-f.glb",
+          "sha256": "ea389c88b7d90ede2763e1f2b5834b9fbaaaa56b8a51ebdf21f61ec46d716320",
+          "bytes": 72460
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-g.glb",
+          "sha256": "1798d7ff656116d04df516dffceceea3be174598a384a48d632b0ef1adf204cd",
+          "bytes": 56240
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-h.glb",
+          "sha256": "f124a4ffd990a248e801aa451ab7ec4abde71a18c121b571f9bb52206609b36b",
+          "bytes": 28380
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-i.glb",
+          "sha256": "d78880a941fed7785df22c5846f553b7b7560a7b9f307d2993892b0103f7d514",
+          "bytes": 38604
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-j.glb",
+          "sha256": "d0d077820b8b840e0f41947dcb4d05960d94ede7431ae3c5e137847771a2f6a1",
+          "bytes": 50632
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-k.glb",
+          "sha256": "f8df17fe6377c6cff52c8ce59d10a5a182f5ba7de4ff291843f3238698471036",
+          "bytes": 35676
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-l.glb",
+          "sha256": "2739ae04bcb1e396b599cbf4af774df73b7708512bde2a054b2918d1161f16df",
+          "bytes": 41848
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-m.glb",
+          "sha256": "ff3f1196f2e9acabbdc44143dc3b93f79f4c5e8176e54514479bd2b788477c80",
+          "bytes": 41532
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-n.glb",
+          "sha256": "e3faa048f8a90fe57fe838a7f86609bd91815358a1ac3a8dd26432f8010590f6",
+          "bytes": 38376
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-o.glb",
+          "sha256": "52da12866542e6d9948af535e8070f5cc924783ffefa32222762ee17e2bb7e98",
+          "bytes": 59396
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-p.glb",
+          "sha256": "2ffc94c6d8f12d45410012b13169988b70929c7e6ae7d4f868a188265210e49a",
+          "bytes": 80460
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-q.glb",
+          "sha256": "e2062bf76cf9ea7690acbb5ae18c9d92be5f7623ec3a2f4b363eb926d1017522",
+          "bytes": 55856
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/blaster-r.glb",
+          "sha256": "ab0b5f51ecff405238727626d558414750a9946d5e255cd1dc8bf81eebe1f1e2",
+          "bytes": 48920
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam-thick.glb",
+          "sha256": "ac12699af02e969be9860794d20f1750505273128864a27bff9393d7d6d3786f",
+          "bytes": 4124
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam-tip-thick.glb",
+          "sha256": "27cedf72c41ff00ca1034eca4fb71b9d6e096f538f86f1f0221f9aa4350b6b58",
+          "bytes": 5756
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam-tip.glb",
+          "sha256": "e3f99099d6ec946f053c23cba0f83f6d5b674f217e4f46325659f4dfa6747d3a",
+          "bytes": 5744
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/bullet-foam.glb",
+          "sha256": "af03c14f053f64c9d351643ec3d5d0a05210e1234fcd2534f7dac3deab7fa515",
+          "bytes": 4112
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/clip-large.glb",
+          "sha256": "47dff38cf9636abf15cf518324f1612d9409e6b1066d99da249047219e41379e",
+          "bytes": 7808
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/clip-small.glb",
+          "sha256": "3501c4c2a1671379643219fc1ea581c9162da0986363cf0f7b1a214c647b5c37",
+          "bytes": 7808
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/crate-medium.glb",
+          "sha256": "187c32592fedaecbbb84152102bbf536f733cbc0c2cfee60828fb18a4803619c",
+          "bytes": 59344
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/crate-small.glb",
+          "sha256": "00ed47c02a5016c11ce5ea0bd54888d120f3a112c5eab79dc4bd4ab878ceb805",
+          "bytes": 59020
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/crate-wide.glb",
+          "sha256": "0a17a51b274d238c09ade21674b70742bd5f1703f7b0e8974b6d0b2b92a58c8b",
+          "bytes": 59404
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/grenade-a.glb",
+          "sha256": "8b67f9500005efee816f3fe72eb00bcded0282f7a9916f4436bf923877d8a89f",
+          "bytes": 19280
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/grenade-b.glb",
+          "sha256": "d36dfabf6c8b5d40ffead1d421934b4aae126f0e55a500d78f1b7d3ddaa4c7cc",
+          "bytes": 16216
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/License.txt",
+          "sha256": "bece5f4d99cca9dcf86931221a69909862ff6cc95e1735462ee678516a1063e2",
+          "bytes": 700
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/scope-large-a.glb",
+          "sha256": "bf83b1cff0bc56b9a11f2956c8c8eb23ef66624dd357e8f3eeb63d0481323928",
+          "bytes": 19476
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/scope-large-b.glb",
+          "sha256": "0d612ce9f4d5c4bc196df8eadd38e875d80d42021a2af14ef0c18826a023dc8f",
+          "bytes": 21932
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/scope-small.glb",
+          "sha256": "e7fed68bd5477b214e5af2c29aca55481bffa9b0fd9db5be4cfb1c2bf3a52a65",
+          "bytes": 19480
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/silencer-larger.glb",
+          "sha256": "21532245b41bd9e5fa1b3768d1880a80b948b5dc2755b8a63d4216931d8a1689",
+          "bytes": 11412
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/silencer-small.glb",
+          "sha256": "ebfc350c024eda0e8a26f79bccea4d7a12fba792d008496739f5a693dbbf15db",
+          "bytes": 8960
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/smoke.glb",
+          "sha256": "6dbf3e971ce419dbbcdee5fccfaa0c059a0333058484cc0949f490d0e21a8b86",
+          "bytes": 12520
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-detail.glb",
+          "sha256": "639c45fbdde41d9e8c6bc3d11fa23afe622225728a389215f7fa8fd5d858f88f",
+          "bytes": 15168
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-fragment-large.glb",
+          "sha256": "e6292ccc645c678b40863eeb5d17e19c7d8831f06eec7cc5b87898daec5227ea",
+          "bytes": 4600
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-fragment-small.glb",
+          "sha256": "7bf18ac45f838c27956b8f32163a72914b1514fa4f593c38d17478a1631a9118",
+          "bytes": 2996
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-large.glb",
+          "sha256": "e55c0b3652823909268ffeda38f08f53e900ea259ff5834a3e35e386a9220e88",
+          "bytes": 7568
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/target-small.glb",
+          "sha256": "6f2e8fe26b13c8fdeecaab2c4a3309ec3243e17ce4a22c40951b14e0c14833dc",
+          "bytes": 7592
+        },
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/Textures/colormap.png",
+          "sha256": "4d0867c3c3c8c539106f91fbc0987d0e1b7d2811362d1daed593169c7d3b0fdc",
+          "bytes": 10223
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_09.glb",
+          "sha256": "836f15562ba2563f2ea91d56b5c53b258edd1f670bdcf47cbb539e62396da103",
+          "bytes": 62980
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_10.glb",
+          "sha256": "0a93eb1a189cda39966ed5eb2f8a5af379c2d61271f7a44330e43170e70ea614",
+          "bytes": 82476
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_11.glb",
+          "sha256": "325a04da6c6d1e6dc7d7f64fbc4c43a6a03ddce6be69a1185f1dfd49f30c6665",
+          "bytes": 55992
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_09.blend",
+          "sha256": "38ea20a7fa18bca037fde97898e74640455cf4e9e00649da4c55d5c05a8d78ee",
+          "bytes": 116879
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_10.blend",
+          "sha256": "dd9ff2c6af8711d6fadb46bfe6e8b14ee55409aa7127f48fa6c270ede38db271",
+          "bytes": 123240
+        },
+        {
+          "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_11.blend",
+          "sha256": "f47085668954d3821254ad9e2cbf34d15f3f82c70df74038b154737a20226b8c",
+          "bytes": 116316
+        }
+      ],
+      "licenseDigests": [
+        {
+          "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/License.txt",
+          "sha256": "bece5f4d99cca9dcf86931221a69909862ff6cc95e1735462ee678516a1063e2",
+          "bytes": 700
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "These are new upstream resources, not recolours of the previous project guns.",
+    "Quaternius OGA archive does not include a separate license document; its author-published CC0 declaration is explicitly recorded, not invented as an embedded notice.",
+    "The retained accessory Bipod.blend and Scope_2.blend are source reference files; the current LMG support legs are project-authored derivative geometry, not a claim that this accessory mesh was instantiated.",
+    "Static Blender PNGs are inspection renders, not native game captures."
+  ]
+}

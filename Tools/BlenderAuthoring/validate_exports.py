@@ -7,11 +7,34 @@ manifest=json.loads((OUT/'asset-manifest.json').read_text(encoding='utf-8'))
 checks=[];summary=[]
 def check(name,value,detail=''):
  checks.append({'name':name,'passed':bool(value),'detail':detail})
+# Marker coordinates must be compared in the same exported scene frame.
+def world_node_positions(data):
+ nodes=data['nodes'];parents={}
+ for i,node in enumerate(nodes):
+  for child in node.get('children',[]):
+   if child in parents:raise ValueError('GLB node has multiple parents')
+   parents[child]=i
+ cache={};visiting=set()
+ def multiply(a,b):return [[sum(a[r][k]*b[k][c] for k in range(4)) for c in range(4)] for r in range(4)]
+ def world(i):
+  if i in cache:return cache[i]
+  if i in visiting:raise ValueError('Cyclic GLB node hierarchy')
+  visiting.add(i);node=nodes[i]
+  if 'matrix' in node:m=[[node['matrix'][c*4+r] for c in range(4)] for r in range(4)]
+  else:
+   x,y,z,w=node.get('rotation',[0,0,0,1]);sx,sy,sz=node.get('scale',[1,1,1]);tx,ty,tz=node.get('translation',[0,0,0])
+   m=[[(1-2*y*y-2*z*z)*sx,(2*x*y-2*z*w)*sy,(2*x*z+2*y*w)*sz,tx],
+      [(2*x*y+2*z*w)*sx,(1-2*x*x-2*z*z)*sy,(2*y*z-2*x*w)*sz,ty],
+      [(2*x*z-2*y*w)*sx,(2*y*z+2*x*w)*sy,(1-2*x*x-2*y*y)*sz,tz],[0,0,0,1]]
+  if i in parents:m=multiply(world(parents[i]),m)
+  visiting.remove(i);cache[i]=m;return m
+ return {node.get('name'):[world(i)[r][3] for r in range(3)] for i,node in enumerate(nodes)}
+
 for entry in manifest['assets']:
  name=entry['id'];path=OUT/(name+'.glb');b=path.read_bytes()
  magic,version,length=struct.unpack_from('<III',b)
  check(name+'_glb_header',magic==0x46546C67 and version==2 and length==len(b))
- n,t=struct.unpack_from('<II',b,12);data=json.loads(b[20:20+n]);nodes={o.get('name'):o for o in data['nodes']}
+ n,t=struct.unpack_from('<II',b,12);data=json.loads(b[20:20+n]);nodes={o.get('name'):o for o in data['nodes']};world=world_node_positions(data)
  for key,position in [('AxisRight',[1,0,0]),('AxisUp',[0,1,0]),('AxisForward',[0,0,1])]:
   check(name+'_'+key,key in nodes and all(abs(a-c)<1e-5 for a,c in zip(nodes[key].get('translation',[0,0,0]),position)))
  required=['Muzzle','AimRear','AimFront','magazine','charging_handle','muzzle','sight','bolt'] if name.startswith('weapon') else ['hand_L','hand_R','forearm_L','forearm_R'] if name.startswith('operative') else ['leg_L','leg_R','head','torso','arm_L','arm_R','weapon_pivot','EnemyMuzzle','knee_L','knee_R','elbow_L','elbow_R']
@@ -25,7 +48,7 @@ for entry in manifest['assets']:
  check(name+'_finite_bounds',all(math.isfinite(x) for axis in entry['bounds'].values() for x in axis))
  if name.startswith('weapon'):
   check(name+'_forward_muzzle',nodes['Muzzle']['translation'][2]>.4)
-  check(name+'_level_sights',abs(nodes['AimFront']['translation'][1]-nodes['AimRear']['translation'][1])<1e-5)
+  check(name+'_level_sights',abs(world['AimFront'][1]-world['AimRear'][1])<1e-5,'world Y delta='+str(abs(world['AimFront'][1]-world['AimRear'][1])))
  if name.startswith('robot'):
   index={o.get('name'):i for i,o in enumerate(data['nodes'])};desc=set()
   def children(i):

@@ -23,3 +23,7 @@ The v0.2 geometry is independently authored by `Tools/ArtAuthoring/generate-asse
 
 Counter-Strike is referenced only through public gameplay-design descriptions. No Counter-Strike code, model, texture, audio, map, installed game file, or proprietary asset is included or used as an input.
 
+
+## Unity MCP local UPM package
+
+The same CoplayDev v10.3.0 commit aa5fc638d623f56178d50329d9ad8c541a57fe66 is supplied under ../Dependencies/com.coplaydev.unity-mcp and referenced by a relative local path. The original MIT license and embedded Tommy MIT notice are retained; see the root THIRD_PARTY_ASSETS records and Dependencies/unity-mcp-source.json. No repository Server subtree, account settings or Library cache is distributed. This removes the reproduced Git-clone failure for this package; other Unity registry dependencies still resolve through the locked package graph.

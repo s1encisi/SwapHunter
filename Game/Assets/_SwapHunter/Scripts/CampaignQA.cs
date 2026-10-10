@@ -13,11 +13,11 @@ namespace SwapHunter
     public sealed class CampaignQA : MonoBehaviour
     {
         [Serializable] public sealed class Check { public string name, detail; public bool passed; }
-        [Serializable] public sealed class Report { public string version = Application.version, kind = "Scripted contract integration, not human playtesting"; public bool passed; public List<Check> checks = new List<Check>(); }
+        [Serializable] public sealed class Report { public string version, kind = "Scripted contract integration, not human playtesting"; public bool passed; public List<Check> checks = new List<Check>(); }
         Report report = new Report(); string output; float started; bool finished;
         DemoGame G => DemoGame.I;
         PlayerMotor P => G.player;
-        void Awake() { started = Time.realtimeSinceStartup; Application.logMessageReceived += OnLog; }
+        void Awake() { report.version = Application.version;  started = Time.realtimeSinceStartup; Application.logMessageReceived += OnLog; }
         void Update() { if (!finished && Time.realtimeSinceStartup - started > 180) { Assert("watchdog", false, "180 second timeout"); Finish(); } }
         void OnLog(string message, string trace, LogType kind) { if (kind == LogType.Error || kind == LogType.Exception || kind == LogType.Assert) Assert("runtime", false, message); }
         void Assert(string name, bool ok, string detail) { report.checks.Add(new Check { name = name, passed = ok, detail = detail }); Debug.Log("V03 " + name + " " + ok + " " + detail); }
@@ -111,7 +111,7 @@ namespace SwapHunter
                 }
                 else swapTarget = G.enemies.Find(e => e.kind == EnemyKind.Sniper);
                 Aim(swapTarget.AimPoint); int swaps = G.totalSwaps;
-                Assert("module_swap_request_" + module.id, P.RequestSwap(swapTarget), P.ValidateSwap(swapTarget));
+                Assert("module_swap_request_" + module.id, P.RequestSwap(swapTarget), P.ValidateSwap(swapTarget).ToString());
                 yield return new WaitForSeconds(.15f);
                 Assert("module_real_swap_" + module.id, G.totalSwaps == swaps + 1, "Full validated swap transaction activated the module");
                 if (module.id == "guard") Assert("guard_effect_and_cost", G.ModuleDamageTaken < .7f && G.ModuleMovement < 1, "Temporary protection, permanent movement cost");

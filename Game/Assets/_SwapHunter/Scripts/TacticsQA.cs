@@ -20,7 +20,7 @@ public sealed class TacticsQA:MonoBehaviour {
  while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;
  G.StartRun(false);G.qaSuppressAI=true;yield return new WaitForSeconds(.3f);var e=G.enemies[0];P.SetFeet(new Vector3(0,.03f,8));P.SetLook(0,0);yield return new WaitForSeconds(.2f);
  Aim(e.AimPoint);Physics.SyncTransforms();
- Add("fixture_target_in_range_and_visible",Vector3.Distance(P.Eye.position,e.AimPoint)<G.config.swapRange&&P.FindTarget()==e&&P.ValidateSwap(e)=="可换位","distance="+Vector3.Distance(P.Eye.position,e.AimPoint)+";validation="+P.ValidateSwap(e));
+ Add("fixture_target_in_range_and_visible",Vector3.Distance(P.Eye.position,e.AimPoint)<G.config.swapRange&&P.FindTarget()==e&&P.ValidateSwap(e).IsValid,"distance="+Vector3.Distance(P.Eye.position,e.AimPoint)+";validation="+P.ValidateSwap(e).ToString());
  P.SetLook(0,0);
  var t=P.tactics;var keys=InputSystem.AddDevice<Keyboard>();G.qaKeyboard=keys;G.qaInputEnabled=true;
  InputSystem.QueueStateEvent(keys,new KeyboardState(Key.C));yield return null;yield return null;InputSystem.QueueStateEvent(keys,new KeyboardState());yield return null;
@@ -39,7 +39,7 @@ public sealed class TacticsQA:MonoBehaviour {
  Add("shield_does_not_occlude_weapon_ray",clearShot&&t.ShieldActive,"firstHit="+(sight.collider?sight.collider.name:"none"));
  P.Fire();yield return new WaitForSeconds(.16f);Add("player_shoots_through_own_shield",e.health<enemyHp,"enemyHp="+e.health);
  P.cooldown=0;Aim(e.AimPoint);Vector3 oldPlayer=P.transform.position,oldEnemy=e.transform.position;
- Add("shield_does_not_occlude_swap_target",P.FindTarget()==e&&P.ValidateSwap(e)=="可换位",P.ValidateSwap(e));
+ Add("shield_does_not_occlude_swap_target",P.FindTarget()==e&&P.ValidateSwap(e).IsValid,P.ValidateSwap(e).ToString());
  bool requested=P.RequestSwap(e);yield return new WaitForSeconds(G.config.swapWindup+.12f);
  Add("swap_exchanges_both_endpoints",requested&&Vector3.Distance(P.transform.position,oldEnemy)<.12f&&Vector3.Distance(e.transform.position,oldPlayer)<.12f,"player="+P.transform.position+";enemy="+e.transform.position);
  Add("swap_keeps_world_directional_shield",P.transform.position.z>12&&Vector3.Distance(t.ShieldPosition,shield)<.001f&&t.ShieldActive,"shield="+t.ShieldPosition+";player="+P.transform.position);

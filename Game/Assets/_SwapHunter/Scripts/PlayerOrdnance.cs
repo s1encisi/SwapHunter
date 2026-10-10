@@ -5,6 +5,9 @@ namespace SwapHunter
     public sealed class PlayerOrdnance : MonoBehaviour
     {
         PlayerMotor owner; Vector3 velocity; float damage, fuse=2.4f; bool exploded;
+        public const float BlastRadius = 3.1f;
+        public bool Live => !exploded && isActiveAndEnabled;
+        public float FuseLeft => fuse;
         public static PlayerOrdnance Launch(PlayerMotor player,Vector3 origin,Vector3 direction,float power)
         {
             var go=Shapes.Make("Player ballistic grenade",PrimitiveType.Sphere,DemoGame.I.effects,origin,Vector3.one*.12f,6);
@@ -22,12 +25,18 @@ namespace SwapHunter
         public void Explode()
         {
             if(exploded)return;exploded=true;var g=DemoGame.I;if(!g){Destroy(gameObject);return;}
-            Vector3 point=transform.position;const float radius=3.1f;bool any=false,killed=false;
+            Vector3 point=transform.position;const float radius=BlastRadius;bool any=false,killed=false;
             foreach(var enemy in g.enemies.ToArray())
             {
                 if(!enemy||!enemy.Alive)continue;float distance=Vector3.Distance(point,enemy.AimPoint);
                 if(distance>=radius||Physics.Linecast(point,enemy.AimPoint,Layers.WorldMask))continue;
                 bool alive=enemy.Alive;enemy.Damage(damage*Mathf.Lerp(1,.2f,distance/radius));any=true;killed|=alive&&!enemy.Alive;
+            }
+            foreach(var objective in DamageableObjective.ActiveSnapshot())
+            {
+                if(!objective||!objective.Alive)continue;float distance=Vector3.Distance(point,objective.AimPoint);
+                if(distance>=radius||Physics.Linecast(point,objective.AimPoint,Layers.WorldMask))continue;
+                any|=objective.ApplyDamage(damage*Mathf.Lerp(1,.2f,distance/radius),point);
             }
             if(owner&&Vector3.Distance(point,owner.Eye.position)<radius&&!Physics.Linecast(point,owner.Eye.position,Layers.WorldMask))
                 owner.Hurt(damage*.65f*Mathf.Clamp01(1-Vector3.Distance(point,owner.Eye.position)/radius),point);

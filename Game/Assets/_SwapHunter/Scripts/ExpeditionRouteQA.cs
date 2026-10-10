@@ -128,8 +128,8 @@ namespace SwapHunter
                 while(c.P.cooldown>.001f&&Time.time<cooldownUntil){ClearEnemies(c.g);yield return new WaitForSeconds(.1f);}
                 Aim(c.P,plan.anchor.AimPoint);yield return new WaitForSeconds(.16f);
                 Vector3 before=c.P.transform.position,destination=plan.anchor.transform.position;
-                string reason=c.P.ValidateSwap(plan.anchor);
-                if(reason!="可换位"||!c.P.RequestSwap(plan.anchor)){Fail(c,label,"Actual swap rejected at planned approach: "+reason);yield break;}
+                var reason = c.P.ValidateSwap(plan.anchor);
+                if(!reason.IsValid||!c.P.RequestSwap(plan.anchor)){Fail(c,label,"Actual swap rejected at planned approach: "+reason);yield break;}
                 yield return new WaitForSeconds(.22f);
                 bool swapped=Vector3.Distance(c.P.transform.position,destination)<.2f&&Vector3.Distance(plan.anchor.transform.position,before)<.2f;
                 c.check(label+"_actual_swap_"+transitions,swapped,"before="+before.ToString("F3")+"; destination="+destination.ToString("F3")+"; actualPlayer="+c.P.transform.position.ToString("F3")+"; actualAnchor="+plan.anchor.transform.position.ToString("F3")+"; playerError="+Vector3.Distance(c.P.transform.position,destination).ToString("F4")+"; anchorError="+Vector3.Distance(plan.anchor.transform.position,before).ToString("F4"));

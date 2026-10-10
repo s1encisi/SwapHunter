@@ -82,7 +82,7 @@ namespace SwapHunter
     var rifle=G.enemies.Find(e=>e&&e.Alive&&e.kind==EnemyKind.Assault);if(rifle)Look(rifle.AimPoint);
     if(t>1&&!shield)shield=P.tactics.ActivateShield();
     if(P.health<60)G.UseExpeditionMedkit();
-    var melee=G.enemies.Find(e=>e&&e.Alive&&e.kind==EnemyKind.Shield);if(melee&&Vector3.Distance(P.transform.position,melee.transform.position)<4&&P.cooldown<=0){Look(melee.AimPoint);if(P.ValidateSwap(melee)=="可换位")P.RequestSwap(melee);}
+    var melee=G.enemies.Find(e=>e&&e.Alive&&e.kind==EnemyKind.Shield);if(melee&&Vector3.Distance(P.transform.position,melee.transform.position)<4&&P.cooldown<=0){Look(melee.AimPoint);if(P.ValidateSwap(melee).IsValid)P.RequestSwap(melee);}
     if(t>5)FireAt(rifle);
    });
   }

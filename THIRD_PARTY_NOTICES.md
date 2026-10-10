@@ -11,7 +11,7 @@ The root MIT license applies to original SwapHunter code, documentation, procedu
 
 Detailed resource provenance is retained in [Game/THIRD_PARTY_NOTICES.md](Game/THIRD_PARTY_NOTICES.md).
 
-All game-specific geometry and synthesized sound in this repository were independently authored for this project with AI assistance. No Counter-Strike installed files, code, maps, models, textures or audio are included.
+Original project-authored geometry and synthesized sound were created for this project with AI assistance. The D1.1 CC0 additions are separately listed below and in THIRD_PARTY_ASSETS.md. No Counter-Strike installed files, code, maps, models, textures or audio are included.
 
 Noto Sans SC font copyright notice: © 2014–2021 Adobe (http://www.adobe.com/). The bundled font retains its original metadata and SIL OFL license.
 
@@ -22,3 +22,10 @@ Noto Sans SC font copyright notice: © 2014–2021 Adobe (http://www.adobe.com/)
 - `swaphunter-key-art-v05.png`: original AI-generated concept illustration made with the built-in image-generation tool on 2026-09-27, with no third-party reference image supplied. It is concept art, not a gameplay screenshot.
 - New gameplay clips are captured from this project's Unity player. Automatic inputs and preconfigured Boss mechanism demonstrations are labeled in the video and storyboard. No third-party game footage is used.
 - Trailer audio uses the game's original procedural sound bank and PhaseScore, reconstructed from emitted sound-event timing and remixed for the trailer. It is not a hardware-loopback recording. Noto font and existing dependency notices above continue to apply.
+
+
+## D1.1 adopted CC0 visuals and development dependency
+
+See [the actual asset ledger](THIRD_PARTY_ASSETS.md) and its JSON file for exact acquired files, hashes, original licences and permitted payloads. Quaternius supplies five CC0 environment meshes; Kenney supplies three CC0 particle textures. Their original geometry/textures are not project-authored. Project-authored fitting, cues and original actor/display variants retain the project licence. The evaluated George mech is not adopted.
+
+Unity MCP v10.3.0 is included as a local UPM package at Dependencies/com.coplaydev.unity-mcp, extracted byte-for-byte from the official archive of commit aa5fc638d623f56178d50329d9ad8c541a57fe66. Its repository MIT license (CoplayDev, 2025) is retained in the package and Dependencies/Licenses/unity-mcp-MIT.txt. Embedded Tommy is separately copyright Denis Zhidkikh (2020), MIT; its original header and Dependencies/Licenses/Tommy-MIT.txt are retained. The repository Server subtree, Library/package caches and credentials are not included. Dependencies/unity-mcp-source.json records the archive and selected file hashes, plus the previous Git declarations. Existing Unity, Noto and Three.js notices continue to apply.

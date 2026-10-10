@@ -31,14 +31,14 @@ namespace SwapHunter
         public int crosshairColor = 0;
         public float moveSpeedScale = 1;
         public ActionBinding[] actions = DefaultBindings();
-        public static readonly string[] ActionNames = { "前进", "后退", "左移", "右移", "跳跃 / 翻越", "冲刺", "相位换位", "装填", "交互", "慢走", "主武器", "副武器", "开火", "瞄准", "上一把武器", "下一把武器", "暂停", "蹲伏", "战术背包", "使用消耗品", "A盾 / 定向屏障", "战术刀 / 近战", "投掷沉默飞刀", "召回飞刀" };
+        public static readonly string[] ActionNames = { "前进", "后退", "左移", "右移", "跳跃 / 翻越", "冲刺", "相位换位", "装填", "交互", "慢走", "主武器", "副武器", "开火", "瞄准", "上一把武器", "下一把武器", "暂停", "蹲伏", "战术背包", "使用消耗品", "A盾 / 定向屏障", "战术刀 / 近战", "投掷飞刀", "召回飞刀", "职业技能" };
         public static ActionBinding[] DefaultBindings() => new[]
         {
             new ActionBinding("K:W"),new ActionBinding("K:S"),new ActionBinding("K:A"),new ActionBinding("K:D"),
             new ActionBinding("K:Space"),new ActionBinding("K:LeftShift"),new ActionBinding("K:Q"),new ActionBinding("K:R"),
             new ActionBinding("K:E"),new ActionBinding("K:LeftAlt"),new ActionBinding("K:Digit1"),new ActionBinding("K:Digit2"),
             new ActionBinding("M:0"),new ActionBinding("M:1"),new ActionBinding("W:Up"),new ActionBinding("W:Down"),new ActionBinding("K:Escape"),
-            new ActionBinding("K:LeftCtrl"),new ActionBinding("K:Tab"),new ActionBinding("K:F"),new ActionBinding("K:C"),new ActionBinding("K:V"),new ActionBinding("K:G"),new ActionBinding("K:X")
+            new ActionBinding("K:LeftCtrl"),new ActionBinding("K:Tab"),new ActionBinding("K:F"),new ActionBinding("K:C"),new ActionBinding("K:V"),new ActionBinding("K:G"),new ActionBinding("K:X"),new ActionBinding("K:Z")
         };
         public GameOptions Clone() => JsonUtility.FromJson<GameOptions>(JsonUtility.ToJson(this));
         public void Validate()
@@ -150,55 +150,143 @@ namespace SwapHunter
     {
         public static string FilePath => Path.Combine(RunStorage.Root, "settings-v5.json");
         public static string LegacyFilePath => Path.Combine(RunStorage.Root, "settings-v4.json");
-        public static string OldestFilePath => Path.Combine(RunStorage.Root,"settings-v2.json");
+        public static string OldestFilePath => Path.Combine(RunStorage.Root, "settings-v2.json");
         public static string LastWarning { get; private set; } = "";
-        public static GameOptions Load()
+
+        public static GameOptions Load() => LoadDirectory(RunStorage.Root, !RunStorage.IsIsolated);
+
+        // Explicit directory API for isolated storage checks and imported profiles.
+        // It never reads PlayerPrefs, changes RunStorage.Root, or automatically writes a recovered file.
+        public static GameOptions LoadFromDirectory(string directory) => LoadDirectory(directory, false);
+
+        static GameOptions LoadDirectory(string directory, bool readLegacyPlayerPrefs)
         {
-            LastWarning="";bool readFailed=false;
-            foreach(string loadPath in new[]{FilePath,LegacyFilePath,OldestFilePath})
+            LastWarning = "";
+            string root = Path.GetFullPath(directory);
+            string current = Path.Combine(root, "settings-v5.json");
+            string[] candidates = {
+                current, current + ".bak",
+                Path.Combine(root, "settings-v4.json"), Path.Combine(root, "settings-v4.json.bak"),
+                Path.Combine(root, "settings-v2.json"), Path.Combine(root, "settings-v2.json.bak")
+            };
+            var failures = new System.Collections.Generic.List<string>();
+            for (int index = 0; index < candidates.Length; index++)
             {
-                if(!File.Exists(loadPath))continue;
+                string path = candidates[index];
+                if (!File.Exists(path)) continue;
                 try
                 {
-                    var loaded=LoadFromPath(loadPath);
-                    if(readFailed)LastWarning="设置主文件无法读取，已恢复旧版配置；原文件已保留。";
+                    GameOptions loaded = LoadFromPath(path);
+                    if (index == 1) LastWarning = "设置主文件不可用，已从有效备份恢复；原文件保留，恢复结果尚未写回。";
+                    else if (index >= 2) LastWarning = failures.Count > 0
+                        ? "设置主文件无法读取，已恢复旧版配置；原文件已保留。"
+                        : "已读取旧版设置；下次保存生成新版文件，旧版原件保留。";
+                    if (failures.Count > 0) LastWarning += " " + string.Join("；", failures);
                     return loaded;
                 }
-                catch(Exception e) when(e is IOException || e is UnauthorizedAccessException || e is ArgumentException)
+                catch (Exception error) when (error is InvalidDataException || error is IOException || error is UnauthorizedAccessException || error is ArgumentException)
                 {
-                    readFailed=true;
-                    try{File.Copy(loadPath,loadPath+".backup-"+DateTime.UtcNow.ToString("yyyyMMddHHmmssfff")+"-"+Guid.NewGuid().ToString("N"));}
-                    catch(Exception backupError) when(backupError is IOException || backupError is UnauthorizedAccessException)
-                    {Debug.LogWarning("设置备份无法写入，原文件未改变："+backupError.Message);}
+                    failures.Add(Path.GetFileName(path) + "：" + error.Message);
+                    if (error is InvalidDataException)
+                    {
+                        try { ArchiveDamagedFile(path); }
+                        catch (Exception archiveError) when (archiveError is IOException || archiveError is UnauthorizedAccessException)
+                        {
+                            // The original is still untouched. Report this instead of pretending an archive exists.
+                            failures.Add("原文件保留在原路径，但无法额外归档：" + archiveError.Message);
+                        }
+                    }
                 }
             }
-            if(readFailed)LastWarning="设置文件无法读取，已使用兼容默认值；原文件已保留。";
+            if (failures.Count > 0)
+                LastWarning = "设置文件与可用备份无法读取，已使用兼容默认值；原件保留，未写入恢复结果。 " + string.Join("；", failures);
             var settings = new GameOptions();
-            settings.sensitivity = PlayerPrefs.GetFloat("SH.sensitivity", 1); settings.fov = PlayerPrefs.GetFloat("SH.fov", 60);
-            settings.volume = PlayerPrefs.GetFloat("SH.volume", .7f); settings.shake = PlayerPrefs.GetFloat("SH.shake", .35f);
-            settings.invertY = PlayerPrefs.GetInt("SH.invert", 0) != 0; settings.difficulty = PlayerPrefs.GetInt("SH.difficulty", 1); settings.quality = PlayerPrefs.GetInt("SH.quality", 1);
-            for (int i = 0; i < 9; i++) { string key = PlayerPrefs.GetString("SH.key" + i, ""); if (BindingInput.Valid("K:" + key)) settings.actions[i].primary = "K:" + key; }
-            settings.Validate(); return settings;
+            if (readLegacyPlayerPrefs)
+            {
+                settings.sensitivity = PlayerPrefs.GetFloat("SH.sensitivity", 1); settings.fov = PlayerPrefs.GetFloat("SH.fov", 60);
+                settings.volume = PlayerPrefs.GetFloat("SH.volume", .7f); settings.shake = PlayerPrefs.GetFloat("SH.shake", .35f);
+                settings.invertY = PlayerPrefs.GetInt("SH.invert", 0) != 0; settings.difficulty = PlayerPrefs.GetInt("SH.difficulty", 1); settings.quality = PlayerPrefs.GetInt("SH.quality", 1);
+                for (int i = 0; i < 9; i++)
+                {
+                    string key = PlayerPrefs.GetString("SH.key" + i, "");
+                    if (BindingInput.Valid("K:" + key)) settings.actions[i].primary = "K:" + key;
+                }
+            }
+            settings.Validate();
+            return settings;
         }
-        public static void SaveToPath(GameOptions settings, string path)
-        {
-            settings.Validate(); Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
-            string temporary = path + ".tmp"; File.WriteAllText(temporary, JsonUtility.ToJson(settings, true));
-            File.Copy(temporary, path, true); File.Delete(temporary);
-        }
+
         public static GameOptions LoadFromPath(string path)
         {
-            var settings = JsonUtility.FromJson<GameOptions>(File.ReadAllText(path));
-            if (settings == null) throw new IOException("Empty settings");
-            settings.Validate(); return settings;
+            string text = File.ReadAllText(path);
+            string trimmed = text.Trim();
+            if (!trimmed.StartsWith("{", StringComparison.Ordinal) || !trimmed.EndsWith("}", StringComparison.Ordinal)
+                || !System.Text.RegularExpressions.Regex.IsMatch(text, "\"version\"\\s*:"))
+                throw new InvalidDataException("设置不是包含版本信息的完整 JSON 对象。");
+            GameOptions settings;
+            try { settings = JsonUtility.FromJson<GameOptions>(text); }
+            catch (ArgumentException error) { throw new InvalidDataException("设置 JSON 无法解析。", error); }
+            if (settings == null || settings.version < 1 || settings.version > GameOptions.CurrentVersion
+                || !System.Text.RegularExpressions.Regex.IsMatch(text, "\"actions\"\\s*:")
+                || settings.actions == null || settings.actions.Length == 0)
+                throw new InvalidDataException("设置版本或按键记录不完整，未将其当作有效备份。");
+            settings.Validate();
+            return settings;
         }
-        public static void Save(GameOptions settings)
+
+        static string ArchiveDamagedFile(string path)
         {
-            SaveToPath(settings, FilePath); LastWarning="";
+            // Keep the historical archive naming contract, separate from the last-valid .bak.
+            string archived = path + ".backup-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + "-" + Guid.NewGuid().ToString("N");
+            File.Copy(path, archived, false);
+            return archived;
         }
+
+        public static void SaveToPath(GameOptions settings, string path)
+        {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            LastWarning = "";
+            try
+            {
+                string fullPath = Path.GetFullPath(path);
+                string directory = Path.GetDirectoryName(fullPath);
+                Directory.CreateDirectory(directory);
+                GameOptions normalized = settings.Clone();
+                normalized.Validate();
+                string temporary = fullPath + ".tmp-" + Guid.NewGuid().ToString("N");
+                byte[] bytes = new System.Text.UTF8Encoding(false).GetBytes(JsonUtility.ToJson(normalized, true));
+                using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.WriteThrough))
+                {
+                    stream.Write(bytes, 0, bytes.Length);
+                    stream.Flush(true);
+                }
+                if (File.Exists(fullPath))
+                {
+                    bool validPrimary = true;
+                    try { LoadFromPath(fullPath); }
+                    catch (InvalidDataException) { validPrimary = false; }
+                    string backup = fullPath + ".bak";
+                    if (!validPrimary)
+                    {
+                        ArchiveDamagedFile(fullPath); // Failure aborts the save before replacement.
+                        backup = null; // Never replace a good .bak with a damaged primary.
+                    }
+                    else if (File.Exists(backup))
+                    {
+                        try { LoadFromPath(backup); }
+                        catch (InvalidDataException) { ArchiveDamagedFile(backup); }
+                    }
+                    File.Replace(temporary, fullPath, backup);
+                }
+                else File.Move(temporary, fullPath);
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is ArgumentException || error is NotSupportedException)
+            {
+                LastWarning = "设置未保存：原设置文件保持不变；若已生成临时文件则保留供排查。 " + error.Message;
+                throw;
+            }
+        }
+
+        public static void Save(GameOptions settings) => SaveToPath(settings, FilePath);
     }
 }
-
-
-
-

@@ -1,0 +1,3780 @@
+{
+  "schemaVersion": 1,
+  "name": "com.coplaydev.unity-mcp",
+  "version": "10.3.0",
+  "commit": "aa5fc638d623f56178d50329d9ad8c541a57fe66",
+  "sourceUrl": "https://codeload.github.com/CoplayDev/unity-mcp/zip/aa5fc638d623f56178d50329d9ad8c541a57fe66",
+  "archiveSha256": "d2353d0604e250184ee5c6fbb14b49d381a555f129977b09f80779b8c8df9b96",
+  "archiveBytes": 18423762,
+  "upstreamDirectory": "MCPForUnity",
+  "upstreamFiles": [
+    {
+      "path": "Editor.meta",
+      "sha256": "88680f2d27d2a4b66af5857b6c9fc70ca453a4778d16f1b7e286a049e5d2a6dd",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/AssemblyInfo.cs",
+      "sha256": "b7dcbcddce550fcb51e1d9ccaba9df35a90470cf50d15360c18b0e28a257edfe",
+      "bytes": 100
+    },
+    {
+      "path": "Editor/AssemblyInfo.cs.meta",
+      "sha256": "308da8c99642ef6d8f24fe59a5d5e86b9a6ff34821cdf97cb8282557aa35be57",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients.meta",
+      "sha256": "81f74e3e69eae99b040aa0b82450699d50b591b093ef6272c82f667421351775",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Clients/Configurators.meta",
+      "sha256": "7a9b9071e8b63acf6a7f320fe82c58ce328a0fd0d9b9d0fc5f2be63aebe6f101",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Clients/Configurators/AntigravityConfigurator.cs",
+      "sha256": "7406cdc4b7f0b06360d03e4eaba619322ddfb980d348e95871941e4063d1822e",
+      "bytes": 3124
+    },
+    {
+      "path": "Editor/Clients/Configurators/AntigravityConfigurator.cs.meta",
+      "sha256": "3d161fce6aee5193280ae48076650e28dd0b7b2f8f6841cd7d55c6b7b8f513ff",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/AntigravityIdeConfigurator.cs",
+      "sha256": "07a7ad24acfaa3b0d6f346b6573f6ae3849601be187091f435a32d9969518500",
+      "bytes": 2502
+    },
+    {
+      "path": "Editor/Clients/Configurators/AntigravityIdeConfigurator.cs.meta",
+      "sha256": "cad4a1508451e5b365bb275721ce96f278d4fdc80272c5d30d2ed5934f14aad0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Clients/Configurators/CherryStudioConfigurator.cs",
+      "sha256": "13e8dfe4fd3a8eac62c38df87b618cafc10f4f8228188240939633d98ee8ffd2",
+      "bytes": 4164
+    },
+    {
+      "path": "Editor/Clients/Configurators/CherryStudioConfigurator.cs.meta",
+      "sha256": "61b4a174a290790956f653d1f292b4d88730127c7989c53bc2dda0c5b48a0893",
+      "bytes": 242
+    },
+    {
+      "path": "Editor/Clients/Configurators/ClaudeCodeConfigurator.cs",
+      "sha256": "52f58235e76b84022b17603bfe19cf4c4619c0bee4d65c6e0a9923e232ef2e62",
+      "bytes": 1279
+    },
+    {
+      "path": "Editor/Clients/Configurators/ClaudeCodeConfigurator.cs.meta",
+      "sha256": "6107009ed43d3072c7dfc35a42a79d7285cfa97653f97e413694911882daac77",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/ClaudeDesktopConfigurator.cs",
+      "sha256": "3a75911fdd8f8f92efc2d8baf3349268296c74be2dbd026f6ccf25df2a6787fa",
+      "bytes": 1831
+    },
+    {
+      "path": "Editor/Clients/Configurators/ClaudeDesktopConfigurator.cs.meta",
+      "sha256": "5ecf90edf5cc63311349210799b5f4849766958f61e0b79c922cfb54165abcd5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/ClineConfigurator.cs",
+      "sha256": "04ef887632027a9313489a60375b8ef08b2d0b7f66ea965b584fe2ad7b0d7d62",
+      "bytes": 1581
+    },
+    {
+      "path": "Editor/Clients/Configurators/ClineConfigurator.cs.meta",
+      "sha256": "a171fe936c6bf0456d9cb6c7a002526387ea92c56531e65d98b808d03c4b0d33",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/CodeBuddyCliConfigurator.cs",
+      "sha256": "303425b6760cd48db42bb6dfccfd8f107fc4b5da205315a1bed07a089ee83ac8",
+      "bytes": 1179
+    },
+    {
+      "path": "Editor/Clients/Configurators/CodeBuddyCliConfigurator.cs.meta",
+      "sha256": "43a64b520da1f7b5fad60fc5c75d0cebf06748abc5cc15b86ba6ca935579eb6d",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/CodexConfigurator.cs",
+      "sha256": "55c210cf6fcfdf9da11fe7a9ce1fe4ad1da5762774d3519d8b593c01f89bd3d7",
+      "bytes": 1328
+    },
+    {
+      "path": "Editor/Clients/Configurators/CodexConfigurator.cs.meta",
+      "sha256": "b3224d86a5ded62052527863b5c531956dc4c60d6e645b6f79b52b04f6b9ce72",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/CopilotCliConfigurator.cs",
+      "sha256": "96d9aff8401f4eb95c63c2125f4e9919e556a43410d468e7f3c82bdb4f5dbdb7",
+      "bytes": 1189
+    },
+    {
+      "path": "Editor/Clients/Configurators/CopilotCliConfigurator.cs.meta",
+      "sha256": "000e1ea0b301c78b091ebd203d0cfc41268669e1fcdb4d8ded51574d00a8cb1b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/CursorConfigurator.cs",
+      "sha256": "f83f04daaa2dd23f216386d68632ddd7df44e9b53468b16a3f675aa49b19589f",
+      "bytes": 1092
+    },
+    {
+      "path": "Editor/Clients/Configurators/CursorConfigurator.cs.meta",
+      "sha256": "3b30225564dbe9f4860e0b41dfa0a95ca0a7c535b9df177a072733bddab3fb80",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/GeminiCliConfigurator.cs",
+      "sha256": "5944c8b61210f71605365162436ce1f27ec20dfd2c66f36f1bedc0eab623e1a8",
+      "bytes": 1277
+    },
+    {
+      "path": "Editor/Clients/Configurators/GeminiCliConfigurator.cs.meta",
+      "sha256": "6b3029ee32d2bf3c0b17051bb0bf794f2671469300e611131c59d6f61549cca8",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/KiloCodeConfigurator.cs",
+      "sha256": "2e845117d8261b475d6260dc7416c619942103ba6bb979552acb15dc11c85805",
+      "bytes": 1914
+    },
+    {
+      "path": "Editor/Clients/Configurators/KiloCodeConfigurator.cs.meta",
+      "sha256": "b468a17f71be2bd5ff4c98064dc6499704cb341f7b08fb6f15a9802363fe7014",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/KimiCodeConfigurator.cs",
+      "sha256": "d6d08e5e5bfe8174062e2e64756cafc5d959e881d4528e1736d4256d4679a257",
+      "bytes": 1867
+    },
+    {
+      "path": "Editor/Clients/Configurators/KimiCodeConfigurator.cs.meta",
+      "sha256": "378411cde6a47e0cc20110dc630fb69856fefdde058fd5635a681e73a5bfcbf9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/KiroConfigurator.cs",
+      "sha256": "32cf090691896bce15880bef6e4e9c1d74a7d926f470133ccf728380c6b38b18",
+      "bytes": 1213
+    },
+    {
+      "path": "Editor/Clients/Configurators/KiroConfigurator.cs.meta",
+      "sha256": "473d2cf64cba6695cae264bf96433de2a27aab6e4d9cc269a23f8bc95806ab7a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/OpenClawConfigurator.cs",
+      "sha256": "244916bfd2222c3030c2e30fab342552e56a53669887f0334f3f19552aeb8a38",
+      "bytes": 14404
+    },
+    {
+      "path": "Editor/Clients/Configurators/OpenClawConfigurator.cs.meta",
+      "sha256": "08cf5d977e1e1545a91e33167d7ea7ba1dffacea189f7f019a0daa138140bdf9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/OpenCodeConfigurator.cs",
+      "sha256": "f0f5e52098502d81c6fc78242c1cccdbbc3a9059ca2e2cd8422b02d4db60007f",
+      "bytes": 8191
+    },
+    {
+      "path": "Editor/Clients/Configurators/OpenCodeConfigurator.cs.meta",
+      "sha256": "7bd560e2e6f55ffa37affcc49507af1107c63dbe0ab7eb8f144cf288fcc3e94a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/PiConfigurator.cs",
+      "sha256": "0aa6c2a394fa4975688d484fc76aa8490dc9ccfb0165815e97d65864f326eccf",
+      "bytes": 4859
+    },
+    {
+      "path": "Editor/Clients/Configurators/PiConfigurator.cs.meta",
+      "sha256": "1aa9ac02e9349b2f3a6b2b4ed498ef7f61faa1e5f62ac4dc219b92c6a3baaae2",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/QwenCodeConfigurator.cs",
+      "sha256": "c9c8bdfa5ee5aeb171fc4993ca7897c5ae1bc6c1f277de737bbfdf145704341a",
+      "bytes": 2092
+    },
+    {
+      "path": "Editor/Clients/Configurators/QwenCodeConfigurator.cs.meta",
+      "sha256": "8737da019079a32befab084d3d33b2fa9ebd307dc1bcd9a00aef7c2deb537fa5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/RiderConfigurator.cs",
+      "sha256": "91e80a33195123617891a1927b6acb6f933d373333276801bdf3412901df576f",
+      "bytes": 1202
+    },
+    {
+      "path": "Editor/Clients/Configurators/RiderConfigurator.cs.meta",
+      "sha256": "77ebef1e6035d1200c6a7f5a555a041f4b17c6bf227c146a37e433ad0d84d31a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/TraeCnConfigurator.cs",
+      "sha256": "cadc0f9bd8ba3706560d50c57d61687b3fbe9a805639c96aed6de0c34ea8f63b",
+      "bytes": 1332
+    },
+    {
+      "path": "Editor/Clients/Configurators/TraeCnConfigurator.cs.meta",
+      "sha256": "0651f08588a748d904e16117ff8a27566c24fdad8e5ce7239c500d53c7bade26",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/TraeConfigurator.cs",
+      "sha256": "8dfebdb00e42827be5724f63243fa4e7254b8a6951a225314d0e4efc5fa1c77c",
+      "bytes": 1301
+    },
+    {
+      "path": "Editor/Clients/Configurators/TraeConfigurator.cs.meta",
+      "sha256": "2bb210a56ee53fc68e28ddc523979680e3d2b50ae7bb398352b668ebf4d65982",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/VSCodeConfigurator.cs",
+      "sha256": "eec24bd8bab99bfbac29fc81a02f79795addaae0a74b9cb3405a2d594afb47df",
+      "bytes": 1149
+    },
+    {
+      "path": "Editor/Clients/Configurators/VSCodeConfigurator.cs.meta",
+      "sha256": "3356d19ccdb8d10c48541d875f6e5009fbbc103b55b96ed71e82c48805ce40d5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/VSCodeInsidersConfigurator.cs",
+      "sha256": "228c8d89819fad23db5f80cc050866b2ab1e0a0223da6501b26d466042c5b520",
+      "bytes": 1237
+    },
+    {
+      "path": "Editor/Clients/Configurators/VSCodeInsidersConfigurator.cs.meta",
+      "sha256": "b6010e4d97d6a111f834534f47bb0d5f754dd9523d2164a00cc0ea3dd53746c3",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/Configurators/WindsurfConfigurator.cs",
+      "sha256": "74b14dbf9459f8312e6c1556a8ca72865b1d2a7cf850365894e173c2df50b2f1",
+      "bytes": 1315
+    },
+    {
+      "path": "Editor/Clients/Configurators/WindsurfConfigurator.cs.meta",
+      "sha256": "a38111bd552001501a122d18382757697c71360e7a318ef5aa46a54346f04f24",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/IMcpClientConfigurator.cs",
+      "sha256": "2076299a2bdb848073bc0f8dc80d85551beba55226bf13c18aab37f308ca5e23",
+      "bytes": 3496
+    },
+    {
+      "path": "Editor/Clients/IMcpClientConfigurator.cs.meta",
+      "sha256": "9f569f020d9f4de6141b7e791667b6e8e761fdaddbb52d7a07c721da0d65e817",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/McpClientConfiguratorBase.cs",
+      "sha256": "60ae08063fb0690bade07318ccf56b84e2e67a48b4fec3043693412fee1be7e4",
+      "bytes": 69901
+    },
+    {
+      "path": "Editor/Clients/McpClientConfiguratorBase.cs.meta",
+      "sha256": "6ff614402d89d3d7fb1ee01f7d6409d3b31c2527eed555e1512da9e76e71d899",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Clients/McpClientRegistry.cs",
+      "sha256": "a93cbc638ec28ce3269134cf74393761fa48b370696276ece54817fd41ce43e4",
+      "bytes": 1846
+    },
+    {
+      "path": "Editor/Clients/McpClientRegistry.cs.meta",
+      "sha256": "aa6b48d4c95a8408394b14129f820622a6f5ccac0df28c85e03e959daea4948b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Constants.meta",
+      "sha256": "53770a952905d2fd8d6a2bcce5a157b28c3c94d354501d36ef5173cbc90d789e",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Constants/AuthConstants.cs",
+      "sha256": "ae83ca11ae9da45488e3426e3a539d2934af916ba004c822c2dbd120061d4184",
+      "bytes": 251
+    },
+    {
+      "path": "Editor/Constants/AuthConstants.cs.meta",
+      "sha256": "da4a38062f2b66f11cc32217fba7f5179111cee0f6dad59aed98d86b9289b33c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Constants/EditorPrefKeys.cs",
+      "sha256": "f2547d8467e8c3ed745f584fc9533cb5c94170bba56dd34ee4211ac71fdeb6ab",
+      "bytes": 6916
+    },
+    {
+      "path": "Editor/Constants/EditorPrefKeys.cs.meta",
+      "sha256": "72c35abf32f4c6bb0611947184b94205a5b2c5f78a70d0eecf7fb0a8e892b8f6",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Constants/HealthStatus.cs",
+      "sha256": "10f47876f2ba6a22daef4a418f87c9b0129d34e0da94bb0873c1da69b390354c",
+      "bytes": 471
+    },
+    {
+      "path": "Editor/Constants/HealthStatus.cs.meta",
+      "sha256": "411a8fd3baf1819b64d1ca29ca9e57d6c02d4a4f37a0eccd80429b037cd52ad2",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Constants/ProductInfo.cs",
+      "sha256": "c25a6e92b5f939d0c649d603521d60b4534ac9d943606950a314b21835de711d",
+      "bytes": 288
+    },
+    {
+      "path": "Editor/Constants/ProductInfo.cs.meta",
+      "sha256": "282c6cb58316255702f4466314c696804da262d6b32933e3de13b9585433f587",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Dependencies.meta",
+      "sha256": "e3b1f9619dc9ad041dfdea1aa9c0108edd1d3ed0436d5ea5fda909aea0236113",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Dependencies/DependencyManager.cs",
+      "sha256": "2474e55f312f5ec17890baceed8fc674b68f9047ccb51ad7f8d1868283acfa00",
+      "bytes": 5191
+    },
+    {
+      "path": "Editor/Dependencies/DependencyManager.cs.meta",
+      "sha256": "84d54bac215121df4aabf7545e1db9a2388bcbb375b7ed22d13022b532f1ca81",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/Models.meta",
+      "sha256": "39d743611a1cfbdc06a6a532c8d987c2ba1e2d2ad87d12a17b26843d03e89c4c",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Dependencies/Models/DependencyCheckResult.cs",
+      "sha256": "ce0003bcaa332b8b85f290a8249451ed973a0b050c8027df2d072c925e468c09",
+      "bytes": 3126
+    },
+    {
+      "path": "Editor/Dependencies/Models/DependencyCheckResult.cs.meta",
+      "sha256": "2f9980f58892024208b3e07b4d30db779bc351ec7f69e412f2ae1c6945821e23",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/Models/DependencyStatus.cs",
+      "sha256": "41a5ca74bed5fbbd9f6815166ecb3c80d28491327a106efab19f20f527a02d4c",
+      "bytes": 1832
+    },
+    {
+      "path": "Editor/Dependencies/Models/DependencyStatus.cs.meta",
+      "sha256": "7a6491c94b1ee97a8575e20beeea23a9f50b7f28af767beefc95d872139aedf0",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors.meta",
+      "sha256": "947ff0373880090c118d3ff2239e5514892a0d8e92f3f15a7686d5fdca1ddecb",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/IPlatformDetector.cs",
+      "sha256": "5d261713915dc5e79c2199f8e5cbf3b3c1b35d61f4c7c9f904b583887acd8d56",
+      "bytes": 1442
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/IPlatformDetector.cs.meta",
+      "sha256": "68d5c492c0efe531d5fb591cb14029c64d0e63cb175bf5c08feccdf3487c2e61",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/LinuxPlatformDetector.cs",
+      "sha256": "4bd0a32c5890c91983c22b4379bda4f947a9d777ec8afc4e48b857aa709299b6",
+      "bytes": 7563
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/LinuxPlatformDetector.cs.meta",
+      "sha256": "cbdf171e680d6b5860653ec4945de61bd066d1e5cc8daa284a92e0dcdd257e16",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/MacOSPlatformDetector.cs",
+      "sha256": "459f4ebd9f762805b49b6243bdcb9a8eb5f219c28182ee99fde3a70f00aafde6",
+      "bytes": 7537
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/MacOSPlatformDetector.cs.meta",
+      "sha256": "e73e60d9872f3792862dcd4ccb322983cc946ea4165a5f2aabb1cef9d02def7f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/PlatformDetectorBase.cs",
+      "sha256": "26ea035858ab3ccd092b5d0a4a1cc95555fd9dd4695453de7e16ce802dc7d8b6",
+      "bytes": 7740
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/PlatformDetectorBase.cs.meta",
+      "sha256": "4ce7fe4512c76d5770ffc5942bf88669d177f9eaa9745f3faeb12ef895465124",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/WindowsPlatformDetector.cs",
+      "sha256": "1e38b571dbea3b480c9ac0141f3217cf49e407a30dfd5b080a82a5180d62badc",
+      "bytes": 14144
+    },
+    {
+      "path": "Editor/Dependencies/PlatformDetectors/WindowsPlatformDetector.cs.meta",
+      "sha256": "63074435721a3e7167618ab1f4116a9ef3ced6e4ee190250edab0fa81081a490",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Dependencies/UvInstaller.cs",
+      "sha256": "e3af0b3a46bb5699698065c302ee803dcf04d46ffacec6cf2bc3441c92b39a57",
+      "bytes": 3648
+    },
+    {
+      "path": "Editor/Dependencies/UvInstaller.cs.meta",
+      "sha256": "c0737117e1f757b9e9fcb1f2990541b08662f20ff2fa605d8f7af1cf4e30a2f2",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/External.meta",
+      "sha256": "5551e5e716f1b84c560e4d011205c154baad3ed6ce36bc59f3b76edd56236172",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/External/Tommy.cs",
+      "sha256": "ceb80370750fbe5c11fd2ee6ed9fdc768c93cfe8731b1564e6c38995c97cfaca",
+      "bytes": 77096
+    },
+    {
+      "path": "Editor/External/Tommy.cs.meta",
+      "sha256": "8d4d4730890d49d5cb739698dfbccd06558db1f488071894c7fe0122a5da5f4c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers.meta",
+      "sha256": "d4274ff7097847269c0dfbf9af3895f5b43c68cfd042d7f6aeb5fa43d755857b",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Helpers/AssetGenPaths.cs",
+      "sha256": "15c8a3e33d84a75dd1ac5d22fff30d1398d2fdd4aa99b3605b5f4b466cac87d0",
+      "bytes": 4184
+    },
+    {
+      "path": "Editor/Helpers/AssetGenPaths.cs.meta",
+      "sha256": "dbd4f342031b34bef7419819f9be1b0ee541c38edf7efd4ace2f8004a59662ae",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Helpers/AssetGenPrefs.cs",
+      "sha256": "3943916e99d66a3e2446bc195ac3610046774edc7b96233e24dcd99f36ea0975",
+      "bytes": 4586
+    },
+    {
+      "path": "Editor/Helpers/AssetGenPrefs.cs.meta",
+      "sha256": "82c8eb629f260f8d5f6d7cd0d7c8ac46db42bed5fe92a0a71735efab2eb8376e",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Helpers/AssetPathUtility.cs",
+      "sha256": "abe8173a4e88286ee1da7dbef92e8eace02880a8fb8d3c12dd8d48c7407a3f94",
+      "bytes": 28082
+    },
+    {
+      "path": "Editor/Helpers/AssetPathUtility.cs.meta",
+      "sha256": "cc816b9b8595b2fa5dc1109cecf0891dcc633bf71b7b4d7e46ca42340b260e72",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/BlenderBridgePrefs.cs",
+      "sha256": "0d56b0ad8e9fc86a5bf4d076dc98ec42eb4e030097570121e55d1f2e1ce19496",
+      "bytes": 4065
+    },
+    {
+      "path": "Editor/Helpers/BlenderBridgePrefs.cs.meta",
+      "sha256": "eaf53c11f8f23ffd74ead0cbec09ab36d9af84423e625003ae7566165fc42d40",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Helpers/BlenderDetection.cs",
+      "sha256": "89b29c32c1e2b841797ac0c1fe049eb85b197e32453a2b20c081156a9f37b1b9",
+      "bytes": 10756
+    },
+    {
+      "path": "Editor/Helpers/BlenderDetection.cs.meta",
+      "sha256": "2ada9d739defa213afa0399adbd3bc4f2211f62ba2c855f62841e07c5b4dda2b",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Helpers/CodexConfigHelper.cs",
+      "sha256": "290f07a67de4d882bf0419f774cdc71d8befaa14827f494c1c0435f200298ffd",
+      "bytes": 11165
+    },
+    {
+      "path": "Editor/Helpers/CodexConfigHelper.cs.meta",
+      "sha256": "ab0e541d526bd86a77079059d4b965d866cec5ea2361867dc6f68d5f365c66ed",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ComponentOps.cs",
+      "sha256": "152759194f9c3d7792596ec6de16902991d2d80a011b6928342355aef3de49e8",
+      "bytes": 41636
+    },
+    {
+      "path": "Editor/Helpers/ComponentOps.cs.meta",
+      "sha256": "1b5790605df1b542c6adda26b74c8da08def88b810c5a766e386f1187cb3aea5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ConfigJsonBuilder.cs",
+      "sha256": "05123e2a260e3b5c0f5552636fea30379f3fbf8790f4e62324b4ad92c2ba06fe",
+      "bytes": 7791
+    },
+    {
+      "path": "Editor/Helpers/ConfigJsonBuilder.cs.meta",
+      "sha256": "0a3dfa6b866a06b5f361e4da66227163af8d3fdf6ddfaafb8b3a67cbce26101f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/EditorWindowScreenshotUtility.cs",
+      "sha256": "85fdf2f48b18f3b6b4b59e6c41877d2ed77b98450ba5d9f97674f35010509614",
+      "bytes": 17617
+    },
+    {
+      "path": "Editor/Helpers/EditorWindowScreenshotUtility.cs.meta",
+      "sha256": "94827be6da017813e8a382226a6d030ad4c08b1dc010eb65424bf187551d85d3",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ExecPath.cs",
+      "sha256": "f619946489fec9286790d650ef48996d08b675bee73831256a90a3e969a64184",
+      "bytes": 16837
+    },
+    {
+      "path": "Editor/Helpers/ExecPath.cs.meta",
+      "sha256": "8da259373f835bf2d95df9aa1be1a4ca76689a8b28691bef18e0c5a7fa83c669",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/GameObjectLookup.cs",
+      "sha256": "c367752fa626a36d508202a5416f30d33e395d9bded606bb1837754f1d3dac69",
+      "bytes": 13500
+    },
+    {
+      "path": "Editor/Helpers/GameObjectLookup.cs.meta",
+      "sha256": "0262c03f6c9657ee94df85956b97666c44480ce29c57df103054e85f6208355a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/GameObjectSerializer.cs",
+      "sha256": "9a9e7482dac9c2edfc5e1151a05fd4b6a7445dab7f1f91c345293f43c4bad71e",
+      "bytes": 36033
+    },
+    {
+      "path": "Editor/Helpers/GameObjectSerializer.cs.meta",
+      "sha256": "f7aef36a36a5c346e4a68af44d0fb98552086baaa7ec801b808aa6afd16abb98",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/HttpEndpointUtility.cs",
+      "sha256": "06f8608ff64a25ef9f42004cfd9b598f39792c3ccec673e8b64b1f2cb4e7ee3e",
+      "bytes": 13105
+    },
+    {
+      "path": "Editor/Helpers/HttpEndpointUtility.cs.meta",
+      "sha256": "4f0c9c2b6a140cdf04ad9254913b846c8a62bc7d6782eb4df7dd677e1e0ed448",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/MaterialOps.cs",
+      "sha256": "8238ff0c739cb5a10cdd1af247624882f8f1ce6ac4e6f689f61212aa7ffc83d9",
+      "bytes": 16479
+    },
+    {
+      "path": "Editor/Helpers/MaterialOps.cs.meta",
+      "sha256": "bf6664ea0499fc0deeb961528ce77f222b000d60ff0adb5d25ca6f6dd7523041",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/McpConfigurationHelper.cs",
+      "sha256": "370ac5a80dcb8c6d9361f3c71a301add4a79b6ef34e7e8fa482907fa52d08357",
+      "bytes": 9994
+    },
+    {
+      "path": "Editor/Helpers/McpConfigurationHelper.cs.meta",
+      "sha256": "53af89a85857bac2b7dac3d4d8795467d70585bfb06f3a2f7a44e189cc0354ae",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/McpJobStateStore.cs",
+      "sha256": "d6a606ffb7afeb0564af22c73d049b80aa8261f821b29505d8a988b058f8f321",
+      "bytes": 1867
+    },
+    {
+      "path": "Editor/Helpers/McpJobStateStore.cs.meta",
+      "sha256": "4d3f4745b42dd66a1f7949309e7649b01acd8844e5afb4a862e98d94c42a13f1",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/McpLog.cs",
+      "sha256": "b4ec54e549577588012d1690f207bfaf36697135d6cca93fb482c14b3cd26337",
+      "bytes": 1729
+    },
+    {
+      "path": "Editor/Helpers/McpLog.cs.meta",
+      "sha256": "6446f07173bd56ca971379e12e4654970e909d251199de48b6eae52f47d53968",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/McpLogRecord.cs",
+      "sha256": "19f95a16aa605c48a18d2c7c2b79b1921fbaffa6a262c0ec54757c4626402486",
+      "bytes": 3876
+    },
+    {
+      "path": "Editor/Helpers/McpLogRecord.cs.meta",
+      "sha256": "3c274ba9b8e094760a45f264c3b358cde300b2788d2a567a671749797fcdc34e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ObjectResolver.cs",
+      "sha256": "3b3d50775d4561de23f2fa9de119f2d9cde826da683038269620b4cc2d852f20",
+      "bytes": 8107
+    },
+    {
+      "path": "Editor/Helpers/ObjectResolver.cs.meta",
+      "sha256": "185b97df6356d9afcb06f381690cbe3a5c2d558155863bcb9994a7ac4f0fc72e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/Pagination.cs",
+      "sha256": "e628e28a82662896dd4ca61d1668e97fd13a793765723953efd6dc483b9c074f",
+      "bytes": 5130
+    },
+    {
+      "path": "Editor/Helpers/Pagination.cs.meta",
+      "sha256": "606e94589da983699a0c0e3c2dd6e099ba358008667e0448a2153e32d924f33e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ParamCoercion.cs",
+      "sha256": "69b425c49152a31d68e80d0a6498c78c406989242214a8f9b760b6936b17670b",
+      "bytes": 14176
+    },
+    {
+      "path": "Editor/Helpers/ParamCoercion.cs.meta",
+      "sha256": "0fdc92a4d315a01b75d03647bcd83198adf3318418f76feaac804850d95f5ee1",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/PortManager.cs",
+      "sha256": "91ad0b7e62a467f24bd8afebc16a6e1d6d5d8836f7d0c9f0efbd211abaaf7a02",
+      "bytes": 12696
+    },
+    {
+      "path": "Editor/Helpers/PortManager.cs.meta",
+      "sha256": "756da4d6015b60768193847950dec0bc76d4252dc0ca3d3ad672ff6de0d602b1",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/PrefabUtilityHelper.cs",
+      "sha256": "4435daae74b7efe335c6db4189b35ac7d10f308dd79cfe3700a72b4f3b6bf95b",
+      "bytes": 8061
+    },
+    {
+      "path": "Editor/Helpers/PrefabUtilityHelper.cs.meta",
+      "sha256": "41b542f07b0067f82cfabfb0a787bad2f423892624364c0946f112ed57b256dc",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ProjectIdentityUtility.cs",
+      "sha256": "a78c82c6423aa32330c4bfbc5e09cbe356b9f15470f8401146b4addf67c89733",
+      "bytes": 8620
+    },
+    {
+      "path": "Editor/Helpers/ProjectIdentityUtility.cs.meta",
+      "sha256": "daa49d71151fca544c592abfc65160530b987b6621653f5d8c2d024b0307b76b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/PropertyConversion.cs",
+      "sha256": "f1d967049144882e065394cc15df95ef4e6eaf7a07c584297819ebbd1c3d45d1",
+      "bytes": 3365
+    },
+    {
+      "path": "Editor/Helpers/PropertyConversion.cs.meta",
+      "sha256": "b82e321d5a294289af531d1bf32450fca6e1942d38515804387e3ef3d438f075",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/RenderPipelineUtility.cs",
+      "sha256": "f869517a575ecb474860fcfcf82cb647b4eb718394245fcfc79d182a1d4b477c",
+      "bytes": 17610
+    },
+    {
+      "path": "Editor/Helpers/RenderPipelineUtility.cs.meta",
+      "sha256": "f6ca8867f36390bc9b14e1ceb5583f2d975810fb29a2bb4ee30dc9dc66c77c06",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/RendererHelpers.cs",
+      "sha256": "178747ff07cd5bbf8ae7b1363ac6335835f784e4b596f594b80e38bb03328dd6",
+      "bytes": 16784
+    },
+    {
+      "path": "Editor/Helpers/RendererHelpers.cs.meta",
+      "sha256": "a98b50fbf0a872630554434976df09197966f67a95bb781823b6bb1c386acfe9",
+      "bytes": 244
+    },
+    {
+      "path": "Editor/Helpers/Response.cs",
+      "sha256": "a1769de32b9c6824841c070f0590ae7e9f44485d2a6c44a0bce3ed3f68e17391",
+      "bytes": 2964
+    },
+    {
+      "path": "Editor/Helpers/Response.cs.meta",
+      "sha256": "74300d01f6a8cd63dfee787a80a79630db69a9081ec62575874c822bb76df982",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ScreenshotPreferences.cs",
+      "sha256": "2b180d65a93e86074ca0cbc500b3ba9031f2669615b87a72172d0a0bb667b864",
+      "bytes": 1837
+    },
+    {
+      "path": "Editor/Helpers/ScreenshotPreferences.cs.meta",
+      "sha256": "5bcaf88cc842e5d3bf39ebf1ebbff2b9ae2f74e63c2f25da55baadb6115f828a",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Helpers/StringCaseUtility.cs",
+      "sha256": "5758c84d56fd4a3420aede775ddd1ca7cc8e0854476bedf65a1a9bca437cd411",
+      "bytes": 2793
+    },
+    {
+      "path": "Editor/Helpers/StringCaseUtility.cs.meta",
+      "sha256": "aa65b5ca0fa0c799a36ff787147f4994df3e56473391f76bdee16d35c6cf99b7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/TelemetryHelper.cs",
+      "sha256": "b882ce08995356967ed03d152f723c5d2db837906e2076630c5933e96b4def36",
+      "bytes": 7679
+    },
+    {
+      "path": "Editor/Helpers/TelemetryHelper.cs.meta",
+      "sha256": "8940561ef4c242feb8a0a95b5ff53a32c0ef363b0c0cb3197eed5bd983f6e73c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/TextureOps.cs",
+      "sha256": "68e7a00cda46b9a41e3cddbe92d102af900ca90e0000313e59da012587c9275f",
+      "bytes": 6275
+    },
+    {
+      "path": "Editor/Helpers/TextureOps.cs.meta",
+      "sha256": "2fc379642a8418de88d3a61aba3fa5031da27cba6f2c50374d46279b4b5af522",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/ToolParams.cs",
+      "sha256": "f708345c2913672011a7050ddceb96141a22f0880c9dfea65ebfb5b50c792abc",
+      "bytes": 8874
+    },
+    {
+      "path": "Editor/Helpers/ToolParams.cs.meta",
+      "sha256": "d7e2f0fe8a3f4c4f92dde52e5c780fe7eec3b2f151b4110f2783dd06d5c6e490",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/UnityJsonSerializer.cs",
+      "sha256": "27dc61bebd6b60b78f94a8d61ec6bbf90c1619f5d95c1309ad7670ba4f572077",
+      "bytes": 1085
+    },
+    {
+      "path": "Editor/Helpers/UnityJsonSerializer.cs.meta",
+      "sha256": "897f45047347a01e24ccd95b46bec9b02b68790f0dbd20272ccfc44d9261dabb",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/UnityTypeResolver.cs",
+      "sha256": "b6c89e35e6eb2120a7a33444497940a4b9980c24d25dabd8388d39db44ffa4e0",
+      "bytes": 10862
+    },
+    {
+      "path": "Editor/Helpers/UnityTypeResolver.cs.meta",
+      "sha256": "a553dd3c043696cc88f51ec15ba404b4659cfc025e9006ea82d2dc0529cb1761",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Helpers/VectorParsing.cs",
+      "sha256": "806b40c239de43deccc5f49c191fa9ddc7b078f4e9182f40d57f919cda138100",
+      "bytes": 30402
+    },
+    {
+      "path": "Editor/Helpers/VectorParsing.cs.meta",
+      "sha256": "b32bf193ae4b52dd151ddbdc852e721498c1ef35daea0558bf16b1b1475fb36b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/MCPForUnity.Editor.asmdef",
+      "sha256": "04ee726b8af51854b8d7b5ad74859f9a0dc2bb04065068c2fa59472920e79a6a",
+      "bytes": 804
+    },
+    {
+      "path": "Editor/MCPForUnity.Editor.asmdef.meta",
+      "sha256": "2bba2cd7b7927c908801cf960d157b23fa5d0102d3e546b0772caa1a0c8ed362",
+      "bytes": 166
+    },
+    {
+      "path": "Editor/McpCiBoot.cs",
+      "sha256": "0b243494f5b3c169fcf63076f981a424ca89735e345c2a09450258eb61eca417",
+      "bytes": 717
+    },
+    {
+      "path": "Editor/McpCiBoot.cs.meta",
+      "sha256": "649ca98c33b0e72195b9cc8854a99c1d6a4d39518a5275bae6a6e89367c83c76",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/MenuItems.meta",
+      "sha256": "b47318e164eb454cc6bb9633576ff136850df3bee47cbb0571adb69147add130",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/MenuItems/BlenderBridgeMenu.cs",
+      "sha256": "6ff1d3680baf6f89d01ca19ea78059b18e1122f1c5d97aa4e01c58ab25396f42",
+      "bytes": 2982
+    },
+    {
+      "path": "Editor/MenuItems/BlenderBridgeMenu.cs.meta",
+      "sha256": "d1af31dc4e6e11a296cfeff8fbff0a0505a707324dbed43b81aaed0c9444c55e",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/MenuItems/MCPForUnityMenu.cs",
+      "sha256": "2bfab91fe93c3a317ac63490478a1da207bc1843cdf341c464ad8e46ee163938",
+      "bytes": 822
+    },
+    {
+      "path": "Editor/MenuItems/MCPForUnityMenu.cs.meta",
+      "sha256": "8eff8ad7fa9699a9e9e967aa62c1d8e8df307e83216d7c3f9ad2058413fbf083",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Migrations.meta",
+      "sha256": "3630d9ac5b352a0bbda7807377cd257e73309a63227d2caa4d2b3711ffccb871",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Migrations/LegacyServerSrcMigration.cs",
+      "sha256": "8e6f2741e4f6cf9f089746459535f2f4554b883216c5b90f0fba9e1c070830b8",
+      "bytes": 2759
+    },
+    {
+      "path": "Editor/Migrations/LegacyServerSrcMigration.cs.meta",
+      "sha256": "fff20507472eee21559f00f9a411452086deb41114a84fa9753101eae2a964fa",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Migrations/StdIoVersionMigration.cs",
+      "sha256": "bf88f69e19c0c7b24126c70f08c5ef60a9f32d51e8c4efe124533e1f045b50b1",
+      "bytes": 5374
+    },
+    {
+      "path": "Editor/Migrations/StdIoVersionMigration.cs.meta",
+      "sha256": "bee387bf9b84e684e4fdee5e263bbdca8b07556bb2f00955b1027f023afc0768",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Models.meta",
+      "sha256": "4637f5639b270bae74298ce3efc1aec8ea320e10f9d70135271a09bd7285d3f7",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Models/Command.cs",
+      "sha256": "92c7675f9f4e5a10045ff56e4040dbde46319da4fb8ed6e04d64673f572f4903",
+      "bytes": 465
+    },
+    {
+      "path": "Editor/Models/Command.cs.meta",
+      "sha256": "15333b647acc5cb05140ea06ee9672d3689d0721e656dc59001cfe385be2efe5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Models/MCPConfigServer.cs",
+      "sha256": "a6af34067a60e4c623f53ce7149b8e8fea1e6573bd04d715e55c72a8a56d9230",
+      "bytes": 595
+    },
+    {
+      "path": "Editor/Models/MCPConfigServer.cs.meta",
+      "sha256": "2be7e120139882fbf7034040d9abeea81baeb493426b31eb2393da99806755ef",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Models/MCPConfigServers.cs",
+      "sha256": "add44f492b1bcc01bf71da3c4caf50f7d553f45d9d6f4e980452db0c0f2d4df5",
+      "bytes": 219
+    },
+    {
+      "path": "Editor/Models/MCPConfigServers.cs.meta",
+      "sha256": "26360a7aaa4bbc2cb94df4ccbf739a3c58f0f55f71841f8c0dfe2aff18234693",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Models/McpClient.cs",
+      "sha256": "e798a15d150b79e1e47abc5af8ac067a173389ae3b549627d6093b57ae277d61",
+      "bytes": 3043
+    },
+    {
+      "path": "Editor/Models/McpClient.cs.meta",
+      "sha256": "9a0c5b6d8c9e5808e3c73639fc67301a7de9771ed1afa53765ab1f58ee9eb917",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Models/McpConfig.cs",
+      "sha256": "847bb7d7e2554c26e6b8f818868e6d6dea5d20fef03e1063bdeeb60548eac287",
+      "bytes": 217
+    },
+    {
+      "path": "Editor/Models/McpConfig.cs.meta",
+      "sha256": "d68df72448d628aa65d80d108347315e2b3aaa260fc1b7d3611d52c4974c8004",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Models/McpStatus.cs",
+      "sha256": "bd50e1ee1664212c486fb6effc3a0f8d0e0328c128b0908ce1ebd3a842d637bf",
+      "bytes": 1230
+    },
+    {
+      "path": "Editor/Models/McpStatus.cs.meta",
+      "sha256": "5d6ad6283bf2dfef8b7518025077ff7204b12e0f42b8538d7fd2c12701f290ee",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources.meta",
+      "sha256": "82f859eff781f2c0974e881cc555b11bffa8d855328194aeb476299689288fee",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Resources/Editor.meta",
+      "sha256": "5164b34f7184824a2f008a23d80fad95e3dc522643071080fae095d8f3b4fd96",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Resources/Editor/ActiveTool.cs",
+      "sha256": "dbcd1909b23c26876f649116f81019a6ad6fb87c845870e1d04bea31eb98bb00",
+      "bytes": 2274
+    },
+    {
+      "path": "Editor/Resources/Editor/ActiveTool.cs.meta",
+      "sha256": "2a735d6d0f03741d645d931bdf3beb9167a880f864cc551a8b0e31283deef074",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Editor/EditorState.cs",
+      "sha256": "b9491f97b4062796e24b9ce1e71419e3aaaca411352d2ffdbe13414884b50335",
+      "bytes": 782
+    },
+    {
+      "path": "Editor/Resources/Editor/EditorState.cs.meta",
+      "sha256": "5d5a4fb1877f2fa3d4b6827250f50832a9273a9ddaff992129ce280924fdc6dc",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Editor/GetPrefabStage.cs",
+      "sha256": "ab28fd6926c8ca1815f3d792a619e66d4c87028abe6dfdc817df2bf0c2facfe3",
+      "bytes": 1592
+    },
+    {
+      "path": "Editor/Resources/Editor/GetPrefabStage.cs.meta",
+      "sha256": "bf4af3ad3a18876c7d2d363e923fefdb8c511ceb886d41a486794259f07e90d4",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Resources/Editor/Selection.cs",
+      "sha256": "c1fd0a170f00dbeda2fc7ca3649e6589e56f5b14613e88299b4fc516049ae9a8",
+      "bytes": 1990
+    },
+    {
+      "path": "Editor/Resources/Editor/Selection.cs.meta",
+      "sha256": "fb7f4f3c37e85ed83596b6b578d0be0a710ba6b8500b4adcc709fc46e26b3757",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Editor/ToolStates.cs",
+      "sha256": "236d588f56d0492f5c54f1a5c2ff280a411ca46090962b14b86cda9ce7fa7428",
+      "bytes": 3092
+    },
+    {
+      "path": "Editor/Resources/Editor/ToolStates.cs.meta",
+      "sha256": "0ac14fadca8fb255763bba42ac573b7e1814acb3cac915e54dff141840c513c7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Editor/Windows.cs",
+      "sha256": "3b868b6ad630b5f2d7b1b3b055a5361b83d878d0c0a8777e9ab84172e2e46b4d",
+      "bytes": 2085
+    },
+    {
+      "path": "Editor/Resources/Editor/Windows.cs.meta",
+      "sha256": "a3b6e7cf06a31a4419fb86b5e6976f5bb2843b96007c7eb42b84fe2e97925b52",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/McpForUnityResourceAttribute.cs",
+      "sha256": "015a97047609af81b23b84e07a3365b4c5770cb1f64679a5e9f7b75ff83977cf",
+      "bytes": 1525
+    },
+    {
+      "path": "Editor/Resources/McpForUnityResourceAttribute.cs.meta",
+      "sha256": "71a6eba03c0206de766ff82b571bbfae13e820043150230c8145608c442fb908",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/MenuItems.meta",
+      "sha256": "a367ded1957816a31e4140872cd6fef067ef9c55e4515122c5c1887b1830b7a8",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Resources/MenuItems/GetMenuItems.cs",
+      "sha256": "8852fa1e2ee6821e485506602e8b5a6097089f20a2d9c348039bf9fa467d82be",
+      "bytes": 2265
+    },
+    {
+      "path": "Editor/Resources/MenuItems/GetMenuItems.cs.meta",
+      "sha256": "194902611e00f977989479e059d3077bed170463b379155e259c5cda425cc38f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Project.meta",
+      "sha256": "7e852bc57aa4ed00d1ba62e846081dbc600089db96f1b10f046dd7b6e18275f8",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Resources/Project/Layers.cs",
+      "sha256": "269850217c0e3b1f23b1658a9c3bf7aeaea043b8b711e043dbafd729d1e823d4",
+      "bytes": 1139
+    },
+    {
+      "path": "Editor/Resources/Project/Layers.cs.meta",
+      "sha256": "f2a89ecdf980b5055e9e3fd0f19e487dff36004c0487fc53668a4345964c962f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Project/ProjectInfo.cs",
+      "sha256": "98150421e21fa437ef60f9d825b59e61f34f2920cc2d07c3a62a23465f79f5e0",
+      "bytes": 3228
+    },
+    {
+      "path": "Editor/Resources/Project/ProjectInfo.cs.meta",
+      "sha256": "dbf4bfe4a31685e3b6d7612521a71fedf7bd2e8470bea6367e59ffd8c21fcbb9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Project/Tags.cs",
+      "sha256": "2568cc5bc6dddd2eba9912c545ee3899b002687d872691329a3af7b20b1d6ce2",
+      "bytes": 725
+    },
+    {
+      "path": "Editor/Resources/Project/Tags.cs.meta",
+      "sha256": "5c61978f9aff2336032a1815d23e42633e124ceb928bdc74250aeb0262e883e4",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Scene.meta",
+      "sha256": "e33074a1bfa21c6ff9c8b350b0b7b0008aa709d393fc2280bef71c171b659c59",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Resources/Scene/CamerasResource.cs",
+      "sha256": "664a377b002a194009706c4936ee46019f6bdaecee1a4e64186fe07f586ab610",
+      "bytes": 751
+    },
+    {
+      "path": "Editor/Resources/Scene/CamerasResource.cs.meta",
+      "sha256": "cb88e32875203c55ccda355208441f6e3fbc7307e00a0c6adc0cec71633bdc74",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Resources/Scene/GameObjectResource.cs",
+      "sha256": "12b8444f5a48306a2809e1a7be8ee4cd24942d0e4cfea61af45bcf0f6424c96e",
+      "bytes": 10690
+    },
+    {
+      "path": "Editor/Resources/Scene/GameObjectResource.cs.meta",
+      "sha256": "e098509cdc19a06b086c31e203a48f249850016fd58ab8579ab3db58fc102c6f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Resources/Scene/RendererFeaturesResource.cs",
+      "sha256": "d13b5c642d3d152aed432460eaced82471fe013235250cb01acad4e04068d72b",
+      "bytes": 708
+    },
+    {
+      "path": "Editor/Resources/Scene/RendererFeaturesResource.cs.meta",
+      "sha256": "bd813b3fe55b58ec53451bb3c9a1e487be4569034374b4c976898926af86e1ef",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Resources/Scene/RenderingStatsResource.cs",
+      "sha256": "2872ec7d3322a233b64b2ec42619a153a43cef96d748ac9e6114b5df9469ff2c",
+      "bytes": 695
+    },
+    {
+      "path": "Editor/Resources/Scene/RenderingStatsResource.cs.meta",
+      "sha256": "6fab7830c0a5e1eb18f4a9dc9081310d6fbe8bbc57e505ae786bd853167ffb16",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Resources/Scene/VolumesResource.cs",
+      "sha256": "9dab6b10809f7fc8d575c2ea7a454b853526f0ac694a0151186dc8620b9c9621",
+      "bytes": 676
+    },
+    {
+      "path": "Editor/Resources/Scene/VolumesResource.cs.meta",
+      "sha256": "e35e2ce98ad770c838e824fba63b831e62526028ede39b1380dd0008c29829eb",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Resources/Tests.meta",
+      "sha256": "2639bf61d8a381c2796114ce432ef410312ebbd1e6b091d437e9eda459f81bb4",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Resources/Tests/GetTests.cs",
+      "sha256": "852dd76f3fe15a8be11b6794b4684685c2e532f4d3b8a80a6a8eb6ad9358d1cc",
+      "bytes": 8975
+    },
+    {
+      "path": "Editor/Resources/Tests/GetTests.cs.meta",
+      "sha256": "58104ca0e68bb779702360938b1ea1b38f04c5e324719f763ce40b9e29976fd4",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Security.meta",
+      "sha256": "b445ced265414e157471dbbc6d606394a2a7acff09e3a5dd14432791cf3b871b",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore.meta",
+      "sha256": "2cd714360ed61d7ea3e6bf628c648bfbb1f96824a18417d51002552fd87c865c",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/EncryptedFileKeyStore.cs",
+      "sha256": "b993b98d7254a421bc1f98d04479564cd97b2277fe6aa0c99dea13447201dd39",
+      "bytes": 8386
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/EncryptedFileKeyStore.cs.meta",
+      "sha256": "2d96a10c822d3a1c73f21b8948c0749355f19d46ab300de3f90d036300fbee96",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/EnvKeyOverride.cs",
+      "sha256": "71644d1a1d9e89d02bb0bcb32bf5421b9ff7c2240bda9853712a440a27c1ddf5",
+      "bytes": 1002
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/EnvKeyOverride.cs.meta",
+      "sha256": "e30f43882ceaaad86e228df80d18f515513e3e55d15b3acc0eda21f342326188",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/ISecureKeyStore.cs",
+      "sha256": "11cba7f59c03a150ec5ce5fd99ac5957630ded911d118654557dfef8c4b27f64",
+      "bytes": 1152
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/ISecureKeyStore.cs.meta",
+      "sha256": "d8224aa8a04a6bf9af015aae108d8dbb7046b97bcd89439c0850adabdfe55707",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/LinuxSecretToolKeyStore.cs",
+      "sha256": "7b7a9d84ca576395220d56fc5bc571efd9af97e71cace22058f21111e5a7ff90",
+      "bytes": 3732
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/LinuxSecretToolKeyStore.cs.meta",
+      "sha256": "00d41609088f5d5453bfb83bce1f720efb6df58b264ed6f91b3c94345545d09c",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/MacKeychainKeyStore.cs",
+      "sha256": "24796518f83290a3cfbf5aa1cd029b493429dcfbe450c4bf2543a532fdcfb95b",
+      "bytes": 2499
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/MacKeychainKeyStore.cs.meta",
+      "sha256": "ec57a9f8029467c954a1c5f44ce8e9c86b75b83a2a980dc058ba88b97d41e6f7",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/SecretRedactor.cs",
+      "sha256": "328eb8e252f4195a317951309be89ebce6ef1243aa0fd332c087814f61d9b47c",
+      "bytes": 1358
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/SecretRedactor.cs.meta",
+      "sha256": "4f058ded9ece6bed948cf75ee222603cc15ba10badeb464a357e9fd3be636be9",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/SecureKeyStore.cs",
+      "sha256": "8c3e4a05557c56a6e3292fb7183f4b7a64c6e1aaa8ed547b6a406dd806054e50",
+      "bytes": 2573
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/SecureKeyStore.cs.meta",
+      "sha256": "2094735f5eb9e514f6a0ffb03ab923240be2cc6a5724e7a4a1399adb15a82253",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/SecureKeyStoreConstants.cs",
+      "sha256": "78968be404925230cffcd8f1c0cbbcdf1a16860884b75dc1cd5fc1847281c37b",
+      "bytes": 550
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/SecureKeyStoreConstants.cs.meta",
+      "sha256": "4294aceeb54c2ee861754b682c3dbbef34bb8bddc007d4a23643921b59fe3779",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/WindowsCredentialKeyStore.cs",
+      "sha256": "9d172356707b19bf162d6fec5a88fab5c0729ad63c1c14192f6d104de66839d0",
+      "bytes": 4248
+    },
+    {
+      "path": "Editor/Security/SecureKeyStore/WindowsCredentialKeyStore.cs.meta",
+      "sha256": "4c052acc3071a5d33ffbda7c5af86cedd7b99252c23d91dc9dbec555e72fedfb",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services.meta",
+      "sha256": "caf62f252675380fe6d72647fcd4ca96c643655e8a100b4daa59240b4ccdfff0",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Services/AssetGen.meta",
+      "sha256": "2cbf3f7538c3cc5c86484d98ad264cfffcaf0a1dd72161504e4d978aff09c85d",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Services/AssetGen/AssetGenJobManager.cs",
+      "sha256": "5a58e159eb54f5df34149982a50dca9742a5d688710c5f4ad929d5999876ed39",
+      "bytes": 29734
+    },
+    {
+      "path": "Editor/Services/AssetGen/AssetGenJobManager.cs.meta",
+      "sha256": "cb73137e9e03bd4f7bfa44124ff53b7ef001aec72bc60b3b757ca9774e8c7e91",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/AssetGenModelCatalog.cs",
+      "sha256": "0762305b5c9ec2ac0d9a1a16db2c28142a1fb9c17996ed2db93ca4e60b24fb7c",
+      "bytes": 8849
+    },
+    {
+      "path": "Editor/Services/AssetGen/AssetGenModelCatalog.cs.meta",
+      "sha256": "d01281e9c6c3cb55d309758b65f1796211030b0b6cf21a5a9d69dccd1ae69dc0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/FalModelCatalog.cs",
+      "sha256": "7384d93e85b52a0b76a4abc84cf18893c0b9990aeccbe7d68b4fee213b563a6b",
+      "bytes": 22834
+    },
+    {
+      "path": "Editor/Services/AssetGen/FalModelCatalog.cs.meta",
+      "sha256": "04ed62f83ee4fb1912d40373834c85cb2baf8b6c4aa5503af826d187e8bf79e0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/FalModelSchema.cs",
+      "sha256": "b9ffe4eca75aa4486d47206476fa72587ee1063da6dcd237ee5cadf1f50fba67",
+      "bytes": 13477
+    },
+    {
+      "path": "Editor/Services/AssetGen/FalModelSchema.cs.meta",
+      "sha256": "5df5688f6d0fd03dd0efabe4f2c21f12228ba1a10a996bb3d5deb3a3041c08d8",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http.meta",
+      "sha256": "8073b37c3eb678d80aa62ebc675f2692de87f14ee5bd8f09721a65c8c253a5ab",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/FakeHttpTransport.cs",
+      "sha256": "32ec50bc9ddeffc3f694a8540e271af119acc69b54e5a379c2906eedde2d112c",
+      "bytes": 2074
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/FakeHttpTransport.cs.meta",
+      "sha256": "351fdb3a09d8164c9b9e637d26f6c4a11bb3522ecba60158e23c1b6f3b2beaa3",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/HttpRequestSpec.cs",
+      "sha256": "bba19ce31e7f0a0f0a89a38c7ccb705defc603f8349bc8c5f27dff4415777015",
+      "bytes": 667
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/HttpRequestSpec.cs.meta",
+      "sha256": "2a6dcbb559669d9cae2ee37148659741a7615fd05c6f033ecc5500ad09ef21c2",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/HttpResult.cs",
+      "sha256": "1fa04c99af9ead1e6e6770d54e775c272967011b86e7b81a7bd355ffeb163a5e",
+      "bytes": 778
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/HttpResult.cs.meta",
+      "sha256": "453325a304c0ffae14127c896c3da59052eef8dfe1f01959dc2cb588e481d56f",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/IHttpTransport.cs",
+      "sha256": "d5b6b067306617be1fd92ccd1a7d19088b7ee83ae220956933c84c97dd5f9e9d",
+      "bytes": 531
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/IHttpTransport.cs.meta",
+      "sha256": "993e4b503d2ac3867a00d13b8729ced7ba1f7f2936474d9c46d8e41626e936f3",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/UnityWebRequestTransport.cs",
+      "sha256": "b967ca9e749622e75c69c001af489369a3c3fa748fced1bcd14037b041ae62d5",
+      "bytes": 3646
+    },
+    {
+      "path": "Editor/Services/AssetGen/Http/UnityWebRequestTransport.cs.meta",
+      "sha256": "5d70fa3e77b5b4e97163830c1e62fc78f09ef3f96fcccf5d5b006942b859f030",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/ImageResultFormat.cs",
+      "sha256": "078ce605ca313deccb9965d49a07090b9ec1eeb42ea97a60aedb0b4139af290d",
+      "bytes": 1538
+    },
+    {
+      "path": "Editor/Services/AssetGen/ImageResultFormat.cs.meta",
+      "sha256": "94b8f5795498fc55af735b6b34fa1599cf77cb404e13b465ab58870248eb4101",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import.meta",
+      "sha256": "93f0f43117a4ecf08bc67ae86306877e319a247b946d60647c5066d84961f2f2",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/AudioImportPipeline.cs",
+      "sha256": "89c7984ba9d72b1594f73f52ff75274d4d5c8c4b19aff81582c58d14eb9e55f1",
+      "bytes": 3145
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/AudioImportPipeline.cs.meta",
+      "sha256": "7fb18b9b12983e15bc454aa1da2f280689dad59929a0a7b7b738ec6c98974fe4",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/ImageImportPipeline.cs",
+      "sha256": "7a0fdea4c3780a5f92790a8dbe10243217730991619ecaa223c3d0297c6981ef",
+      "bytes": 2766
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/ImageImportPipeline.cs.meta",
+      "sha256": "4005ff3b40fc89590034749df17fc7272c314e5f7ff7f3f2025c1c9ab02c647a",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/ModelImportPipeline.cs",
+      "sha256": "02cd2ab00f97b084a6733468d4256d6597ca1b7f53ed4979970521234f9f629d",
+      "bytes": 10709
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/ModelImportPipeline.cs.meta",
+      "sha256": "f1ff40f6b3fb5b6963138fb84d8d27d284aa101063759bd3ce4663e398384b6f",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/SafeZipExtractor.cs",
+      "sha256": "fa49022a5e363dc302f42ba21aef5dd3b15278127846ed82e3c0d153ab13015e",
+      "bytes": 3517
+    },
+    {
+      "path": "Editor/Services/AssetGen/Import/SafeZipExtractor.cs.meta",
+      "sha256": "a8b212f3ec29be3a3d55da16e5e659bd8fc7241d3c2c7d14318dfc9c78a82c3a",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/OpenRouterModelCatalog.cs",
+      "sha256": "355489b4933a516832cf7d770a769373a0589d74fd1b146a4eb9e9354e23d51c",
+      "bytes": 10498
+    },
+    {
+      "path": "Editor/Services/AssetGen/OpenRouterModelCatalog.cs.meta",
+      "sha256": "65d37508f3e8d509fffa6e1eec9c3c621c3d02726cbddbf764296e19d5257948",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers.meta",
+      "sha256": "ec756d092f7d589dc3443f8e56c86862f66eb8dbb064a987aa81fb6ef695f80c",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/AssetGenProviders.cs",
+      "sha256": "00b70784ffa76c56a19ec04da50f9b93c1e246c40316ce16fbae01739002108a",
+      "bytes": 4258
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/AssetGenProviders.cs.meta",
+      "sha256": "def5a673053a01d31d3b49941fcb79660c6d10be31ce8f3ca9c265fa930b5be4",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/FalAdapter.cs",
+      "sha256": "e37dfae66bd721bcceda8d82046c75abe8f4211b2609d29dd6c3c950e675d90e",
+      "bytes": 10536
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/FalAdapter.cs.meta",
+      "sha256": "d673e08f8fba02902f5b1662fd96f2a072679a54776094247ba7682b38d359e0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/FalAudioAdapter.cs",
+      "sha256": "a8aac2c4b854a75ae950f3f485613d035a66152b66a3519082464f9072de565f",
+      "bytes": 8895
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/FalAudioAdapter.cs.meta",
+      "sha256": "e199c2e6eecca2c90bccf6b142ecd19c487575262e8cdcf07e617b7c7f1c0d89",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/FalModelAdapter.cs",
+      "sha256": "041775cb765119f0ee8102749ce946a3bf3bb9e62e7c13c4ffaf42050271890d",
+      "bytes": 2280
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/FalModelAdapter.cs.meta",
+      "sha256": "ef180ffca258bda8fbe556e483d2a4c3b3970568689bf979e159ea722436236b",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/IProviderAdapters.cs",
+      "sha256": "116b730e67ec9336578e43d95f6849bcb55efa0d49ff460ff2aae3903048c0a3",
+      "bytes": 2393
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/IProviderAdapters.cs.meta",
+      "sha256": "f7c72202bc71bf18d57a367a5c469e02b7410ba427857ffb116cab32e9ff6cbf",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/LocalImage.cs",
+      "sha256": "d06fad3fef0b82fbb08b2d712391e2112c11340e160c5a4d1620b7004e7e2bb5",
+      "bytes": 3495
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/LocalImage.cs.meta",
+      "sha256": "f58dcea67c659ecbecdbd1a1c0b699110b23e267ae92adcd38885e437794d1e5",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/MeshyAdapter.cs",
+      "sha256": "57e3d09db8aa8a11be6ec98a6315174870002220be1a2a34b7937796642f3caa",
+      "bytes": 9529
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/MeshyAdapter.cs.meta",
+      "sha256": "f9d615540f03094a2709c34f6fdba6a70e62774ca06b83fde42ebabea3caa3e0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/OpenRouterAdapter.cs",
+      "sha256": "5f713d0ba31d299db579d3963f40509ce3246b3a134f4d59a99cb0fd0c919b10",
+      "bytes": 8736
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/OpenRouterAdapter.cs.meta",
+      "sha256": "1afb8079678d515bd2cc6171026e0403dc11b4a8037ee174f4ebff78bcadfe85",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/ProviderHttp.cs",
+      "sha256": "5ecb28562c5bc4bb79522ab783d0879826bae71eec3e329d859ff49063703658",
+      "bytes": 2144
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/ProviderHttp.cs.meta",
+      "sha256": "79a3b4d5fe2acfb9c58b84eeba868ffa14d9654f52764084d1711caad829e797",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/ProviderModels.cs",
+      "sha256": "08d7d841305a0d7aa315d02935455ee3736bbc744ec5c920589245453d5d4eed",
+      "bytes": 3699
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/ProviderModels.cs.meta",
+      "sha256": "3df08511fc586ef1d3b68f2456e5b04ef3a4ac04594f00e94f5c78fe846fefcd",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/SketchfabAdapter.cs",
+      "sha256": "cbae6c7a61f6b0c727be396c65a13f30ff1cd2960f75b17cc1731ca0813a7605",
+      "bytes": 4690
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/SketchfabAdapter.cs.meta",
+      "sha256": "a54a7d2fdc041d6e70612911dc2122ac742d430b210fa4404c8b99a025d25ca8",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/TripoAdapter.cs",
+      "sha256": "618ad8472ab5111fc920b448826ad2ac4da290ff845371b0e64037a5330faf9b",
+      "bytes": 9176
+    },
+    {
+      "path": "Editor/Services/AssetGen/Providers/TripoAdapter.cs.meta",
+      "sha256": "ffc6e86edf168496a87874d03d62e3d707c640c501a8b5597b40ffc8cac92b34",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/Blender.meta",
+      "sha256": "1ead3e274b86a136c60b01815464c5d66c24c67313c305f621bc7ff45c9af496",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Services/Blender/BlenderSocketClient.cs",
+      "sha256": "871a605f0813e0b3742c4e26532a020dd8c67b752a0105a94e124f44b4131370",
+      "bytes": 7616
+    },
+    {
+      "path": "Editor/Services/Blender/BlenderSocketClient.cs.meta",
+      "sha256": "4299c0ea741992710844ea63ef2987d9ea2121023072a955e0190b47d45e3554",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/BridgeControlService.cs",
+      "sha256": "4a9a720417b1949340d0f89133f06ff7c5a0fce600f2acc78ae2cb78495102a3",
+      "bytes": 5921
+    },
+    {
+      "path": "Editor/Services/BridgeControlService.cs.meta",
+      "sha256": "3317752a6ccaca5d9abddb1393b0b14b178deadf0cbe1e5b1804636ffb6e3b3f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/ClientConfigurationService.cs",
+      "sha256": "c362ac30c69df7f89b0d5cfea91107bb0477421aa68f24a619c7f2fa7ea3f2df",
+      "bytes": 5759
+    },
+    {
+      "path": "Editor/Services/ClientConfigurationService.cs.meta",
+      "sha256": "b1a91a52384c74375d6d4c71ddcd5fd5e6c3b515ab8056a7ecc160cc6dc8a98e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/EditorConfigurationCache.cs",
+      "sha256": "96bf619c01e7b14b222c78ec716326945e2f4b3284c2f5991f97db3cca73b10e",
+      "bytes": 14019
+    },
+    {
+      "path": "Editor/Services/EditorConfigurationCache.cs.meta",
+      "sha256": "b8d7ff31e83b43311026a7b0b41995f3f2ce26b8e8716c55110d3a93cb51cf4e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/EditorPrefsWindowService.cs",
+      "sha256": "0cf6b75bf7e64a68ea62b64548274012554875c753f85a7747bb1a781663fd61",
+      "bytes": 1353
+    },
+    {
+      "path": "Editor/Services/EditorPrefsWindowService.cs.meta",
+      "sha256": "d5ddbc9873a7fd02adad98af920b1cca280d74bead568e84a2ab6ebc2616ba71",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/EditorStateCache.cs",
+      "sha256": "b0ff9eee0e4888ef04541cb6abbf49845315ac50eda34993918a2676d55c47a3",
+      "bytes": 24612
+    },
+    {
+      "path": "Editor/Services/EditorStateCache.cs.meta",
+      "sha256": "d22722f5b1078ebc6718a9740e3cf5002ca168c95d153632bae1112ebbd7a369",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/HttpAutoStartHandler.cs",
+      "sha256": "4aef170376ab33ad8673fa2705f1025f64a331eb0ecf7070cfc5e9270a8bc604",
+      "bytes": 14839
+    },
+    {
+      "path": "Editor/Services/HttpAutoStartHandler.cs.meta",
+      "sha256": "76c794c2ab26962a6a9e14660a1a72dec3069777e1de6f43a59fa7b5f30eec67",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/HttpBridgeReloadHandler.cs",
+      "sha256": "5cad911133903e37452e44a36da1edde32ade463322b534eb96c7c1485ced653",
+      "bytes": 10009
+    },
+    {
+      "path": "Editor/Services/HttpBridgeReloadHandler.cs.meta",
+      "sha256": "80a559843f9f910ab53aa1a9aa90e4a37aeab80f4a0e9fa1764c8cf088a2629b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IBridgeControlService.cs",
+      "sha256": "945230812eb1633a0f9ba8fa22525dbb71f055ed7ca49edbfe13c8aedabc73dc",
+      "bytes": 2515
+    },
+    {
+      "path": "Editor/Services/IBridgeControlService.cs.meta",
+      "sha256": "2f8cd3de6d11ff92725a884c4f1e115773d547879a9e2e5cb540451c6a522335",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IClientConfigurationService.cs",
+      "sha256": "3486dc431b793b3041862d8f1479c4143a2aaa74bbc8ddf069486311a1e4e5ac",
+      "bytes": 2423
+    },
+    {
+      "path": "Editor/Services/IClientConfigurationService.cs.meta",
+      "sha256": "76c1b3ace16283a4125c62dd9fc9d650c52e2cc2cf497cad21dbf4f0494c8609",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IPackageDeploymentService.cs",
+      "sha256": "2813eb90da03ab75ede837e7a60c8476ffebfa24471d222265e34d0d7798da8a",
+      "bytes": 767
+    },
+    {
+      "path": "Editor/Services/IPackageDeploymentService.cs.meta",
+      "sha256": "8f73baf018debdff1839e30d86909e677205346a042e72cbf7c20ddd9c7ad32c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IPackageUpdateService.cs",
+      "sha256": "e92b4ba85cb03a7829e1a5d4c1a9edc9444bd473e29df02137227a846f91bab6",
+      "bytes": 3495
+    },
+    {
+      "path": "Editor/Services/IPackageUpdateService.cs.meta",
+      "sha256": "66f2e55f94bb352d37f6e79eab3fc5db74ea8fa71940d05773d01948f437e590",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IPathResolverService.cs",
+      "sha256": "e747179579532159e0a44f1c0816d5b13fff6be4256aa95399dfd9f424f51381",
+      "bytes": 2682
+    },
+    {
+      "path": "Editor/Services/IPathResolverService.cs.meta",
+      "sha256": "ee41717d5c2e641476cefa65361bd5fcc4e495b087bfdbf32e4987dad3e58454",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IPlatformService.cs",
+      "sha256": "5e3125825a2298a403c0bdf1d408553194ad0b71b9989b87e402940fa16afc7a",
+      "bytes": 615
+    },
+    {
+      "path": "Editor/Services/IPlatformService.cs.meta",
+      "sha256": "7a1d3012bca62a0383c861657ba3848f3ab8051157582f79c64689b8c54da697",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IResourceDiscoveryService.cs",
+      "sha256": "053f0b7c72a4a22a913b5cd55e30ac5c5835090b3f71650f2133ef4526cc1d3f",
+      "bytes": 1581
+    },
+    {
+      "path": "Editor/Services/IResourceDiscoveryService.cs.meta",
+      "sha256": "bba8eb88aba04dea53f77dd33062229b05fdd40fda6768293cb70092877b9643",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IServerManagementService.cs",
+      "sha256": "6fd21a253708bbc01c0e55a0f6f725815c94f3be33a285fab865abc7ad0513ac",
+      "bytes": 3941
+    },
+    {
+      "path": "Editor/Services/IServerManagementService.cs.meta",
+      "sha256": "8eb31ab822e4ea775dd6a415b591a1f7088ab5e1ac0b6696ed4e0612f17db8ed",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/ITestRunnerService.cs",
+      "sha256": "73ecf527d561f2d474d7e5da06724ea529708bcbe7569c7b1b918b20766c0151",
+      "bytes": 1896
+    },
+    {
+      "path": "Editor/Services/ITestRunnerService.cs.meta",
+      "sha256": "8b6bd695725993e2c353648da3493535b22b8241954ba3f47b5e78424c31d8ba",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/IToolDiscoveryService.cs",
+      "sha256": "56ebf5166bd704f6daf27af4e9f83230c84489e58b3e8050da69ed80c959d457",
+      "bytes": 2308
+    },
+    {
+      "path": "Editor/Services/IToolDiscoveryService.cs.meta",
+      "sha256": "5f072396f77e8e1373cff34bc154085a77ec304b1db2fb1be1ec5d50ac64de4e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/MCPServiceLocator.cs",
+      "sha256": "a2f4a419dcbb0d2c985a8647ede6562c811220e80fd811d174d952712ca110cc",
+      "bytes": 5126
+    },
+    {
+      "path": "Editor/Services/MCPServiceLocator.cs.meta",
+      "sha256": "0a64b6541133418bdc16243a3e7ff6dc5b71dc919beb724d62e07a631faa93b9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/McpEditorShutdownCleanup.cs",
+      "sha256": "5b642ff456fda4e37722e40f07f33722d1ab84a19ebf406da8e7d5f0cc1dcbd6",
+      "bytes": 3112
+    },
+    {
+      "path": "Editor/Services/McpEditorShutdownCleanup.cs.meta",
+      "sha256": "069cae0c183967e117070127a7477a441be1934041ebabd12780f4a60b89a90d",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/PackageDeploymentService.cs",
+      "sha256": "c141e23e5876f9dcbee4588ef1878a58ccbeab66576a798ff321a5fa0f8d3ab9",
+      "bytes": 10763
+    },
+    {
+      "path": "Editor/Services/PackageDeploymentService.cs.meta",
+      "sha256": "36f5ada278e541417cc7a8a6c10c1e3e355c51f74efab38400210aa529bada35",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/PackageJobManager.cs",
+      "sha256": "5219421f8292186a02fe63b6fa4c40ec8426d60532fee332ebac52fb884e33cc",
+      "bytes": 13399
+    },
+    {
+      "path": "Editor/Services/PackageJobManager.cs.meta",
+      "sha256": "0870cffcf4c4852ac3f852c1336e1fe14eab2e95bef7f5254258717c599f9d9c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/PackageUpdateService.cs",
+      "sha256": "7041297c1a5899f25fb8e316480834fcdcf91d8ffc0674c814b5daf2752fc0e2",
+      "bytes": 17739
+    },
+    {
+      "path": "Editor/Services/PackageUpdateService.cs.meta",
+      "sha256": "17c7a322976384df050dbd7757254c0521b8e1ebf1155ad0c6504239f5718df5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/PathResolverService.cs",
+      "sha256": "3da8705f6cd6740c12c819f032c6f35d40171e1b5cb250346f60ae482a0d9b0f",
+      "bytes": 12009
+    },
+    {
+      "path": "Editor/Services/PathResolverService.cs.meta",
+      "sha256": "ea8ab93e5cba61acda23792a6da00f66bf1d25c3ce1b86b0a12963172d50ea22",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/PlatformService.cs",
+      "sha256": "7bb5d5dcca9db75024b6d933d969de5b6cfd77ae5c1b2a097af729a2b5b2bc21",
+      "bytes": 936
+    },
+    {
+      "path": "Editor/Services/PlatformService.cs.meta",
+      "sha256": "6da994109697e7e62225f98df932608d1ecfc01b66923edda9b166b7c25ad452",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/ResourceDiscoveryService.cs",
+      "sha256": "fe8ca42733b5979f9f7d8e918347370b7be78d17b44d3546cf6f256eb9692598",
+      "bytes": 5360
+    },
+    {
+      "path": "Editor/Services/ResourceDiscoveryService.cs.meta",
+      "sha256": "8fbc8519971bdd0d133351e56af72febff4987f85d7c5a1bbff4f05f70b60433",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server.meta",
+      "sha256": "b7d89add29e13baf8dafe099f5de8cf56ffad3538a6c158a77ca4bb7648c1f15",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Services/Server/IPidFileManager.cs",
+      "sha256": "a926cb56d184ead96cb08a4d30b8fbec17d3167b544e1dd859035b6764f38eed",
+      "bytes": 4029
+    },
+    {
+      "path": "Editor/Services/Server/IPidFileManager.cs.meta",
+      "sha256": "80ff0b3545dbe1470dc8d5e7f967e73eb77abf1f41efadca4055e97f55c4ffb9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/IProcessDetector.cs",
+      "sha256": "4fe25fc63ccd42427945ec03e39c9f2b3d699d479d9b0805dd92c5c4e033edeb",
+      "bytes": 2361
+    },
+    {
+      "path": "Editor/Services/Server/IProcessDetector.cs.meta",
+      "sha256": "fec1e2ce66a06f1e411275d4f31423437a6ff48c6d96866dd3d93654a88ebef7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/IProcessTerminator.cs",
+      "sha256": "d4414a774ed4994cbc8411d98ffe40d29a74a50b5da87b94f898ddbb1cb26978",
+      "bytes": 697
+    },
+    {
+      "path": "Editor/Services/Server/IProcessTerminator.cs.meta",
+      "sha256": "cacd9b969f6827371976a1c84dcdf92eed2ce8badf5c1e774291ec3a1d03a2be",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/IServerCommandBuilder.cs",
+      "sha256": "06fedfe8cc60dbcc07d4ec089e87b68d3a807de5b39616027c9445b320242728",
+      "bytes": 1785
+    },
+    {
+      "path": "Editor/Services/Server/IServerCommandBuilder.cs.meta",
+      "sha256": "a7e760c0905bb073bbd837dc975a95ad1248b08331958d0717e7e1cf22cb5189",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/ITerminalLauncher.cs",
+      "sha256": "5fa5fa07318de8176dbe97a1d7fe02ad0fc80f97195f18ccef4e5ad682fb59d7",
+      "bytes": 1553
+    },
+    {
+      "path": "Editor/Services/Server/ITerminalLauncher.cs.meta",
+      "sha256": "4decb03b0435a71ac258045389531e9b5a09a775e2b00075780872d4f332b4fb",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/PidFileManager.cs",
+      "sha256": "247b03fa4a415027d7a9c73a2cc97a34e1159b523ff4ac5031af0b0166db331f",
+      "bytes": 9171
+    },
+    {
+      "path": "Editor/Services/Server/PidFileManager.cs.meta",
+      "sha256": "9ef7da38ea7bf0ed8de0fae33c172808add151ad052bdd21a17d1c4f223e0d56",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/ProcessDetector.cs",
+      "sha256": "e62648b474599681200cd7f556f84ee5d4474604f2d52b1505d2375d2b3f4668",
+      "bytes": 13458
+    },
+    {
+      "path": "Editor/Services/Server/ProcessDetector.cs.meta",
+      "sha256": "30dc6f4925dc86180725ac09a2a66585ac94119caa50277c4afc43ef2f76bcbb",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/ProcessTerminator.cs",
+      "sha256": "a96db28ddd468c9c5e9c2715c9926f5326be22e993d3c3635fa04cb5904eb561",
+      "bytes": 3559
+    },
+    {
+      "path": "Editor/Services/Server/ProcessTerminator.cs.meta",
+      "sha256": "b7e4d3e52a7a6048de6f8e1857a9221beae514dfea637b707fa842e3a99c5307",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/ServerCommandBuilder.cs",
+      "sha256": "eb90c745097549fd00ecaa93949873954ecbb888be5e00b0fb5f44badc23ae08",
+      "bytes": 4943
+    },
+    {
+      "path": "Editor/Services/Server/ServerCommandBuilder.cs.meta",
+      "sha256": "86149204a215dff5bbbed225c35785ed295c54b608138bad23c4e991a7ac67cf",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Server/TerminalLauncher.cs",
+      "sha256": "8b145505949652fe19e10a7b3254348c09a3a71458e5ef71b9df5fcb59d92a4a",
+      "bytes": 7981
+    },
+    {
+      "path": "Editor/Services/Server/TerminalLauncher.cs.meta",
+      "sha256": "a055629c44a51bccb24242f479923e06e4e817879a5f0a45723a4cec5fec6170",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/ServerManagementService.cs",
+      "sha256": "0800b440dc672cbe913edb3a71a1cda51489203d507fd92df4fce6a4989ebd29",
+      "bytes": 44626
+    },
+    {
+      "path": "Editor/Services/ServerManagementService.cs.meta",
+      "sha256": "ee17244b7bea7c403743f89d227789464104e876f03e4fbc54d8358fec19ee00",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/StartupConfigRewrite.cs",
+      "sha256": "1a050be9752d9ad19772b617002f8b8c844c5f6ac2dc262a4d92caae72c0b836",
+      "bytes": 3890
+    },
+    {
+      "path": "Editor/Services/StartupConfigRewrite.cs.meta",
+      "sha256": "10b9f5bf2ae9aeec1fe562936ded7e2181e493e69bf65c2a3017364d63db52e9",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Services/StdioBridgeReloadHandler.cs",
+      "sha256": "4696204189834cf628a1ee57e1c1378c630a517a83db3cd4e1e87e8cf53aad5d",
+      "bytes": 8064
+    },
+    {
+      "path": "Editor/Services/StdioBridgeReloadHandler.cs.meta",
+      "sha256": "726401d27127b02944c06e3b78a213b175b9334948363bb700a0fd901c269c74",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/TestJobManager.cs",
+      "sha256": "2935f5ffac796a4f4cda810de1802ac1b37cc69cfbc3ac3dbb889f2795fcd062",
+      "bytes": 29819
+    },
+    {
+      "path": "Editor/Services/TestJobManager.cs.meta",
+      "sha256": "7f3d9a3505ec87d5be356edfcc4a95f91c97ef8e0002def36b7e82c62dff9916",
+      "bytes": 245
+    },
+    {
+      "path": "Editor/Services/TestRunStatus.cs",
+      "sha256": "694f3b51f0e55b19db823c0e2fed2393b104c0a33c6d5be13e9b7e3f391a2954",
+      "bytes": 1632
+    },
+    {
+      "path": "Editor/Services/TestRunStatus.cs.meta",
+      "sha256": "81d6edcf178967fb001f64a76e64727372a742754b2c1243e0ae332c71dfd375",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/TestRunnerNoThrottle.cs",
+      "sha256": "2e24d0ddc7a1d60b646b33e4e8d95e7e28880351520ff02b0136d77dcc18ba51",
+      "bytes": 6370
+    },
+    {
+      "path": "Editor/Services/TestRunnerNoThrottle.cs.meta",
+      "sha256": "01401855539326a1fffcc6dac6925e8fd9e543dd06486cfa066eb18fd9409546",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/TestRunnerService.cs",
+      "sha256": "05971a1d78c300d5a2827640ce797dbf6f29515192fd404e8d45e624633fb50b",
+      "bytes": 31678
+    },
+    {
+      "path": "Editor/Services/TestRunnerService.cs.meta",
+      "sha256": "c8af7a9f294429f70074c6b783a003ff3ef8d5610d80225b2f8be5676e1da39d",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/ToolDiscoveryService.cs",
+      "sha256": "091eccfb09cf8dcd29615ec7c3673d42d6f2a68aaeffd819f26407f77c9cbf30",
+      "bytes": 9665
+    },
+    {
+      "path": "Editor/Services/ToolDiscoveryService.cs.meta",
+      "sha256": "135657144f81d74e496e17a64b8f83b67f5f5764f386ce7245915870d06b2c34",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport.meta",
+      "sha256": "d24fc3d565c73927432077877d35990d4ce7c009aff4f42ab5fdb0e1326e4c43",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Services/Transport/IMcpTransportClient.cs",
+      "sha256": "6a8dc1afd947172ab6d4e500ec10d03b16e14e6177c85d0eeed5d684f49ed5bf",
+      "bytes": 498
+    },
+    {
+      "path": "Editor/Services/Transport/IMcpTransportClient.cs.meta",
+      "sha256": "8eb15f9f91d462c5884d488f1c40b1ee9abde54484ffc6edebef0eaacf7d8dff",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport/TransportCommandDispatcher.cs",
+      "sha256": "25607728c57cf17c6dc5c462394811d6fe75da7caa751edc47264e57be21c049",
+      "bytes": 17325
+    },
+    {
+      "path": "Editor/Services/Transport/TransportCommandDispatcher.cs.meta",
+      "sha256": "9b0ba458ddfb86681dafc2fb4f68ea989aa9c8095ebcbd70921b89dadd31fd73",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport/TransportManager.cs",
+      "sha256": "77196e7924e6fbe63795c355f032fdedb35f754d7d13e0858c54662398e9d4c4",
+      "bytes": 9188
+    },
+    {
+      "path": "Editor/Services/Transport/TransportManager.cs.meta",
+      "sha256": "d53e1789d85cf97b48090380bfe0721f2fb562b6a2669699b9ae4b3e1c9083cf",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport/TransportState.cs",
+      "sha256": "c190bbc8107f5039f688e5e11e54e3900b8befb76f2b24f37046eea993c20030",
+      "bytes": 1609
+    },
+    {
+      "path": "Editor/Services/Transport/TransportState.cs.meta",
+      "sha256": "244245f08c186ca562f4f0e0790cbedd21d31884cddf08954d0eaf3fd8347ee9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport/Transports.meta",
+      "sha256": "be5d5bc6a39d4c6f73e155bdc45197cb2ddd61a72ad130263aeac9274dd472ce",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Services/Transport/Transports/StdioBridgeHost.cs",
+      "sha256": "85c3bffc2125e78eb4f67e7f5bd3be665507538b1aa388dfad996a997a2a085b",
+      "bytes": 49898
+    },
+    {
+      "path": "Editor/Services/Transport/Transports/StdioBridgeHost.cs.meta",
+      "sha256": "e9165db7b80c51c1093dd8880124075e6030569ff2c6b2945bac0a4adb21643b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport/Transports/StdioTransportClient.cs",
+      "sha256": "55ef221b39741a9fbebe74a6f2b62a810ac520cedc02ac33743e8d1767da943d",
+      "bytes": 4788
+    },
+    {
+      "path": "Editor/Services/Transport/Transports/StdioTransportClient.cs.meta",
+      "sha256": "a0452d4e3679c636748fe6e3941f80a8dde027e08bce99c23e7a78aea254b74f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Services/Transport/Transports/WebSocketTransportClient.cs",
+      "sha256": "79a911dd5cd2539d0ab6cdfb92defa873184f6d91dc1a64a213d6cf3fa7d8665",
+      "bytes": 33526
+    },
+    {
+      "path": "Editor/Services/Transport/Transports/WebSocketTransportClient.cs.meta",
+      "sha256": "96825ab4e12ba7296f48e2eca6b68340295b18b1e144d052ad3703350df3a92c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Setup.meta",
+      "sha256": "94f64ee49b3f202855e22752ca6662fc3e2d8d5c2ec40e469d1aa625ab75a001",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Setup/McpForUnitySkillInstaller.cs",
+      "sha256": "27b474f60cc5bfeec94d61196e4c50b129fd9f1aaccdb01bba582d46069e90fe",
+      "bytes": 9289
+    },
+    {
+      "path": "Editor/Setup/McpForUnitySkillInstaller.cs.meta",
+      "sha256": "d2e4bf03beb6e4db78a8cbb5f2b505e0d8fbfafe4fdc85eb02214c552252ebea",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Setup/RoslynInstaller.cs",
+      "sha256": "02b338053eb4652430fce4ce14eebb3881b5806553e0da8ede0530b1a5d4364d",
+      "bytes": 7798
+    },
+    {
+      "path": "Editor/Setup/RoslynInstaller.cs.meta",
+      "sha256": "52a04c1a07a5ef4aad7d5d046b813f1ed3795c269e26621929f34c681abe94cd",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Setup/SetupWindowService.cs",
+      "sha256": "2832abc02508f5562432be67155d02dbc3842723600b8a729f735837f9d79787",
+      "bytes": 3974
+    },
+    {
+      "path": "Editor/Setup/SetupWindowService.cs.meta",
+      "sha256": "a363a67cbcf1d5c8d6cc4fd36bcd8caf0def58047df8758e669eb6754caa0335",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Setup/SkillSyncService.cs",
+      "sha256": "04c9ccd3f57e45dded80a2ebfbcab85e1365f1d4184f582fd95f242a856e20ae",
+      "bytes": 30690
+    },
+    {
+      "path": "Editor/Setup/SkillSyncService.cs.meta",
+      "sha256": "a684e8193593367a350d93115bc039a304620232a8f05542b49d7ed8f7a8d6b0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools.meta",
+      "sha256": "6af9707dbbae06b05f986c0a4b1a8b8f6427d65e9a1d8e45d80f39fa5a7088ef",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Tools/Animation.meta",
+      "sha256": "f8e82e1ee84c4c279ea9bdea332b735378090cc0f3ecb383df028445acd7fdf5",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/Animation/AnimatorControl.cs",
+      "sha256": "732e8a79ff215b6705a3545a3f7df8321553b946780779559f81fb59dc187531",
+      "bytes": 10703
+    },
+    {
+      "path": "Editor/Tools/Animation/AnimatorControl.cs.meta",
+      "sha256": "fa78ce53577c8babbb2926c7485b17338a0cf6db3edb18a9b1fd390a7c6a4344",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/AnimatorRead.cs",
+      "sha256": "ec382b5dead58c4170a71ac5296199fd56fe8c1174bda4d39f22495ce2d430f4",
+      "bytes": 5706
+    },
+    {
+      "path": "Editor/Tools/Animation/AnimatorRead.cs.meta",
+      "sha256": "3e7936ee12f09240899de1e4bb04bab9dd612ad70677fc97cab6bc8a3d07ad12",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/AnimatorResolver.cs",
+      "sha256": "339acbd3918442c8f1e07f464e624e8640652e83add0e1c7679fd951af0320d5",
+      "bytes": 3765
+    },
+    {
+      "path": "Editor/Tools/Animation/AnimatorResolver.cs.meta",
+      "sha256": "dce49ee4f28e3f55e0151163b0c7c46b610c260c22f8a08bfe9e5b78f3754360",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/ClipCreate.cs",
+      "sha256": "acda2fcc48fc90ca3fb2c4cca62957486f7fd8105bd7cdd306c014ae5adef37b",
+      "bytes": 26983
+    },
+    {
+      "path": "Editor/Tools/Animation/ClipCreate.cs.meta",
+      "sha256": "80fb4e2bb099800c6016020add1021e051758071cdfe62a10c9436dc190fb379",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/ClipPresets.cs",
+      "sha256": "bef3309fcac19e56d6928f62b6589ce4e3b73cacecd97b4994519ced379f302f",
+      "bytes": 17316
+    },
+    {
+      "path": "Editor/Tools/Animation/ClipPresets.cs.meta",
+      "sha256": "24d146253ca416c03bd425e462366da272a2cad775d270a2989cdd72ef73badd",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/ControllerBlendTrees.cs",
+      "sha256": "c46d06095ebe6dbaad29b283227af55dd1c780963eac16d7ac402ec8cd34d29a",
+      "bytes": 10718
+    },
+    {
+      "path": "Editor/Tools/Animation/ControllerBlendTrees.cs.meta",
+      "sha256": "0aa5987e50d14d1d7f9e9eb500a26cbe79156fdb68a5133581cf71e42c011d8b",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/ControllerCreate.cs",
+      "sha256": "44028f273d14df46115d90675977d81e50173f92128d0b4291430aae8f491b44",
+      "bytes": 18345
+    },
+    {
+      "path": "Editor/Tools/Animation/ControllerCreate.cs.meta",
+      "sha256": "06d7e4717046b4b37bed52921460392578496e01fd32e04059bf5016cb7ee911",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/ControllerLayers.cs",
+      "sha256": "1c4110ade5b4b69a7385c1eb60123a4048cb2a14e16ad33640c5219a3f3cbe96",
+      "bytes": 7914
+    },
+    {
+      "path": "Editor/Tools/Animation/ControllerLayers.cs.meta",
+      "sha256": "b0a2fae58e4d11e9cad54012db4e17895e7ad3b102b8a06f87d4c1b59dff2a8a",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Animation/ManageAnimation.cs",
+      "sha256": "55ee53aa8f6c48f367c8601d2fb66a9e56ca740ed5b69f6bdac52d13d11f3b62",
+      "bytes": 9952
+    },
+    {
+      "path": "Editor/Tools/Animation/ManageAnimation.cs.meta",
+      "sha256": "89d5c2b705296c0b64050f9ffccd69589f457108c43658410c5442ea7d4f589f",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/AssetGen.meta",
+      "sha256": "7b589da279949dadb814cb497ba1ad1baa71505d3ee28236dc96259b7f29999e",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/AssetGen/AssetGenToolHelpers.cs",
+      "sha256": "4767468fab5226712331a95ba270b90818f10d368881423dfdb8bf4176da7553",
+      "bytes": 6983
+    },
+    {
+      "path": "Editor/Tools/AssetGen/AssetGenToolHelpers.cs.meta",
+      "sha256": "55a00743ff94801dd66bc48e69e1f93e658b78578c5c88e0e7e5f3fab56edceb",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/AssetGen/GenerateAudio.cs",
+      "sha256": "c7cfea0dd0f3dca6b001ddcc8589f8c4b39109fb32e0b845320be99f3668cea6",
+      "bytes": 4299
+    },
+    {
+      "path": "Editor/Tools/AssetGen/GenerateAudio.cs.meta",
+      "sha256": "38b0015077d38806a928a27a7cf53f56f55480a02d2fbdb26b4140e9a514db9d",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/AssetGen/GenerateImage.cs",
+      "sha256": "44e29f47f56a342262a14b5c0a36c16e2bca903d7698804d30b9e99a7af6b068",
+      "bytes": 5134
+    },
+    {
+      "path": "Editor/Tools/AssetGen/GenerateImage.cs.meta",
+      "sha256": "b242f71b9ee8702fdef46102fb3fd3f640dd92280b4dafc13292c4b107272b38",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/AssetGen/GenerateModel.cs",
+      "sha256": "9766e2452dba6221a1f7422692344844351ebef69d75c9eac5f6a98ec118a167",
+      "bytes": 5204
+    },
+    {
+      "path": "Editor/Tools/AssetGen/GenerateModel.cs.meta",
+      "sha256": "2a1ef1ff9b1005a0706265967edc818c4f6f5baf461c51dc81ca9dbdf5d532a0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/AssetGen/ImportModel.cs",
+      "sha256": "f0f159381c6c6756ab4cbc382a8c041e398d830bf0fb7687be3fce772c9867f4",
+      "bytes": 8445
+    },
+    {
+      "path": "Editor/Tools/AssetGen/ImportModel.cs.meta",
+      "sha256": "299cb7c17ea0e5c71e312a6130539e254b5531d39c8ae11351156ef65e2301a1",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/AssetGen/ImportModelFile.cs",
+      "sha256": "a2f940ec76b898fda28627129a8b520bc804523f2fc0b55f2ffd7d5a63547ddc",
+      "bytes": 4638
+    },
+    {
+      "path": "Editor/Tools/AssetGen/ImportModelFile.cs.meta",
+      "sha256": "250b1a1f38528e18b98c34aa80f5f29d3105df0838ef4f3b4dbb5a664c53e93c",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/BatchExecute.cs",
+      "sha256": "98e0e2c04a8be9dd7506e9ff6f8f791ad860964d9d48081ae47abea6a062ed74",
+      "bytes": 8448
+    },
+    {
+      "path": "Editor/Tools/BatchExecute.cs.meta",
+      "sha256": "b64855e9314f771cc26d18b2aa2e88f7c5043dbdf812012758179e57fdb176fc",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Blender.meta",
+      "sha256": "5d316622880b3576f8a32356e8455f89ea275fcb4a8cd178465c823ff4410501",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/Blender/BlenderBridgeTool.cs",
+      "sha256": "9c3a72eadaf520e31c6e304eda8cfc1ddc5459f9bd711aab6b4e55a28d015272",
+      "bytes": 49984
+    },
+    {
+      "path": "Editor/Tools/Blender/BlenderBridgeTool.cs.meta",
+      "sha256": "2de42a8d12193dcb9f8895f4a863e2e1874d228456e81a2f7215e3a7bb6a99ea",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Build.meta",
+      "sha256": "6a9961856cd400260ec8408e279685e836d403158cb20a9fefc2cdf239773b20",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/Build/BuildJob.cs",
+      "sha256": "48653029cbd3ca510ea4f9d4a76dcec8f58459e4428a9278ec39002bd1d097b2",
+      "bytes": 6593
+    },
+    {
+      "path": "Editor/Tools/Build/BuildJob.cs.meta",
+      "sha256": "5b5cd8a5c6ef3d60c76d49b740abb3bbd67c3ce736f0d1de0d36729c941b0b23",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Build/BuildRunner.cs",
+      "sha256": "eec8da39f39bb2eb07aef1de487e192eb65317cbae0ae23f3477c259b95f277b",
+      "bytes": 10893
+    },
+    {
+      "path": "Editor/Tools/Build/BuildRunner.cs.meta",
+      "sha256": "0bffefe41bb13312a3a7eb348131c9c4ed44e02896284d758d2f346f3e89a339",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Build/BuildSettingsHelper.cs",
+      "sha256": "fe6d1bc125e21419b195116435f460273852c856e4a37e94ac3d78ab3416101c",
+      "bytes": 4342
+    },
+    {
+      "path": "Editor/Tools/Build/BuildSettingsHelper.cs.meta",
+      "sha256": "f31a1f6cf33f1c45c363a4faa97398e9851bf9b0d29ed2f6abeaa8b46dc58af6",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Build/BuildTargetMapping.cs",
+      "sha256": "cb56a116f1ea8a22528b7ea11d6ab1f8b428c36e98de9c652e86a344d62e1701",
+      "bytes": 6587
+    },
+    {
+      "path": "Editor/Tools/Build/BuildTargetMapping.cs.meta",
+      "sha256": "47d1a0be31e211f7afe9cb2fcfee46e59dc1aa30781dad5ad5f905ce30013dd0",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Cameras.meta",
+      "sha256": "6d8bc398a4a7aaf20086825014ddbdffdb8b63cb99267febbb1ae8a8ee3c194d",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraConfigure.cs",
+      "sha256": "c2fc7522d0aa139f8f881c28d7f1967479f74ff2855bde9811af7635b69e19bb",
+      "bytes": 17659
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraConfigure.cs.meta",
+      "sha256": "00e2ec5f0ea3487682657c28988416a02e805998faca7340094aa6c0247edcb8",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraControl.cs",
+      "sha256": "3810c6f45f4e610cc19e53c52c2a98e077e6ca44d615de0bee76ee4f311ed6d5",
+      "bytes": 12992
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraControl.cs.meta",
+      "sha256": "71044addd29256bef5dea1651cd25aed1bc847067c11d0b1727ff11e68659453",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraCreate.cs",
+      "sha256": "b61d6ca7580d85960492a49bd7b27001ce350958ad19623d93fc6b8efff38779",
+      "bytes": 10462
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraCreate.cs.meta",
+      "sha256": "cb353cdbf9646a145bb14cc1e27b105840ece55b1d2d213054f7b206a17f165f",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraHelpers.cs",
+      "sha256": "7ba2aa9ee99a06bdffc01947722994371f4fedae36f9915c6a8cbf129cb8557c",
+      "bytes": 9840
+    },
+    {
+      "path": "Editor/Tools/Cameras/CameraHelpers.cs.meta",
+      "sha256": "b3e6a71efbc76596c41c0085bb71ab397a5273a1ba9b957527ed689c322a769e",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Cameras/ManageCamera.cs",
+      "sha256": "7ed66b1ca93993aa21b09c8edd7ec04c7398ff0714f8c8b8eb31437b30e4a032",
+      "bytes": 5537
+    },
+    {
+      "path": "Editor/Tools/Cameras/ManageCamera.cs.meta",
+      "sha256": "598cf0de85949ca530fc59c7e878662decb76ac4d03a9de9ea9b377ed961d666",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/CommandRegistry.cs",
+      "sha256": "d2cbaede1d68e5c54877e1e1976284ee86829aaf669e77f3333da93e4ab61b86",
+      "bytes": 18418
+    },
+    {
+      "path": "Editor/Tools/CommandRegistry.cs.meta",
+      "sha256": "6698a54b131a0189249ad41ef2d77edd8783f365d80769f7bb581818ef0068a6",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ExecuteCode.cs",
+      "sha256": "53552bb02b3568f0b91e7289ad269469990e368f0238a115f7c968f7cf885726",
+      "bytes": 38159
+    },
+    {
+      "path": "Editor/Tools/ExecuteCode.cs.meta",
+      "sha256": "54b519dba9fa8ae19708434ebd47ec983b30ef3c6514ec8009198aa570c1e46a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ExecuteMenuItem.cs",
+      "sha256": "b78774ed1937144222a9032b191032238e46baafab56c9f5d0b602fbf09faf86",
+      "bytes": 2182
+    },
+    {
+      "path": "Editor/Tools/ExecuteMenuItem.cs.meta",
+      "sha256": "3bb74e0bd7d09f6ea4391daf68b66150762702cc3fd5fce61850e592a3e5aa2e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/FindGameObjects.cs",
+      "sha256": "37a62dddc6c504d303eef81a2747b5316fa1c9a8b425d35a653cce92f48ba0ff",
+      "bytes": 3133
+    },
+    {
+      "path": "Editor/Tools/FindGameObjects.cs.meta",
+      "sha256": "aef0d325d3993efc828bbb3cd92d13f826266e57996c77d2eff70f68af199a08",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects.meta",
+      "sha256": "39777116964e829da09a8dfd0cbec9533951b97949ebb8be4bd23e0193fb8698",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Tools/GameObjects/ComponentResolver.cs",
+      "sha256": "811f5e163e17808ea7d66778a55405a6183ff755e90726fd41579301eafa092a",
+      "bytes": 5980
+    },
+    {
+      "path": "Editor/Tools/GameObjects/ComponentResolver.cs.meta",
+      "sha256": "3b9c967b956d1f84b01937587fe6779d036bce0ee64a042a1f2af3db2f1fcb1e",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectComponentHelpers.cs",
+      "sha256": "c9842cfdc9c3d380aff75866b0597c55c2a8a6244718c8f7166851b3e8cf7211",
+      "bytes": 21356
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectComponentHelpers.cs.meta",
+      "sha256": "809e012fb4662cd2db9fc8554f2397be5b23bf76bb22975b5e2258f237833859",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectCreate.cs",
+      "sha256": "afa124620ca664c11a0983040b426554aceb4cfc89782981039a1a2848cc6d83",
+      "bytes": 16220
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectCreate.cs.meta",
+      "sha256": "3f3482c2a3f239ad28705d56e94abcaac79974f215fcea29890c9f8399ffd4d7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectDelete.cs",
+      "sha256": "7f8196d715f4f3f4b3f165523d6f596c01798d256c9ec6595cbc32d8f47ed87c",
+      "bytes": 1936
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectDelete.cs.meta",
+      "sha256": "73e323d88f4fb2ba0215de37c7e0f8a6feca7128eba11f167a83b8220ea22d06",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectDuplicate.cs",
+      "sha256": "7ff5cf6a8a4b3187de35b8d62bc875aac21af2d175308d3c7da24ebba13b0adb",
+      "bytes": 3297
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectDuplicate.cs.meta",
+      "sha256": "bc430bf53c3928b52f9356db72406c577ca7370f1e73ad831b8492f181ad4d9a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectHandlers.cs",
+      "sha256": "c7248f9c7deff4bae44ef7a79a609ce4fd6385af639cfe7f978c277e8f36d2da",
+      "bytes": 931
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectHandlers.cs.meta",
+      "sha256": "f8e3b839729013cfceefb04c50604548039fd9c511af448683b0eaa22095d18f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectLookAt.cs",
+      "sha256": "372276158ed69fe0121ff8dfd3b47d6a5e1b1ec502fa79078204d1a73d097b59",
+      "bytes": 2955
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectLookAt.cs.meta",
+      "sha256": "d693bd2bd06baaefeb6473649c75064f5c9a125199bfe000fe370f6551e60407",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectModify.cs",
+      "sha256": "924b0c437aae0d818e9a8914c8117569eb7419e3bcc649cbd7918f3b8b957c7c",
+      "bytes": 11189
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectModify.cs.meta",
+      "sha256": "75c58ec6b3b6dfcdde60649af5237e778ea3d60263c18cdf6ad1f77f232c83c3",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectMoveRelative.cs",
+      "sha256": "185003e9ac6e84a71f60c60b51734f612bcaebac1616646f1ea29e554b89bed1",
+      "bytes": 4939
+    },
+    {
+      "path": "Editor/Tools/GameObjects/GameObjectMoveRelative.cs.meta",
+      "sha256": "88cdd96b40b092b9e7307457edbae8056353e26668474e65d552190dc2b42e7a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/ManageGameObject.cs",
+      "sha256": "0197484a66d1d2ed267851fc19e6ec24c2f10c212c86ec2199730c6a78142343",
+      "bytes": 5185
+    },
+    {
+      "path": "Editor/Tools/GameObjects/ManageGameObject.cs.meta",
+      "sha256": "6a9e10ecf4fe1cdd07b05d1a9ca56ec1933a086b605e8a00d018dd0230bf1cfd",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GameObjects/ManageGameObjectCommon.cs",
+      "sha256": "f02a9b6f05a252de93cd19bc264b73f969fc8d0731e9734301dfa1da7dd414e6",
+      "bytes": 9532
+    },
+    {
+      "path": "Editor/Tools/GameObjects/ManageGameObjectCommon.cs.meta",
+      "sha256": "8e1061f7f80e5ed8d13385cffbdac0dedc0d8df0ee747312e43d6b3c8465c0b5",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/GetTestJob.cs",
+      "sha256": "b9c4a46c7b73cee8ddd7e832cf388c1c9da7a60b2153bfb3ea376fd154193d83",
+      "bytes": 1235
+    },
+    {
+      "path": "Editor/Tools/GetTestJob.cs.meta",
+      "sha256": "bb94b1822bbbfc9a64171aeec8996377930721a8745a17e0426fbd6f2f2655a9",
+      "bytes": 245
+    },
+    {
+      "path": "Editor/Tools/Graphics.meta",
+      "sha256": "afd2a4be026079b3588bdeded726d0d20ec38ea784742604f1be7d4e0766b5d3",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/Graphics/GraphicsHelpers.cs",
+      "sha256": "f9ef8ca6fb11c5d4cb4d1d88a9e50a46d9c96019499f2cd076e9ff6b5fd53769",
+      "bytes": 11338
+    },
+    {
+      "path": "Editor/Tools/Graphics/GraphicsHelpers.cs.meta",
+      "sha256": "02bc9ef8163d46330d218ba53ef53db05655ce46785ea103a8bbf33fd1ed9ab9",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/LightBakingOps.cs",
+      "sha256": "ed8768ea1c946eab72b1e0576a534bf5dd6b6efdcf7716e4c279d8fd1a3a0ac8",
+      "bytes": 22810
+    },
+    {
+      "path": "Editor/Tools/Graphics/LightBakingOps.cs.meta",
+      "sha256": "01116d9cfd08b2fd6c6f64079e1f5ba35835920ba339d8d00eefd4c7ee44fe44",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/ManageGraphics.cs",
+      "sha256": "e26268d980f41ec8d28e08ffc1be42ead2101799ea7c529d1a0aeddd19aa5a7c",
+      "bytes": 9306
+    },
+    {
+      "path": "Editor/Tools/Graphics/ManageGraphics.cs.meta",
+      "sha256": "0b4ecb829c0e2039947cf370732ab3ff04f4653deb11f7564d3bb2e549fafe75",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/RenderPipelineOps.cs",
+      "sha256": "316dfb9b97346e7cb26c0aa0ebecd5351e86e14122748d5aec9591dae26d6831",
+      "bytes": 11768
+    },
+    {
+      "path": "Editor/Tools/Graphics/RenderPipelineOps.cs.meta",
+      "sha256": "0dd69e51026c94aec3fd9caaac963ebd01ceafd91a97a6dde732e036bb5aa694",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/RendererFeatureOps.cs",
+      "sha256": "6fbacbf5ac4d069dd8a055c06a2c331df8decdce3f30a56e6754eb913c9d90e8",
+      "bytes": 25042
+    },
+    {
+      "path": "Editor/Tools/Graphics/RendererFeatureOps.cs.meta",
+      "sha256": "9718fd1d634b399d44d6b510c179dcb0b12bd2e9a1052c656b2cfddc3097e05e",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/RenderingStatsOps.cs",
+      "sha256": "602b2c0b7295f72b1568cd2db9d9be86c1d26546f3e3f30a46f379a76e0b2ba4",
+      "bytes": 7159
+    },
+    {
+      "path": "Editor/Tools/Graphics/RenderingStatsOps.cs.meta",
+      "sha256": "a97389214a732803e6680f3bab959acd40ef13926e3fd979699a629e2dc18d7d",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/SkyboxOps.cs",
+      "sha256": "e8b9227fdbd6c08330306501d561d65119ae96c73e699772342934e328b4b3f1",
+      "bytes": 20316
+    },
+    {
+      "path": "Editor/Tools/Graphics/SkyboxOps.cs.meta",
+      "sha256": "8fd327cc94c761d41d1d32ec93df40cd4ebb34e15c5996e1512272b273ba82ee",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Graphics/VolumeOps.cs",
+      "sha256": "4a490716fec01a3a179d686747f3f0ba8b5890ddf8739ad38f135ccd218f19b9",
+      "bytes": 29560
+    },
+    {
+      "path": "Editor/Tools/Graphics/VolumeOps.cs.meta",
+      "sha256": "6858bc6d36c72bf69308fc2101593b10e76f1c914875402ecfaab4686f8ca9dc",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/JsonUtil.cs",
+      "sha256": "204c70e46f7bdd6da5e3ff329042260afc9f0ebf4d4a259691e4ecfbec9117c8",
+      "bytes": 1063
+    },
+    {
+      "path": "Editor/Tools/JsonUtil.cs.meta",
+      "sha256": "885881875f9dbd1e3a237dd45050b87851e376c7c28d2bf86410632605dcf346",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageAsset.cs",
+      "sha256": "2b2dd181e92f38522938468dcf3b2682fa4ea40caa166c8c2dbeb00d7c86799e",
+      "bytes": 51093
+    },
+    {
+      "path": "Editor/Tools/ManageAsset.cs.meta",
+      "sha256": "8408c67a014138761ae8cbf463a12d6a2c9d3963d3bbafd0a434adff38d704a9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageBuild.cs",
+      "sha256": "a752fedcf916d377d6b0d33067b8c6c2204ff0fba98d8fa745e30f5f02ead154",
+      "bytes": 27342
+    },
+    {
+      "path": "Editor/Tools/ManageBuild.cs.meta",
+      "sha256": "cd2d372113a175b3711cceac64960272f969afdcf9c88f985959b07acbd8a1f6",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/ManageComponents.cs",
+      "sha256": "6565ce22fcbe28a02aed6ba482f6f6d15b82370779f7de4d69bd238491d8ff23",
+      "bytes": 17289
+    },
+    {
+      "path": "Editor/Tools/ManageComponents.cs.meta",
+      "sha256": "e4f2d024ce8a21bfd8eb0a4dcd8d21bbc340c1606576e5eaee29a1b3d872bc81",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageEditor.cs",
+      "sha256": "84a4f51aabb1dd13295cedd0cd6f220bffa827e5fd2a2f464f902a3d6f611231",
+      "bytes": 19823
+    },
+    {
+      "path": "Editor/Tools/ManageEditor.cs.meta",
+      "sha256": "bb225d3cf53bc2f57253a3ee1c8f70eb178b29c101a32bc44f8bc11c11a99c5c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageMaterial.cs",
+      "sha256": "8a35a9813f90ee9e39f0292d2fceecc7ec50f194e3900b4b7d7a482ba0d8f8ed",
+      "bytes": 28416
+    },
+    {
+      "path": "Editor/Tools/ManageMaterial.cs.meta",
+      "sha256": "3a72e1e75056d4988a56f463a1c4bd8421da92c1b74cc5a108eb37905d2af3c0",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManagePackages.cs",
+      "sha256": "314008d7207225eac67ce88ce87557ac771a245a0e00bb6400da899f0bf4b9fc",
+      "bytes": 28756
+    },
+    {
+      "path": "Editor/Tools/ManagePackages.cs.meta",
+      "sha256": "e7d8c1ec0629f6ad581f69b34390ee1c6521e904c7bdafba2808f6fd8d2f1cdd",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageScene.cs",
+      "sha256": "1fc7de5f27d4213bf3f1173cb9589e6056590c70bcb894c4a86483d789ac8e15",
+      "bytes": 99658
+    },
+    {
+      "path": "Editor/Tools/ManageScene.cs.meta",
+      "sha256": "7590bdce5d7cedf584b4c2371aa34731a60e6782bb88ee1ce296ec20ae27230c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageScript.cs",
+      "sha256": "04ca73e6b5c967af0934e26b8559103eb74b988bb49eb7921f7531e214c58aee",
+      "bytes": 143834
+    },
+    {
+      "path": "Editor/Tools/ManageScript.cs.meta",
+      "sha256": "b00c379221645a5be1e5d2cd1fec0ddd766ba7cb040b70dfe74c5ad9122af33d",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageScriptableObject.cs",
+      "sha256": "77ddc21b7056e6c65cbe8e704b4925418e0a10929318500dbc791c04fb18abef",
+      "bytes": 66487
+    },
+    {
+      "path": "Editor/Tools/ManageScriptableObject.cs.meta",
+      "sha256": "a3fc370d89f7779241599d770c5de195678fc1bb55538f7a9b6150a88b636800",
+      "bytes": 246
+    },
+    {
+      "path": "Editor/Tools/ManageShader.cs",
+      "sha256": "6f8a845e8f8d8f92648c35c7e38ea4ab5952144dd691b4142312e04732059124",
+      "bytes": 12766
+    },
+    {
+      "path": "Editor/Tools/ManageShader.cs.meta",
+      "sha256": "acb5f605f7c445b86a5a15ca033f766830363c784c01a2530a8d60ac63ec65a7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageTexture.cs",
+      "sha256": "bded1faaa8c0fc99f2300370a0519d8059322d65ee425e7abb50ef5cf6946360",
+      "bytes": 43479
+    },
+    {
+      "path": "Editor/Tools/ManageTexture.cs.meta",
+      "sha256": "241a5d78cf7c2828fa95396dcd198de34b0f951c49deebfdf46fcb6ba9aad8bb",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ManageUI.cs",
+      "sha256": "e5a75e3c3f98cb5875d30aed84efc69f5cc052982ccd8a3fcab112ba1ef05ba4",
+      "bytes": 79042
+    },
+    {
+      "path": "Editor/Tools/ManageUI.cs.meta",
+      "sha256": "91291ea6689f504ddaa537ac1c8510500bbaebfd706acbf4a0e1745624b8752f",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/McpForUnityToolAttribute.cs",
+      "sha256": "5b0122df3da96d788b6976d0d5af1cb1a2043df2d75dfc631596cd8d9e7bcff9",
+      "bytes": 4222
+    },
+    {
+      "path": "Editor/Tools/McpForUnityToolAttribute.cs.meta",
+      "sha256": "ee90ce0e66cc1d75c3390576745e69030ae874d4c67b0c631bb0f364f35e95b7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Physics.meta",
+      "sha256": "487701ef078ce58c177853c80415b30d8d7b347adfb25f5cf6038def389ba6d7",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/Physics/CollisionMatrixOps.cs",
+      "sha256": "a93168d8c69ef5e9edd4e0bffebd409985b283d400f41ea5fb70ce88baed2776",
+      "bytes": 4806
+    },
+    {
+      "path": "Editor/Tools/Physics/CollisionMatrixOps.cs.meta",
+      "sha256": "eb39f594bb5b8fb1b9867d9dff3f229ac114b320715c49118e7ed5c5cf1015e6",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/JointOps.cs",
+      "sha256": "98b5017f2c6d4cbd00572f762874b0039f4b1437f654c60466a560098a7858cf",
+      "bytes": 21878
+    },
+    {
+      "path": "Editor/Tools/Physics/JointOps.cs.meta",
+      "sha256": "881c76f55f8c1bef395d482d4893e9f01947c3e29a93bf439fe63372f254e40e",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/ManagePhysics.cs",
+      "sha256": "7930ac1dece35b71ae3450e2533516a5cb2c5b304bb7833475c9201e3d354727",
+      "bytes": 4614
+    },
+    {
+      "path": "Editor/Tools/Physics/ManagePhysics.cs.meta",
+      "sha256": "10e766344b682c55505eb31fefdb9a92bd29fe56f07b80efd95ee881f4d5bd3d",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsForceOps.cs",
+      "sha256": "64ac386e56f8723878c4cd0ade207135a2a81916c4ac6645da5d0bfd44d81399",
+      "bytes": 11288
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsForceOps.cs.meta",
+      "sha256": "ce967833f3bcadcbab646a798512782898a96755c12769739bcb07c426e57ee9",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsMaterialOps.cs",
+      "sha256": "aa503c86ffdd7f498efdee5e5ad911b6d692946e97880d63331941903e56f878",
+      "bytes": 22014
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsMaterialOps.cs.meta",
+      "sha256": "3202cb9d597ac0d7643a0036cfec4f0594764643024027938a8421878cbed00b",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsQueryOps.cs",
+      "sha256": "ee96f80a3456f78653094abc0637f9f6de801b1a246cd79786e72e390eae5693",
+      "bytes": 33987
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsQueryOps.cs.meta",
+      "sha256": "7d0c6aa7304976c51ed16f9a9a1d494d8726e29cb5e2b1ef0c2dc8a1b40d12df",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsRigidbodyOps.cs",
+      "sha256": "355eccb6a9c5d4b393aa0d59a4d845a7049b4763c192fbd26480359548a10020",
+      "bytes": 17775
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsRigidbodyOps.cs.meta",
+      "sha256": "6d067f1c458041db74b38868b9ad1f490718188d339d5947ad3ae68981f292b0",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsSettingsOps.cs",
+      "sha256": "f2d916f1c7c640225d87c8912e5db9d097867581b487a2b3fa86650b8a87eafa",
+      "bytes": 13592
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsSettingsOps.cs.meta",
+      "sha256": "eb36f0f8cabf27ec924b15f2edaebc828fcc8fc0fbfb0b2067607a0922e63e3d",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsSimulationOps.cs",
+      "sha256": "f7e2004311a25667738a5117de07ba941243083722d5ca12b402d3adb5d1f244",
+      "bytes": 6843
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsSimulationOps.cs.meta",
+      "sha256": "c636c94f0b488e78bb2411a4e52f9950b32fa4150c98291e1912c7f1acf95d2e",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsValidationOps.cs",
+      "sha256": "c87e08f114af97fd5fa4502cb9bbe09e2143a99824062d29ec181f5ead886b50",
+      "bytes": 12769
+    },
+    {
+      "path": "Editor/Tools/Physics/PhysicsValidationOps.cs.meta",
+      "sha256": "b9bd187fe1ad84fba14014c34266104d179df4578a2a8eb64df003edb7c25467",
+      "bytes": 218
+    },
+    {
+      "path": "Editor/Tools/Prefabs.meta",
+      "sha256": "97f208ceecfcb892dab360d381a6040617db2b45a746a294dae2eb4bc09321f2",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Tools/Prefabs/ManagePrefabs.cs",
+      "sha256": "24c4a1c342c96169cd2c8fcc67c776c0737d5cdd542efdf48d343dba26dba77a",
+      "bytes": 60715
+    },
+    {
+      "path": "Editor/Tools/Prefabs/ManagePrefabs.cs.meta",
+      "sha256": "f7e8f6fc94fc5b7cab4a5107756a68669c08a86c39b978a3bfecbdf5ee70cfd7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ProBuilder.meta",
+      "sha256": "c177117bef8c2c01fbc46b312a3312f62a234bb6591398fdf5a160eaa95830a3",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Tools/ProBuilder/ManageProBuilder.cs",
+      "sha256": "6d8695fb2f65d17a0a4ffc9a554d7690c3a1ed96d06064a2ea938b735c54a57f",
+      "bytes": 112638
+    },
+    {
+      "path": "Editor/Tools/ProBuilder/ManageProBuilder.cs.meta",
+      "sha256": "81b0b4ac933f3a189fa1a373b0d414f18c337b2ed1da74af781e166cdd90c5de",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/ProBuilder/ProBuilderMeshUtils.cs",
+      "sha256": "c0fd9800b40ef9fdd81db924bf321c3edfbd0f85776f80fb8160408cdda5417f",
+      "bytes": 11595
+    },
+    {
+      "path": "Editor/Tools/ProBuilder/ProBuilderMeshUtils.cs.meta",
+      "sha256": "f320153f9b9959c754e712134fb10e0b2b4b860f0f23baae8435afbac75acf1d",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/ProBuilder/ProBuilderSmoothing.cs",
+      "sha256": "5adb66f7aab3e66435988552cc1bb9974c977f880039ac5bb0d43d6c9c9d4898",
+      "bytes": 3688
+    },
+    {
+      "path": "Editor/Tools/ProBuilder/ProBuilderSmoothing.cs.meta",
+      "sha256": "5d8acc82fb49d1a33446b895aa0a007d38ce1de847c295ef7ac3e0b339b1ac62",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Tools/Profiler.meta",
+      "sha256": "c97080121c561f4e8e25eb14f8cd9e7a5674722a4a8fde5e5ebeaf71cf84e749",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Tools/Profiler/ManageProfiler.cs",
+      "sha256": "d86d20956884a145103121f158c00e6bd09ac196a66747508a6592afef7a05e8",
+      "bytes": 3608
+    },
+    {
+      "path": "Editor/Tools/Profiler/ManageProfiler.cs.meta",
+      "sha256": "0c27d8ac5fcc8e26161b676c553ab777949406ebc32267fe42cfb07b41d3c116",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations.meta",
+      "sha256": "8cd4f2845a77e364c031b86bf675829a4152a70a9e215cce26bd5b5e3fddca1d",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/CounterOps.cs",
+      "sha256": "bd80335544a7baa8677b62c4040417605178bb360b2c61f39fe3821b29c27988",
+      "bytes": 6328
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/CounterOps.cs.meta",
+      "sha256": "a6254627688c8dfe963ce21f2928ec6d20581b6e546b5de2fc58a48442c4cc03",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/FrameDebuggerOps.cs",
+      "sha256": "3d18d9d10dac48146d6109dd31d87466bc6f9d2f00b119b75c2eb5d33134b802",
+      "bytes": 11071
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/FrameDebuggerOps.cs.meta",
+      "sha256": "b0944d34591c1da87fec283a2cb168cb9a07ce90e33b7f83485b02a8b437f5cf",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/FrameTimingOps.cs",
+      "sha256": "3edb8a3241c5d9f7d603b0ff2e3a6ba76ea5056a1dcd0c026fc30417b26c91f2",
+      "bytes": 2047
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/FrameTimingOps.cs.meta",
+      "sha256": "c54538c9ef6054c7c3b55619a9768eaa5404929f6b9bc572a16fa3aa12400823",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/MemorySnapshotOps.cs",
+      "sha256": "395a0c55363b6193c7bef36b814de89189718e6402d24ad530ca41700cbef9f9",
+      "bytes": 9772
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/MemorySnapshotOps.cs.meta",
+      "sha256": "648409c751cee42e088012d4405f55a57a84b1456053c5c9d067323d1c2f6bbd",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/ObjectMemoryOps.cs",
+      "sha256": "9ac4f1327dd1dec3bc58c9c11b91a8bca6077a8a66d85a1dd773641a7a8aedac",
+      "bytes": 2061
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/ObjectMemoryOps.cs.meta",
+      "sha256": "26fa74230d83e3eb54983459f540e96e7ae32dc59ed713c71cb43c46d3eb8bb8",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/SessionOps.cs",
+      "sha256": "d7ee667ac032dc6c64dcef68ceed3ee7bd79fb9fbcfa5349db5ef583fb229d7c",
+      "bytes": 3838
+    },
+    {
+      "path": "Editor/Tools/Profiler/Operations/SessionOps.cs.meta",
+      "sha256": "c507c5c7ca0ea03e9bda1d632619325511acd33b42202496f6620212ca102896",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/ReadConsole.cs",
+      "sha256": "d2447a09b6e22d877b8b667700e8842853e94432feea89e2f590fc0bc58cf355",
+      "bytes": 32660
+    },
+    {
+      "path": "Editor/Tools/ReadConsole.cs.meta",
+      "sha256": "60f2a8ec621462500ef6090612217a0ca1844b25a49e989066c2a23dc16c88ec",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/RefreshUnity.cs",
+      "sha256": "0bab1c693979d9cc870a4521dfb62e832fc615ae77285cd371c86af7a03d0389",
+      "bytes": 14651
+    },
+    {
+      "path": "Editor/Tools/RefreshUnity.cs.meta",
+      "sha256": "58c832d69026e69d85732a4de997704ec04ca69018663512ddea8cfa2c0f2ae7",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/RunTests.cs",
+      "sha256": "04afa77c38ddeda576d3533f08e3a23d796b4aedd1660166552a79c4633c3f80",
+      "bytes": 3843
+    },
+    {
+      "path": "Editor/Tools/RunTests.cs.meta",
+      "sha256": "703d59f4995e82728a278b2669b3f4f18a03bde7135b3ac9d44b4f8410c9258d",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/UnityReflect.cs",
+      "sha256": "b42f5b8de353eec2e6ce26bbfa72a4e235ecedcf7fabffbda548244f10f838ef",
+      "bytes": 31765
+    },
+    {
+      "path": "Editor/Tools/UnityReflect.cs.meta",
+      "sha256": "a40a7edbf2bd384fbc0954b12514de3897b0ccad57b54af16df0fb7576876c0f",
+      "bytes": 60
+    },
+    {
+      "path": "Editor/Tools/Vfx.meta",
+      "sha256": "48683e89155f41b4b75a025d4cbb8e4084ca5104f3a4a55f7fbc95cf4bb0b1f2",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Tools/Vfx/LineCreate.cs",
+      "sha256": "8cfdb07771a1908faaec971f980f9c3435f37730c0bdadee2fd2c436de74f253",
+      "bytes": 9532
+    },
+    {
+      "path": "Editor/Tools/Vfx/LineCreate.cs.meta",
+      "sha256": "efffcedfada71f9e2642fdf8f0f20876ed061948285ac17d6b8a4ab931738856",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/LineRead.cs",
+      "sha256": "2769b7829d7267ad537a96bfb6da4eb5dc4c3ee0e1b1e6e66f78091a137a46f4",
+      "bytes": 2121
+    },
+    {
+      "path": "Editor/Tools/Vfx/LineRead.cs.meta",
+      "sha256": "cf1f6862b7ecd7ba68c45a166b1281f510588629d38ef47ea2bff89fc25a1b06",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/LineWrite.cs",
+      "sha256": "a92821f0bcf50ab6452dba7873aa737bbe455f06964af03a86b591c15ac7d036",
+      "bytes": 7468
+    },
+    {
+      "path": "Editor/Tools/Vfx/LineWrite.cs.meta",
+      "sha256": "7138bddd4d364fdb7189c292d233490d642284da65030ae6c11a32b818a399db",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/ManageVFX.cs",
+      "sha256": "43c16938256558545efebe72da1f313da28361cb1e49c269c52db0b0b705b3d2",
+      "bytes": 20413
+    },
+    {
+      "path": "Editor/Tools/Vfx/ManageVFX.cs.meta",
+      "sha256": "1e95de0032bc734bd8c9c45e4757c0f733a1a0e2b7923299db92afbc2835198c",
+      "bytes": 245
+    },
+    {
+      "path": "Editor/Tools/Vfx/ManageVfxCommon.cs",
+      "sha256": "c08358a6fe0349d87aed3278c86207fe9a4cafcfb2328fb69596e906a3a12d87",
+      "bytes": 2344
+    },
+    {
+      "path": "Editor/Tools/Vfx/ManageVfxCommon.cs.meta",
+      "sha256": "8fa9fa22372387ffa2f411b73f5cd209ef504c5bbd5783a2dd638ada8ab322fc",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleCommon.cs",
+      "sha256": "b25315d5c7d247b613d2b496f586ef044a597806742d799a7e533408f1586ef2",
+      "bytes": 3548
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleCommon.cs.meta",
+      "sha256": "c27915edf157c8f2a46612fd23b783ec32a20b9ddd1718abcdfde0dab6aa0497",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleControl.cs",
+      "sha256": "a66ba7cda730524de3d62be767a6e6d19453a90c5de100220b602139f6d2c13c",
+      "bytes": 9715
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleControl.cs.meta",
+      "sha256": "8a9f89dd86a3409c0912f2fc67d29d280810b461501f811c8fd0e71180e46428",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleRead.cs",
+      "sha256": "7b076fd54744345a4a65ac3570809544fc7d18fba453a20001be80c20aabed45",
+      "bytes": 5880
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleRead.cs.meta",
+      "sha256": "7f0b73bf50ccf944f1763cdd43b3f7322a0349120b9f8f57f284c66f22c17a51",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleWrite.cs",
+      "sha256": "ddb53cac71b3adcd8f99e5a20d60ebff0e2f91b32a6300f2911f80382249fc1f",
+      "bytes": 17822
+    },
+    {
+      "path": "Editor/Tools/Vfx/ParticleWrite.cs.meta",
+      "sha256": "db69bbf9cd0b2abbaea545bcdc946c0d0db3ae6c212f2b46c4c56f92a461f913",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/TrailControl.cs",
+      "sha256": "de289f4b782db935c196d67e4e4d62d471575218717b0b82acdf6960f983beeb",
+      "bytes": 1104
+    },
+    {
+      "path": "Editor/Tools/Vfx/TrailControl.cs.meta",
+      "sha256": "b06e54229a9a8e90f153803f0110615cdabd132038ee5998d3727bb166c5116b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/TrailRead.cs",
+      "sha256": "c136f1016b8d6c7104c22aa87e7726aad7239feaaf62fdaed0f9aeec2819f9cd",
+      "bytes": 2015
+    },
+    {
+      "path": "Editor/Tools/Vfx/TrailRead.cs.meta",
+      "sha256": "8aef9ef1b35f0d1910b8f5b11ec9ab49d1dbefd981481831a48d9850e55e5dc9",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/TrailWrite.cs",
+      "sha256": "9936528558270cfc25d9c81b8f8b35ee4477942ba61443fe8fc5efe3061c814e",
+      "bytes": 5471
+    },
+    {
+      "path": "Editor/Tools/Vfx/TrailWrite.cs.meta",
+      "sha256": "5a411c8d66ac649693b2591dccbcfb8a91c6a15231bb633e4111f20f6302db5b",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphAssets.cs",
+      "sha256": "5e3dd5408adf9fccb6599d2d1b484ec3df79bdc1eee06a12b974fba37c047f9e",
+      "bytes": 21292
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphAssets.cs.meta",
+      "sha256": "e9579b2b2fdbaa159a3d4b7cb6bfbb0c13d51d7cad5dc0dbc9cd59294c12d36f",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphCommon.cs",
+      "sha256": "266c29275d910027fd3020b316ab93006a3d0ab5129d3ae8f968331efaf252c0",
+      "bytes": 704
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphCommon.cs.meta",
+      "sha256": "71211b52d90764afa972ce147b2d82b96e1285c5a4c634c4764c002f08939168",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphControl.cs",
+      "sha256": "465967a3d8d81c220825cbdaf40a39ebe308eba7426c573dde99255f7a934d0e",
+      "bytes": 3083
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphControl.cs.meta",
+      "sha256": "abe3158f74d08355b8c8757619eefcf2be309f6ffe290c1b2f6cebd314ec572a",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphRead.cs",
+      "sha256": "bde063d9b87ec4b3b56982e0ca12d9c464ad42f7c3ddbd14465d3cdd93918c66",
+      "bytes": 1399
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphRead.cs.meta",
+      "sha256": "6b028539e4ed23c828da81bdadb631573b5d6fc90a66a00fc33b11b3616027ee",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphWrite.cs",
+      "sha256": "f097dfd045200fbe241b2f48d7795d952958f0dec073682b428ab1ba12110124",
+      "bytes": 11450
+    },
+    {
+      "path": "Editor/Tools/Vfx/VfxGraphWrite.cs.meta",
+      "sha256": "4c1bc4e9ab123b34baed9a0700875fb56e4a03ec5b5ad5b4ba883bcdcd6f63f3",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows.meta",
+      "sha256": "7d486cecd835982ad5e63fefa7c15e092da40809f62c9b49e8cd4fa1746420c4",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components.meta",
+      "sha256": "2e3d2328c13086c0a4b7f0186cc60419eee834d99454ba6c296c48f1959011e3",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Advanced.meta",
+      "sha256": "760c7807465f5e2858295b838530c0b056af5a806c1ee85ca41c2239c8c27865",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Advanced/McpAdvancedSection.cs",
+      "sha256": "a0e86e6c92571bdaab1272ec39e6442de3959370fa0e24d8b95374c4ed14fdd1",
+      "bytes": 29853
+    },
+    {
+      "path": "Editor/Windows/Components/Advanced/McpAdvancedSection.cs.meta",
+      "sha256": "5a5da4bece3054177631c621559d15fd893cd5542e3d26fad64b4acb165fbe5c",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/Advanced/McpAdvancedSection.uxml",
+      "sha256": "818ee9012871384933f7af80c4e44674e2697eba8fff377e3bf7d7d9a583b99d",
+      "bytes": 5349
+    },
+    {
+      "path": "Editor/Windows/Components/Advanced/McpAdvancedSection.uxml.meta",
+      "sha256": "dec71accd401601ce6690e37b9f3dea71f0654775731e148aef2cc48646df6d6",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen.meta",
+      "sha256": "043fe35968df77cb8fc500339e2bc248dda94ea21080c3aed83b349493fbe2e6",
+      "bytes": 169
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen/McpAssetGenSection.cs",
+      "sha256": "550525e288491b4289bf98078dd57161f4904786a2c41719599b0f8f94d54e58",
+      "bytes": 32110
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen/McpAssetGenSection.cs.meta",
+      "sha256": "7a8e9fae3c69b6f909b267e08181eb3b6ee95708e458b45bcfceb9c89aae971d",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen/McpAssetGenSection.uxml",
+      "sha256": "1a1876d31eb51770d3baa7b1953bb4379f13c609cf03b545eac7073ec4566abd",
+      "bytes": 5877
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen/McpAssetGenSection.uxml.meta",
+      "sha256": "419d089963a98730ea73add73c68b83a06a09bf8f1b3fb89b136b4df1caa61ac",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen/McpBlenderBridgePanel.cs",
+      "sha256": "f410dbe439aad0aa7a2b3b0396c7656232632efd4697aa4ff52779bed9fcff0b",
+      "bytes": 17069
+    },
+    {
+      "path": "Editor/Windows/Components/AssetGen/McpBlenderBridgePanel.cs.meta",
+      "sha256": "9fe10c1f7751f49543ff3babc7c7f2059f3e633caef3dd703a150eb0f7ece4ee",
+      "bytes": 240
+    },
+    {
+      "path": "Editor/Windows/Components/Branding.meta",
+      "sha256": "3e9679f6b36c7b00d95b0e5c3a0dd4454082f45dd6587fb408d1135c1fdb31be",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Branding/OceanMark.cs",
+      "sha256": "4cd7abee90f3986ac0559d06d4fc09e19269709bf1a6e9547d70951561f2a8e2",
+      "bytes": 6946
+    },
+    {
+      "path": "Editor/Windows/Components/Branding/OceanMark.cs.meta",
+      "sha256": "4898a94cb306ff6f1ab76a53607492670dc84788063d719d08ba4f211b00a869",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/ClientConfig.meta",
+      "sha256": "8e5151d56bcd18772cd60b04e707f680bd4ca517c0fddd8c6ec0d10e62a3f10f",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/ClientConfig/McpClientConfigSection.cs",
+      "sha256": "8b1eaab2fb941b4eac015cd15fd13cbd3493ddb1d3353bc1b188e10e3496d5dc",
+      "bytes": 36591
+    },
+    {
+      "path": "Editor/Windows/Components/ClientConfig/McpClientConfigSection.cs.meta",
+      "sha256": "ecf4f3327a7d8f7e58a8b0f2f904b72e5eb02424682622e845fd47e4c8b932ce",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/ClientConfig/McpClientConfigSection.uxml",
+      "sha256": "beb7fbe8ad4df5f7a6b32a9f31ff185306b333a37c6adaf206a888cdf12c659f",
+      "bytes": 3838
+    },
+    {
+      "path": "Editor/Windows/Components/ClientConfig/McpClientConfigSection.uxml.meta",
+      "sha256": "e3b59a9d02d4c49d669cb52ec43be59f3189872f31bd3f410583776ed9c55c19",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/Components/Common.uss",
+      "sha256": "349e16095a4b250d9a7e968d1e46ed51a8cedb3fc739604b83b22d1019feb870",
+      "bytes": 14268
+    },
+    {
+      "path": "Editor/Windows/Components/Common.uss.meta",
+      "sha256": "d4f1646d51cb578cce556d9c769d946018690d59555dcd102edd9eb87794760a",
+      "bytes": 305
+    },
+    {
+      "path": "Editor/Windows/Components/Connection.meta",
+      "sha256": "72be8231e16ef91c068d9287dc4c3a7fb7001262a4f85472d39ca0215872ac69",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Connection/McpConnectionSection.cs",
+      "sha256": "eb4f431af97eef3c65112f65fbce26d45cedf84e026ab3ace945a55623cb585c",
+      "bytes": 55536
+    },
+    {
+      "path": "Editor/Windows/Components/Connection/McpConnectionSection.cs.meta",
+      "sha256": "311236cfaf6b330526368d95d8a0f387413c4ab5ce9da58615b8c9ced494f2b6",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/Connection/McpConnectionSection.uxml",
+      "sha256": "e169780e0db28ead31747829f6ec8e203673d81c48da8093cd93bb9375cff505",
+      "bytes": 3810
+    },
+    {
+      "path": "Editor/Windows/Components/Connection/McpConnectionSection.uxml.meta",
+      "sha256": "7e951ac66745f06548d2da24f6e63a09287c9899b46439d689a304d9fb01a65a",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/Components/Resources.meta",
+      "sha256": "3d23386da5c788ddf817b83676d23adb0ba7c0f481b5b8c42abc7f584a18174e",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Resources/McpResourcesSection.cs",
+      "sha256": "777ece7ee9627b8350716947dea1b48085a7dfd06ddb259cb8b350852ca07ac6",
+      "bytes": 8496
+    },
+    {
+      "path": "Editor/Windows/Components/Resources/McpResourcesSection.cs.meta",
+      "sha256": "b07d53996732e4a6b4b8460f097d0cde78281bab0eee45aec6e64ae610f26171",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/Resources/McpResourcesSection.uxml",
+      "sha256": "cfa0c2f2ad7f8024af45a79e30736e207ffd223abf6cacbabc3413a171a08614",
+      "bytes": 1225
+    },
+    {
+      "path": "Editor/Windows/Components/Resources/McpResourcesSection.uxml.meta",
+      "sha256": "71e31703280642fda8232b21c12535531ac7c05ea144b86ac0f1036839bd51db",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/Components/Tools.meta",
+      "sha256": "5780a67d9e9da963adc8c5a0862b92c8d50e372560cac7edad719183f1962cff",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Tools/McpToolsSection.cs",
+      "sha256": "c465faabfd851adbdd3010ded57dc6dbeb592c6f31c215a86b46255a8386f9fa",
+      "bytes": 31758
+    },
+    {
+      "path": "Editor/Windows/Components/Tools/McpToolsSection.cs.meta",
+      "sha256": "b7cd1786c7be9f91e61996ac014ae61a3d4eb3d36630ddf0101509c826d01ec2",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/Tools/McpToolsSection.uxml",
+      "sha256": "91bf20b4a15457b290130e6256a47f1ae79c138199a201eabdd5a9ea630ead82",
+      "bytes": 1637
+    },
+    {
+      "path": "Editor/Windows/Components/Tools/McpToolsSection.uxml.meta",
+      "sha256": "0343788245267b691e216be622bc6b12e2ac70e03a2b881aafc33a90d27b598e",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/Components/Validation.meta",
+      "sha256": "6ea4a08bece7834fd18829b476e26da3bef80f0f08fd54f81b64f695f420f0fc",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/Components/Validation/McpValidationSection.cs",
+      "sha256": "ba2103674d6e52b8c61fbe5f58f37204eb045a015e17e11501980866114259d8",
+      "bytes": 2738
+    },
+    {
+      "path": "Editor/Windows/Components/Validation/McpValidationSection.cs.meta",
+      "sha256": "6d3542e7e7a50445247a9dbcd7d783c2c356eeec99d057a471a936640cbda289",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/Components/Validation/McpValidationSection.uxml",
+      "sha256": "42e333f1561aaade582236770cb96f5a7e7187dd6ff3e0ccbd068a7b8ba513b2",
+      "bytes": 724
+    },
+    {
+      "path": "Editor/Windows/Components/Validation/McpValidationSection.uxml.meta",
+      "sha256": "27f14185bcbd80b47c9d419836d75030ba85df0c5653c9186cc265687dadd3ab",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs.meta",
+      "sha256": "48fff95c182dbcf30efb6badd6d54261537673e0cce89410d1260d86e6c4df42",
+      "bytes": 172
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefItem.uxml",
+      "sha256": "1c460f84ca8546d3eba8a80f5d8b298a7582cdfb45f91785c9821eb4d4ab12c2",
+      "bytes": 966
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefItem.uxml.meta",
+      "sha256": "2fa3897a0429bc62d515399a88e4bd01c796449a7a56dd6db702b1dd6c40fba2",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefsWindow.cs",
+      "sha256": "faa0fa166120a7e3f50d9839b71eb9366796e5540b62300d5283f2c2a821bb78",
+      "bytes": 16262
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefsWindow.cs.meta",
+      "sha256": "391a9d463bae194e49962c6242899a50f1ecbb11b41d8358587145137b1b14a8",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefsWindow.uss",
+      "sha256": "cda41e2c6d1db380fb32dc644bdaa5e586a23b7068f04a2f519854c9a1094ed4",
+      "bytes": 3996
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefsWindow.uss.meta",
+      "sha256": "9b8c661a3f961600cbd21dfcb41aff92a08c9dc9e54615b8eebd79c4a7160907",
+      "bytes": 305
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefsWindow.uxml",
+      "sha256": "f5cb0389cfbed27e7326f91380ac2b71b90bdad9dfe826a742a25ea1fd5dfa29",
+      "bytes": 1616
+    },
+    {
+      "path": "Editor/Windows/EditorPrefs/EditorPrefsWindow.uxml.meta",
+      "sha256": "294dd584c5e6ea534f71a5e59091d11fc4439701b4f21e0b00ed1550bdf34777",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/MCPForUnityEditorWindow.cs",
+      "sha256": "7d7b2f17c95e7188fb28e2cc8c0c2aec240d9c0583299f33a2664f5ce042cd2d",
+      "bytes": 45765
+    },
+    {
+      "path": "Editor/Windows/MCPForUnityEditorWindow.cs.meta",
+      "sha256": "b8886743ce49137d55c9fde6f4d67e31e0b624e4db7c9e3dee01b3dbdcc8f262",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/MCPForUnityEditorWindow.uss",
+      "sha256": "b11a4fe1a8c4692c136856e3a2e5362521b9d3c01f13d118cd3f0ed670ad6caa",
+      "bytes": 3282
+    },
+    {
+      "path": "Editor/Windows/MCPForUnityEditorWindow.uss.meta",
+      "sha256": "25e5ae03a91bab5e233a18066ee1bc87db4170329f235c31dc7e5fd632a5b3fb",
+      "bytes": 305
+    },
+    {
+      "path": "Editor/Windows/MCPForUnityEditorWindow.uxml",
+      "sha256": "b7472f614752589a3bd404d7fce6494f962b0bc6c544377d6a3b110f5cdb3b1a",
+      "bytes": 2546
+    },
+    {
+      "path": "Editor/Windows/MCPForUnityEditorWindow.uxml.meta",
+      "sha256": "d6e4adfd28770981cb51665471d5961d2c30738ad58ec06bcdfd36f7f99a6cc4",
+      "bytes": 282
+    },
+    {
+      "path": "Editor/Windows/MCPSetupWindow.cs",
+      "sha256": "162fa684932846b14591f382a1d7e57c32c62a1f6161bbbfc7d6a921b18dcafc",
+      "bytes": 16435
+    },
+    {
+      "path": "Editor/Windows/MCPSetupWindow.cs.meta",
+      "sha256": "d22d8599c2a213479b47f16b99edc72673b1ccfbd5c037d7aae9f1a8c6d2fa51",
+      "bytes": 243
+    },
+    {
+      "path": "Editor/Windows/MCPSetupWindow.uss",
+      "sha256": "ccad089ac54c41bd31cbaf40858eb1d0e1c829e71d506abdc07c6266b414873e",
+      "bytes": 2847
+    },
+    {
+      "path": "Editor/Windows/MCPSetupWindow.uss.meta",
+      "sha256": "84a643280975a9e0ed48379aa77d71efd16fdf8ca2f80f4342a3c3cd5a5f5baa",
+      "bytes": 305
+    },
+    {
+      "path": "Editor/Windows/MCPSetupWindow.uxml",
+      "sha256": "281f7c798188a9a46e00802a23c2750403aecf10684b4f82a4de0341e8034dfa",
+      "bytes": 5671
+    },
+    {
+      "path": "Editor/Windows/MCPSetupWindow.uxml.meta",
+      "sha256": "23c2ee9f378146e48168252a3942bd9be32c4b0b25a79af5c114601462a8862c",
+      "bytes": 282
+    },
+    {
+      "path": "README.md",
+      "sha256": "6a48b46f086cda98f5ea03ee407e77f7bb6c41e1d7b3a07fd96c138f1571ef81",
+      "bytes": 4351
+    },
+    {
+      "path": "README.md.meta",
+      "sha256": "382303fc8b5cf9100edbadfedb427312e17e21f98e3a8328df32a398e0cf1216",
+      "bytes": 158
+    },
+    {
+      "path": "Runtime.meta",
+      "sha256": "614860f453b4debcba9f99e0556beb23290d58155258175ab75069a2df546be2",
+      "bytes": 172
+    },
+    {
+      "path": "Runtime/AssemblyInfo.cs",
+      "sha256": "9ce11999dbcdc89b589df146db3c4bd8a0f1c3c6036b63e3456c93f39aa933cb",
+      "bytes": 213
+    },
+    {
+      "path": "Runtime/AssemblyInfo.cs.meta",
+      "sha256": "68bfb9532d3ee08a9bf36c8288d23e071f2dd1fcc0996f707e5d16014c6fbe0f",
+      "bytes": 240
+    },
+    {
+      "path": "Runtime/Helpers.meta",
+      "sha256": "ebd364e9187f2187d801649d6defc8dd49581a2f7616ffb4705b30feb13ef266",
+      "bytes": 172
+    },
+    {
+      "path": "Runtime/Helpers/ScreenshotUtility.cs",
+      "sha256": "d4c8612c33baad80bc385742612aa9430576fa5842bed57581837f87461707d2",
+      "bytes": 35160
+    },
+    {
+      "path": "Runtime/Helpers/ScreenshotUtility.cs.meta",
+      "sha256": "5c99d1ce72d67d7215f6f0fe3b1143e100f5dbbf31626503e96df91e45a9153e",
+      "bytes": 243
+    },
+    {
+      "path": "Runtime/Helpers/UnityAssembliesCompat.cs",
+      "sha256": "ec9f4f1de38983f810616899decd63976cd2df8f741b7d592520a04b1dc08437",
+      "bytes": 4731
+    },
+    {
+      "path": "Runtime/Helpers/UnityAssembliesCompat.cs.meta",
+      "sha256": "2d81067831a72e17166d1f1a368703c2274a1a9e20f50bbdeb3151cc6191dc77",
+      "bytes": 60
+    },
+    {
+      "path": "Runtime/Helpers/UnityCompatShims.cs",
+      "sha256": "ae8503d36c8da997b0049998473df9013d09696e627a2970159b55ce63fe08fa",
+      "bytes": 2444
+    },
+    {
+      "path": "Runtime/Helpers/UnityCompatShims.cs.meta",
+      "sha256": "33cb40971363dbbbc9bdeffc2c4d06b6d050fc9f99bb9373749f1377d628fde7",
+      "bytes": 60
+    },
+    {
+      "path": "Runtime/Helpers/UnityFindObjectsCompat.cs",
+      "sha256": "675963ef0c2c189d58d1ac3f5369a098f73011c8c601d7af5b5d29b4a7bab5a8",
+      "bytes": 6205
+    },
+    {
+      "path": "Runtime/Helpers/UnityFindObjectsCompat.cs.meta",
+      "sha256": "a86dc939f706e9d3e0664469a84db3c6bc3fb69454002f59eef6eb9c12bb3c2c",
+      "bytes": 243
+    },
+    {
+      "path": "Runtime/Helpers/UnityObjectIdCompat.cs",
+      "sha256": "3a74681ae9d50bbcd91ea5a77b2c260c8791f13e48573a7356abf34714566047",
+      "bytes": 3493
+    },
+    {
+      "path": "Runtime/Helpers/UnityObjectIdCompat.cs.meta",
+      "sha256": "da667dae5456bd4584f6e217280dbd6240282bcdf07bd1ca5fe1e9850709c4a5",
+      "bytes": 60
+    },
+    {
+      "path": "Runtime/Helpers/UnityPhysicsCompat.cs",
+      "sha256": "752f33ca1574caa909f918ce047d4c49cb164b3185040712334b5dbd66278bc5",
+      "bytes": 9605
+    },
+    {
+      "path": "Runtime/Helpers/UnityPhysicsCompat.cs.meta",
+      "sha256": "11b786988da5cf6acd24a5393db76af05d7b7f8c909642703b343b2fbf0636eb",
+      "bytes": 60
+    },
+    {
+      "path": "Runtime/MCPForUnity.Runtime.asmdef",
+      "sha256": "51f8366e323d334f40537d1118beda44828d64b578fdf30e142401546507ffc2",
+      "bytes": 372
+    },
+    {
+      "path": "Runtime/MCPForUnity.Runtime.asmdef.meta",
+      "sha256": "dd596f130d352069d15acaaef11fa8447dcf35c258346dd5a0f44ace961036e5",
+      "bytes": 166
+    },
+    {
+      "path": "Runtime/Serialization.meta",
+      "sha256": "a36b911f6af792b465edd79dea52cbaa3d1c7d52d4cdc95af3b38e7f96c4852c",
+      "bytes": 172
+    },
+    {
+      "path": "Runtime/Serialization/UnityTypeConverters.cs",
+      "sha256": "a3358dc969114161162726062f03498bab421b126c36102ee1f4f477d1ac3831",
+      "bytes": 26630
+    },
+    {
+      "path": "Runtime/Serialization/UnityTypeConverters.cs.meta",
+      "sha256": "b5d180293b2d74926c6ec676bb4282ef30962af87366197b3bc1d32081df2575",
+      "bytes": 243
+    },
+    {
+      "path": "package-icon.png",
+      "sha256": "e64c9aa25e409eddac69b28d99876cae1c6d30e128cd63ec1e4158567f80215d",
+      "bytes": 3988
+    },
+    {
+      "path": "package-icon.png.meta",
+      "sha256": "7bed0bd33f9d9720a40b11ef03681dedc0b5a9e17d0f94a3c234539d0d73df76",
+      "bytes": 2164
+    },
+    {
+      "path": "package.json",
+      "sha256": "38b175ed66a8e7c3fe5f4c47f4545dd882aea583d3ea2b9ba97e039b03cbfd00",
+      "bytes": 1339
+    },
+    {
+      "path": "package.json.meta",
+      "sha256": "dd605f09308b1b6dbed6dfeb43805ad3fe855689e83ad9a8854f792c0d0a7871",
+      "bytes": 163
+    }
+  ],
+  "upstreamFileCount": 744,
+  "upstreamMetaCount": 401,
+  "upstreamCanonicalSha256": "9d42eaefd603f2e572abbb35a0bc485d3d6ba96fad2c09ea12ebbd1c5c9d0626",
+  "packageRoot": "Dependencies/com.coplaydev.unity-mcp",
+  "manifestReference": "file:../../Dependencies/com.coplaydev.unity-mcp",
+  "dependencies": {
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.physics2d": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0",
+    "com.unity.modules.screencapture": "1.0.0",
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.unity.test-framework": "1.1.31"
+  },
+  "additionalPackageFiles": [
+    {
+      "path": "Dependencies/com.coplaydev.unity-mcp/LICENSE",
+      "sha256": "6efe650c965012ac418238dcd6b9116e4130a5220717ef0dfb539dd159c4245c",
+      "bytes": 1066
+    },
+    {
+      "path": "Dependencies/com.coplaydev.unity-mcp/LICENSE.meta",
+      "sha256": "43ca0442be4d7ae5d1d4050877349c2fb9e6f625325119d6c2716d81d010cc4d",
+      "bytes": 60
+    }
+  ],
+  "previousDeclarations": [
+    {
+      "path": "Dependencies/McpProvenance/manifest.git-original.json",
+      "sha256": "c92b7f4a30700d5d7d2494c627c82eb5d11451252beda77f23bc8b10420f273e",
+      "bytes": 694
+    },
+    {
+      "path": "Dependencies/McpProvenance/packages-lock.git-original.json",
+      "sha256": "1ba907f9b57a3605a01b79736618840c8934e06d66f0f17a88a91d7b8bd01257",
+      "bytes": 7660
+    }
+  ],
+  "licenseAudit": [
+    "Repository MIT: CoplayDev, 2025; copied verbatim as package LICENSE",
+    "Embedded Editor/External/Tommy.cs: MIT, Denis Zhidkikh 2020; original header preserved and separate notice retained",
+    "No other license/copyright exception declaration found in the selected UPM text files"
+  ],
+  "selection": "All 744 files under MCPForUnity preserved byte-for-byte, including 401 original .meta files. No repository Server directory, Library cache, credentials or generated package scripts were used.",
+  "execution": "Downloaded archive was read/extracted as data only; no bundled code was executed during vendoring.",
+  "obtainedUtc": "2026-10-09T10:35:37.755376+00:00"
+}

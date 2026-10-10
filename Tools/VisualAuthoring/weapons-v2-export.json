@@ -1,0 +1,353 @@
+{
+  "kind": "Static Blender CC0 derivative export; not Unity or real gameplay evidence",
+  "coordinateContract": "Mesh positions are Unity metres, +Y up and +Z barrel. Imported marker rotations may contain reflection; WeaponVisualFactory rebases real authored markers into its positive-scale wrapper using AimFront minus AimRear.",
+  "weapons": [
+    {
+      "id": 0,
+      "label": "Carbine",
+      "source": "AssaultRifle_1",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 1,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.03810681030154228,
+        0.6734391450881958
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.01893840730190277,
+        -0.026951851323246956,
+        0.2354803830385208
+      ],
+      "sightYUnity": 0.12427901685237884,
+      "resourcePath": "VisualV2/Weapons/weapon_00",
+      "glbSha256": "4d2816e39bfa87df484d688caf7de4d1cb224104cb1f65f08393e2cf2516c17f"
+    },
+    {
+      "id": 1,
+      "label": "Pump",
+      "source": "Shotgun_2",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 2,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 1,
+      "muzzleUnity": [
+        0.0,
+        -0.044121403247117996,
+        0.6236200928688049
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.014105685986578465,
+        -0.09118394553661346,
+        0.16271840035915375
+      ],
+      "sightYUnity": -0.005162495896220207,
+      "resourcePath": "VisualV2/Weapons/weapon_01",
+      "glbSha256": "5961bea982f4aceed21d828808f7a1dd6cfe31935b2ff18f615902baba10ddeb"
+    },
+    {
+      "id": 2,
+      "label": "Burst bullpup",
+      "source": "Bullpup_2",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 1,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.06333216279745102,
+        0.4846382737159729
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.02129552885890007,
+        -0.023336097598075867,
+        0.11295528709888458
+      ],
+      "sightYUnity": 0.13850068509578706,
+      "resourcePath": "VisualV2/Weapons/weapon_02",
+      "glbSha256": "74cee477c7f23a6c85effcc8147d1500a2d72e0691c4be132909512642efea17"
+    },
+    {
+      "id": 3,
+      "label": "Heavy rifle",
+      "source": "AssaultRifle2_3",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 1,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.04418215528130531,
+        0.7561326622962952
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.024516012519598007,
+        -0.014193957671523094,
+        0.14516012370586395
+      ],
+      "sightYUnity": 0.16056130290031434,
+      "resourcePath": "VisualV2/Weapons/weapon_03",
+      "glbSha256": "babe3635c44a0fc049e7c9e900a3248c990fe26b87d2e7d9b5b3b19767edc093"
+    },
+    {
+      "id": 4,
+      "label": "SMG",
+      "source": "SubmachineGun_1",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 1,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.04786299541592598,
+        0.41410157084465027
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.029082048684358597,
+        0.0230394396930933,
+        0.20200590789318085
+      ],
+      "sightYUnity": 0.13319065630435944,
+      "resourcePath": "VisualV2/Weapons/weapon_04",
+      "glbSha256": "2dea5ead31a79f8cc004459567650c358b24994f009cec022f3775ae69025df2"
+    },
+    {
+      "id": 5,
+      "label": "Double barrel",
+      "source": "Shotgun_SawedOff",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 2,
+      "realBoltParts": 0,
+      "realHingeParts": 4,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.004451353568583727,
+        0.4848349392414093
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.025052865967154503,
+        -0.04631528630852699,
+        0.21316081285476685
+      ],
+      "sightYUnity": 0.0432707092165947,
+      "resourcePath": "VisualV2/Weapons/weapon_05",
+      "glbSha256": "bf815c0cfd49eb7ddf33bc11daf9d666737f0f43505c246a215aede5b3efff70"
+    },
+    {
+      "id": 6,
+      "label": "DMR",
+      "source": "SniperRifle_2",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 1,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        -0.030013596639037132,
+        0.6826626658439636
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.008902270346879959,
+        -0.058456070721149445,
+        0.11068707704544067
+      ],
+      "sightYUnity": 0.009201186709105968,
+      "resourcePath": "VisualV2/Weapons/weapon_06",
+      "glbSha256": "13c116b16c8ada14247fd9278b901011fb1ad50cdf524fcaf4200b0bd891257c"
+    },
+    {
+      "id": 7,
+      "label": "Bolt sniper",
+      "source": "SniperRifle_5",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 5,
+      "realBoltParts": 1,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.009604942984879017,
+        0.8051493167877197
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.014899911358952522,
+        -0.05157528445124626,
+        0.22593556344509125
+      ],
+      "sightYUnity": 0.05346909537911415,
+      "resourcePath": "VisualV2/Weapons/weapon_07",
+      "glbSha256": "6a1acd48144cc77eb88483b1e6e858685dab860825d415487cda2f9a172aee59"
+    },
+    {
+      "id": 8,
+      "label": "Support LMG",
+      "source": "AssaultRifle2_4",
+      "sourceFamily": "Quaternius Ultimate Gun Pack",
+      "realMagazineParts": 2,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.11290277540683746,
+        0.7022078037261963
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        -0.03381447121500969,
+        0.03525788336992264,
+        0.22123748064041138
+      ],
+      "sightYUnity": 0.2573738044500351,
+      "resourcePath": "VisualV2/Weapons/weapon_08",
+      "glbSha256": "41dde0edec99765147a98250b3528d7075ab6e11c8f44df8a61902a6e6c58655"
+    },
+    {
+      "id": 9,
+      "label": "Grenade launcher",
+      "source": "blaster-m",
+      "sourceFamily": "Kenney Blaster Kit 2.1",
+      "realMagazineParts": 4,
+      "realBoltParts": 0,
+      "realHingeParts": 93,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.10609764605760574,
+        0.4749985933303833
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        0.0,
+        -0.0825834646821022,
+        0.13222062587738037
+      ],
+      "sightYUnity": 0.2278189903497696,
+      "resourcePath": "VisualV2/Weapons/weapon_09",
+      "glbSha256": "836f15562ba2563f2ea91d56b5c53b258edd1f670bdcf47cbb539e62396da103"
+    },
+    {
+      "id": 10,
+      "label": "Coil rifle",
+      "source": "blaster-g",
+      "sourceFamily": "Kenney Blaster Kit 2.1",
+      "realMagazineParts": 2,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.14043782651424408,
+        0.5680677890777588
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        0.0,
+        -0.06564315408468246,
+        0.11759337782859802
+      ],
+      "sightYUnity": 0.22945856511592866,
+      "resourcePath": "VisualV2/Weapons/weapon_10",
+      "glbSha256": "0a93eb1a189cda39966ed5eb2f8a5af379c2d61271f7a44330e43170e70ea614"
+    },
+    {
+      "id": 11,
+      "label": "Phase marker",
+      "source": "blaster-r",
+      "sourceFamily": "Kenney Blaster Kit 2.1",
+      "realMagazineParts": 18,
+      "realBoltParts": 0,
+      "realHingeParts": 0,
+      "realPumpParts": 0,
+      "muzzleUnity": [
+        0.0,
+        0.17677398025989532,
+        0.5565615892410278
+      ],
+      "gripUnity": [
+        0,
+        -0.1,
+        -0.1
+      ],
+      "supportGripUnity": [
+        0.0,
+        -0.06575991958379745,
+        0.08261377364397049
+      ],
+      "sightYUnity": 0.29623005747795106,
+      "resourcePath": "VisualV2/Weapons/weapon_11",
+      "glbSha256": "325a04da6c6d1e6dc7d7f64fbc4c43a6a03ddce6be69a1185f1dfd49f30c6665"
+    }
+  ],
+  "blade": {
+    "source": "Quaternius Ultimate Gun Pack Accessories/Bayonet.blend",
+    "length": 0.5,
+    "gripUnity": [
+      0,
+      0,
+      -0.105
+    ]
+  },
+  "originalMaterials": "Upstream colours/textures retained; optical Glass alpha adapted for FPS visibility. Newly authored feed parts/coils have separately named project materials.",
+  "materialRestoration": "See weapons-v2-material-report.json; authored flat colours restored from actual Blend shader nodes, binary chunks unchanged. Textured Kenney materials are not flattened."
+}

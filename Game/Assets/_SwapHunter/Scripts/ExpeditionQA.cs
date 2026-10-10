@@ -9,10 +9,10 @@ namespace SwapHunter
  public sealed class ExpeditionQA:MonoBehaviour
  {
   [Serializable] public sealed class Check{public string name,detail;public bool passed;}
-  [Serializable] public sealed class Report{public string version=Application.version;public string kind="Native scripted integration with controlled positioning and accelerated wave waits; not human playtesting";public bool passed;public List<Check> checks=new List<Check>();}
+  [Serializable] public sealed class Report{public string version;public string kind="Native scripted integration with controlled positioning and accelerated wave waits; not human playtesting";public bool passed;public List<Check> checks=new List<Check>();}
   readonly Report report=new Report();string output;float started;bool finished;
   DemoGame G=>DemoGame.I;PlayerMotor P=>G.player;
-  void Awake(){started=Time.realtimeSinceStartup;Application.logMessageReceived+=OnLog;}
+  void Awake(){ report.version = Application.version; started=Time.realtimeSinceStartup;Application.logMessageReceived+=OnLog;}
   void Update(){if(!finished&&Time.realtimeSinceStartup-started>480){Add("watchdog",false,"Exceeded 480 seconds");Finish();}}
   void OnLog(string message,string stack,LogType type){if(type==LogType.Error||type==LogType.Exception||type==LogType.Assert)Add("runtime_error",false,message);}
   void Add(string name,bool pass,string detail=""){report.checks.Add(new Check{name=name,passed=pass,detail=detail});Debug.Log("EXPEDITION_QA "+name+" "+pass+" "+detail);}
@@ -83,13 +83,13 @@ namespace SwapHunter
     if(level==10)
     {
      P.SetFeet(new Vector3(0,.04f,14));P.cooldown=0;yield return new WaitForSeconds(.1f);
-     Add(key+"_jammer_blocks",P.ValidateSwap(G.expeditionMap.anchors[0]).Contains("干扰"));
+     Add(key+"_jammer_blocks",P.ValidateSwap(G.expeditionMap.anchors[0]).Code == SwapFailureReason.Interference);
      yield return UseNode(G.expeditionMap.nodes.Find(n=>n.kind==ExpeditionNodeKind.Jammer),key+"_jammer");
     }
     P.SetFeet(new Vector3(0,.04f,14));P.verticalSpeed=0;P.cooldown=0;
     var anchor=G.expeditionMap.anchors[0];Aim(anchor.AimPoint);yield return new WaitForSeconds(.15f);
     Vector3 before=P.transform.position,other=anchor.transform.position;
-    Add(key+"_swap_valid",P.ValidateSwap(anchor)=="可换位",P.ValidateSwap(anchor));
+    Add(key+"_swap_valid",P.ValidateSwap(anchor).IsValid,P.ValidateSwap(anchor).ToString());
     Add(key+"_swap_requested",P.RequestSwap(anchor));yield return new WaitForSeconds(.2f);
     Add(key+"_bidirectional_swap",Vector3.Distance(P.transform.position,other)<.15f&&Vector3.Distance(anchor.transform.position,before)<.15f,"before="+before+", expected="+other+", player="+P.transform.position+", anchor="+anchor.transform.position);
     Add(key+"_no_free_teleport",G.totalSwaps==1);

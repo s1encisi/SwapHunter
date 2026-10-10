@@ -49,38 +49,31 @@ namespace SwapHunter
             if (name.StartsWith("Deck ") || name == "Connector deck" || name == "Extraction deck" || name == "Elevated deck")
             {
                 proxy.GetComponent<Renderer>().enabled = false;
+                FinalEnvironmentModels.Create("RoofTile_Empty",root,p-new Vector3(0,.045f,0),new Vector3(scale.x,Mathf.Max(.05f,scale.y-.09f),scale.z));
                 for (float x = -scale.x / 2; x < scale.x / 2 - .01f; x += 4)
                     for (float z = -scale.z / 2; z < scale.z / 2 - .01f; z += 4)
                     {
                         float w = Mathf.Min(4, scale.x / 2 - x), d = Mathf.Min(4, scale.z / 2 - z);
-                        ImportedModels.Create(G.config.models.deck, root, p + new Vector3(x + w / 2, scale.y / 2, z + d / 2), new Vector3(w / 4, 1, d / 4));
+                        FinalEnvironmentModels.Create("FloorTile_Basic",root,p+new Vector3(x+w/2,scale.y/2-.045f,z+d/2),new Vector3(w,.09f,d));
                     }
             }
-            else if (name == "Outer cargo barrier")
-            {
-                proxy.GetComponent<Renderer>().enabled = false;
-                for (float z = -scale.z / 2; z < scale.z / 2 - .01f; z += 4)
-                {
-                    float span = Mathf.Min(4, scale.z / 2 - z);
-                    var wall = ImportedModels.Create(G.config.models.bulkhead, root, p + new Vector3(0, -scale.y / 2, z + span / 2), new Vector3(span / 4, scale.y / 3.4f, scale.x / .6f));
-                    wall.transform.localRotation = Quaternion.Euler(0, p.x > 0 ? 90 : -90, 0);
-                }
-            }
+            else if (name == "Outer cargo barrier")FinalEnvironmentModels.Replace(proxy,"Wall_1",Quaternion.Euler(0,90,0),true);
+            else FinalEnvironmentModels.Structure(proxy);
             return proxy;
         }
-        static GameObject Deco(string name, Vector3 p, Vector3 scale, int mat = 3) => Shapes.Box(name, root, p, scale, mat);
+        static GameObject Deco(string name, Vector3 p, Vector3 scale, int mat = 3) {var go=Shapes.Box(name,root,p,scale,mat);if(!name.ToLowerInvariant().Contains("light"))FinalEnvironmentModels.Structure(go);return go;}
         public static void Build(DemoGame game)
         {
             G = game; root = new GameObject("Aerial cargo port · modular environment").transform; G.world = root;
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(.42f, .54f, .65f);
-            RenderSettings.ambientEquatorColor = new Color(.30f, .37f, .40f);
+            RenderSettings.ambientSkyColor = new Color(.38f, .48f, .62f);
+            RenderSettings.ambientEquatorColor = new Color(.24f, .29f, .35f);
             RenderSettings.ambientGroundColor = new Color(.14f, .18f, .20f);
             Shader portSky = Resources.Load<Shader>("PortSky");
             if (portSky) { var sky = new Material(portSky); sky.name = "Original procedural port atmosphere"; RenderSettings.skybox = sky; }
             RenderSettings.fog = true; RenderSettings.fogColor = new Color(.38f, .50f, .57f); RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogStartDistance = 65; RenderSettings.fogEndDistance = 230;
             Light sun = new GameObject("Afternoon sun").AddComponent<Light>(); sun.transform.SetParent(root); sun.type = LightType.Directional;
-            sun.transform.rotation = Quaternion.Euler(32, -42, 0); sun.color = new Color(1, .86f, .70f); sun.intensity = 1.85f; sun.shadows = LightShadows.Soft;
+            sun.transform.rotation = Quaternion.Euler(32, -42, 0); sun.color = new Color(1, .86f, .70f); sun.intensity = 1.4f; sun.shadows = LightShadows.Soft;
             Room(0, 9, 24, 28, "PHASE LAB", 4);
             Room(1, 48, 32, 36, "01   CARGO YARD", 4);
             Room(2, 92, 36, 36, "02   TRANSFER HALL", 5);
@@ -133,7 +126,7 @@ namespace SwapHunter
             // Doors are physical blockers in play, but their open passages must exist in the baked navigation.
             foreach (var gate in G.gates) gate.panel.SetActive(false);
             NavMeshSurface surface = root.gameObject.AddComponent<NavMeshSurface>(); surface.collectObjects = CollectObjects.All;
-            surface.layerMask = Layers.WorldMask; surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders; surface.BuildNavMesh();
+            surface.layerMask = Layers.WorldMask; surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders; RuntimeNavigationOwner.BuildFresh(surface);
             foreach (var gate in G.gates) gate.SetOpen(false);
             AnchorAt(new Vector3(7, 4.02f, 14)); AnchorAt(new Vector3(-10, .02f, 60)); AnchorAt(new Vector3(9, .02f, 103)); AnchorAt(new Vector3(12, 3.52f, 148));
             SupplyAt(new Vector3(-7, 0, 39)); SupplyAt(new Vector3(12, 4, 57)); SupplyAt(new Vector3(12, 0, 78)); SupplyAt(new Vector3(-10, 4, 99)); SupplyAt(new Vector3(-14, 0, 122)); SupplyAt(new Vector3(12, 3.5f, 151));
@@ -172,7 +165,7 @@ namespace SwapHunter
             GameObject door = new GameObject("Security shutter " + number); door.transform.SetParent(root);
             var gate = door.AddComponent<SecurityGate>(); gate.number = number;
             gate.panel = Shapes.Box("LOCKED", door.transform, new Vector3(0, 2, z), new Vector3(6.6f, 4, .28f), 11, true, Layers.World);
-            ImportedModels.ReplaceBox(gate.panel, G.config.models.gate, new Vector3(6.6f, 4, .3f));
+            FinalEnvironmentModels.Replace(gate.panel,"Door_Single");
             G.gates.Add(gate);
         }
         static void Platform(Vector3 feet, float height, float width, float depth)
@@ -220,7 +213,7 @@ namespace SwapHunter
         static void Crate(Vector3 feet, Vector3 scale, int mat)
         {
             var proxy = Solid("Cargo container", feet + Vector3.up * scale.y / 2, scale, mat == 5 ? 12 : mat);proxy.AddComponent<CoverSite>();
-            ImportedModels.ReplaceBox(proxy, G.config.models.cargo, new Vector3(4, 2.4f, 3));
+            FinalEnvironmentModels.Replace(proxy,mat==5?"Props_Crate":"Props_ContainerFull");
         }
         public static void Sign(string text, Vector3 point, float scale, Color color)
         {
@@ -238,7 +231,8 @@ namespace SwapHunter
             GameObject go = new GameObject(label); go.transform.SetParent(root); go.transform.position = point;
             Terminal terminal = go.AddComponent<Terminal>(); terminal.stage = stage; terminal.id = id; terminal.label = label;
             var proxy = Shapes.Box("Console collision", go.transform, new Vector3(0, .70f, 0), new Vector3(1.02f, 1.4f, .8f), 8, true, Layers.World); proxy.GetComponent<Renderer>().enabled = false;
-            var console = ImportedModels.Create(G.config.models.terminal, go.transform, Vector3.zero);
+            var console = FinalEnvironmentModels.Terminal(go.transform);
+            terminal.lightPanel=Shapes.Box("Terminal status light",go.transform,new Vector3(0,1.12f,-.405f),new Vector3(.7f,.07f,.02f),4).GetComponent<Renderer>();
             foreach (Renderer renderer in console.GetComponentsInChildren<Renderer>())
                 if (renderer.sharedMaterial && renderer.sharedMaterial.name.Contains("Phase emitter")) { terminal.lightPanel = renderer; break; }
             G.terminals.Add(terminal);
@@ -247,60 +241,31 @@ namespace SwapHunter
         {
             GameObject go = new GameObject("Phase anchor"); go.layer = Layers.Actor; go.transform.SetParent(root); go.transform.position = point;
             PhaseAnchor anchor = go.AddComponent<PhaseAnchor>(); SphereCollider collider = go.AddComponent<SphereCollider>(); collider.radius = .42f; collider.center = Vector3.up * .95f;
-            ImportedModels.Create(G.config.models.beacon, go.transform, Vector3.zero);
+            FinalEnvironmentModels.Anchor(go.transform);
             Shapes.Ring(go.transform, point + Vector3.up * .06f, .68f, new Color(.25f, 1, .85f), .03f);
             G.anchors.Add(anchor); G.anchorOrigins.Add(point);
         }
         static void SupplyAt(Vector3 point)
         {
             GameObject go = new GameObject("Health and ammunition"); go.transform.SetParent(root); go.transform.position = point;
-            ImportedModels.Create(G.config.models.supply, go.transform, Vector3.up * .45f);
+            FinalEnvironmentModels.Supply(go.transform,Vector3.up*.45f);
             SupplyPickup pickup = go.AddComponent<SupplyPickup>(); pickup.Initialize(); G.supplies.Add(pickup);
         }
         static void Surroundings()
         {
-            var random = new System.Random(820);
-            var skyline = new List<GameObject>();
-            for (int i = 0; i < 26; i++)
+            var random=new System.Random(820);
+            for(int i=0;i<20;i++)
             {
-                float side = i % 2 == 0 ? -1 : 1;
-                float x = side * (49 + random.Next(0, 45));
-                float z = random.Next(-40, 240), height = random.Next(24, 62), width = random.Next(8, 16), depth = random.Next(10, 19);
-                var center = new Vector3(x, height / 2 - 19, z);
-                skyline.Add(Deco("Port skyline stepped tower", center, new Vector3(width, height, depth), i % 3 == 0 ? 1 : 11));
-                skyline.Add(Deco("Port skyline upper core", new Vector3(x + side * width * .12f, height - 19 + 3, z + 1), new Vector3(width * .65f, 6, depth * .68f), 3));
-                skyline.Add(Deco("Port skyline vertical service spine", center + new Vector3(side * -width * .42f, 0, -depth * .51f), new Vector3(.65f, height - 2, .30f), 3));
-                for (int j = 1; j < 4; j++)
-                    skyline.Add(Deco("Port skyline floor band", center + new Vector3(0, height * (.2f * j - .42f), -depth * .506f), new Vector3(width * .78f, .13f, .05f), i % 4 == 0 ? 5 : 4));
+                float side=i%2==0?-1:1;
+                float x=side*(49+random.Next(0,45)),z=random.Next(-40,240),height=random.Next(24,62);
+                FinalEnvironmentModels.Create("Props_Vessel_Tall",root,new Vector3(x,height/2-19,z),new Vector3(random.Next(8,16),height,random.Next(10,19)));
             }
-            for (int side = -1; side <= 1; side += 2)
+            for(int side=-1;side<=1;side+=2)
             {
-                skyline.Add(Deco("Crane mast", new Vector3(side * 25, 10, 48), new Vector3(1.2f, 35, 1.2f), 12));
-                skyline.Add(Deco("Crane boom", new Vector3(side * 15, 26, 48), new Vector3(24, 1, 1.2f), 12));
-                skyline.Add(Deco("Crane upper chord", new Vector3(side * 15, 28, 48), new Vector3(24, .30f, .45f), 3));
-                for(int n = 0; n < 7; n++)
-                {
-                    var brace = Deco("Crane triangular web", new Vector3(side * 15 - 10 + n * 3.1f, 27, 48), new Vector3(.20f, 3.5f, .25f), 12);
-                    brace.transform.localRotation = Quaternion.Euler(0, 0, n % 2 == 0 ? 55 : -55); skyline.Add(brace);
-                }
-                skyline.Add(Deco("Lift cable", new Vector3(side * 7, 18, 48), new Vector3(.06f, 16, .06f), 3));
-                skyline.Add(Deco("Suspended lifting frame", new Vector3(side * 7, 10, 48), new Vector3(3, .22f, 2), 12));
-            }
-            // Merge static distant decoration by material: richer skyline without a renderer per small part.
-            var batches = new Dictionary<Material, List<CombineInstance>>();
-            foreach (GameObject item in skyline)
-            {
-                Material material = item.GetComponent<MeshRenderer>().sharedMaterial;
-                if (!batches.TryGetValue(material, out var list)) { list = new List<CombineInstance>(); batches.Add(material, list); }
-                list.Add(new CombineInstance { mesh = item.GetComponent<MeshFilter>().sharedMesh, transform = root.worldToLocalMatrix * item.transform.localToWorldMatrix });
-                item.SetActive(false); Object.Destroy(item);
-            }
-            foreach (var entry in batches)
-            {
-                var batch = new GameObject("Batched port skyline / " + entry.Key.name); batch.transform.SetParent(root, false);
-                var mesh = new Mesh { name = "Original skyline mesh" }; mesh.CombineMeshes(entry.Value.ToArray(), true, true);
-                batch.AddComponent<MeshFilter>().sharedMesh = mesh;
-                var renderer = batch.AddComponent<MeshRenderer>(); renderer.sharedMaterial = entry.Key; renderer.shadowCastingMode = ShadowCastingMode.Off;
+                FinalEnvironmentModels.Create("Column_Slim",root,new Vector3(side*25,10,48),new Vector3(1.2f,35,1.2f));
+                FinalEnvironmentModels.Create("Column_Slim",root,new Vector3(side*15,26,48),new Vector3(24,1,1.2f),Quaternion.Euler(0,0,90));
+                FinalEnvironmentModels.Create("Props_Base",root,new Vector3(side*7,10,48),new Vector3(3,.22f,2));
+                Shapes.Line(root,new Vector3(side*7,26,48),new Vector3(side*7,10,48),new Color(.35f,.44f,.5f),.05f);
             }
         }
     }

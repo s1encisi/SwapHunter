@@ -10,7 +10,7 @@ namespace SwapHunter.Editor
     {
         [Serializable] public sealed class Item { public string name; public int meshes, vertices, triangles; public Vector3 boundsSize, rightAxis, forwardAxis; }
         [Serializable] public sealed class Report { public string pipeline = "Three.js GLTFExporter -> GLB -> Unity glTFast editor import"; public Vector3 correction; public List<Item> assets = new List<Item>(); }
-        public static ModelLibrary Prepare()
+        public static ModelLibrary Prepare(string evidenceDirectory = null)
         {
             string[] names = { "cx24-carbine", "s12-scattergun", "operative-arms", "operative-body", "assault-sentinel", "sniper-sentinel", "shield-sentinel", "commander-sentinel", "cargo-container", "deck-module", "bulkhead-module", "control-terminal", "phase-beacon", "supply-case", "security-gate" };
             var assets = new List<GameObject>(); var report = new Report();
@@ -45,7 +45,12 @@ namespace SwapHunter.Editor
                 if (Vector3.Distance(Vector3.Scale(item.rightAxis, report.correction), Vector3.right) > .001f || Vector3.Distance(Vector3.Scale(item.forwardAxis, report.correction), Vector3.forward) > .001f)
                     throw new InvalidOperationException("Inconsistent imported axes: " + item.name);
             EditorUtility.SetDirty(library); AssetDatabase.SaveAssets();
-            string folder = Path.GetFullPath("../Logs/V052"); Directory.CreateDirectory(folder); File.WriteAllText(Path.Combine(folder, "asset-import.json"), JsonUtility.ToJson(report, true));
+            string folder = string.IsNullOrWhiteSpace(evidenceDirectory)
+                ? Path.GetFullPath("../Logs/V06/asset-audit-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N").Substring(0, 8))
+                : Path.GetFullPath(evidenceDirectory);
+            Directory.CreateDirectory(folder);
+            using (var writer = new StreamWriter(new FileStream(Path.Combine(folder, "asset-import.json"), FileMode.CreateNew, FileAccess.Write, FileShare.None)))
+                writer.Write(JsonUtility.ToJson(report, true));
             Debug.Log("THREE_MODELS_IMPORTED=" + assets.Count + "; correction=" + library.coordinateCorrection);
             return library;
         }

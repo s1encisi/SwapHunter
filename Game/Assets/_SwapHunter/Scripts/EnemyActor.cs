@@ -10,8 +10,10 @@ namespace SwapHunter
         public EnemyKind kind;
         public NavMeshAgent agent;
         public EnemyMotion motion;
+        public ActorVisualRig VisualRig {get;private set;}
         public BossEncounter boss;
         public EnemyTacticalAI tactical;
+        public EncounterGrenadeCue grenadeCue;
         public float health, maximumHealth, stunLeft, warningLeft, silenceLeft;
         public bool Silenced=>silenceLeft>0;
         public void ApplySilence(float seconds)
@@ -20,6 +22,11 @@ namespace SwapHunter
             if(boss&&!boss.TryReceiveSilence(seconds))return;
             if(silenceLeft<=0)DemoGame.I.sound.Play("silence",AimPoint);
             silenceLeft=Mathf.Max(silenceLeft,seconds);DemoGame.I.Record("enemy_silenced",kind+":"+seconds);
+        }
+        public bool ApplyOrdinaryStagger(float seconds)
+        {
+            if(!Alive||boss||seconds<=0)return false;
+            stunLeft=Mathf.Max(stunLeft,seconds);return true;
         }
         public int arena;
         public bool expeditionOptional;
@@ -32,13 +39,13 @@ namespace SwapHunter
         public override Vector3 AimPoint => transform.position + Vector3.up * (Height * .62f);
         public string Label => (Marked ? BaseLabel + " · 已标记" : BaseLabel)+(Silenced?" · 沉默":"");
         string BaseLabel => kind == EnemyKind.Training ? "训练机" : kind == EnemyKind.Sniper ? "哨戒狙击手" : kind == EnemyKind.Shield ? "盾卫" : kind == EnemyKind.Elite ? "封锁指挥官" : "突击掷弹兵";
-        Transform model, leftLeg, rightLeg, weaponPivot, shotMuzzle;
+        Transform shotMuzzle;
         Renderer[] bodyRenderers;
-        Transform torso;
-        Quaternion torsoRest;
         MaterialPropertyBlock impactBlock;
         bool wasFlashing;
-        Collider body;
+        Collider body,headHurtbox,torsoHurtbox;
+        public Collider HeadHitbox=>headHurtbox;
+        public Collider TorsoHitbox=>torsoHurtbox;
         readonly System.Collections.Generic.Dictionary<Collider,EnemyHitRegion> hurtboxes=new System.Collections.Generic.Dictionary<Collider,EnemyHitRegion>();
         float markedUntil;
         public bool Marked => Alive && Time.time<markedUntil;
@@ -49,7 +56,7 @@ namespace SwapHunter
         BoxCollider shieldCollider;
         public bool HasPhysicalShield => shieldCollider && shieldCollider.enabled;
         public bool IsShieldCollider(Collider candidate) => HasPhysicalShield && candidate && candidate == shieldCollider;
-        float fireAt, grenadeAt, nextPath, flashLeft, age, deathAge; bool dying; Vector3 hitDirection, deathPosition; Quaternion deathRotation;
+        float fireAt, grenadeAt, nextPath, flashLeft, age; bool dying;
         int burstLeft;
         Vector3 shotLock, home;
         Vector3 lastKnownPlayer, gaitPrevious;
@@ -75,8 +82,7 @@ namespace SwapHunter
             if(boss)return boss;
             DisableShieldMeleePresentation();
             if(shieldCollider)shieldCollider.enabled=false;
-            var shieldVisual=ImportedModels.Find(model,"shield_visual");
-            if(shieldVisual)shieldVisual.gameObject.SetActive(false);
+
             boss=gameObject.AddComponent<BossEncounter>();boss.Initialize(this);return boss;
         }
         void Initialize()
@@ -91,11 +97,7 @@ namespace SwapHunter
             agent.stoppingDistance = kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 3 : 9;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
             motion=gameObject.AddComponent<EnemyMotion>();motion.Initialize(this,capsule);
-            GameObject prefab = kind == EnemyKind.Training ? G.config.models.playerBody : kind == EnemyKind.Sniper ? G.config.models.sniper : kind == EnemyKind.Shield ? G.config.models.shield : kind == EnemyKind.Elite ? G.config.models.commander : G.config.models.assault;
             float modelScale = kind == EnemyKind.Elite ? 1.16f : 1;
-            model = ImportedModels.Create(prefab, transform, Vector3.zero, Vector3.one * modelScale).transform;
-            leftLeg = ImportedModels.Find(model, "leg_L"); rightLeg = ImportedModels.Find(model, "leg_R");
-            if (!leftLeg || !rightLeg) throw new System.InvalidOperationException("Imported enemy rig has no leg pivots");
             if (kind == EnemyKind.Shield || kind == EnemyKind.Elite)
             {
                 var shield = new GameObject("Shield"); shield.layer = Layers.Actor; shield.transform.SetParent(transform, false);
@@ -104,9 +106,7 @@ namespace SwapHunter
                 Physics.IgnoreCollision(capsule,box,true);
             }
             BuildHurtboxes(modelScale);
-            weaponPivot = ImportedModels.Find(model, "weapon_pivot"); shotMuzzle = ImportedModels.Find(model, "EnemyMuzzle");
-            bodyRenderers = model.GetComponentsInChildren<Renderer>();
-            torso = ImportedModels.Find(model, "torso"); if (torso) torsoRest = torso.localRotation;
+            VisualRig=ActorVisualRig.CreateEnemy(this,shieldCollider);RefreshVisualReferences();
             impactBlock = new MaterialPropertyBlock();
             fireAt = Time.time + 1.7f + Random.value; grenadeAt = Time.time + 5 + Random.value * 2;
             transform.rotation = Quaternion.Euler(0, 180, 0); gaitPrevious=transform.position;
@@ -118,7 +118,7 @@ namespace SwapHunter
             if (dying) { AnimateDeath(); return; }
             if (!Alive || !G.IsPlaying) return;
             float dt = Time.deltaTime; age += dt; silenceLeft=Mathf.Max(0,silenceLeft-dt); stunLeft = Mathf.Max(0, stunLeft - dt); flashLeft = Mathf.Max(0, flashLeft - dt);
-            if (agent.enabled && agent.isOnNavMesh) agent.isStopped = stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training;
+            if (agent.enabled && agent.isOnNavMesh) agent.isStopped = stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training || grenadeCue && grenadeCue.Preparing;
             Vector3 displacement=Vector3.ProjectOnPlane(transform.position-gaitPrevious,Vector3.up);
             gaitPrevious=transform.position;float strideDistance=displacement.magnitude;
             // Locomotion phase follows actual distance; teleport/warp is not a stride.
@@ -126,26 +126,17 @@ namespace SwapHunter
             if(strideDistance<1)gaitPhase+=strideDistance*(Mathf.PI*2/.95f);
             float targetGait=Mathf.Clamp01(actualSpeed/3.4f);
             gaitWeight=Mathf.MoveTowards(gaitWeight,targetGait,dt*(targetGait>gaitWeight?4:7));
-            float heavy=kind==EnemyKind.Shield||kind==EnemyKind.Elite?.76f:1;
-            float swing=Mathf.Sin(gaitPhase)*24*gaitWeight*heavy;
-            leftLeg.localRotation=Quaternion.Slerp(leftLeg.localRotation,Quaternion.Euler(swing,0,0),1-Mathf.Exp(-18*dt));
-            rightLeg.localRotation=Quaternion.Slerp(rightLeg.localRotation,Quaternion.Euler(-swing,0,0),1-Mathf.Exp(-18*dt));
-            model.localPosition=Vector3.Lerp(model.localPosition,Vector3.up*(Mathf.Abs(Mathf.Sin(gaitPhase))*.028f*gaitWeight),1-Mathf.Exp(-15*dt));
-            Vector3 localMotion=transform.InverseTransformDirection(displacement/Mathf.Max(.0001f,dt));
-            float lean=Mathf.Clamp(-localMotion.x*2.3f,-7,7)*gaitWeight;
-            model.localRotation=Quaternion.Slerp(model.localRotation,Quaternion.Euler(2.2f*gaitWeight,0,lean),1-Mathf.Exp(-7*dt));
+            VisualRig.SetLocomotion(actualSpeed,gaitWeight,stunLeft>0);
+            VisualRig.SetAim(G.player.Eye.position);
+            VisualRig.SetGrenadePreparing(grenadeCue&&grenadeCue.Preparing);
             UpdateHitVisual();
             if (stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training) { ClearLaser(); return; }
             if(boss){boss.Tick(dt);return;}
             Vector3 playerAim = G.player.transform.position + Vector3.up * 1.1f;
-            if (weaponPivot)
-            {
-                Vector3 localAim = transform.InverseTransformDirection(playerAim - AimPoint);
-                weaponPivot.localRotation = Quaternion.Euler(-Mathf.Atan2(localAim.y, Mathf.Max(.1f, new Vector2(localAim.x, localAim.z).magnitude)) * Mathf.Rad2Deg, 0, 0);
-            }
             Vector3 toPlayer = playerAim - AimPoint;
             Vector3 flat = Vector3.ProjectOnPlane(toPlayer, Vector3.up);
             if (flat.sqrMagnitude > .01f) FaceSafely(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145)));
+            if(grenadeCue && grenadeCue.Preparing) return;
             if(tactical){tactical.Tick(dt);return;}
             bool visible = !Physics.Linecast(AimPoint, playerAim, Layers.WorldMask);
             if (visible) { lastKnownPlayer = G.player.transform.position; lastSawPlayer = Time.time; }
@@ -159,7 +150,12 @@ namespace SwapHunter
                 {
                     Vector3 destination = G.player.transform.position;
                     if (kind == EnemyKind.Assault && visible) destination += transform.right * Mathf.Sin(age * .5f + GetInstanceID()) * 3;
-                    if (NavMesh.SamplePosition(destination, out var nav, 2, NavMesh.AllAreas)) agent.SetDestination(nav.position);
+                    if (NavMesh.SamplePosition(destination, out var nav, 2, NavMesh.AllAreas))
+                    {
+                        var territory=GetComponent<MissionEncounterAgent>();
+                        if(!territory||territory.Allows(nav.position))agent.SetDestination(nav.position);
+                        else agent.ResetPath();
+                    }
                 }
                 else agent.ResetPath();
             }
@@ -198,6 +194,7 @@ namespace SwapHunter
         void Shoot(Vector3 point, float damage, float speed)
         {
             shotsFired++;
+            if(VisualRig){VisualRig.SetAim(point);VisualRig.NotifyShot();}
             Vector3 origin = shotMuzzle ? shotMuzzle.position : AimPoint + transform.forward * .85f + transform.right * .24f;
             Bolt.Spawn(this, origin, point - origin, speed, damage); G.sound.Play("rifle", origin);
             Shapes.Burst(origin, new Color(1, .64f, .25f), .12f);
@@ -211,7 +208,6 @@ namespace SwapHunter
             {
                 Shapes.Impact(point, (point - source).normalized * -1, true); return false;
             }
-            hitDirection = transform.InverseTransformDirection((point - source).normalized);
             float regionMultiplier=LastHitRegion==EnemyHitRegion.Head?1.5f:LastHitRegion==EnemyHitRegion.Limb?.8f:1;
             Damage(damage*regionMultiplier*(Marked?1.2f:1)); return true;
         }
@@ -233,6 +229,7 @@ namespace SwapHunter
             if(sphere){var c=go.AddComponent<SphereCollider>();c.radius=size.y*.5f*scale;collider=c;}
             else{var c=go.AddComponent<BoxCollider>();c.size=size*scale;collider=c;}
             collider.isTrigger=true;hurtboxes.Add(collider,region);go.AddComponent<EnemyHitPart>().owner=this;
+            if(region==EnemyHitRegion.Head)headHurtbox=collider;else if(region==EnemyHitRegion.Torso)torsoHurtbox=collider;
         }
         public static bool CastWeaponRay(Vector3 origin,Vector3 direction,float distance,Transform ignore,out RaycastHit hit)
         {
@@ -261,28 +258,28 @@ namespace SwapHunter
         {
             if (!Alive) return;
             if(boss)damage=boss.Absorb(damage);
-            health = Mathf.Max(0, health - damage); flashLeft = .12f;
+            health = Mathf.Max(0, health - damage); flashLeft = .12f;if(VisualRig)VisualRig.NotifyHit();
             if(boss)boss.RefreshPhase();
             if (health > 0) return;
             ClearLaser(); flashLeft = 0; UpdateHitVisual(); agent.enabled = false;
             foreach (Collider collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
-            dying = true; deathAge = 0; deathPosition = model.localPosition; deathRotation = model.localRotation;
+            dying = true;if(VisualRig)VisualRig.BeginDeath();
             Shapes.Burst(AimPoint, new Color(1, .55f, .15f), .8f); G.sound.Play("death", AimPoint);
             gameObject.AddComponent<TimedEffect>().life = 2.5f;
             G.EnemyKilled(this); G.Record("enemy_killed", kind.ToString());
         }
+        void RefreshVisualReferences()
+        {
+            shotMuzzle=VisualRig.Muzzle;bodyRenderers=VisualRig.GetComponentsInChildren<Renderer>(true);AlignVisualHitRegions(VisualRig);
+        }
+        internal void AlignVisualHitRegions(ActorVisualRig rig)
+        {
+            if(headHurtbox)headHurtbox.transform.position=rig.HeadAimMarker;
+            if(torsoHurtbox)torsoHurtbox.transform.position=rig.TorsoAimMarker;
+        }
         void AnimateDeath()
         {
-            if (!model || !G.IsPlaying) return;
-            deathAge += Time.deltaTime;
-            float t = Mathf.Clamp01(deathAge / .48f);
-            float eased = t * t * (3 - 2 * t);
-            float side = hitDirection.x < -.1f ? -1 : 1;
-            model.localRotation = deathRotation * Quaternion.Euler(8 * eased, 0, side * 82 * eased);
-            model.localPosition = deathPosition + Vector3.up * (.3f * eased + Mathf.Sin(t * Mathf.PI) * .08f);
-            if (leftLeg) leftLeg.localRotation = Quaternion.Euler(-16 * eased, 0, 0);
-            if (rightLeg) rightLeg.localRotation = Quaternion.Euler(12 * eased, 0, 0);
-            if (torso) torso.localRotation = torsoRest * Quaternion.Euler(14 * eased, 0, 0);
+            if(VisualRig&&G.IsPlaying)VisualRig.BeginDeath();
         }
         public override bool MoveTo(Vector3 feet)
         {
@@ -318,7 +315,9 @@ namespace SwapHunter
         }
         public override void AfterSwap()
         {
-            stunLeft = G.config.swapStun; warningLeft = 0; ClearLaser();if(tactical)tactical.Invalidate();
+            var territory=GetComponent<MissionEncounterAgent>();
+            if(territory)territory.RebaseAfterSwap();
+            stunLeft = Mathf.Max(stunLeft,G.config.swapStun); warningLeft = 0; ClearLaser();if(tactical)tactical.Invalidate();
             fireAt = Mathf.Max(fireAt, Time.time + stunLeft + .25f);
             if (agent.enabled && agent.isOnNavMesh) { agent.ResetPath(); agent.isStopped = true; }
         }
@@ -326,7 +325,6 @@ namespace SwapHunter
         void UpdateHitVisual()
         {
             bool flashing = flashLeft > 0;
-            if (torso) torso.localRotation = torsoRest * Quaternion.Euler(-7 * Mathf.Clamp01(flashLeft / .12f), hitDirection.x * 5 * Mathf.Clamp01(flashLeft / .12f), hitDirection.x * -3 * Mathf.Clamp01(flashLeft / .12f));
             if (!flashing && !wasFlashing) return;
             foreach (var renderer in bodyRenderers)
             {
@@ -335,7 +333,7 @@ namespace SwapHunter
                 for (int i = 0; i < materials.Length; i++)
                 {
                     if (!flashing) { renderer.SetPropertyBlock(null, i); continue; }
-                    Material material = materials[i]; string property = material.HasProperty("_BaseColorFactor") ? "_BaseColorFactor" : material.HasProperty("_BaseColor") ? "_BaseColor" : "_Color";
+                    Material material = materials[i]; string property = material.HasProperty("baseColorFactor") ? "baseColorFactor" : material.HasProperty("_BaseColorFactor") ? "_BaseColorFactor" : material.HasProperty("_BaseColor") ? "_BaseColor" : "_Color";
                     if (!material.HasProperty(property)) continue;
                     impactBlock.Clear(); impactBlock.SetColor(property, Color.Lerp(material.GetColor(property), Color.white, .32f * flashLeft / .12f)); renderer.SetPropertyBlock(impactBlock, i);
                 }

@@ -4,9 +4,11 @@ public sealed class PlayerTactics:MonoBehaviour {
  public const float ShieldDuration=4,ShieldCooldown=10;
  public float ShieldLeft {get;private set;} public float ShieldCooldownLeft {get;private set;}
  public int ShieldBlocks {get;private set;}
+ public float CurrentShieldCooldown=>PlayerClassSkill.IsTacticalFlow?ClassSkillTuning.ShieldCooldown(G.expeditionStore.EquippedGeneralSkillLevel):ShieldCooldown;
  public Vector3 ShieldPosition=>barrier?barrier.position:Vector3.zero;
  public bool ShieldActive=>ShieldLeft>0&&barrier;
- PlayerMotor owner;Transform barrier;Vector3 normal;float flash;readonly MaterialPropertyBlock tint=new MaterialPropertyBlock();
+ PlayerMotor owner;Transform barrier;Vector3 normal;float flash;MaterialPropertyBlock tint;
+        void Awake() { tint = new MaterialPropertyBlock(); }
  DemoGame G=>DemoGame.I;
  public void Initialize(PlayerMotor player){owner=player;}
  public void ResetCombat(){EndShield(false);ShieldCooldownLeft=0;ShieldBlocks=0;}
@@ -18,13 +20,14 @@ public sealed class PlayerTactics:MonoBehaviour {
   if(G.Pressed(20))ActivateShield();
  }
  public bool ActivateShield(){
+  if(PlayerClassSkill.IsTacticalFlow&&!G.expeditionStore.HasShield){G.Toast("尚未装配 A盾，请在关外领取保障或装配",2);return false;}
   if(!G.IsPlaying||owner.health<=0||ShieldCooldownLeft>0||ShieldActive)return false;
   normal=owner.Eye.forward.normalized;Vector3 p=owner.Eye.position+normal*1.35f;Quaternion rot=Quaternion.LookRotation(normal,owner.Eye.up);
   if(Physics.CheckBox(p,new Vector3(1.35f,1.2f,.06f),rot,Layers.WorldMask,QueryTriggerInteraction.Ignore)){G.Toast("屏障展开空间被阻挡",1.5f);return false;}
   barrier=Shapes.Box("A-shield directional barrier",G.effects,p,new Vector3(2.7f,2.4f,.07f),9).transform;barrier.rotation=rot;
   Vector3[] corners={new Vector3(-.5f,-.5f,0),new Vector3(.5f,-.5f,0),new Vector3(.5f,.5f,0),new Vector3(-.5f,.5f,0)};
   for(int i=0;i<4;i++)Shapes.Line(barrier,barrier.TransformPoint(corners[i]),barrier.TransformPoint(corners[(i+1)%4]),new Color(.2f,.95f,1),.022f);
-  ShieldLeft=ShieldDuration;ShieldCooldownLeft=ShieldCooldown;G.sound.Play("phase");G.Record("a_shield_open",p+" facing "+normal);G.Toast("A盾已展开 · 固定朝向，侧背仍有风险",2);return true;
+  ShieldLeft=ShieldDuration;ShieldCooldownLeft=CurrentShieldCooldown;G.sound.Play("phase");G.Record("a_shield_open",p+" facing "+normal);G.Toast("A盾已展开 · 固定朝向，侧背仍有风险",2);return true;
  }
  public bool Intercept(Vector3 from,Vector3 to,out Vector3 point){
   point=Vector3.zero;if(!ShieldActive)return false;
@@ -39,7 +42,59 @@ public sealed class PlayerTactics:MonoBehaviour {
  void OnDisable(){EndShield(false);}
 }
 public sealed partial class DemoGame {
- void DrawTacticsHud(){DrawDeploymentHud();if(tutorialCourse&&tutorialCourse.Active&&tutorialCourse.Step<5)return;if(!player||!player.tactics)return;var t=player.tactics;Fill(new Rect(32,654,520,75),new Color(.015f,.03f,.045f,.76f));string s=t.ShieldActive?"持续 "+t.ShieldLeft.ToString("F1")+"秒":t.ShieldCooldownLeft>0?"冷却 "+t.ShieldCooldownLeft.ToString("F1")+"秒":"就绪";Text(KeyName(20)+"  A盾 · "+s,new Rect(49,658,488,28),18,t.ShieldActive?Cyan:Muted);
-  if(player.combatTools&&(!tutorialCourse||!tutorialCourse.Active||tutorialCourse.Step>=6)){var tools=player.combatTools;string toolText=KeyName(21)+" 近战";if(!tutorialCourse||!tutorialCourse.Active||tutorialCourse.Step>=7)toolText+="   "+KeyName(22)+" 飞刀 · "+tools.KnifeStatus+"   "+(tools.KnifeRank>=3?KeyName(23)+" 召回":"研究 "+tools.KnifeRank+"/3");Text(toolText,new Rect(49,693,488,28),17,Muted);}}
+ void DrawTacticsHud()
+ {
+  DrawDeploymentHud();
+  if(tutorialCourse&&tutorialCourse.Active&&tutorialCourse.Step<5)return;
+  if(!player||!player.tactics)return;
+  var t=player.tactics;bool tactical=PlayerClassSkill.IsTacticalFlow;
+  if(tactical)
+  {
+   DrawClassScanMarkers();
+   Fill(new Rect(32,586,540,143),new Color(.015f,.03f,.045f,.76f));
+   Text("临时护甲 "+player.TemporaryArmor.ToString("0"),new Rect(49,590,180,28),17,Muted);
+   Fill(new Rect(232,601,155,5),new Color(.18f,.25f,.32f));
+   Fill(new Rect(232,601,155*Mathf.Clamp01(player.TemporaryArmor/TacticalPrototypeRules.ArmorAmount),5),Cyan);
+   var skill=player.classSkill;
+   Text(KeyName(PlayerClassSkill.InputAction)+"  "+(skill?skill.AbilityName:"职业技能")+" · "+(skill?skill.Status:"不可用"),new Rect(49,624,505,28),18,skill&&skill.ActiveSeconds>0?Cyan:Muted);
+   if(expeditionStore.EquippedGeneralSkill==TacticalPrototypeRules.KnifeGeneralIndex&&player.combatTools)
+   {
+    var tools=player.combatTools;
+    Text(KeyName(22)+"  飞刀 "+tools.KnifeRank+"级 · "+tools.KnifeStatus+"   "+KeyName(23)+" 召回",new Rect(49,658,505,28),18,Muted);
+   }
+   else
+   {
+    string shield=!expeditionStore.HasShield?"未装配":t.ShieldActive?"持续 "+t.ShieldLeft.ToString("F1")+"秒":t.ShieldCooldownLeft>0?"冷却 "+t.ShieldCooldownLeft.ToString("F1")+"秒":"就绪";
+    Text(KeyName(20)+"  A盾 · "+shield,new Rect(49,658,505,28),18,t.ShieldActive?Cyan:Muted);
+   }
+   Text(KeyName(21)+" 近战 · 职业技能与通用技能独立",new Rect(49,693,505,28),17,Muted);
+   return;
+  }
+  Fill(new Rect(32,654,520,75),new Color(.015f,.03f,.045f,.76f));
+  string s=t.ShieldActive?"持续 "+t.ShieldLeft.ToString("F1")+"秒":t.ShieldCooldownLeft>0?"冷却 "+t.ShieldCooldownLeft.ToString("F1")+"秒":"就绪";
+  Text(KeyName(20)+"  A盾 · "+s,new Rect(49,658,488,28),18,t.ShieldActive?Cyan:Muted);
+  if(player.combatTools&&(!tutorialCourse||!tutorialCourse.Active||tutorialCourse.Step>=6))
+  {
+   var tools=player.combatTools;string toolText=KeyName(21)+" 近战";
+   if(!tutorialCourse||!tutorialCourse.Active||tutorialCourse.Step>=7)toolText+="   "+KeyName(22)+" 飞刀 · "+tools.KnifeStatus+"   "+(tools.CanRecallKnife?KeyName(23)+" 召回":"研究 "+tools.KnifeRank+"/3");
+   Text(toolText,new Rect(49,693,488,28),17,Muted);
+  }
+ }
+ void DrawClassScanMarkers()
+ {
+  if(!player.classSkill||!player.classSkill.ScanActive)return;
+  string[] arrows={"→","↗","↑","↖","←","↙","↓","↘"};
+  foreach(var enemy in enemies)
+  {
+   if(!enemy||!enemy.Alive||Vector3.Distance(player.Eye.position,enemy.AimPoint)>ClassSkillTuning.ScanRange)continue;
+   Vector3 v=player.cameraView.WorldToViewportPoint(enemy.AimPoint);
+   if(v.z<=0||v.x<.03f||v.x>.97f||v.y<.04f||v.y>.96f)continue;
+   Vector3 front=player.cameraView.WorldToViewportPoint(enemy.AimPoint+enemy.transform.forward);
+   int direction=(Mathf.RoundToInt(Mathf.Atan2(front.y-v.y,front.x-v.x)*4/Mathf.PI)+8)%8;
+   Vector2 point=ViewportToUi(v);
+   Fill(new Rect(point.x-4,point.y-4,8,8),Cyan);
+   Text("扫描 · "+enemy.Label+" "+arrows[direction],new Rect(point.x-105,point.y-32,210,24),15,Cyan,TextAnchor.MiddleCenter);
+  }
+ }
 }
 }

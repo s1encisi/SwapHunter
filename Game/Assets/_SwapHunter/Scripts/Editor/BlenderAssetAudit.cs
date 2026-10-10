@@ -9,7 +9,7 @@ namespace SwapHunter.Editor
  {
   [Serializable] public sealed class Item {public string name;public int vertices,triangles;public Vector3 correction,bounds;}
   [Serializable] public sealed class Report {public string pipeline="Blender -> GLB -> glTFast -> Unity prefab";public List<Item> assets=new List<Item>();}
-  public static void Prepare(ModelLibrary library)
+  public static void Prepare(ModelLibrary library, string evidenceDirectory = null)
   {
    string source="Assets/_SwapHunter/Art/BlenderModels";if(!Directory.Exists(source))return;
    Directory.CreateDirectory("Assets/_SwapHunter/Resources/Weapons");Directory.CreateDirectory("Assets/_SwapHunter/Resources/BlenderActors");
@@ -45,7 +45,12 @@ namespace SwapHunter.Editor
     report.assets.Add(item);
    }
    EditorUtility.SetDirty(library);AssetDatabase.SaveAssets();
-   string folder=Path.GetFullPath("../Logs/V052");Directory.CreateDirectory(folder);File.WriteAllText(Path.Combine(folder,"blender-import.json"),JsonUtility.ToJson(report,true));
+   string folder=string.IsNullOrWhiteSpace(evidenceDirectory)
+    ?Path.GetFullPath("../Logs/V06/blender-audit-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff")+"-"+Guid.NewGuid().ToString("N").Substring(0,8))
+    :Path.GetFullPath(evidenceDirectory);
+   Directory.CreateDirectory(folder);
+   using(var writer=new StreamWriter(new FileStream(Path.Combine(folder,"blender-import.json"),FileMode.CreateNew,FileAccess.Write,FileShare.None)))
+    writer.Write(JsonUtility.ToJson(report,true));
    Debug.Log("BLENDER_MODELS_IMPORTED="+report.assets.Count);
   }
  }

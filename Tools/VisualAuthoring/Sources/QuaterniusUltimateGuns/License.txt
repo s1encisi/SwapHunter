@@ -1,0 +1,8 @@
+Quaternius Ultimate Gun Pack (July 2019)
+Author: Quaternius
+License: Creative Commons Zero (CC0 1.0)
+Author publication: https://opengameart.org/content/low-poly-guns-pack
+Author site: https://quaternius.com/packs/ultimategun.html
+License terms: https://creativecommons.org/publicdomain/zero/1.0/
+
+The author publication explicitly marks this archive CC0. The downloaded OGA ZIP does not contain a separate License.txt; this provenance record is project-authored and is not misrepresented as an embedded upstream notice. Original Blend files remain byte-for-byte unchanged.

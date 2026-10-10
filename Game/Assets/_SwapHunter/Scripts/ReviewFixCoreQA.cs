@@ -59,7 +59,7 @@ namespace SwapHunter
    if(!guard){Check(id+"_setup",false,"Guard spawn failed");yield break;}
    guard.transform.rotation=Quaternion.Euler(0,180,0);
    P.ResetAt(center+new Vector3(0,3,shieldOverLedge?1.35f:2.1f));P.verticalSpeed=0;P.cooldown=0;Aim(guard.AimPoint);
-   Physics.SyncTransforms();string validation=P.ValidateSwap(guard);int swaps=P.swapCount;
+   Physics.SyncTransforms();string validation=P.ValidateSwap(guard).ToString();int swaps=P.swapCount;
    bool requested=P.RequestSwap(guard);float until=Time.time+.3f;
    while(P.swapCount==swaps&&Time.time<until)yield return null;
    Vector3 start=guard.transform.position;

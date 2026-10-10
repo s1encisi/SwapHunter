@@ -1,0 +1,896 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c4a1df3f59480faf5510b60622db58, type: 3}
+  m_Name: MissionConfiguration
+  m_EditorClassIdentifier: Assembly-CSharp::SwapHunter.MissionConfiguration
+  missions:
+  - level: 0
+    requiredObjectives: 0
+    minimumSwaps: 1
+    maximumEscorts: 0
+    instruction: "\u5B89\u5168\u533A\u5B8C\u6210\u4E00\u6B21\u53CC\u5411\u6362\u4F4D\uFF0C\u518D\u89E3\u51B3\u4FA7\u53F0\u5B9E\u6218\u5B88\u536B"
+    extraction: "\u524D\u65B9\u6821\u51C6\u51FA\u53E3"
+    bonusRisk: "\u5165\u95E8\u7AE0\u65E0\u989D\u5916\u6570\u636E"
+    objectives: []
+    groups:
+    - id: calibration
+      label: "\u5B89\u5168\u6821\u51C6\u8BAD\u7EC3\u673A"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 0
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: combat
+      label: "\u4FA7\u53F0\u5B9E\u6218\u5B88\u536B"
+      region: combat
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 1
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 1
+    requiredObjectives: 0
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u7A7F\u8FC7\u4E24\u6BB5\u76FE\u7EBF\uFF0C\u89E3\u51B3\u4E24\u540D\u6307\u5B9A\u76FE\u536B\uFF1B\u4FA7\u5411\u7A81\u51FB\u5175\u53EF\u7559\u5728\u573A\u5185"
+    extraction: "\u540E\u65B9\u8D27\u68C0\u95F8\u53E3"
+    bonusRisk: "\u5F15\u5BFC\u7AE0\u65E0\u989D\u5916\u6570\u636E"
+    objectives: []
+    groups:
+    - id: first
+      label: "\u7B2C\u4E00\u76FE\u7EBF"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 1
+        fixedPost: 0
+        firstGrenade: 0
+    - id: second
+      label: "\u7B2C\u4E8C\u76FE\u7EBF\u4E0E\u4FA7\u5411\u706B\u529B"
+      region: second
+      objective: 
+      afterDefeated: first
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 1
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 2
+    requiredObjectives: 1
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u53D6\u5F97\u4E0A\u5C42\u901A\u884C\u4EF6\uFF0C\u518D\u4ECE\u4E0A\u5C42\u901A\u9053\u79BB\u5F00\uFF1B\u65E0\u9700\u6E05\u7A7A\u5404\u5C42\u654C\u4EBA"
+    extraction: "\u4E0A\u5C42\u901A\u884C\u51FA\u53E3"
+    bonusRisk: "\u5F15\u5BFC\u7AE0\u65E0\u989D\u5916\u6570\u636E"
+    objectives:
+    - id: a
+      label: "\u4E0A\u5C42\u901A\u884C\u4EF6"
+    groups:
+    - id: lower
+      label: "\u4F4E\u4F4D\u5B88\u536B"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: middle
+      label: "\u4E2D\u5C42\u697C\u68AF\u5B88\u536B"
+      region: middle
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: upper
+      label: "\u4E0A\u5C42\u76EE\u6807\u5B88\u536B"
+      region: upper
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 3
+    requiredObjectives: 1
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u53D6\u5F97\u6838\u5FC3\u51ED\u636E\uFF0C\u4E2D\u592E\u6377\u5F84\u5F00\u653E\u540E\u524D\u5F80\u5BF9\u4FA7\u64A4\u79BB\uFF1B\u65E0\u9700\u5168\u6E05"
+    extraction: "\u5BF9\u4FA7\u64A4\u79BB\u53E3"
+    bonusRisk: "\u66B4\u9732\u4FA7\u53F0\uFF1A\u7ED5\u8DEF\u4E0E\u622A\u51FB\u5C04\u7EBF"
+    objectives:
+    - id: a
+      label: "\u6838\u5FC3\u51ED\u636E"
+    groups:
+    - id: initial
+      label: "\u524D\u6BB5\u9632\u7EBF"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: intercept
+      label: "\u64A4\u79BB\u4FA7\u5165\u53E3\u622A\u51FB"
+      region: 
+      objective: a
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 2
+      triggerSeconds: 0
+      warningSeconds: 3.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 4
+    requiredObjectives: 2
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u593A\u53D6\u5DE6\u53F3\u706B\u63A7\u8282\u70B9\uFF0C\u5206\u522B\u6253\u5F00\u5BF9\u5E94\u906E\u853D\u901A\u8DEF"
+    extraction: "\u4E2D\u592E\u8D27\u8FD0\u51FA\u53E3"
+    bonusRisk: "\u5854\u4FA7\u89C2\u5BDF\u4F4D\uFF1A\u53E6\u4E00\u5EA7\u5854\u7684\u66B4\u9732\u5C04\u7EBF"
+    objectives:
+    - id: a
+      label: "\u5DE6\u5854\u706B\u63A7"
+    - id: b
+      label: "\u53F3\u5854\u706B\u63A7"
+    groups:
+    - id: left
+      label: "\u5DE6\u5854\u67AA\u7EBF\u4E0E\u5854\u6839"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.8
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: right
+      label: "\u53F3\u5854\u67AA\u7EBF\u4E0E\u5854\u6839"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 1.2
+      warningSeconds: 3.4
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: guard
+      label: "\u4E2D\u592E\u76FE\u536B"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: reinforce
+      label: "\u9996\u8282\u70B9\u4FA7\u65B9\u589E\u63F4"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 3
+      triggerSeconds: 0
+      warningSeconds: 3.2
+      objectiveCount: 1
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 5
+    requiredObjectives: 2
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u7528\u67AA\u68B0\u3001\u771F\u5B9E\u7206\u70B8\u6216\u8FD1\u6218\u6467\u6BC1\u4E24\u5904\u5C01\u9501\u88C5\u7F6E"
+    extraction: "\u7834\u5F00\u7684\u8D27\u8231\u51FA\u53E3"
+    bonusRisk: "\u4FA7\u4ED3\uFF1A\u989D\u5916\u4EA4\u6218\u548C\u5F39\u836F\u652F\u51FA"
+    objectives:
+    - id: a
+      label: "\u5C01\u9501\u88C5\u7F6E A"
+    - id: b
+      label: "\u5C01\u9501\u88C5\u7F6E B"
+    groups:
+    - id: first
+      label: "\u6295\u96F7\u89C2\u5BDF\u533A"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.8
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 1
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: second
+      label: "\u7B2C\u4E8C\u5C01\u9501\u9632\u7EBF"
+      region: 
+      objective: a
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 2
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: third
+      label: "\u4FA7\u4ED3\u9632\u7EBF"
+      region: 
+      objective: b
+      afterDefeated: 
+      alternativeRegion: side
+      cancelOnObjective: 
+      trigger: 2
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 6
+    requiredObjectives: 3
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u628A\u4EFB\u52A1\u951A\u70B9\u9001\u5165\u4E09\u5904\u63A5\u5165\u5EA7\uFF1B\u63A5\u5165\u9501\u5B58\uFF0C\u53EF\u4F7F\u7528\u7EF4\u62A4\u590D\u4F4D"
+    extraction: "C \u5C9B\u51FA\u53E3"
+    bonusRisk: "C \u5C9B\u4FA7\u652F\u7EBF\uFF1A\u66F4\u957F\u8FD4\u7A0B\u4E0E\u66B4\u9732"
+    objectives:
+    - id: a
+      label: "A \u5C9B\u63A5\u5165"
+    - id: b
+      label: "B \u5C9B\u63A5\u5165"
+    - id: c
+      label: "C \u5C9B\u63A5\u5165"
+    groups:
+    - id: island-b
+      label: "B \u5C9B\u72D9\u51FB\u4E0E\u4FA7\u536B"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 3
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: island-c
+      label: "C \u5C9B\u76FE\u536B"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: reinforce
+      label: "\u53CC\u63A5\u5165\u540E\u7684\u672C\u5C9B\u589E\u63F4"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 3
+      triggerSeconds: 0
+      warningSeconds: 3.4
+      objectiveCount: 2
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 7
+    requiredObjectives: 2
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "A \u7A84\u5ECA\u3001B \u957F\u7EBF\u3001C \u6298\u8FD4\uFF1A\u53D6\u4EFB\u610F\u4E24\u5323\u5373\u53EF\u64A4\u79BB\uFF0C\u7B2C\u4E09\u5323
+      +40"
+    extraction: "\u4ED3\u533A\u6C47\u5408\u51FA\u53E3"
+    bonusRisk: "\u7B2C\u4E09\u5206\u652F\uFF1A\u989D\u5916\u8DEF\u7EBF\u4E0E\u72EC\u7ACB\u4EA4\u6218"
+    objectives:
+    - id: a
+      label: "A \u4ED3\u6570\u636E"
+    - id: b
+      label: "B \u4ED3\u6570\u636E"
+    - id: c
+      label: "C \u4ED3\u6570\u636E"
+    groups:
+    - id: warehouse-a
+      label: "A \u4ED3\u7A84\u53E3"
+      region: a
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: warehouse-b
+      label: "B \u4ED3\u957F\u7EBF"
+      region: b
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: warehouse-c
+      label: "C \u4ED3\u6298\u8FD4"
+      region: c
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 8
+    requiredObjectives: 1
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u53D6\u5F97\u9876\u5C42\u6838\u5FC3\uFF0C\u6CBF\u6C38\u4E45\u697C\u68AF\u6216\u6362\u4F4D\u8DEF\u7EBF\u4E0B\u64A4\uFF1B\u4E0A\u5C42\u654C\u4EBA\u53EF\u9057\u7559"
+    extraction: "\u5730\u9762\u8D27\u8FD0\u51FA\u53E3"
+    bonusRisk: "\u9876\u5C42\u4FA7\u8DEF\uFF1A\u989D\u5916\u66B4\u9732\u548C\u4E0B\u64A4\u8DDD\u79BB"
+    objectives:
+    - id: a
+      label: "\u9876\u5C42\u6838\u5FC3"
+    groups:
+    - id: top
+      label: "\u9876\u5C42\u6838\u5FC3\u9632\u7EBF"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: middle
+      label: "\u4E2D\u5C42\u622A\u51FB"
+      region: middle
+      objective: a
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 3
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: bottom
+      label: "\u5730\u9762\u51FA\u53E3\u706B\u7F51"
+      region: bottom
+      objective: a
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 3
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 9
+    requiredObjectives: 3
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u5173\u95ED\u4E09\u4E2A\u63A7\u5236\u7AD9\uFF0C\u53D6\u6D88\u5BF9\u5E94\u5165\u53E3\u5C1A\u672A\u843D\u5730\u7684\u9884\u7B97\uFF1B\u6D3B\u654C\u4E0D\u4F1A\u6D88\u5931"
+    extraction: "\u63A7\u5236\u7AD9\u8D27\u8FD0\u51FA\u53E3"
+    bonusRisk: "\u5DF2\u5173\u95ED\u7AD9\u70B9\u540E\u65B9\u4ED3\u5E93\uFF1A\u6298\u8FD4\u4E0E\u8D44\u6E90\u6D88\u8017"
+    objectives:
+    - id: a
+      label: "\u5DE6\u63A7\u5236\u7AD9"
+    - id: b
+      label: "\u53F3\u63A7\u5236\u7AD9"
+    - id: c
+      label: "\u540E\u63A7\u5236\u7AD9"
+    groups:
+    - id: initial
+      label: "\u521D\u59CB\u5C01\u9501"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: left
+      label: "\u5DE6\u5165\u53E3\u589E\u63F4"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: a
+      trigger: 4
+      triggerSeconds: 15
+      warningSeconds: 4
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: right
+      label: "\u53F3\u5165\u53E3\u589E\u63F4"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: b
+      trigger: 4
+      triggerSeconds: 30
+      warningSeconds: 4
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: rear
+      label: "\u540E\u5165\u53E3\u589E\u63F4"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: c
+      trigger: 4
+      triggerSeconds: 45
+      warningSeconds: 4
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 10
+    requiredObjectives: 1
+    minimumSwaps: 0
+    maximumEscorts: 0
+    instruction: "\u4ECE\u5916\u73AF\u53D6\u5F97\u6838\u5FC3\u6743\u9650\u5E76\u64A4\u79BB\uFF1B\u4E24\u5904\u5C40\u90E8\u5E72\u6270\u5668\u53EF\u5206\u522B\u5173\u95ED\uFF0C\u65E0\u9700\u5168\u90E8\u5173\u95ED"
+    extraction: "\u5B89\u5168\u5916\u73AF\u51FA\u53E3"
+    bonusRisk: "\u975E\u5FC5\u7ECF\u5E72\u6270\u533A\uFF1A\u989D\u5916\u6E17\u900F\u98CE\u9669"
+    objectives:
+    - id: a
+      label: "\u6838\u5FC3\u6743\u9650"
+    groups:
+    - id: left
+      label: "\u5DE6\u5E72\u6270\u4FA7\u5ECA"
+      region: left
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: right
+      label: "\u53F3\u533A\u957F\u5C04\u7EBF"
+      region: right
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: core
+      label: "\u6838\u5FC3\u6743\u9650\u5B88\u536B"
+      region: core
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 1
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+  - level: 11
+    requiredObjectives: 3
+    minimumSwaps: 0
+    maximumEscorts: 2
+    instruction: "\u53D6\u5F97\u53CC\u9AD8\u53F0\u6388\u6743\u548C\u5730\u9762\u6838\u5FC3\uFF0C\u51FB\u8D25\u6307\u6325\u5B98\u540E\u4ECE\u5BF9\u4FA7\u79BB\u5F00\uFF1B\u968F\u4ECE\u65E0\u9700\u5168\u6E05"
+    extraction: "\u5BF9\u4FA7\u8D27\u8FD0\u51FA\u53E3"
+    bonusRisk: "\u4FA7\u53F0\u89C2\u5BDF\u70B9\uFF1A\u6218\u6597\u4E2D\u989D\u5916\u505C\u7559\u4E0E\u66B4\u9732"
+    objectives:
+    - id: a
+      label: "\u5DE6\u9AD8\u53F0\u6388\u6743"
+    - id: b
+      label: "\u53F3\u9AD8\u53F0\u6388\u6743"
+    - id: c
+      label: "\u5730\u9762\u6838\u5FC3"
+    groups:
+    - id: boss
+      label: "\u5C01\u9501\u6307\u6325\u5B98"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 0
+      triggerSeconds: 0
+      warningSeconds: 3
+      objectiveCount: 0
+      escort: 0
+      roles:
+      - kind: 4
+        required: 1
+        fixedPost: 1
+        firstGrenade: 0
+    - id: phase-one
+      label: "\u80FD\u91CF\u9636\u6BB5\u968F\u4ECE"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 5
+      triggerSeconds: 0
+      warningSeconds: 2.2
+      objectiveCount: 0
+      escort: 1
+      roles:
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: phase-two
+      label: "\u6B65\u67AA\u9636\u6BB5\u968F\u4ECE"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 6
+      triggerSeconds: 0
+      warningSeconds: 3
+      objectiveCount: 0
+      escort: 1
+      roles:
+      - kind: 3
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0
+    - id: phase-three
+      label: "\u534A\u8840\u9636\u6BB5\u968F\u4ECE"
+      region: 
+      objective: 
+      afterDefeated: 
+      alternativeRegion: 
+      cancelOnObjective: 
+      trigger: 7
+      triggerSeconds: 0
+      warningSeconds: 3
+      objectiveCount: 0
+      escort: 1
+      roles:
+      - kind: 2
+        required: 0
+        fixedPost: 1
+        firstGrenade: 0
+      - kind: 1
+        required: 0
+        fixedPost: 0
+        firstGrenade: 0

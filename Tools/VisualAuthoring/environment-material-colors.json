@@ -1,0 +1,4321 @@
+{
+  "scope": "Restore exact original flat source colours; geometry and animation binary unchanged",
+  "items": [
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFi/Column_Slim.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualD11/Environment/Column_Slim.glb",
+      "palette": {
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Pipes": {
+          "rgbaLinear": [
+            0.01884707622230053,
+            0.01884707622230053,
+            0.01884707622230053,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.01884707622230053,
+                0.01884707622230053,
+                0.01884707622230053,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.01884707622230053,
+                0.01884707622230053,
+                0.01884707622230053,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.01884707622230053,
+            0.01884707622230053,
+            0.01884707622230053,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualD11-Column_Slim.glb",
+        "beforeSha256": "2fbb85e8077e827b8e1ef524ff3c8d303b533c2df3845ca5743296548a19a763",
+        "afterSha256": "432be86e7b83429e8688486fbc50f572b84e11223bff6ab9d9e297399bb8dfa1",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "4f5c20ae7467a1795c48651833d192698b0630afc9a38fa098c92c5b23e0c17d",
+        "changes": [
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Pipes",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.01884707622230053,
+              0.01884707622230053,
+              0.01884707622230053,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFi/FloorTile_Basic.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualD11/Environment/FloorTile_Basic.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualD11-FloorTile_Basic.glb",
+        "beforeSha256": "a84b28e2089b7ba13b3641b09b12087145d854357aad5bc530c3f107bc44c137",
+        "afterSha256": "de41bec586cdb755865b9920f613dddb1cf29c54ed159163e4bd0d27ba7cc566",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "4d535f8545113f03c4ac659c4f58aaab827fd9dec1207aff4d12e3d8d5dc0ba6",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFi/Props_ComputerSmall.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualD11/Environment/Props_ComputerSmall.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualD11-Props_ComputerSmall.glb",
+        "beforeSha256": "e64a19d6efecf704f48d1a5f8d5661af5bdad155d6ee8f28b332004352c34904",
+        "afterSha256": "903caa61249b188d07c1251cbe9f0e7ec0ece13c16b12751f77027853f787e07",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "4c483121b868a44bb9f58dcd2fbad474aed0fdee501702f7fde8984b7e4ae0ad",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFi/Props_ContainerFull.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualD11/Environment/Props_ContainerFull.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualD11-Props_ContainerFull.glb",
+        "beforeSha256": "d0c04e537aec4faaab8e83fffdf47fb840d8b65510369ab6305a3d13ca788908",
+        "afterSha256": "5bdbe5effa4170046e4c1c4a49bb39a5725b8c7349c33ef3b6dac8818421be44",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "b8d9d67f4818e4ea9a1592e665ba54adec20ba452a51ffe740c6365b9b75841b",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFi/Wall_1.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualD11/Environment/Wall_1.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Light": {
+          "retainExportedEmission": true,
+          "sourceEmissionNodes": [
+            {
+              "node": "Emission",
+              "color": [
+                1.0,
+                0.8120468854904175,
+                0.3343311548233032,
+                1.0
+              ],
+              "strength": 3.0999999046325684
+            }
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "ALL",
+              "active": true,
+              "surface": [
+                "Emission"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualD11-Wall_1.glb",
+        "beforeSha256": "2fb04ec36433488016a2dfaff0d8781837f675b67ceed62432167f9b2dd80248",
+        "afterSha256": "a18dda2cafb51118e34252259fe0f3057d233212bfce8974fcc0223386ab3531",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "12fddbb3cd5910424040ba17c985efee944f1b85f68d75fa41028017575b8ab5",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "Light",
+            "retainedExportedEmission": true
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Door_Single.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Door_Single.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Door_Single.glb",
+        "beforeSha256": "43f60a94160b1b5edc86edfa61ab3890ad901473d6ced0ad021e25e36741d6fb",
+        "afterSha256": "98929af0d3ad0e33105bc4101b88b45e6d24cb190f98d217ba374c413d588a9f",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "e4af19642ae1e9dd8217895f90b8eb739b765131c46802483a3e8021e814fe48",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Base.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Base.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Base.glb",
+        "beforeSha256": "a2e05e9e7f04fa40755423808ca046d326fa4f95fa4eacb9f396e9c5ae4673f8",
+        "afterSha256": "afd91b147ec8fa6969ea11e9becffc4ab216ca8ca23fae3eda58d7749b6e9ce3",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "5ff37fe654c38de491da1e66fdaaf5c5a0fccc9fa67b55b10b389a15e007cd72",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Capsule.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Capsule.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Capsule.glb",
+        "beforeSha256": "70f7e9a42d475139cfa7dfde00b3d68d0ab5e3099c6e32efd28588361de3fc53",
+        "afterSha256": "a844805581950ab836ea8f671d1699bbed4ff43a0ef3ed8502bc40403aff10e6",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "0ea8c191192e152b5c50eeebd1d09ac29588816cafd20d27684d539d1c94ce8d",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Chest.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Chest.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Chest.glb",
+        "beforeSha256": "ca329c937ac6a2fb5ba8299020f9542fd63c1c18239ac53c0c97481848bfec31",
+        "afterSha256": "735deaf1952084b0789edd300117707f60887d988d4c025616f02088c5c5c213",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "44aaad49a3bbc9d22d13c058efab77a6c1f4cb0a76b75596b12c7cfd9cbf759d",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Computer.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Computer.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Computer.glb",
+        "beforeSha256": "00f841f1309088353fcd463273ae417ea8407275ebc89cce1550677ae38d69d9",
+        "afterSha256": "5562730dbf656dd7b43ecce0d9c173a7ba2f2329895b07b8bda903c6644576e6",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "bf047b4faaf68109dca372de984df56d81e32c0eab9aeb393994cbc35c3a777f",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Crate.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Crate.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkAccent": {
+          "rgbaLinear": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.226578950881958,
+                0.12337818741798401,
+                0.030147360637784004,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.226578950881958,
+            0.12337818741798401,
+            0.030147360637784004,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Black": {
+          "rgbaLinear": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.04202548414468765,
+                0.04202548414468765,
+                0.04202548414468765,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.04202548414468765,
+            0.04202548414468765,
+            0.04202548414468765,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Crate.glb",
+        "beforeSha256": "3fb3e354afc99cac2c32693318b5fb2cb5739a5ebfebf4cbde52c1828faea164",
+        "afterSha256": "20b0e9f1c4a6804bcbb03f5980f36979963019b301ad484272ea86d910204af5",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "d8a2ee8ed669d042a315536bfd9d8ae271a589c1ebf4a4946a74b80c65810b74",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkAccent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.226578950881958,
+              0.12337818741798401,
+              0.030147360637784004,
+              1.0
+            ]
+          },
+          {
+            "material": "Black",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.04202548414468765,
+              0.04202548414468765,
+              0.04202548414468765,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Laser.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Laser.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Laser.glb",
+        "beforeSha256": "a9bd75cad5861ea53cf38acf7ae99c33ed98ae399fe615c07bd5c0aed2568dab",
+        "afterSha256": "7f262a17b918efde117731a41ab09404e2dff9a571c0f01763b3578f593fce34",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "4170d0851093f2f22df44b7b475de29a4b86ff6c39846c58fcdeaf88fe87856d",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Teleporter_1.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Teleporter_1.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Teleporter_1.glb",
+        "beforeSha256": "f9c1fe6a12a4d2da7fff1aaf17e595760d82415ec68fb102539cdae75f9c20a3",
+        "afterSha256": "97bf3c8e3c2f700d644ed59b1948b648a5c228b96df50019e888e6847c69de3f",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "b165d3df28bf23be1237e18a3330b7d71a53eb1eeafbf56b484fd0a180da7f34",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/Props_Vessel_Tall.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/Props_Vessel_Tall.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "Accent": {
+          "rgbaLinear": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.559592604637146,
+                0.29767245054244995,
+                0.06678982824087143,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.559592604637146,
+            0.29767245054244995,
+            0.06678982824087143,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-Props_Vessel_Tall.glb",
+        "beforeSha256": "ce1b1d913750015146ee3af6cc1225c80bc281adbe790bcded303564d6a238f5",
+        "afterSha256": "69c7022da6959a5299d9780bcfbe10393b91f1fd600d66a461dfc71e12c44d11",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "1498301b53e3af22ca3f967b78d7cd7fb89405c8a6c4995a623fc9614daa16c7",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "Accent",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.559592604637146,
+              0.29767245054244995,
+              0.06678982824087143,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "source": "Tools/VisualAuthoring/Sources/QuaterniusModularSciFiFinal/RoofTile_Empty.blend",
+      "target": "Game/Assets/_SwapHunter/Resources/VisualV2/Environment/RoofTile_Empty.glb",
+      "palette": {
+        "Main": {
+          "rgbaLinear": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.40196332335472107,
+                0.40196332335472107,
+                0.40196332335472107,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.40196332335472107,
+            0.40196332335472107,
+            0.40196332335472107,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        },
+        "DarkGrey": {
+          "rgbaLinear": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.5,
+          "sourceShaderNodes": [
+            {
+              "node": "Principled BSDF",
+              "type": "BSDF_PRINCIPLED",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            },
+            {
+              "node": "Diffuse BSDF",
+              "type": "BSDF_DIFFUSE",
+              "color": [
+                0.23954731225967407,
+                0.23954731225967407,
+                0.23954731225967407,
+                1.0
+              ]
+            }
+          ],
+          "sourceViewportColor": [
+            0.23954731225967407,
+            0.23954731225967407,
+            0.23954731225967407,
+            1.0
+          ],
+          "materialOutputs": [
+            {
+              "name": "Material Output",
+              "target": "EEVEE",
+              "active": true,
+              "surface": [
+                "Principled BSDF"
+              ]
+            },
+            {
+              "name": "Material Output.001",
+              "target": "CYCLES",
+              "active": false,
+              "surface": [
+                "Diffuse BSDF"
+              ]
+            }
+          ]
+        }
+      },
+      "repair": {
+        "sourceFile": "VisualV2-RoofTile_Empty.glb",
+        "beforeSha256": "e9cf78f8058f36b590ac6ba3bb40d2b9cd887a0feeb3d51f88748b5749be4217",
+        "afterSha256": "1bd884958eee79265ed233bcfe631a37f06828e2b0d22a385ff73cc1f9b80eec",
+        "nonMaterialJsonUnchanged": true,
+        "binaryChunksUnchanged": true,
+        "binaryChunksSha256": "0a50293a1d85db002e77922ef780e383b3202682ba604be67d13d647514d779a",
+        "changes": [
+          {
+            "material": "Main",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.40196332335472107,
+              0.40196332335472107,
+              0.40196332335472107,
+              1.0
+            ]
+          },
+          {
+            "material": "DarkGrey",
+            "beforeBaseColorFactor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "afterBaseColorFactor": [
+              0.23954731225967407,
+              0.23954731225967407,
+              0.23954731225967407,
+              1.0
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

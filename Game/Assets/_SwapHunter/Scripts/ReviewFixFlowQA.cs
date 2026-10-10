@@ -137,11 +137,11 @@ namespace SwapHunter
      if(now.z>27&&G.totalSwaps>0)
      {run.entrySwap=true;FlowInput();FlowRecord(run,"crossed_gap","Walked normally then exchanged first anchor");yield return Capture("flow-ch"+run.chapter+"-entry-swap");continue;}
      var anchor=G.expeditionMap.anchors[0];FlowAim(anchor.AimPoint);
-     if(!P.preparing&&P.ValidateSwap(anchor)=="可换位")
+     if(!P.preparing&&P.ValidateSwap(anchor).IsValid)
      {FlowInput();if(P.RequestSwap(anchor))FlowRecord(run,"entry_swap_requested",anchor.transform.position.ToString());}
      else if(P.preparing)FlowInput();
      else if(now.z<15)FlowInput(Key.W);
-     else {FlowInput();run.reason="Entrance swap unavailable: "+P.ValidateSwap(anchor);}
+     else {FlowInput();run.reason="Entrance swap unavailable: "+P.ValidateSwap(anchor).ToString();}
      yield return null;continue;
     }
 
@@ -177,7 +177,7 @@ namespace SwapHunter
     if(target)
     {
      Vector3 flat=Vector3.ProjectOnPlane(target.transform.position-now,Vector3.up);float distance=flat.magnitude;
-     if(target.HasPhysicalShield&&distance<4.5f&&P.cooldown<=0&&P.ValidateSwap(target)=="可换位")
+     if(target.HasPhysicalShield&&distance<4.5f&&P.cooldown<=0&&P.ValidateSwap(target).IsValid)
      {FlowInput();FlowAim(target.AimPoint);if(P.RequestSwap(target))FlowRecord(run,"close_shield_swap",target.name);yield return null;continue;}
      // Hold an actual world-fixed shield while firing; protect the current line, not the HUD.
      if(!bossEnemy&&(visible>=2||P.health<90)&&P.tactics.ShieldCooldownLeft<=0)
@@ -198,8 +198,8 @@ namespace SwapHunter
      {flowNextPlan=Time.time+1.5f;FlowPlan(run);}
      if(flowRouteAnchor)
      {
-      FlowAim(flowRouteAnchor.AimPoint);string reason=P.ValidateSwap(flowRouteAnchor);
-      if(reason=="可换位")
+      FlowAim(flowRouteAnchor.AimPoint);var reason = P.ValidateSwap(flowRouteAnchor);
+      if(reason.IsValid)
       {
        FlowInput();if(P.RequestSwap(flowRouteAnchor))FlowRecord(run,"navigation_swap_requested",run.lastGoal+"; anchor="+flowRouteAnchor.transform.position+"; plannedApproach="+flowApproach);
        yield return null;continue;
@@ -253,7 +253,7 @@ namespace SwapHunter
    PhaseAnchor chosen=null;float best=float.NegativeInfinity;
    foreach(var anchor in G.expeditionMap.anchors)
    {
-    if(!anchor||P.ValidateSwap(anchor)!="可换位")continue;
+    if(!anchor||!P.ValidateSwap(anchor).IsValid)continue;
     if(boss.Skill!=BossSkill.Attraction&&anchor.transform.position.y<1.3f)continue;
     if(boss.Skill==BossSkill.Attraction&&Vector3.Distance(anchor.transform.position,boss.DangerCenter)<5.5f)continue;
     float score=anchor.transform.position.y*4+Vector3.Distance(anchor.transform.position,enemy.transform.position)*.3f;

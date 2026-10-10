@@ -22,7 +22,7 @@ namespace SwapHunter
    }
    if((keyboard.enterKey.wasPressedThisFrame||keyboard.spaceKey.wasPressedThisFrame)&&uiPrevious.Contains(uiFocus))uiActivate=uiFocus;
   }
-  bool NavigationButton(string value,Rect r,bool primary)
+  bool NavigationButton(string value,Rect r,bool primary,bool drawLabel=true)
   {
    bool enabled=GUI.enabled;string id=value+"@"+r.x+","+r.y;
    if(enabled&&!uiNavigation.Contains(id))uiNavigation.Add(id);
@@ -33,8 +33,11 @@ namespace SwapHunter
    GUI.enabled=true;Fill(r,background);
    Fill(new Rect(r.x,r.y,hover||focus?5:2,r.height),primary||hover||focus?Cyan:new Color(.24f,.31f,.42f));
    Fill(new Rect(r.x,r.yMax-1,r.width,focus?3:1),focus?Cyan:hover?Color.white:new Color(.18f,.24f,.34f));
+   if(drawLabel)
+   {
    int size=r.width<70?17:r.width<160?16:r.width<260?18:20;bool wrap=textStyle.wordWrap;if(r.width<70)textStyle.wordWrap=false;
    Text(value,new Rect(r.x+(r.width<70?0:10)+(down?2:0),r.y+(down?2:0),r.width-(r.width<70?0:20),r.height),size,enabled?Color.white:new Color(.49f,.54f,.63f),r.width<70?TextAnchor.MiddleCenter:TextAnchor.MiddleLeft);textStyle.wordWrap=wrap;
+   }
    GUI.enabled=enabled;bool clicked=GUI.Button(r,GUIContent.none,GUIStyle.none);
    if(Event.current.rawType==EventType.MouseUp)uiPressed="";
    if(enabled&&uiActivate==id){uiActivate="";clicked=true;}

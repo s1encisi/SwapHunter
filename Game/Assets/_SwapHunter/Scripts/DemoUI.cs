@@ -75,7 +75,7 @@ namespace SwapHunter
                 GUI.enabled=previousEnabled;
                 if(settingsOpen)Settings();
             }
-            finally { GUI.enabled=previousEnabled;GUI.matrix=previous; }
+            finally { DrawDemonstrationBadge(); GUI.enabled=previousEnabled;GUI.matrix=previous; }
         }
         void Menu(){BrandedMenu();}
         void Hud()
@@ -88,11 +88,11 @@ namespace SwapHunter
             Text(tutorialCourse&&tutorialCourse.Active?tutorialCourse.Title:expeditionActive ? ExpeditionTitle : campaignActive ? activeContract.name : stageNames[stage], new Rect(49, 57, 500, 40), 30);
             Text(Objective, new Rect(49, 109, Mathf.Min(644, viewWidth * .49f - 54), 60), 19, new Color(.84f, .90f, .92f));
             Text(FormatTime(runSeconds), new Rect(viewWidth - 195, 32, 150, 35), 25, Color.white, TextAnchor.MiddleRight);
-            if(expeditionActive) Text("必需 "+ExpeditionRequiredEnemies+" / 数据追兵 "+ExpeditionOptionalEnemies,new Rect(viewWidth-345,74,300,30),16,Muted,TextAnchor.MiddleRight);
+            if(expeditionActive) Text("指定必清 "+ExpeditionRequiredEnemies+" / 可遗留敌人 "+ExpeditionOptionalEnemies,new Rect(viewWidth-345,74,300,30),16,Muted,TextAnchor.MiddleRight);
             else if (AliveEnemies>0) Text("在场敌人  "+AliveEnemies,new Rect(viewWidth-275,74,230,30),16,Muted,TextAnchor.MiddleRight);
 
             float x = viewWidth / 2, y = 450;
-            Color reticle = player.target && player.swapReason == "可换位" ? Cyan : Color.white;
+            Color reticle = player.target && player.swapValidation.IsValid ? Cyan : Color.white;
             DrawCrosshair(x, y, options, player.CurrentSpreadDegrees);
             if (player.hitFlash > 0 && options.hitMarkers) Text(player.killFlash > 0 ? "×" : "+", new Rect(x - 20, y - 27, 40, 54), 36, player.killFlash > 0 ? new Color(1, .67f, .24f) : Color.white, TextAnchor.MiddleCenter);
             if (player.blockFlash > 0)
@@ -114,7 +114,7 @@ namespace SwapHunter
                 {
                     Vector2 projected=ViewportToUi(point);float sx=projected.x,sy=projected.y;
                     Text("[       ]", new Rect(sx - 58, sy - 31, 116, 62), 42, reticle, TextAnchor.MiddleCenter);
-                    Text(player.swapReason == "可换位" ? KeyName(6) + " 交换位置" : player.swapReason, new Rect(sx - 135, sy + 45, 270, 32), 17, reticle, TextAnchor.MiddleCenter);
+                    Text(player.swapValidation.IsValid ? KeyName(6) + " 交换位置" : player.swapReason, new Rect(sx - 135, sy + 45, 270, 32), 17, reticle, TextAnchor.MiddleCenter);
                 }
             }
             foreach (var enemy in enemies)
