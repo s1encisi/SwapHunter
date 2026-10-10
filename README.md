@@ -8,7 +8,7 @@
 
 ## 从哪里开始
 
-- **直接试玩**：Windows 包完整解压后运行 `SwapHunter.exe`，正常开局领取入门武器、任选职业技能和盾/刀通用技能。
+- **直接试玩**：[下载 Windows 64 位免安装版](https://github.com/s1encisi/SwapHunter/releases/download/v0.6.0/SwapHunter-v0.6.0-Windows-x64.zip)（[Release 说明](https://github.com/s1encisi/SwapHunter/releases/tag/v0.6.0)）。无需 Unity，完整解压后运行 `SwapHunter.exe`，正常开局领取入门武器、任选职业技能和盾/刀通用技能。
 - **快速浏览作品**：双击 Windows 包中的 `快速体验.cmd`，使用独立演示档浏览四职业、全武器及章节。先看第 5、7、12 章。
 - **操作与成长**：[完整中文玩法指南](docs/tactical-playguide.zh-CN.md)。
 - **理解实现与取舍**：[系统设计](docs/tactical-design.zh-CN.md)、[经济路径](docs/tactical-economy.zh-CN.md)。
