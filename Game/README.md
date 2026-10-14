@@ -1,8 +1,12 @@
-# Unity 工程入口
+# SwapHunter Unity 工程
 
-当前版本与快速开始见[项目 README](../README.md)，规则见[中文游玩指南](../docs/playguide.zh-CN.md)，验证边界见[原生验收记录](../docs/validation.zh-CN.md)。
+使用 Unity **6000.3.25f1** 打开本目录，等待依赖与资源导入后，打开 `Assets/_SwapHunter/Scenes/SwapHunter.unity` 并进入 Play。地图在运行时生成。
 
-用 Unity 6000.3.25f1 打开本目录，在 Assets/_SwapHunter/Scenes/SwapHunter.unity 进入 Play。地图由运行时代码生成。普通构建读取现有场景/材质/任务配置；显式 Prepare 才会重建底座源资产。
+项目使用 URP、Input System、AI Navigation 和 glTFast，依赖版本锁定在 `Packages` 目录。常规运行和构建不需要 Blender 或 Node.js。
 
-历史 v0.2/v0.3 文档为旧版说明，不作为 v0.6 的当前数值或通过证据。
+- [项目介绍、游戏画面与 Windows 下载](../README.md)
+- [玩法与操作指南](../docs/tactical-playguide.zh-CN.md)
+- [Windows 构建脚本](../Tools/Build-Demo-v06.ps1)
+
+游戏代码位于 `Assets/_SwapHunter/Scripts`，任务配置位于 `Assets/_SwapHunter/Resources/MissionConfiguration.asset`。
 
