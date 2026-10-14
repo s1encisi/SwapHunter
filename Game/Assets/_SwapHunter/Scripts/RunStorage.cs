@@ -8,10 +8,12 @@ namespace SwapHunter
     public static class RunStorage
     {
         static readonly string[] Arguments = Environment.GetCommandLineArgs();
+        public static readonly bool IsDirectedTrial = Array.IndexOf(Arguments, "-swapHunterTrial") >= 0;
+        public static readonly bool IsSynergyValidation = Array.IndexOf(Arguments, "-swapHunterSynergyQA") >= 0;
         public static readonly bool IsModelsValidation = Array.IndexOf(Arguments, "-swapHunterModelsFinalQA") >= 0;
         public static readonly bool IsUiValidation = Array.IndexOf(Arguments, "-swapHunterTacticalUIQA") >= 0;
         public static readonly bool IsFullValidation = Array.IndexOf(Arguments, "-swapHunterFullQA") >= 0;
-        public static readonly bool IsTacticalValidation = IsUiValidation || IsFullValidation || Array.IndexOf(Arguments, "-swapHunterT01QA") >= 0;
+        public static readonly bool IsTacticalValidation = IsSynergyValidation || IsUiValidation || IsFullValidation || Array.IndexOf(Arguments, "-swapHunterT01QA") >= 0;
         public static readonly bool IsValidation = IsModelsValidation || IsTacticalValidation || Array.IndexOf(Arguments, "-swapHunterWeaponLibraryQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06LifecycleQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06PoolQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06BossEscapeQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06AllocationQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06CoreQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06MissionQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06RouteQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06StorageQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06VisualQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterV06PerformanceQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterNaturalBossQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterInteractiveReview") >= 0 || Array.IndexOf(Arguments, "-swapHunterBossPerformanceQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterShowcaseCapture") >= 0 || Array.IndexOf(Arguments, "-swapHunterBattlefieldQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterTutorialQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterShopUIQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterDeploymentQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterTacticalAIQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterCombatToolsQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterBossSkillsQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterTacticsQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterBossQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterMotionQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterExpeditionBenchmark") >= 0 || Array.IndexOf(Arguments, "-swapHunterRouteQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterExpeditionQA") >= 0 || Array.IndexOf(Arguments, "-swapHunterQA") >= 0
             || Array.IndexOf(Arguments, "-swapHunterGunplayQA") >= 0
             || Array.IndexOf(Arguments, "-swapHunterReviewFixQA") >= 0
@@ -19,7 +21,7 @@ namespace SwapHunter
             || Array.IndexOf(Arguments, "-swapHunterBenchmark") >= 0
             || Array.IndexOf(Arguments, "-swapHunterAVReview") >= 0
             || Array.IndexOf(Arguments, "-swapHunterAudioReview") >= 0;
-        public static readonly bool IsTacticalDemo = Array.IndexOf(Arguments, "-swapHunterTacticalDemo") >= 0;
+        public static readonly bool IsTacticalDemo = IsDirectedTrial || Array.IndexOf(Arguments, "-swapHunterTacticalDemo") >= 0;
         public static readonly bool IsDemonstration = IsTacticalDemo || Array.IndexOf(Arguments, "-swapHunterDemo") >= 0;
         public static bool IsIsolated => IsValidation || IsDemonstration;
         static string root;

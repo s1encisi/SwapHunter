@@ -27,6 +27,16 @@ namespace SwapHunter
         public string swapReason => swapValidation.ToDisplayText(G.config.swapRange);
         public SwapTarget target;
         public bool preparing;
+        // The acceptance frame remains locked even if a zero-length/failed transaction finishes there.
+        public bool SwapActionsLocked => preparing || swapAcceptedFrame == Time.frameCount;
+        public bool ReloadSuspendedForSwap => preparing && reloadLeft > 0;
+        public int ActionSequence => actionSequence;
+        internal float NextShotTime => nextShot;
+        internal float LastShotTime => lastShotAt;
+        internal int PendingBurstRounds => burstRemaining;
+        int swapAcceptedFrame = -1, actionSequence, fireSequence, fireSequenceWeapon = -1, burstRemaining;
+        float nextBurstAt;
+        bool swapHeldReload;
         public bool IsAiming { get; private set; }
         public bool IsCrouching { get; private set; }
         public bool IsSprinting { get; private set; }
@@ -72,7 +82,7 @@ namespace SwapHunter
             get
             {
                 float movement = Mathf.Clamp01(CurrentSpeed / Mathf.Max(.1f, G.config.walkSpeed * G.options.moveSpeedScale));
-                float spread = weapon == 0 ? G.config.stationarySpread + movement * G.config.movingSpread + shotBloom : CurrentWeaponDefinition.spread + movement * (CurrentWeaponDefinition.Shotgun ? 1 : G.config.movingSpread) + shotBloom;
+                float spread = EffectiveWeaponStats.Read(weapon,G.config).Spread + movement * (weapon != 0 && CurrentWeaponDefinition.Shotgun ? 1 : G.config.movingSpread) + shotBloom;
                 if (!Grounded) spread += G.config.airborneSpread;
                 if (IsAiming) spread *= .76f;
                 return spread * G.ModuleSpread * G.ExpeditionSpreadMultiplier * (IsCrouching ? .80f : 1);
@@ -95,7 +105,7 @@ namespace SwapHunter
         float nextShot, visualKick, travel, stepDistance, lastShotAt = -100, shotBloom, reloadDuration, muzzleFlashUntil;
         int burstCount, ignoreLook;
         bool fireArmed = true, sprintLatched, reloadSoundA, reloadSoundB;
-        Coroutine swapRoutine, fireRoutine, vaultRoutine;
+        Coroutine swapRoutine, vaultRoutine;
         bool charging, chargeRequiresHold, inputFire;
         float chargeStarted, cycleSoundAt;
         DemoGame G => DemoGame.I;
@@ -184,10 +194,11 @@ namespace SwapHunter
             ClearArmor(); CancelActions(); IsCrouching=false; controller.height=1.8f; controller.center=Vector3.up*.9f;
             Eye.localPosition=Vector3.up*1.62f; SetFeet(feet); health = G.config.playerHealth;
             EquippedWeapons=new[]{0,1};
-            for(int i=0;i<WeaponCatalog.Count;i++){ammo[i]=Capacity(i);reserve[i]=WeaponCatalog.Get(i).reserve;}
+            for(int i=0;i<WeaponCatalog.Count;i++){ammo[i]=Capacity(i);reserve[i]=EffectiveWeaponStats.Read(i,G.config).Reserve;}
             cooldown = 0; verticalSpeed = 0; horizontal = Vector3.zero; weapon = 0; nextShot = 0; visualKick = 0; travel = stepDistance = 0;
             recoilAngles = Vector2.zero; shotBloom = 0; burstCount = 0; lastShotAt = -100; targetArrowTime = 0; target = null;
-            ammo[0] = G.config.rifleMagazine; ammo[1] = G.config.shotgunMagazine; reserve[0] = G.config.rifleReserve; reserve[1] = G.config.shotgunReserve;
+            // Classic checkpoint reserves retain their original config override; expedition SetLoadout uses effective base reserves.
+            reserve[0] = G.config.rifleReserve; reserve[1] = G.config.shotgunReserve;
             hitFlash = hurtFlash = phaseFlash = killFlash = blockFlash = 0; AimingAtShield = false; HitRegionLabel=""; for(int i=0;i<WeaponCatalog.Count;i++)weaponModels[i].gameObject.SetActive(i==0);
             muzzle = ImportedModels.Find(rifleModel, "Muzzle"); weaponPosition = new Vector3(.23f, -.28f, .53f); SetLook(0, 0);
         }
@@ -197,7 +208,7 @@ namespace SwapHunter
             pendingSwapTarget = null; pendingSwapTelemetry = null;
             if(vaultRoutine!=null)StopCoroutine(vaultRoutine);vaultRoutine=null;IsVaulting=false;IsSprinting=false;
             CancelFireSequence();
-            swapRoutine = null; pendingSwapTarget = null; preparing = false; reloadLeft = 0; ResetReloadPresentation(); fireArmed = false; ignoreLook = 2; IsAiming = false; sprintLatched = false; horizontal = Vector3.zero;
+            swapRoutine = null; pendingSwapTarget = null; preparing = false; swapAcceptedFrame = -1; swapHeldReload = false; reloadLeft = 0; ResetReloadPresentation(); fireArmed = false; ignoreLook = 2; IsAiming = false; sprintLatched = false; horizontal = Vector3.zero;
         }
         public void SetFeet(Vector3 feet) { controller.enabled = false; transform.position = feet; controller.enabled = true; Physics.SyncTransforms(); }
         public bool Launch(float speed=18)
@@ -228,13 +239,14 @@ namespace SwapHunter
             if(cycleSoundAt>0 && Time.time>=cycleSoundAt){cycleSoundAt=0;G.sound.Play("reload_bolt");}
             if(charging && chargeRequiresHold && !G.Held(12))CancelFireSequence();
             Eye.localPosition=Vector3.Lerp(Eye.localPosition,Vector3.up*(IsCrouching?.98f:1.62f),1-Mathf.Exp(-18*dt));
-            if(IsVaulting){UpdateEquipment(Vector2.zero,false,dt);return;}
-            if (reloadLeft > 0)
+            AdvanceFireSequence();
+            if(IsVaulting){if(classSkill)classSkill.ProcessInput();UpdateEquipment(Vector2.zero,false,dt);return;}
+            if (reloadLeft > 0 && !ReloadSuspendedForSwap)
             {
                 reloadLeft -= dt; float phase = 1 - Mathf.Max(0,reloadLeft) / reloadDuration;
                 if (phase > .20f && !reloadSoundA) { reloadSoundA = true; G.sound.Play("reload_out"); }
                 if (phase > .79f && !reloadSoundB) { reloadSoundB = true; G.sound.Play("reload_in"); }
-                if (reloadLeft <= 0) { int take = Mathf.Min(Capacity(weapon) - ammo[weapon], reserve[weapon]); ammo[weapon] += take; reserve[weapon] -= take; if(reloadWasEmpty||weapon==5||weapon==9)G.sound.Play("reload_bolt"); }
+                if (reloadLeft <= 0) { int take = Mathf.Min(Capacity(weapon) - ammo[weapon], reserve[weapon]); ammo[weapon] += take; reserve[weapon] -= take; G.Record("weapon_reload_complete",weapon+":"+take); if(reloadWasEmpty||weapon==5||weapon==9)G.sound.Play("reload_bolt"); }
             }
             Mouse mouse = G.qaMode && !G.qaInputEnabled ? null : G.MouseDevice;
             Vector2 delta = mouse == null ? Vector2.zero : mouse.delta.ReadValue();
@@ -244,7 +256,12 @@ namespace SwapHunter
                 Vector2 turn = delta * (G.sensitivity * .04f * (IsAiming ? G.options.aimSensitivity : 1));
                 yaw += turn.x; pitch = Mathf.Clamp(pitch + turn.y * G.options.verticalSensitivity * (G.invertY ? 1 : -1), -85, 85);
             }
-            if (!G.Held(12)) fireArmed = true;
+            // Already-due events above commit before Q; new input below observes the shared lock.
+            SetEyeRotation(); target = FindTarget(); swapValidation = ValidateSwap(target);
+            if (G.Pressed(6)) RequestSwap(target);
+            if(classSkill)classSkill.ProcessInput();
+            if (SwapActionsLocked && G.Held(12)) fireArmed = false;
+            else if (!G.Held(12)) fireArmed = true;
             if (G.options.toggleAim) { if (G.Pressed(13)) IsAiming = !IsAiming; } else IsAiming = G.Held(13);
             if (reloadLeft > 0 || preparing) IsAiming = false;
             if(G.options.toggleCrouch){if(G.Pressed(17))TrySetCrouch(!IsCrouching);}else TrySetCrouch(G.Held(17));
@@ -256,7 +273,7 @@ namespace SwapHunter
             transform.rotation = Quaternion.Euler(0, yaw, 0);
             bool grounded = Grounded; float fallSpeed = verticalSpeed;
             float speed = (sprint ? G.config.sprintSpeed : G.Held(9) ? G.config.slowSpeed : G.config.walkSpeed) * G.options.moveSpeedScale;
-            speed *= G.ModuleMovement * G.ModuleAimMovement * G.ExpeditionMoveMultiplier * CurrentWeaponDefinition.movement * (IsCrouching?.52f:1);
+            speed *= G.ModuleMovement * G.ModuleAimMovement * G.ExpeditionMoveMultiplier * EffectiveWeaponStats.Read(weapon,G.config).Movement * (IsCrouching?.52f:1);
             if(grounded && classSkill && classSkill.MobilityActive) speed *= PlayerClassSkill.GroundSpeedMultiplier;
             Vector3 desired = (transform.forward * movement.y + transform.right * movement.x) * speed;
             float rate = grounded ? (movement.sqrMagnitude < .01f ? G.config.braking : Vector3.Dot(horizontal, desired) < -.1f ? G.config.counterBraking : G.config.acceleration) : G.config.airAcceleration;
@@ -281,7 +298,7 @@ namespace SwapHunter
             if (G.Pressed(7)) Reload();
             SetEyeRotation(); if (shooting && (CurrentWeaponDefinition.Automatic || G.Pressed(12))) { inputFire=true; Fire(); inputFire=false; } SetEyeRotation();
             target = FindTarget(); swapValidation = ValidateSwap(target);
-            if (G.Pressed(6)) RequestSwap(target); if (G.Pressed(8)) G.Interact();
+            if (G.Pressed(8) && !SwapActionsLocked) G.Interact();
             cameraView.fieldOfView = Mathf.Lerp(cameraView.fieldOfView, IsAiming ? G.fov * CurrentWeaponDefinition.aimZoom : G.fov, 1 - Mathf.Exp(-14 * dt));
             UpdateEquipment(delta, grounded, dt);
         }
@@ -317,14 +334,14 @@ namespace SwapHunter
             ToolGripRotation=Eye.rotation*Quaternion.Euler(-12,Mathf.Lerp(-38,45,sweep),25);
             PoseCc0ToolHand(grip,ToolGripRotation);
         }
-        public int Capacity(int slot) => slot==0?G.config.rifleMagazine:slot==1?G.config.shotgunMagazine:WeaponCatalog.Get(slot).magazine;
-        float Rate => weapon==0?G.config.rifleRate:weapon==1?G.config.shotgunRate:CurrentWeaponDefinition.rate;
+        public int Capacity(int slot) => EffectiveWeaponStats.Read(slot,G.config).Magazine;
+        float Rate => EffectiveWeaponStats.Read(weapon,G.config).Rate;
         public void SetLoadout(int primary,int secondary)
         {
             if(!WeaponCatalog.Valid(primary)||!WeaponCatalog.Valid(secondary)||primary==secondary)
                 throw new ArgumentException("Loadout requires two different valid weapon IDs.");
             CancelActions(); EquippedWeapons=new[]{primary,secondary};
-            foreach(int id in EquippedWeapons){ammo[id]=Capacity(id);reserve[id]=WeaponCatalog.Get(id).reserve;}
+            foreach(int id in EquippedWeapons){ammo[id]=Capacity(id);reserve[id]=EffectiveWeaponStats.Read(id,G.config).Reserve;}
             weapon=primary;ShowWeapon();nextShot=Time.time+.2f;
         }
         void ShowWeapon()
@@ -334,27 +351,27 @@ namespace SwapHunter
         }
         void CancelFireSequence()
         {
-            if(fireRoutine!=null)StopCoroutine(fireRoutine);
-            fireRoutine=null;charging=false;chargeRequiresHold=false;cycleSoundAt=0;
+            actionSequence++;fireSequence=-1;fireSequenceWeapon=-1;burstRemaining=0;
+            charging=false;chargeRequiresHold=false;cycleSoundAt=0;
         }
         public void SwitchWeapon(int slot)
         {
-            if(slot==weapon||!WeaponCatalog.Valid(slot)||Array.IndexOf(EquippedWeapons,slot)<0||IsVaulting||preparing)return;
+            if(slot==weapon||!WeaponCatalog.Valid(slot)||Array.IndexOf(EquippedWeapons,slot)<0||IsVaulting||SwapActionsLocked)return;
             CancelFireSequence();reloadLeft=0;ResetReloadPresentation();IsAiming=false;sprintLatched=IsSprinting=false;
             weapon=slot;ShowWeapon();nextShot=Mathf.Max(nextShot,Time.time+.20f);
             G.sound.Play("reload");
         }
         public bool Reload()
         {
-            if(!G.IsPlaying||health<=0||IsVaulting||preparing||reloadLeft>0||ammo[weapon]>=Capacity(weapon)||reserve[weapon]<=0)return false;
+            if(!G.IsPlaying||health<=0||IsVaulting||SwapActionsLocked||reloadLeft>0||ammo[weapon]>=Capacity(weapon)||reserve[weapon]<=0)return false;
             CancelFireSequence();IsAiming=false;sprintLatched=IsSprinting=false;
             BeginReloadPresentation();
-            reloadDuration=(weapon==0?G.config.rifleReload:weapon==1?G.config.shotgunReload:CurrentWeaponDefinition.reload)*G.ModuleReload*G.ExpeditionReloadMultiplier;
-            reloadLeft=reloadDuration;reloadSoundA=reloadSoundB=false;return true;
+            reloadDuration=EffectiveWeaponStats.Read(weapon,G.config).Reload*G.ModuleReload*G.ExpeditionReloadMultiplier;
+            reloadLeft=reloadDuration;reloadSoundA=reloadSoundB=false;G.Record("weapon_reload_begin",weapon.ToString());return true;
         }
         public bool AccelerateCurrentReload(float remainingMultiplier)
         {
-            if(!G.IsPlaying || health<=0 || reloadLeft<=0 || ammo[weapon]>=Capacity(weapon) || reserve[weapon]<=0 || remainingMultiplier<=0 || remainingMultiplier>=1) return false;
+            if(!G.IsPlaying || health<=0 || SwapActionsLocked || reloadLeft<=0 || ammo[weapon]>=Capacity(weapon) || reserve[weapon]<=0 || remainingMultiplier<=0 || remainingMultiplier>=1) return false;
             reloadLeft *= remainingMultiplier; return true;
         }
         Vector3 TracerOrigin()
@@ -364,33 +381,42 @@ namespace SwapHunter
         }
         public bool Fire()
         {
-            if(!G.IsPlaying||health<=0||Time.time<nextShot||reloadLeft>0||IsVaulting||preparing||fireRoutine!=null||combatTools&&combatTools.PoseActive)return false;
+            if(!G.IsPlaying||health<=0||Time.time<nextShot||reloadLeft>0||IsVaulting||SwapActionsLocked||charging||burstRemaining>0||combatTools&&combatTools.PoseActive)return false;
             if(ammo[weapon]<=0){if(!Reload()){nextShot=Time.time+.3f;G.sound.Play("empty");}return false;}
             sprintLatched=IsSprinting=false;
             if(CurrentWeaponDefinition.mechanism==FireMechanism.Burst)
-            {fireRoutine=StartCoroutine(FireBurst(weapon));return true;}
+            {
+                fireSequence=++actionSequence;fireSequenceWeapon=weapon;burstRemaining=2;
+                ShootRound();nextBurstAt=Time.time+1/EffectiveWeaponStats.Read(weapon,G.config).Rate;return true;
+            }
             if(CurrentWeaponDefinition.mechanism==FireMechanism.Charge)
-            {chargeRequiresHold=inputFire;fireRoutine=StartCoroutine(ChargeShot(weapon));return true;}
+            {
+                fireSequence=++actionSequence;fireSequenceWeapon=weapon;
+                chargeRequiresHold=inputFire;charging=true;chargeStarted=Time.time;G.sound.Play("phase");return true;
+            }
             return ShootRound();
         }
-        IEnumerator FireBurst(int selected)
+        // One due round per frame, as before; no catch-up burst or altered rate under a slow frame.
+        // Owning the schedule here ensures due events precede this frame's Q arbitration.
+        void AdvanceFireSequence()
         {
-            for(int i=0;i<3;i++)
+            if(!charging && burstRemaining<=0)return;
+            if(fireSequence!=actionSequence || weapon!=fireSequenceWeapon || reloadLeft>0 || preparing || IsVaulting || combatTools&&combatTools.PoseActive)
             {
-                if(!G.IsPlaying||weapon!=selected||ammo[weapon]<=0||reloadLeft>0||preparing||IsVaulting||combatTools&&combatTools.PoseActive)break;
-                ShootRound();if(i<2)yield return new WaitForSeconds(1/CurrentWeaponDefinition.rate);
+                bool wasBurst=burstRemaining>0;CancelFireSequence();
+                if(wasBurst)nextShot=Mathf.Max(nextShot,Time.time+.28f);
+                return;
             }
-            nextShot=Mathf.Max(nextShot,Time.time+.28f);fireRoutine=null;
-        }
-        IEnumerator ChargeShot(int selected)
-        {
-            charging=true;chargeStarted=Time.time;G.sound.Play("phase");
-            while(Time.time-chargeStarted<CurrentWeaponDefinition.chargeTime)
+            if(charging)
             {
-                if(!G.IsPlaying||weapon!=selected||reloadLeft>0||IsVaulting||combatTools&&combatTools.PoseActive){charging=false;fireRoutine=null;yield break;}
-                yield return null;
+                if(Time.time-chargeStarted<CurrentWeaponDefinition.chargeTime)return;
+                charging=false;chargeRequiresHold=false;fireSequence=-1;fireSequenceWeapon=-1;ShootRound();return;
             }
-            charging=false;ShootRound();fireRoutine=null;
+            if(Time.time<nextBurstAt)return;
+            if(ammo[weapon]>0){ShootRound();burstRemaining--;}
+            else burstRemaining=0;
+            if(burstRemaining>0)nextBurstAt=Time.time+1/EffectiveWeaponStats.Read(weapon,G.config).Rate;
+            else {nextShot=Mathf.Max(nextShot,Time.time+.28f);fireSequence=-1;fireSequenceWeapon=-1;}
         }
         bool ShootRound()
         {
@@ -404,11 +430,11 @@ namespace SwapHunter
             G.sound.Play(def.sound);if(def.accent.Length>0)G.sound.Play(def.accent);
             if(def.mechanism==FireMechanism.Pump||def.mechanism==FireMechanism.BoltAction)cycleSoundAt=Time.time+interval*.48f;
             float spreadAngle=CurrentSpreadDegrees;
-            int count=weapon==1?G.config.shotgunPellets:def.pellets;
+            int count=EffectiveWeaponStats.Read(weapon,G.config).Pellets;
             bool anyDamage=false,anyKill=false,anyShield=false,anySurface=false;int impactCount=0;Vector3 surfacePoint=Eye.position;
             string region="";
             if(def.mechanism==FireMechanism.Grenade)
-                PlayerOrdnance.Launch(this,Eye.position,Eye.forward,def.damage*G.ExpeditionDamageMultiplier*G.ModuleShotDamage(0)*abilityMultiplier);
+                PlayerOrdnance.Launch(this,Eye.position,Eye.forward,EffectiveWeaponStats.Read(weapon,G.config).Damage*G.ExpeditionDamageMultiplier*G.ModuleShotDamage(0)*abilityMultiplier);
             else for(int i=0;i<count;i++)
             {
                 Vector2 spread=UnityEngine.Random.insideUnitCircle*Mathf.Tan(spreadAngle*Mathf.Deg2Rad);
@@ -463,7 +489,7 @@ namespace SwapHunter
         }
         float ShotDamage(WeaponDefinition def,float distance,float abilityMultiplier=1)
         {
-            float damage=weapon==0?G.config.rifleDamage:weapon==1?G.config.shotgunDamage:def.damage;
+            float damage=EffectiveWeaponStats.Read(weapon,G.config).Damage;
             float falloff=def.Shotgun?Mathf.Lerp(1,.3f,Mathf.InverseLerp(6,16,distance)):
                 weapon==4?Mathf.Lerp(1,.35f,Mathf.InverseLerp(12,32,distance)):
                 weapon==6||weapon==7||weapon==10?1:Mathf.Lerp(1,.6f,Mathf.InverseLerp(20,45,distance));
@@ -542,8 +568,10 @@ namespace SwapHunter
             {
                 if(classSkill)effective*=classSkill.FortifyDamageMultiplier();
                 absorbed=Mathf.Min(TemporaryArmor,effective);TemporaryArmor-=absorbed;effective-=absorbed;
+                if(absorbed>0)G.RecordAttemptArmorAbsorbed(absorbed);
             }
-            health = Mathf.Max(0, health - effective); hurtFlash = .40f; lastThreat = source; G.sound.Play("player_hit");
+            float healthBefore=health;health = Mathf.Max(0, health - effective);
+            G.Record("player_effective_damage",(healthBefore-health).ToString("R",System.Globalization.CultureInfo.InvariantCulture)); hurtFlash = .40f; lastThreat = source; G.sound.Play("player_hit");
             G.Record("player_damage", "raw="+damage.ToString("F1")+";health="+effective.ToString("F1")+";armor="+absorbed.ToString("F1")+";kind="+kind);
             if (health <= 0) { ClearArmor(); if(classSkill)classSkill.ResetCombat(); G.Die(); }
         }
@@ -552,8 +580,8 @@ namespace SwapHunter
             health = Mathf.Min(G.config.playerHealth, health + hp); reserve[0] = Mathf.Min(240,reserve[0]+Mathf.RoundToInt(bullets * G.ModuleAmmoSupply)); reserve[1] = Mathf.Min(60,reserve[1]+Mathf.RoundToInt(shells * G.ModuleAmmoSupply));
             foreach(int id in EquippedWeapons) if(id>=2)
             {
-                int amount=WeaponCatalog.Get(id).Shotgun?shells:bullets<=0?0:Mathf.Max(1,Mathf.RoundToInt(bullets*(Capacity(id)/(float)Mathf.Max(1,G.config.rifleMagazine))));
-                reserve[id]=Mathf.Min(WeaponCatalog.Get(id).reserve*2,reserve[id]+Mathf.RoundToInt(amount*G.ModuleAmmoSupply));
+                int amount=WeaponCatalog.Get(id).Shotgun?shells:bullets<=0?0:Mathf.Max(1,Mathf.RoundToInt(bullets*(Capacity(id)/(float)Mathf.Max(1,Capacity(0)))));
+                reserve[id]=Mathf.Min(EffectiveWeaponStats.Read(id,G.config).Reserve*2,reserve[id]+Mathf.RoundToInt(amount*G.ModuleAmmoSupply));
             }
             G.sound.Play("confirm"); G.Toast("补给已获取",1.5f);
         }
@@ -628,9 +656,19 @@ namespace SwapHunter
             var result = ValidateSwap(candidate);
             var context = CaptureSwapTelemetry(candidate, ++nextSwapTelemetryId);
             RecordSwap("swap_attempt", candidate, result, context);
-            if (!result.IsValid) { G.Toast(result.ToDisplayText(G.config.swapRange), 1.2f); RecordSwap("swap_fail", candidate, result, context); return false; }
+            if (!result.IsValid) { G.Toast("换位未开始："+result.ToDisplayText(G.config.swapRange), 1.2f); RecordSwap("swap_fail", candidate, result, context); return false; }
             pendingSwapTelemetry = context;
-            preparing = true; pendingSwapTarget = candidate; swapRoutine = StartCoroutine(CompleteSwap(candidate)); return true;
+            int canceledRounds=burstRemaining;
+            if(canceledRounds>0)
+            {
+                nextShot=Mathf.Max(nextShot,lastShotAt+.28f);CancelFireSequence();
+                G.Record("swap_burst_cancel","remaining="+canceledRounds+";nextShot="+nextShot+";sequence="+actionSequence);
+            }
+            else actionSequence++;
+            swapAcceptedFrame=Time.frameCount;swapHeldReload=reloadLeft>0;fireArmed=false;
+            preparing = true; pendingSwapTarget = candidate;
+            G.Record("swap_action_accept","sequence="+actionSequence+";reloadHeld="+swapHeldReload+";remaining="+reloadLeft);
+            swapRoutine = StartCoroutine(CompleteSwap(candidate)); return true;
         }
         DemoGame.SwapTelemetry CaptureSwapTelemetry(SwapTarget candidate, int attemptId)
         {
@@ -662,7 +700,7 @@ namespace SwapHunter
             yield return new WaitForSeconds(G.config.swapWindup);
             preparing = false;
             var finalResult = ValidateSwap(candidate);
-            if (!finalResult.IsValid) { swapRoutine = null; pendingSwapTarget = null; G.Toast("换位取消：" + finalResult.ToDisplayText(G.config.swapRange), 1.3f); RecordSwap("swap_cancel", candidate, finalResult); pendingSwapTelemetry = null; yield break; }
+            if (!finalResult.IsValid) { swapRoutine = null; pendingSwapTarget = null; G.Toast("换位取消：" + finalResult.ToDisplayText(G.config.swapRange)+(swapHeldReload?" · 装填继续":""), 1.3f);swapHeldReload=false; RecordSwap("swap_cancel", candidate, finalResult); pendingSwapTelemetry = null; yield break; }
             bool wasAirborne=!Grounded;
             Vector3 oldPlayer = transform.position, oldTarget = candidate.transform.position;
             // Success/rollback coordinates describe the real execution endpoints,
@@ -679,12 +717,12 @@ namespace SwapHunter
                 transform.position=oldPlayer;candidate.MoveTo(oldTarget);
                 Physics.SyncTransforms();controller.enabled=true;Physics.SyncTransforms();
                 horizontal=oldVelocity;verticalSpeed=oldVertical;
-                swapRoutine=null;pendingSwapTarget=null;G.Toast("换位取消：导航恢复失败",1.5f);RecordSwap("swap_rollback", candidate, new SwapValidationResult(SwapFailureReason.RelocationFailed));pendingSwapTelemetry=null;yield break;
+                swapRoutine=null;pendingSwapTarget=null;G.Toast("换位取消：导航恢复失败"+(swapHeldReload?" · 装填继续":""),1.5f);swapHeldReload=false;RecordSwap("swap_rollback", candidate, new SwapValidationResult(SwapFailureReason.RelocationFailed));pendingSwapTelemetry=null;yield break;
             }
             Physics.SyncTransforms();controller.enabled=true;Physics.SyncTransforms();
             G.Record("swap_mode",wasAirborne?"air":"ground");
             G.Record("swap_endpoints","beforePlayer="+oldPlayer.ToString("F3")+"; beforeTarget="+oldTarget.ToString("F3")+"; actualPlayer="+transform.position.ToString("F3")+"; actualTarget="+candidate.transform.position.ToString("F3"));
-            if(PlayerClassSkill.IsTacticalFlow){reloadLeft=0;ResetReloadPresentation();}
+            if(swapHeldReload){reloadLeft=0;ResetReloadPresentation();G.Toast("换位成功 · 装填中断",1.3f);}swapHeldReload=false;
             verticalSpeed = 0; blockFlash = 0; candidate.AfterSwap(); cooldown = G.CampaignCooldown * G.ExpeditionCooldownMultiplier; G.OnCampaignSwap(candidate);
             swapCount++; G.totalSwaps++;if(G.tutorialCourse)G.tutorialCourse.NotifySwap(wasAirborne); G.tutorialSwapped = true; phaseFlash = .18f; lastSwapTarget = oldPlayer; targetArrowTime = 2;
             Shapes.Echo(oldPlayer); Shapes.Echo(oldTarget); Shapes.Trace(oldPlayer + Vector3.up, oldTarget + Vector3.up, new Color(.2f, 1, .9f), .13f, .09f);

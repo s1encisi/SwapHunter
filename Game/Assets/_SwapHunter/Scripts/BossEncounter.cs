@@ -19,7 +19,7 @@ namespace SwapHunter
   {
    if(seconds<=0)return false;
    if(Owner.Silenced||Time.time<silenceResistantUntil){SilenceRejectedCount++;return false;}
-   // Covers the normal 1.5s warning + 2.7s ground wave; swap-CD extensions remain interruptible.
+   // One accepted application owns both windows; repeated hits never refresh either.
    // Repeated hits cannot extend the current silence or the following resistance window.
    SilenceAcceptedCount++;silenceResistantUntil=Time.time+seconds+SilenceResistanceDuration;
    return true;
@@ -48,21 +48,33 @@ namespace SwapHunter
   {
    if(Phase==next)return;
    bool committedMelee=windup>0&&next!=BossPhase.Defeated;
-   Phase=next;PhaseTransitions++;if(!committedMelee)ClearWarning();CancelSpatialSkill();
-   skillSequence=0;openingSkillPending=true;nextSkillAt=Time.time+.15f;burst=0;attackAt=Time.time+.9f;
-   Owner.UpdateBossPresentation(next==BossPhase.EnergyMelee||committedMelee,committedMelee?1-windup/.75f:0,0,G.player.Eye.position);
+   Phase=next;PhaseTransitions++;
+   if(next==BossPhase.Defeated)
+   {
+    ClearWarning();CancelSpatialSkill();burst=0;StopMotion();
+   }
+   else
+   {
+    // Resource phase changes immediately. A warning/execution keeps its original cast,
+    // while the next action selects from the new phase after the existing recovery.
+    skillSequence=0;openingSkillPending=true;
+    if(SkillStep==BossSkillStep.Ready)nextSkillAt=Time.time+.15f;
+    if(!committedMelee&&burst==0)attackAt=Time.time+.9f;
+   }
+   Owner.UpdateBossPresentation(PresentationUsesEnergyForm||committedMelee,committedMelee?1-windup/.75f:0,0,G.player.Eye.position);
    G.Record("boss_phase",next.ToString());
-   if(next!=BossPhase.Defeated){G.sound.Play("warning",transform.position);G.Toast(next==BossPhase.Rifle?"能量盾击破 · 指挥官切换步枪形态":"核心失稳 · 观察攻击预警并选择反制",3);}
+   if(next!=BossPhase.Defeated){G.sound.Play("warning",transform.position);G.Toast(next==BossPhase.Rifle?(committedMelee||SkillStep==BossSkillStep.Telegraph||SkillStep==BossSkillStep.Execute?"能量盾击破 · 当前招式继续，下一动作进入步枪阶段":"能量盾击破 · 指挥官进入步枪阶段"):"核心失稳 · 观察攻击预警并选择反制",3);}
   }
   public void Tick(float dt)
   {
-   RefreshPhase();if(Phase==BossPhase.Defeated)return;
+   RefreshPhase();if(Phase==BossPhase.Defeated||!Owner.Alive)return;
    meleeSwing=Mathf.Max(0,meleeSwing-dt);float elbowSwing=Skill==BossSkill.SwapElbow&&SkillStep==BossSkillStep.Execute&&SkillSeconds<.22f?1-SkillSeconds/.22f:0;
    Vector3 visualAim=Skill==BossSkill.Attraction&&(SkillStep==BossSkillStep.Telegraph||SkillStep==BossSkillStep.Execute)?DangerCenter+Vector3.up*1.2f:G.player.Eye.position;
    Vector3 facing=Vector3.ProjectOnPlane(visualAim-Owner.AimPoint,Vector3.up);
    if(facing.sqrMagnitude>.01f)transform.rotation=Quaternion.RotateTowards(transform.rotation,Quaternion.LookRotation(facing),110*dt);
-   Owner.UpdateBossPresentation(Phase==BossPhase.EnergyMelee||windup>0||meleeSwing>0,windup>0?1-windup/.75f:0,Mathf.Max(meleeSwing/.22f,elbowSwing),visualAim);
-   if(windup<=0&&TickSpatialSkills(dt))return;
+   Owner.UpdateBossPresentation(PresentationUsesEnergyForm||windup>0||meleeSwing>0,windup>0?1-windup/.75f:0,Mathf.Max(meleeSwing/.22f,elbowSwing),visualAim);
+   if(TickSpatialSkills(dt,windup<=0))return;
+   if(Owner.stunLeft>0){StopMotion();return;}
    Vector3 p=G.player.transform.position;Vector3 d=Vector3.ProjectOnPlane(p-transform.position,Vector3.up);
    bool melee=Phase==BossPhase.EnergyMelee;
    if(Owner.agent.enabled&&Owner.agent.isOnNavMesh)

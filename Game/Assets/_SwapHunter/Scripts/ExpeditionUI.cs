@@ -14,26 +14,28 @@ namespace SwapHunter
    Text(sub,new Rect(48,141,viewWidth-120,40),18,Muted);
   }
   void ExpeditionAction(Action action)
-  {try{action();expeditionNotice="";sound.Play("confirm");}catch(Exception e){expeditionNotice=e.Message;sound.Play("warning");}}
-  public void SetExpeditionTabForReview(int tab) { expeditionTab = Mathf.Clamp(tab, 0, 3); }
+  {if(TrialSessionActive||TrialAccountReadBlocked)return;try{action();expeditionNotice="";sound.Play("confirm");}catch(Exception e){expeditionNotice=e.Message;sound.Play("warning");}}
+  public void SetExpeditionTabForReview(int tab) { expeditionTab = Mathf.Clamp(tab, 0, TacticalExpedition?4:3); }
   public bool DrawExpeditionScreen()
   {
    if(TacticalExpedition&&ExpeditionAwaitingRetry){DrawExpeditionOverlay();return true;}
    if(expeditionInventory&&expeditionActive){ExpeditionInventoryUI();return true;}
    if(!expeditionBoard||state!=RunState.Menu)return false;
-   string title=expeditionTab==0?"相位行动":expeditionTab==1?"武器装配":TacticalExpedition?(expeditionTab==2?"职业技能":"补给采购"):"补给商店";
+   string title=expeditionTab==0?"相位行动":expeditionTab==1?"武器装配":TacticalExpedition?(expeditionTab==2?"职业技能":expeditionTab==4?"配装路线":"补给采购"):"补给商店";
    ExpeditionChrome(title,TacticalExpedition?TacticalPrototypeRules.ClassNames[expeditionStore.Profile.activeClass]+" · 关外整备与采购 → 带着出发配置行动 → 成功结算信用点":"战斗 → 带回研究点 → 选择成长与装配 → 下一段行动");
    if(Button("主菜单",new Rect(viewWidth-195,40,145,47))){expeditionBoard=false;return true;}
    if(expeditionStore==null)
    {Text(expeditionNotice,new Rect(50,250,viewWidth-100,220),24);return true;}
    var p=expeditionStore.Profile;
    Text((TacticalExpedition?"信用点  ":"研究点  ")+p.credits+"    |    进度 "+Array.FindAll(p.cleared,v=>v).Length+" / 12",new Rect(viewWidth-570,102,515,35),21,Paper,TextAnchor.MiddleRight);
-   string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
+   string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购","配装路线"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
    for(int i=0;i<tabs.Length;i++)if(Button(tabs[i],new Rect(48+i*205,200,192,47),expeditionTab==i))expeditionTab=i;
    if(expeditionTab==0)ExpeditionLevelsUI();else if(expeditionTab==1)ExpeditionWeaponsUI();
    else if(expeditionTab==2){if(TacticalExpedition)ExpeditionAssaultSkillsUI();else ExpeditionSpecializationUI();}
+   else if(expeditionTab==4&&TacticalExpedition)DrawLoadoutRoutes();
    else{if(TacticalExpedition)ExpeditionProcurementUI();else ExpeditionToolsUI();}
-   if(!string.IsNullOrEmpty(expeditionNotice))Text(expeditionNotice,new Rect(49,840,viewWidth-100,46),18,new Color(1,.69f,.3f));
+   string status=!string.IsNullOrEmpty(AttemptMetricsNotice)?AttemptMetricsNotice:expeditionNotice;
+   if(!string.IsNullOrEmpty(status))Text(status,new Rect(49,840,viewWidth-100,46),18,new Color(1,.69f,.3f));
    return true;
   }
   void ExpeditionLevelsUI()
@@ -124,7 +126,7 @@ namespace SwapHunter
   public void DrawExpeditionOverlay()
   {
    if(TacticalExpedition){DrawTacticalExpeditionOverlay();return;}
-   float w=Mathf.Min(800,viewWidth-120),x=(viewWidth-w)/2;Fill(FullScreenGuiRect,new Color(.005f,.015f,.04f,.88f));Fill(new Rect(x,130,w,655),PanelBlue);
+   float w=Mathf.Min(800,viewWidth-120),x=(viewWidth-w)/2;Fill(FullScreenGuiRect,new Color(.005f,.015f,.04f,.88f));Fill(new Rect(x,130,w,740),PanelBlue);
    if(expeditionPending)
    {
     Text("结算保存受阻",new Rect(x+34,167,w-68,60),38);Text(expeditionNotice,new Rect(x+34,265,w-68,185),22,Muted);
@@ -155,7 +157,7 @@ namespace SwapHunter
   string TacticalAttemptSummary()
   {
    var deployment=expeditionStore.Profile.deployment;
-   return deployment==null?"":"已尝试 "+deployment.attempts+" 次 · 死亡 "+deployment.deaths+" 次";
+   return deployment==null?"":"已尝试 "+deployment.attempts+" 次 · 死亡 "+deployment.deaths+" 次"+(CurrentAttemptMetrics==null?"":"\n累计有效 "+CurrentAttemptMetrics.cumulativeActiveSeconds.ToString("0.0")+"秒 / 暂停 "+CurrentAttemptMetrics.cumulativePausedSeconds.ToString("0.0")+"秒");
   }
   void ExpeditionAssaultSkillsUI()
   {
@@ -191,7 +193,8 @@ namespace SwapHunter
    bool selected=(general?store.EquippedGeneralSkill:store.EquippedClassSkill)==index;
    bool guarantee=general?!store.HasGeneralStarter:!store.HasSkillStarter;
    string name=(general?TacticalPrototypeRules.GeneralSkillNames:TacticalPrototypeRules.ClassSkillNames)[index];
-   DrawUiPanel(rect,selected);Text(name+"  "+(level>0?level+" / 3":"未拥有"),new Rect(rect.x+14,rect.y+12,rect.width-28,28),20,selected?PhaseBlue:Paper);
+   DrawUiPanel(rect,selected);Text(name+"  "+(level>0?level+" / 3":"未拥有"),new Rect(rect.x+14,rect.y+12,rect.width-116,28),20,selected?PhaseBlue:Paper);
+   if(Button("试用",new Rect(rect.xMax-86,rect.y+12,72,30)))OpenSkillTrial(index,general);
    string description=general?(index==0?"固定方向屏障 · 持续4秒\n冷却 "+(10-Mathf.Max(0,level-1))+" 秒":"1级投出与召回，2级命中沉默\n3级范围沉默；墙体与实体盾阻挡"):ClassSkillTuning.Describe(index,Mathf.Max(1,level));
    Text(description,new Rect(rect.x+14,rect.y+49,rect.width-28,general?51:102),16,Muted);
    float y=rect.yMax-53,w=(rect.width-36)/2;bool enabled=GUI.enabled;
@@ -320,11 +323,12 @@ namespace SwapHunter
    Text(success?"奖励已计入共享信用点，随身道具仅扣本次实际消耗。回到整备页可采购新上架武器、强化技能并选择下一场配置。":receipt!=null?"已恢复出发时的库存与装配，本次无收益。返回准备后可以重新整备。":"尚未保存退出结果。请重试退出保存，原出发记录保留。",new Rect(x+34,310,w-68,118),22,Paper);
    if(receipt!=null)
     Text("信用点 +"+receipt.reward+"（行动 "+receipt.baseReward+" + 首通 "+receipt.firstReward+" + 可选 "+receipt.bonusReward+"）\n道具消耗 医疗 "+receipt.medkitsUsed+" / 弹药 "+receipt.ammoUsed+" / 护甲 "+receipt.armorUsed+" · 尝试 "+receipt.attempts+" 次 · 死亡 "+receipt.deaths+" 次",new Rect(x+34,457,w-68,105),20,Muted);
-   if(success&&expeditionLevel<11&&Button("查看下一段行动",new Rect(x+34,594,w-68,54),true))
+   Text(AttemptMetricsSummary,new Rect(x+34,568,w-68,95),17,Paper);
+   if(success&&expeditionLevel<11&&Button("查看下一段行动",new Rect(x+34,678,w-68,54),true))
    {OpenExpeditionBoard();expeditionSelected=expeditionLevel+1;expeditionTab=0;}
-   if(Button(receipt==null?"重试退出并返回准备":"返回准备 / 整备与补给",new Rect(x+34,668,w-68,54),!success))
+   if(Button(receipt==null?"重试退出并返回准备":"返回准备 / 整备与补给",new Rect(x+34,742,w-68,54),!success))
    {if(receipt==null)TacticalReturnToPreparation();else{OpenExpeditionBoard();expeditionTab=3;}}
-   if(!string.IsNullOrEmpty(expeditionNotice))Text(expeditionNotice,new Rect(x+34,739,w-68,40),16,Amber);
+   if(!string.IsNullOrEmpty(expeditionNotice))Text(expeditionNotice,new Rect(x+34,809,w-68,40),16,Amber);
   }
 
  }

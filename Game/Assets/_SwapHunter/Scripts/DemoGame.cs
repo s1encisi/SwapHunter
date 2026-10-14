@@ -8,6 +8,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace SwapHunter
 {
+    [DefaultExecutionOrder(-100)]
     public sealed partial class DemoGame : MonoBehaviour
     {
         public static DemoGame I { get; private set; }
@@ -94,7 +95,8 @@ namespace SwapHunter
             if (!string.IsNullOrEmpty(SettingsStore.LastWarning)) Toast(SettingsStore.LastWarning, 8);
             Record("boot", "SwapHunter "+Application.version+" / " + Application.unityVersion);
             if (RunStorage.IsDemonstration) { BeginDemonstration(); yield break; }
-            if (RunStorage.IsModelsValidation) gameObject.AddComponent<ModelsFinalQA>();
+            if (RunStorage.IsSynergyValidation) gameObject.AddComponent<SynergyQA>();
+            else if (RunStorage.IsModelsValidation) gameObject.AddComponent<ModelsFinalQA>();
             else if (RunStorage.IsUiValidation) gameObject.AddComponent<TacticalUIQA>();
             else if (RunStorage.IsFullValidation) gameObject.AddComponent<TacticalCampaignQA>();
             else if (RunStorage.IsTacticalValidation) gameObject.AddComponent<TacticalT01QA>();
@@ -143,6 +145,14 @@ namespace SwapHunter
         void Update()
         {
             if (state == RunState.Loading) return;
+            TickAttemptMetrics();
+            TickTrialSession();
+            if (TrialSessionActive || RunStorage.IsDirectedTrial && trialChildClosed) return;
+            if (trialDialog || trialResultVisible)
+            {
+                if (!TrialAccountReadBlocked && (Pressed(16) || KeyboardDevice != null && KeyboardDevice.escapeKey.wasPressedThisFrame)) { trialDialog=false;trialResultVisible=false; }
+                return;
+            }
             UpdateWeaponLibraryPresentation();
             UpdateAdaptiveResolution();UpdateDeployments();
             if ((!qaMode || qaInputEnabled) && KeyboardDevice != null && KeyboardDevice.f12Key.wasPressedThisFrame)
@@ -273,6 +283,7 @@ namespace SwapHunter
         }
         public bool Interact()
         {
+            if (player && player.SwapActionsLocked) return false;
             if(tutorialCourse&&tutorialCourse.Active)return tutorialCourse.Interact();
             if (expeditionActive) return UseExpeditionNode(FindExpeditionNode());
             if (campaignActive) { var station = FindCampaignStation(); if (station) return UseCampaignStation(station); }
@@ -303,7 +314,7 @@ namespace SwapHunter
             Time.timeScale = next == RunState.Playing || next == RunState.Menu ? 1 : 0;
             bool playing = next == RunState.Playing;
             Cursor.lockState = playing && !qaMode && !Application.isBatchMode ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !playing || qaMode || Application.isBatchMode;
-            if (player) { if (!playing) player.CancelActions(); player.SetViewActive(next != RunState.Menu); }
+            if (player) { if (!playing && next != RunState.Paused) player.CancelActions(); player.SetViewActive(next != RunState.Menu); }
             if (menuCamera) menuCamera.enabled = next == RunState.Menu;
         }
         public void HandleFocusLoss() { if (IsPlaying) SetState(RunState.Paused); }
@@ -386,6 +397,8 @@ namespace SwapHunter
             public int stage, chapter, frame;
             public bool hasPlayer;
             public bool isDemonstration;
+            public int rulesVersion;
+            public string mode;
             public Vector3 playerFeet;
             public SwapTelemetry swap;
             public ExpeditionResourceTelemetry resources;
@@ -398,6 +411,8 @@ namespace SwapHunter
         void RecordEntry(string evt, string detail, SwapTelemetry swapPayload, ExpeditionResourceTelemetry resourcePayload)
         {
             ShowcaseCapture.Event(evt,detail);
+            RecordAttemptEvent(evt, detail);
+            ObserveTrialEvent(evt, detail);
             if (recorder == null) return;
             bool hasPlayer = player;
             var entry = new LogEntry
@@ -405,15 +420,16 @@ namespace SwapHunter
                 evt = evt, detail = detail, time = runSeconds, stage = stage,
                 chapter = expeditionActive ? expeditionLevel + 1 : 0,
                 frame = Time.frameCount, hasPlayer = hasPlayer,
-                isDemonstration = RunStorage.IsDemonstration,
+                isDemonstration = RunStorage.IsDemonstration, rulesVersion = TacticalPrototypeRules.Version,
+                mode = RunStorage.IsValidation ? "QA" : RunStorage.IsDemonstration ? "Trial" : "Normal",
                 playerFeet = hasPlayer ? player.transform.position : Vector3.zero,
                 swap = swapPayload, resources = resourcePayload
             };
             try { recorder.WriteLine(JsonUtility.ToJson(entry)); }
             catch (IOException e) { Debug.LogWarning("Playtest logging stopped: " + e.Message); try { recorder.Dispose(); } catch (IOException) { } recorder = null; }
         }
-        void OnDestroy() { recorder?.Dispose(); if (I == this) I = null; }
-        void OnApplicationQuit() { if (RunStorage.IsDemonstration && !demonstrationPrepared) return; if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterAVReview") < 0) SaveSettings(); }
+        void OnDestroy() { CloseTrialSession(); EndAttemptMetrics("scene_exit"); recorder?.Dispose(); if (I == this) I = null; }
+        void OnApplicationQuit() { CloseTrialSession(); EndAttemptMetrics("quit"); if (RunStorage.IsDemonstration && !demonstrationPrepared) return; if (Array.IndexOf(Environment.GetCommandLineArgs(), "-swapHunterAVReview") < 0) SaveSettings(); }
     }
 }
 

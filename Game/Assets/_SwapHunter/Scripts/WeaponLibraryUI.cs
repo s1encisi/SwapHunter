@@ -116,11 +116,14 @@ namespace SwapHunter
             else WeaponTexture(modelRect, preview ? preview.SelectedTexture : null);
             Text("对应武器模型", new Rect(modelRect.x + 9, modelRect.y + 7, modelRect.width - 18, 18), 12, Muted);
 
-            float controlsY = modelRect.yMax + 8, buttonWidth = (modelWidth - 18) / 4;
+            float controlsY = modelRect.yMax + 8, buttonWidth = (modelWidth - 24) / 5;
             if (Button("左转", new Rect(x, controlsY, buttonWidth, 31)) && preview) preview.RotateYaw(-30);
             if (Button("复位", new Rect(x + buttonWidth + 6, controlsY, buttonWidth, 31)) && preview) preview.ResetView();
             if (Button("右转", new Rect(x + (buttonWidth + 6) * 2, controlsY, buttonWidth, 31)) && preview) preview.RotateYaw(30);
             if (Button(preview && preview.AutoRotate ? "停止" : "自动", new Rect(x + (buttonWidth + 6) * 3, controlsY, buttonWidth, 31)) && preview) preview.AutoRotate = !preview.AutoRotate;
+            bool trialEnabled=GUI.enabled;GUI.enabled=trialEnabled&&store.IsTactical&&canConfigure&&!TrialSessionActive;
+            if(Button("试用",new Rect(x+(buttonWidth+6)*4,controlsY,buttonWidth,31)))OpenWeaponTrial(selectedId);
+            GUI.enabled=trialEnabled;
             WeaponText(selectedWeapon.description, new Rect(x, controlsY + 42, modelWidth, 42), 14, Muted);
 
             Text("基础属性  ·  统一刻度", new Rect(statsX, contentTop - 21, statsWidth, 20), 13, PhaseBlue);

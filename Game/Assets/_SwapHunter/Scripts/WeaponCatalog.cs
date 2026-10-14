@@ -31,7 +31,7 @@ namespace SwapHunter
             W(8,"支援轻机枪",FireMechanism.Automatic,21,9,60,180,3.4f,.4f,.82f,"大弹箱压制；持续射击散布更大。",1,"rifle","reload_in"),
             W(9,"弧线榴弹发射器",FireMechanism.Grenade,95,.85f,4,16,2.6f,.3f,1.5f,"抛物线榴弹；爆炸受墙体遮挡，也会伤害自己。",1,"shotgun","land"),
             W(10,"蓄能线圈枪",FireMechanism.Charge,145,1,5,25,2.7f,.055f,1.7f,"按住蓄能0.65秒；提前松开取消，不扣弹药。",1,"phase","rifle"),
-            W(11,"相位标记器",FireMechanism.PhaseMark,16,2.4f,12,60,1.7f,.1f,.35f,"命中标记5秒；后续命中伤害+20%，不能穿墙或穿盾。",1,"phase","impact")
+            W(11,"相位标记器",FireMechanism.PhaseMark,16,2.4f,12,60,1.7f,.1f,.35f,"命中标记5秒；后续枪弹和普通近战+20%；爆炸、飞刀及区域伤害不增伤，不能穿墙或穿盾。",1,"phase","impact")
         };
         static WeaponCatalog()
         {

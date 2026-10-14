@@ -54,7 +54,7 @@ namespace SwapHunter
                 throw new InvalidOperationException("演示档案自检仅接受 -batchmode，不打开交互窗口。");
             if (!TryParseLevel(Environment.GetCommandLineArgs(), out int level, out string error))
                 throw new ArgumentException(error);
-            Level = level;
+            Level = RunStorage.IsDirectedTrial ? (DirectedTrialBootstrap.Request.scenario==0?0:4) : level;
             bool tactical=RunStorage.IsTacticalDemo;
             string folder=Path.Combine(RunStorage.Root,tactical?"Expedition-Tactical-v6":"Expedition-v4");
             Directory.CreateDirectory(folder);
@@ -67,6 +67,7 @@ namespace SwapHunter
                 seed.primary=seed.classLoadouts[seed.activeClass].primary;seed.secondary=seed.classLoadouts[seed.activeClass].secondary;
                 ExpeditionStore.Validate(seed);
             }
+            if(RunStorage.IsDirectedTrial)seed=DirectedTrialBootstrap.CreateProfile();
             WriteNew(Path.Combine(folder,tactical?"expedition-v6.json":"expedition-v4.json"),JsonUtility.ToJson(seed,true));
             WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=tactical?"四职业全武器/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
         }
@@ -98,7 +99,7 @@ namespace SwapHunter
         }
         void BeginDemonstration()
         {
-            if(RunStorage.IsTacticalDemo&&Array.IndexOf(Environment.GetCommandLineArgs(),"-demoMenu")>=0){OpenExpeditionBoard();expeditionTab=2;Toast(DemonstrationSession.Badge+"；所有职业、武器和技能为展示预置。",8);return;}
+            if(!RunStorage.IsDirectedTrial&&RunStorage.IsTacticalDemo&&Array.IndexOf(Environment.GetCommandLineArgs(),"-demoMenu")>=0){OpenExpeditionBoard();expeditionTab=2;Toast(DemonstrationSession.Badge+"；所有职业、武器和技能为展示预置。",8);return;}
             Record("demonstration_seed", (RunStorage.IsTacticalDemo?"tactical-all-skills-level3;":"legacy;")+"all-weapons;knife-rank=3;no-completion-history;temporary-profile;chapter=" + (DemonstrationSession.Level + 1));
             if (!BeginExpedition(DemonstrationSession.Level))
             {

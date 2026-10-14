@@ -14,7 +14,7 @@ param(
     [Parameter(Mandatory=$true)][string]$ExecutablePath,
     [Parameter(Mandatory=$true)][string[]]$ValidationDirectory,
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
-    [ValidateSet('tactical','models')][string]$Profile='tactical',
+    [ValidateSet('tactical','models','synergy')][string]$Profile='tactical',
     [string]$UIReview,
     [string]$SourceExecutablePath,
     [string]$VerificationRoot,

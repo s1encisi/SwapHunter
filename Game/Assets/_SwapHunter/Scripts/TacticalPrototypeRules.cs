@@ -4,7 +4,7 @@ namespace SwapHunter
     // D1.1 implementation balance, versioned separately from save schemas.
     public static class TacticalPrototypeRules
     {
-        public const int Version=2, ClassCount=4, AssaultClass=0;
+        public const int Version=3, ClassCount=4, AssaultClass=0;
         public const int ShockSkillIndex=0,MobilitySkillIndex=1,FortifySkillIndex=2,ReloadSkillIndex=3,ScanSkillIndex=4,PrecisionSkillIndex=5,RemoteSkillIndex=6,DenialSkillIndex=7;
         public const int ShieldGeneralIndex=0,KnifeGeneralIndex=1;
         public const int MedkitPrice=20,AmmoPrice=25,ArmorPrice=25,MedkitCarryLimit=2,AmmoMagazineCount=2,OptionalReward=40;

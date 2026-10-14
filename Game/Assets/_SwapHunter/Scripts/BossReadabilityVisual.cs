@@ -60,7 +60,7 @@ namespace SwapHunter
             // Original warning geometry remains the authoritative visible boundary; recolour only.
             var boundary=boss.DangerOutline;
             if(boundary){boundary.GetPropertyBlock(lineTint);lineTint.SetColor("_BaseColor",new Color(tint.r,tint.g,tint.b,1));lineTint.SetColor("_Color",new Color(tint.r,tint.g,tint.b,1));boundary.SetPropertyBlock(lineTint);}
-            float fraction=warning?Mathf.Clamp01(1-boss.SkillAgeSeconds/Mathf.Max(.001f,boss.SkillSeconds)):1;
+            float fraction=warning?boss.TelegraphProgress:1;
             for(int i=0;i<33;i++){float a=(i/32f)*Mathf.PI*2*fraction;progress.SetPosition(i,new Vector3(Mathf.Sin(a)*.275f,Mathf.Cos(a)*.275f,-.01f));}
             progress.enabled=warning;
         }

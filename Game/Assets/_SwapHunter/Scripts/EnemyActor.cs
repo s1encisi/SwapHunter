@@ -26,7 +26,7 @@ namespace SwapHunter
         public bool ApplyOrdinaryStagger(float seconds)
         {
             if(!Alive||boss||seconds<=0)return false;
-            stunLeft=Mathf.Max(stunLeft,seconds);return true;
+            stunLeft=Mathf.Max(stunLeft,seconds);DemoGame.I.Record("enemy_staggered",kind+":"+seconds);return true;
         }
         public int arena;
         public bool expeditionOptional;
@@ -130,8 +130,10 @@ namespace SwapHunter
             VisualRig.SetAim(G.player.Eye.position);
             VisualRig.SetGrenadePreparing(grenadeCue&&grenadeCue.Preparing);
             UpdateHitVisual();
-            if (stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training) { ClearLaser(); return; }
+            if (suppressAI || G.qaSuppressAI || kind == EnemyKind.Training) { ClearLaser(); return; }
+            // Ordinary stagger pauses basic actions; the Boss owns an independent spatial clock.
             if(boss){boss.Tick(dt);return;}
+            if (stunLeft > 0) { ClearLaser(); return; }
             Vector3 playerAim = G.player.transform.position + Vector3.up * 1.1f;
             Vector3 toPlayer = playerAim - AimPoint;
             Vector3 flat = Vector3.ProjectOnPlane(toPlayer, Vector3.up);
@@ -193,6 +195,7 @@ namespace SwapHunter
         public void ShootAt(Vector3 point,float damage,float speed){Shoot(point,damage,speed);}
         void Shoot(Vector3 point, float damage, float speed)
         {
+            if (!Alive || !G.IsPlaying) return;
             shotsFired++;
             if(VisualRig){VisualRig.SetAim(point);VisualRig.NotifyShot();}
             Vector3 origin = shotMuzzle ? shotMuzzle.position : AimPoint + transform.forward * .85f + transform.right * .24f;
@@ -257,9 +260,12 @@ namespace SwapHunter
         public void Damage(float damage)
         {
             if (!Alive) return;
+            float resourcesBefore=health+(boss?boss.Energy:0);
             if(boss)damage=boss.Absorb(damage);
             health = Mathf.Max(0, health - damage); flashLeft = .12f;if(VisualRig)VisualRig.NotifyHit();
             if(boss)boss.RefreshPhase();
+            float effectiveDamage=Mathf.Max(0,resourcesBefore-health-(boss?boss.Energy:0));
+            if(effectiveDamage>0)G.Record("enemy_effective_damage",effectiveDamage.ToString("R",System.Globalization.CultureInfo.InvariantCulture));
             if (health > 0) return;
             ClearLaser(); flashLeft = 0; UpdateHitVisual(); agent.enabled = false;
             foreach (Collider collider in GetComponentsInChildren<Collider>()) collider.enabled = false;

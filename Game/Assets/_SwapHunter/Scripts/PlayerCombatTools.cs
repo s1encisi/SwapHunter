@@ -2,11 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SwapHunter
 {
+ [DefaultExecutionOrder(50)]
  public sealed class PlayerCombatTools:MonoBehaviour
  {
   PlayerMotor owner;float meleeCooldown,throwCooldown,pose,poseDuration;bool throwingPose;
   public float PoseProgress=>pose>0?1-pose/poseDuration:1;
   public bool PoseActive=>pose>0;
+  internal float MeleeCooldownLeft=>meleeCooldown;
+  internal float ThrowCooldownLeft=>throwCooldown;
   public bool ThrowingPose=>throwingPose;
   public float GripError=>handTool&&owner?Vector3.Distance(handTool.TransformPoint(new Vector3(0,0,-.105f)),owner.ToolGripWorld):0;
   Transform handTool;ThrownKnife knife;
@@ -42,7 +45,7 @@ namespace SwapHunter
   }
   public bool Melee()
   {
-   if(!G.IsPlaying||owner.health<=0||meleeCooldown>0||owner.reloadLeft>0)return false;
+   if(!G.IsPlaying||owner.health<=0||owner.SwapActionsLocked||meleeCooldown>0||owner.reloadLeft>0)return false;
    meleeCooldown=.75f;pose=poseDuration=.38f;throwingPose=false;
    if(owner.classSkill)owner.classSkill.EndForAttack("melee");
    G.sound.Play("knife_swipe");
@@ -68,7 +71,7 @@ namespace SwapHunter
   public bool Throw()
   {
    if(!KnifeEquipped){G.Toast("当前通用技能槽未装配飞刀",2);return false;}
-   if(!G.IsPlaying||owner.health<=0||throwCooldown>0||knife||owner.reloadLeft>0)return false;
+   if(!G.IsPlaying||owner.health<=0||owner.SwapActionsLocked||throwCooldown>0||knife||owner.reloadLeft>0)return false;
    pose=poseDuration=.3f;throwingPose=true;throwCooldown=1.3f;Throws++;knife=ThrownKnife.Launch(this,owner,owner.Eye.position,owner.Eye.forward,KnifeRank,PlayerClassSkill.IsTacticalFlow);
    if(owner.classSkill)owner.classSkill.EndForAttack("throw");
    G.sound.Play("knife_throw");G.Record("knife_throw","rank="+KnifeRank);return true;

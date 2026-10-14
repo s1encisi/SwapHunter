@@ -111,17 +111,18 @@ namespace SwapHunter
         static WeaponDisplayStats Read(int id, DemoConfig config)
         {
             var definition = WeaponCatalog.Get(id);
-            float rate = id == 0 ? config.rifleRate : id == 1 ? config.shotgunRate : definition.rate;
+            var stats = EffectiveWeaponStats.Read(id, config);
+            float rate = stats.Rate;
             var value = new WeaponDisplayStats {
                 WeaponId = id, Name = definition.name,
-                BaseDamage = id == 0 ? config.rifleDamage : id == 1 ? config.shotgunDamage : definition.damage,
+                BaseDamage = stats.Damage,
                 BaseIntervalSeconds = 1 / Mathf.Max(.1f, rate), // Same floor as PlayerMotor.ShootRound.
-                ReloadSeconds = id == 0 ? config.rifleReload : id == 1 ? config.shotgunReload : definition.reload,
-                Magazine = id == 0 ? config.rifleMagazine : id == 1 ? config.shotgunMagazine : definition.magazine,
-                BaseReserve = definition.reserve, // SetLoadout uses catalog reserve, including weapon IDs 0/1.
-                Pellets = id == 1 ? config.shotgunPellets : definition.pellets,
-                HipSpreadDegrees = id == 0 ? config.stationarySpread : definition.spread,
-                MovementMultiplier = definition.movement,
+                ReloadSeconds = stats.Reload,
+                Magazine = stats.Magazine,
+                BaseReserve = stats.Reserve, // SetLoadout uses catalog reserve, including weapon IDs 0/1.
+                Pellets = stats.Pellets,
+                HipSpreadDegrees = stats.Spread,
+                MovementMultiplier = stats.Movement,
                 IsShotgun = definition.Shotgun,
                 IsExplosive = definition.mechanism == FireMechanism.Grenade,
                 UsesSpread = definition.mechanism != FireMechanism.Grenade,
@@ -190,7 +191,7 @@ namespace SwapHunter
                     break;
                 case FireMechanism.PhaseMark:
                     value.MechanismLabel = "相位标记·单发";
-                    value.FireCadenceExplanation = "逐次触发，基础间隔 " + interval + " 秒；存活目标命中后标记5秒，后续射线命中增伤20%。";
+                    value.FireCadenceExplanation = "逐次触发，基础间隔 " + interval + " 秒；存活目标命中后标记5秒，后续枪弹与普通近战增伤20%；爆炸、飞刀及区域伤害不享受标记增伤。";
                     break;
                 default: throw new InvalidOperationException("Unrecognized fire mechanism: " + definition.mechanism);
             }

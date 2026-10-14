@@ -142,3 +142,6 @@
 
 # System synergy upgrade design on its own branch.
 !/docs/system-synergy-upgrade.zh-CN.md
+
+!/docs/system-synergy-playguide.zh-CN.md
+!/docs/system-synergy-validation.zh-CN.md

@@ -18,6 +18,8 @@ namespace SwapHunter
   bool TacticalExpedition=>expeditionStore!=null&&expeditionStore.IsTactical;
   int ActiveExpeditionAttachment(int id)=>TacticalExpedition&&expeditionStore.Profile.deployment!=null?expeditionStore.Profile.deployment.attachments[id]:expeditionStore.AttachmentFor(id);
   int expeditionTab,expeditionWeaponSlot,expeditionSelectedWeapon;
+  internal int ExpeditionTabForReview=>expeditionTab;
+  internal int ExpeditionWeaponForReview=>expeditionSelectedWeapon;
   Transform classicWorld;
   public string ExpeditionTitle=>ExpeditionCatalog.Levels[Mathf.Clamp(expeditionLevel,0,11)].name;
   public MissionRuntime mission {get;private set;}
@@ -67,7 +69,7 @@ namespace SwapHunter
   }
   public bool BeginExpedition(int level)
   {
-   if(expeditionStore==null||campaignActive||expeditionPending)return false;
+   if(expeditionStore==null||campaignActive||expeditionPending||TrialSessionActive||TrialAccountReadBlocked)return false;
    if(expeditionActive&&expeditionReceipt==null)return false;
    try { string run=expeditionStore.Begin(level); return DeployExpeditionAttempt(level,run); }
    catch(Exception e){expeditionNotice="无法部署："+e.Message;return false;}
@@ -96,7 +98,7 @@ namespace SwapHunter
     var layout=expeditionMap.root.GetComponent<MissionLayout>();
     if(!layout)throw new InvalidOperationException("章节未绑定 MissionLayout");
     mission=new MissionRuntime(this,layout,MissionCatalog.Get(level));
-    SetState(RunState.Playing);mission.Tick(0);
+    SetState(RunState.Playing);BeginAttemptMetrics();mission.Tick(0);
     Toast(mission.Definition.instruction,9);Record("expedition_start",(level+1)+":"+run);
     return true;
    }
@@ -112,6 +114,7 @@ namespace SwapHunter
   {
    if(!TacticalExpedition){FinishExpedition(false);return;}
    if(expeditionAwaitingRetry||expeditionReceipt!=null)return;
+   EndAttemptMetrics("death");
    expeditionAwaitingRetry=true;expeditionDeathPending=true;expeditionInventory=false;
    if(mission!=null)mission.Stop("death_retry");
    SetState(RunState.Dead);SaveExpeditionDeath();
@@ -163,7 +166,7 @@ namespace SwapHunter
   }
   public bool UseExpeditionNode(ExpeditionNode node)
   {
-   if(!IsPlaying||node==null||node!=FindExpeditionNode())return false;
+   if(!IsPlaying||player.SwapActionsLocked||node==null||node!=FindExpeditionNode())return false;
    if(node.useAction!=null)return node.useAction();
    if(node.kind==ExpeditionNodeKind.Extraction)
    {
@@ -230,7 +233,8 @@ namespace SwapHunter
     expeditionInventory=false;expeditionAwaitingRetry=false;SetState(success?RunState.Victory:RunState.Dead);
     Record("expedition_settlement",JsonUtility.ToJson(expeditionReceipt));
     // mission_exit is intent; only a successfully persisted receipt reaches this snapshot.
-    RecordExpeditionResources(expeditionReceipt);return true;
+    RecordExpeditionResources(expeditionReceipt);
+    EndAttemptMetrics(success?"success":"abandon");RecordAttemptSettlement(expeditionReceipt);return true;
    }
    catch(Exception e){expeditionNotice="结算保存失败，可重试；结果已锁定："+e.Message;SetState(RunState.Paused);return false;}
   }
@@ -238,15 +242,16 @@ namespace SwapHunter
   {
    if(expeditionPending||!expeditionActive||expeditionMedkits<=0||player.health<=0||player.health>=config.playerHealth||expeditionReceipt!=null)return false;
    if(!IsPlaying&&!expeditionInventory)return false;
-   expeditionMedkits--;player.health=Mathf.Min(config.playerHealth,player.health+(TacticalExpedition?TacticalPrototypeRules.MedkitHeal:40));sound.Play("confirm");Record("medkit",expeditionMedkits.ToString());return true;
+   float before=player.health;expeditionMedkits--;player.health=Mathf.Min(config.playerHealth,player.health+(TacticalExpedition?TacticalPrototypeRules.MedkitHeal:40));RecordAttemptConsumable(0,player.health-before);sound.Play("confirm");Record("medkit",expeditionMedkits.ToString());return true;
   }
-  int ExpeditionReserveLimit(int id) => Mathf.RoundToInt(WeaponCatalog.Get(id).reserve * (ActiveExpeditionAttachment(id) == 2 ? 1.25f : 1));
+  int ExpeditionReserveLimit(int id) => Mathf.RoundToInt(EffectiveWeaponStats.Read(id,config).Reserve * (ActiveExpeditionAttachment(id) == 2 ? 1.25f : 1));
   public bool UseExpeditionAmmo()
   {
    if(expeditionPending||!expeditionInventory||expeditionAmmoPacks<=0||expeditionReceipt!=null)return false;
    bool useful=false;foreach(int w in player.EquippedWeapons)if(player.reserve[w]<ExpeditionReserveLimit(w))useful=true;
    if(!useful)return false;expeditionAmmoPacks--;
-   foreach(int w in player.EquippedWeapons)player.reserve[w]=Mathf.Max(player.reserve[w],Mathf.Min(ExpeditionReserveLimit(w),player.reserve[w]+WeaponCatalog.Get(w).magazine*(TacticalExpedition?TacticalPrototypeRules.AmmoMagazineCount:2)));
+   int granted=0;foreach(int w in player.EquippedWeapons){int before=player.reserve[w];player.reserve[w]=Mathf.Max(before,Mathf.Min(ExpeditionReserveLimit(w),before+EffectiveWeaponStats.Read(w,config).AmmoPackRounds));granted+=player.reserve[w]-before;}
+   RecordAttemptConsumable(1,granted);
    sound.Play("confirm");Record("ammo_pack",expeditionAmmoPacks.ToString());return true;
   }
   public bool UseExpeditionArmor()
@@ -254,7 +259,7 @@ namespace SwapHunter
    if(!TacticalExpedition||!expeditionActive||expeditionPending||expeditionArmorPacks<=0||expeditionReceipt!=null||!player||player.health<=0)return false;
    if(!IsPlaying&&!expeditionInventory)return false;
    if(!player.TryApplyArmor(TacticalPrototypeRules.ArmorAmount)){Toast("现有护甲尚未耗尽，无需使用应急护甲",2);return false;}
-   expeditionArmorPacks--;sound.Play("confirm");Record("armor_pack",expeditionArmorPacks.ToString());return true;
+   expeditionArmorPacks--;RecordAttemptConsumable(2,0);sound.Play("confirm");Record("armor_pack",expeditionArmorPacks.ToString());return true;
   }
 
  }

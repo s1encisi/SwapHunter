@@ -99,7 +99,10 @@ namespace SwapHunter
             MobilityLeft = Mathf.Max(0, MobilityLeft - dt); CooldownLeft = Mathf.Max(0, CooldownLeft - dt);
             FortifyLeft = Mathf.Max(0, FortifyLeft - dt); ScanLeft = Mathf.Max(0, ScanLeft - dt); PrecisionLeft = Mathf.Max(0, PrecisionLeft - dt);
             if (FortifyLeft <= 0 && fortifyRing) { Destroy(fortifyRing.gameObject); fortifyRing = null; }
-            if (game.Pressed(InputAction)) ActivateEquipped();
+        }
+        internal void ProcessInput()
+        {
+            if (DemoGame.I.Pressed(InputAction)) ActivateEquipped();
         }
         public bool ActivateMobility()
         {
@@ -117,6 +120,12 @@ namespace SwapHunter
                 if (!remote.Armed) return Reject("爆破装置尚未启动，请稍候再引爆");
                 if (!remote.TryDetonate()) return Reject("爆破装置已失效");
                 LastFailure = ""; LastOutcome = "遥控爆破已引爆"; return true;
+            }
+            if (owner.SwapActionsLocked)
+            {
+                if(skill==TacticalPrototypeRules.ReloadSkillIndex)return Reject("换位准备期间装填已挂起，暂不能快速装填");
+                if(skill==TacticalPrototypeRules.ShockSkillIndex || skill==TacticalPrototypeRules.FortifySkillIndex || skill==TacticalPrototypeRules.RemoteSkillIndex || skill==TacticalPrototypeRules.DenialSkillIndex)
+                    return Reject("换位准备期间不能开始新的攻击或区域施放");
             }
             if (CooldownLeft > 0) return Reject(AbilityName + "正在冷却");
             string outcome;

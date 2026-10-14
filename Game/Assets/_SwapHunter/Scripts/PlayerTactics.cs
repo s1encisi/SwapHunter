@@ -1,5 +1,6 @@
 using UnityEngine;
 namespace SwapHunter {
+[DefaultExecutionOrder(50)]
 public sealed class PlayerTactics:MonoBehaviour {
  public const float ShieldDuration=4,ShieldCooldown=10;
  public float ShieldLeft {get;private set;} public float ShieldCooldownLeft {get;private set;}
@@ -20,6 +21,7 @@ public sealed class PlayerTactics:MonoBehaviour {
   if(G.Pressed(20))ActivateShield();
  }
  public bool ActivateShield(){
+  if(owner&&owner.SwapActionsLocked){G.Toast("换位准备期间不能展开新屏障",1.5f);return false;}
   if(PlayerClassSkill.IsTacticalFlow&&!G.expeditionStore.HasShield){G.Toast("尚未装配 A盾，请在关外领取保障或装配",2);return false;}
   if(!G.IsPlaying||owner.health<=0||ShieldCooldownLeft>0||ShieldActive)return false;
   normal=owner.Eye.forward.normalized;Vector3 p=owner.Eye.position+normal*1.35f;Quaternion rot=Quaternion.LookRotation(normal,owner.Eye.up);

@@ -22,6 +22,7 @@ from package_demo_v06 import (
 from verify_package_v06 import verify_archive
 
 REPORTS = {
+    "Synergy": "synergy-report.json",
     "Tactical": "tactical-campaign-report.json", "Models": "models-final-report.json", "Routes": "route-v06-report.json",
     "Visual": "visual-v06-report.json", "Performance": "performance-v06-report.json",
     "Allocation": "allocation-v06-report.json",
@@ -72,7 +73,7 @@ def checks_pass(row, report):
 
 
 def collect_evidence(directories, identity, ui_review, profile="tactical"):
-    require(profile in ("tactical", "models"), "Unknown packaging profile")
+    require(profile in ("tactical", "models", "synergy"), "Unknown packaging profile")
     evidence, records, route_records = {}, {}, []
     levels = set()
     for run_index, directory in enumerate(directories, 1):
@@ -211,6 +212,7 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
                            else "Packager records the supplied review; it does not perform or certify human testing")
     status = {"profile": profile, "tactical": tactical,
               "models": records.get("Models", {"status": "not_run"}),
+              "synergy": records.get("Synergy", {"status": "not_run"}),
               "routes": {"status": "passed" if route_ok else "failed", "requiredLevels": sorted(REQUIRED_ROUTES),
                          "actualLevels": sorted(levels), "runs": route_records,
                          "scope": "清敌/耗尽跳板的保底路线夹具，非真人/真实战斗通关；不宣称全十二关重新验收"},
@@ -220,11 +222,17 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
               "allocation": records.get("Allocation", {"status": "not_run"}),
               "cleanRebuild": {"status": "not_run_by_packager"},
               "humanPlaytesting": {"status": "not_certified_by_packager"}}
-    if profile == "models":
+    if profile == "synergy":
+        require(status["synergy"]["status"] == "passed", "SSU-01 requires same-build Synergy QA")
+        require(ui["status"] == "passed", "SSU-01 requires supplied native UI evidence")
+    elif profile == "models":
         require(status["models"]["status"] == "passed", "Models packaging requires passed Models QA for this exact build")
     else:
         require(tactical["status"] == "passed", "D1.1 packaging requires passed Tactical full QA for this exact build")
-    require(route_ok, "D1.1 packaging requires actual same-build routes 5, 7, 12; no skipped checkpoints")
+    if profile != "synergy":
+        require(route_ok, "D1.1 packaging requires actual same-build routes 5, 7, 12; no skipped checkpoints")
+    elif not route_records:
+        status["routes"].update(status="not_run", requiredLevels=[], scope="SSU-01 mission invariants are checked in Synergy QA; geometry unchanged, old route reports are not reused as new evidence.")
     return status, evidence
 
 
@@ -365,7 +373,7 @@ def main():
     parser.add_argument("--source-executable", type=Path,
                         help="Separately successful source build for the exact pinned-MCP local-source variant")
     parser.add_argument("--ui-review", type=Path)
-    parser.add_argument("--profile", choices=("tactical", "models"), default="tactical",
+    parser.add_argument("--profile", choices=("tactical", "models", "synergy"), default="tactical",
                         help="models requires same-build Models QA and routes 5/7/12; does not claim a new economy run")
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--verification-root", type=Path)
@@ -429,13 +437,13 @@ if($Menu){$launchArguments+='-demoMenu'}
         add_same(windows_payload, "Licenses/" + name, source_payload[name])
     add_same(windows_payload, "THIRD_PARTY_ASSETS.md", source_payload["THIRD_PARTY_ASSETS.md"])
     add_same(windows_payload, "THIRD_PARTY_ASSETS.json", ledger_bytes)
-    for name in WINDOWS_DOCS + (("docs/models-final.zh-CN.md", "docs/media/models-class.png", "docs/media/models-weapons.png", "docs/media/models-islands.png", "docs/media/models-actors.png") if args.profile == "models" else ()):
+    for name in WINDOWS_DOCS + (("docs/models-final.zh-CN.md", "docs/media/models-class.png", "docs/media/models-weapons.png", "docs/media/models-islands.png", "docs/media/models-actors.png") if args.profile == "models" else ("docs/system-synergy-playguide.zh-CN.md", "docs/system-synergy-validation.zh-CN.md") if args.profile == "synergy" else ()):
         require(contained(project, name).is_file() and name in source_payload,
                 "Final Chinese delivery document is missing or ignored: " + name)
         add_same(windows_payload, name, source_payload[name])
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    base = ("SwapHunter-ModelsFinal-" if args.profile == "models" else "SwapHunter-D11-") + stamp
-    status = {"schemaVersion": 1, "releaseLabel": "Models final" if args.profile == "models" else "D1.1",
+    base = ("SwapHunter-SSU01-" if args.profile == "synergy" else "SwapHunter-ModelsFinal-" if args.profile == "models" else "SwapHunter-D11-") + stamp
+    status = {"schemaVersion": 1, "releaseLabel": "SSU-01 local candidate" if args.profile == "synergy" else "Models final" if args.profile == "models" else "D1.1",
               "profile": args.profile, "buildIdentity": identity,
               "validation": validation, "sourceSnapshot": source_info,
               "sourceBuildIdentity": source_identity, "sourceVariant": source_variant,
@@ -446,7 +454,28 @@ if($Menu){$launchArguments+='-demoMenu'}
         template = template.replace("# 换位猎手 D1.1 本地交付", "# 换位猎手 Models 最终版 本地交付").replace("D1.1 是本轮系统方案标识。", "ModelsFinal 是本次全模型替换版本标识。")
         template = template.replace("- 同构建完整战术专项：{tactical_status}。",
             "- 同构建模型专项：{models_status}。\n- 战术经济专项记录：{tactical_status}；本模式不要求重跑经济，也不将旧构建报告冒充本轮结果。")
-    readme = template.format(build_version=identity["version"], executable=executable.name,
+    if args.profile == "synergy":
+        template = """# 换位猎手 SSU-01 系统协同升级 · 本地试玩版
+
+游戏基础版本：{build_version}；规则版本 3；本候选未发布到远端。
+
+- 同构建 SSU-01 专项：{synergy_status}。覆盖动作衔接、Boss 承诺、参数一致性、试用隔离、配装与行动记录。
+- 新界面检查：{ui_status}。原生窗口脚本与截图，非真人通关。
+- 未修改关卡几何；本轮检查相关任务约束，不重复执行旧模型和保底路线套件。
+
+完整解压后按下方入口启动。升级操作见 `docs/system-synergy-playguide.zh-CN.md`。
+源码导入 Unity Hub 时选择 Source 包中的 `Game`，编辑器 6000.3.25f1。
+
+构建输入 SHA-256：`{source_sha256}`
+
+程序集 SHA-256：`{assembly_sha256}`
+
+源码基准：`{source_commit}`；含工作树修改：{dirty}。
+
+`validation-status.json` 和交付目录 `evidence/` 保存实际验证范围。源码包不含玩家存档、Library、Git 和旧构建。
+第三方材料的许可见 `THIRD_PARTY_ASSETS.md/json` 和 `Licenses/`。
+"""
+    readme = template.format(synergy_status=validation["synergy"]["status"], build_version=identity["version"], executable=executable.name,
         models_status=validation["models"]["status"],
         tactical_status=validation["tactical"]["status"], routes_status=validation["routes"]["status"],
         ui_status=validation["uiReview"]["status"], visual_status=validation["nativeVisual"]["status"],

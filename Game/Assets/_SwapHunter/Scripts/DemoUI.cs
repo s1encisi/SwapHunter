@@ -64,7 +64,7 @@ namespace SwapHunter
                     Text("正在接入相位信标",new Rect(64,345,800,70),38);
                     Text("准备行动区域…",new Rect(68,468,800,36),18,Muted);return;
                 }
-                if(settingsOpen)GUI.enabled=false;
+                if(settingsOpen||TrialSessionActive||trialDialog||trialResultVisible)GUI.enabled=false;
                 bool expeditionScreen=DrawExpeditionScreen();
                 if(!expeditionScreen)
                 {
@@ -75,7 +75,7 @@ namespace SwapHunter
                 GUI.enabled=previousEnabled;
                 if(settingsOpen)Settings();
             }
-            finally { DrawDemonstrationBadge(); GUI.enabled=previousEnabled;GUI.matrix=previous; }
+            finally { GUI.enabled=previousEnabled;DrawDirectedTrialUI();if(!RunStorage.IsDirectedTrial)DrawDemonstrationBadge(); GUI.enabled=previousEnabled;GUI.matrix=previous; }
         }
         void Menu(){BrandedMenu();}
         void Hud()

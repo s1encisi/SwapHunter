@@ -39,7 +39,7 @@ namespace SwapHunter
  {
   public string runId;public int level,reward;public bool success,first,bonus;public float seconds;
   public int baseReward,firstReward,bonusReward,medkitsUsed,ammoUsed,armorUsed,attempts,deaths;
-  public bool historical;public int sourceVersion;
+  public bool historical;public int sourceVersion,rulesVersion;
  }
  [Serializable] public sealed class ClassLoadout
  {
@@ -52,7 +52,7 @@ namespace SwapHunter
   // No initializers: JsonUtility's empty inline object must differ from a real snapshot.
   public string runId,classSkillId,tacticalSkillId;
   public int level,classId,primary,secondary,medkits,ammoPacks,armorPacks,inventoryMedkits,attempts,deaths;
-  public int classSkillLevel,generalSkillLevel,baseReward,firstReward,bonusReward;
+  public int classSkillLevel,generalSkillLevel,baseReward,firstReward,bonusReward,rulesVersion;
   public int[] attachments,itemTypes,itemCounts,inventoryConsumables,carriedConsumables;
   public bool hasMobility,hasShield;
  }
@@ -334,6 +334,20 @@ namespace SwapHunter
    RequireTactical();RequireIdle();if(!TacticalPrototypeRules.ValidSkill(index,true)||SkillLevel(index,true)<1)throw new InvalidOperationException("通用技能尚未拥有");
    var p=Copy();p.classLoadouts[p.activeClass].tacticalSkillId=TacticalPrototypeRules.GeneralSkillIds[index];Commit(p);
   }
+  public void ReloadFromDisk()
+  {
+   var fresh=Read(file);if(fresh.version!=(IsTactical?6:4))throw new InvalidDataException("档案模式不匹配");Profile=fresh;
+  }
+  public void ApplyTacticalRoute(int classId,int primary,int secondary,int classSkill,int general)
+  {
+   RequireTactical();RequireIdle();
+   if(!TacticalPrototypeRules.ValidClass(classId)||primary==secondary||!TacticalPrototypeRules.ClassCanUseWeapon(classId,primary)||!TacticalPrototypeRules.ClassCanUseWeapon(classId,secondary)
+      ||!TacticalPrototypeRules.ClassCanUseSkill(classId,classSkill)||!TacticalPrototypeRules.ValidSkill(general,true))throw new InvalidOperationException("路线职业或槽位不合法");
+   if(!Profile.weapons[primary]||!Profile.weapons[secondary]||Profile.classSkillLevels[classSkill]<1||Profile.generalLevels[general]<1)throw new InvalidOperationException("路线仍有未拥有内容；请先自行采购或改用已有配置");
+   var p=Copy();p.activeClass=classId;var l=p.classLoadouts[classId];
+   l.primary=primary;l.secondary=secondary;l.classSkillId=TacticalPrototypeRules.SkillIds[classSkill];l.tacticalSkillId=TacticalPrototypeRules.GeneralSkillIds[general];
+   Commit(p);
+  }
   public void SetConsumableSlot(int slot,int type,int count)
   {
    RequireTactical();RequireIdle();if(slot<0||slot>1)throw new ArgumentOutOfRangeException(nameof(slot));
@@ -362,7 +376,7 @@ namespace SwapHunter
    if(IsTactical)
    {
     var l=p.classLoadouts[p.activeClass];var carried=new int[3];for(int type=0;type<3;type++)carried[type]=Math.Min(ItemCarry(l,type),p.consumables[type]);
-    p.deployment=new TacticalDeployment{runId=p.activeRun,level=level,classId=p.activeClass,primary=l.primary,secondary=l.secondary,attachments=(int[])l.attachments.Clone(),classSkillId=l.classSkillId,tacticalSkillId=l.tacticalSkillId,classSkillLevel=EquippedClassSkillLevel,generalSkillLevel=EquippedGeneralSkillLevel,itemTypes=(int[])l.itemTypes.Clone(),itemCounts=(int[])l.itemCounts.Clone(),inventoryConsumables=(int[])p.consumables.Clone(),carriedConsumables=carried,medkits=carried[0],ammoPacks=carried[1],armorPacks=carried[2],inventoryMedkits=p.consumables[0],attempts=1,deaths=0,baseReward=TacticalPrototypeRules.BaseReward(level),firstReward=p.cleared[level]?0:TacticalPrototypeRules.FirstClearExtra(level),bonusReward=TacticalPrototypeRules.OptionalReward,hasMobility=HasMobility,hasShield=HasShield};
+    p.deployment=new TacticalDeployment{rulesVersion=TacticalPrototypeRules.Version,runId=p.activeRun,level=level,classId=p.activeClass,primary=l.primary,secondary=l.secondary,attachments=(int[])l.attachments.Clone(),classSkillId=l.classSkillId,tacticalSkillId=l.tacticalSkillId,classSkillLevel=EquippedClassSkillLevel,generalSkillLevel=EquippedGeneralSkillLevel,itemTypes=(int[])l.itemTypes.Clone(),itemCounts=(int[])l.itemCounts.Clone(),inventoryConsumables=(int[])p.consumables.Clone(),carriedConsumables=carried,medkits=carried[0],ammoPacks=carried[1],armorPacks=carried[2],inventoryMedkits=p.consumables[0],attempts=1,deaths=0,baseReward=TacticalPrototypeRules.BaseReward(level),firstReward=p.cleared[level]?0:TacticalPrototypeRules.FirstClearExtra(level),bonusReward=TacticalPrototypeRules.OptionalReward,hasMobility=HasMobility,hasShield=HasShield};
    }
    Commit(p);return p.activeRun;
   }
@@ -381,7 +395,7 @@ namespace SwapHunter
    var receipt=new ExpeditionReceipt{runId=run,level=level,success=success,first=first,bonus=success&&bonus,seconds=seconds};
    if(IsTactical)
    {
-    var d=p.deployment;int[] used={medkitsUsed,ammoUsed,armorUsed};if(d==null)throw new InvalidOperationException("缺少出发快照");
+    var d=p.deployment;receipt.rulesVersion=d==null?0:d.rulesVersion;int[] used={medkitsUsed,ammoUsed,armorUsed};if(d==null)throw new InvalidOperationException("缺少出发快照");
     for(int i=0;i<3;i++){if(used[i]<0||used[i]>d.carriedConsumables[i])throw new InvalidOperationException("实际道具消耗与出发快照不符");p.consumables[i]=d.inventoryConsumables[i]-(success?used[i]:0);}
     receipt.baseReward=success?d.baseReward:0;receipt.firstReward=first?d.firstReward:0;receipt.bonusReward=success&&bonus?d.bonusReward:0;
     receipt.reward=checked(receipt.baseReward+receipt.firstReward+receipt.bonusReward);receipt.medkitsUsed=success?medkitsUsed:0;receipt.ammoUsed=success?ammoUsed:0;receipt.armorUsed=success?armorUsed:0;receipt.attempts=d.attempts;receipt.deaths=d.deaths;p.deployment=null;
