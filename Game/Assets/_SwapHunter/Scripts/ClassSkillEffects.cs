@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace SwapHunter
 {
@@ -14,18 +15,26 @@ namespace SwapHunter
         public static void Blast(PlayerMotor owner, Vector3 center, float power)
         {
             var game = DemoGame.I; if (!game || !game.IsPlaying) return;
+            var batch=new DamageBatch(DamageSource.RemoteCharge,owner?owner.transform:null,center);long damageEvent=batch.NewEvent();
             foreach (var enemy in game.enemies.ToArray())
             {
-                if (!enemy || !enemy.Alive) continue;
-                float factor = BlastFactor(center, enemy.AimPoint);
-                if (factor > 0) enemy.Damage(power * factor);
+                if(!enemy||!enemy.Alive)continue;
+                float factor=BlastFactor(center,enemy.AimPoint);
+                if(factor>0)batch.Enemy(enemy,power*factor,damageEvent);
             }
             foreach (var objective in DamageableObjective.ActiveSnapshot())
             {
-                if (!objective || !objective.Alive) continue;
-                float factor = BlastFactor(center, objective.AimPoint);
-                if (factor > 0) objective.ApplyDamage(power * factor, center);
+                if(!objective||!objective.Alive)continue;
+                float factor=BlastFactor(center,objective.AimPoint);
+                if(factor>0)batch.Objective(objective,power*factor,damageEvent);
             }
+            foreach(var device in RelayDevice.ActiveSnapshot())
+            {
+                if(!device||!device.Alive)continue;
+                float factor=BlastFactor(center,device.AimPoint);
+                if(factor>0)batch.Device(device,power*factor,damageEvent);
+            }
+            batch.Apply();
             if (owner && owner.health > 0)
             {
                 float factor = BlastFactor(center, owner.transform.position + Vector3.up * .9f);
@@ -51,6 +60,7 @@ namespace SwapHunter
         public float LifetimeLeft => Mathf.Max(0, ClassSkillTuning.RemoteLifetime - age);
         public static RemoteClassCharge Create(PlayerClassSkill skill, PlayerMotor owner, float power)
         {
+            D2HoldInteraction.CancelForAction();
             var game = DemoGame.I;
             var go = Shapes.Make("Remote class charge", PrimitiveType.Sphere, game.effects, owner.Eye.position, Vector3.one * .18f, 6, false, Layers.Effects);
             var charge = go.AddComponent<RemoteClassCharge>(); charge.skill = skill; charge.owner = owner; charge.power = power;
@@ -84,7 +94,7 @@ namespace SwapHunter
             var game = DemoGame.I;
             if (!Armed || !game || !game.IsPlaying) return false;
             // Consume first: self damage may end the run and clear this same device.
-            ended = true; Vector3 center = transform.position;
+            ended = true; D2HoldInteraction.CancelForAction(); Vector3 center = transform.position;
             if (owner && owner.classSkill) owner.classSkill.EndForAttack("detonate");
             if (skill) skill.RemoteEnded(this, true);
             Shapes.Burst(center, new Color(1,.45f,.15f), ClassSkillTuning.AreaRadius);
@@ -105,11 +115,18 @@ namespace SwapHunter
     public sealed class ClassDenialField : MonoBehaviour
     {
         PlayerMotor owner; float power, age, untilTick; bool ended;
+        static readonly List<ClassDenialField> active=new List<ClassDenialField>();
+        public static IReadOnlyList<ClassDenialField> Active=>active;
+        public float DamagePerSecond=>power;
+        void OnEnable(){if(!active.Contains(this))active.Add(this);}
+        void OnDisable(){active.Remove(this);}
+
         public float SecondsLeft => Mathf.Max(0, ClassSkillTuning.DenialDuration - age);
         public bool Live => !ended && isActiveAndEnabled;
         public int TicksApplied { get; private set; }
         public static ClassDenialField Create(PlayerMotor owner, Vector3 ground, float dps)
         {
+            D2HoldInteraction.CancelForAction();
             var go = new GameObject("Class area denial"); go.transform.SetParent(DemoGame.I.effects, false); go.transform.position = ground;
             var field = go.AddComponent<ClassDenialField>(); field.owner = owner; field.power = dps; field.untilTick = ClassSkillTuning.DenialTick;
             Shapes.Ring(go.transform, ground + Vector3.up * .045f, ClassSkillTuning.AreaRadius, new Color(1,.32f,.12f), .08f);
@@ -130,10 +147,18 @@ namespace SwapHunter
         void ApplyTick()
         {
             var game = DemoGame.I; Vector3 center = transform.position; float damage = power * ClassSkillTuning.DenialTick; TicksApplied++;
-            foreach (var enemy in game.enemies.ToArray())
-                if (enemy && enemy.Alive && ClassSkillArea.Contains(center, enemy.transform.position, enemy.AimPoint)) enemy.Damage(damage);
-            foreach (var objective in DamageableObjective.ActiveSnapshot())
-                if (objective && objective.Alive && ClassSkillArea.Contains(center, objective.transform.position, objective.AimPoint)) objective.ApplyDamage(damage, center);
+            var batch=new DamageBatch(DamageSource.Denial,owner?owner.transform:null,center);long damageEvent=batch.NewEvent();
+            foreach(var enemy in game.enemies.ToArray())
+            {
+                if(!enemy||!enemy.Alive||!ClassSkillArea.Contains(center,enemy.transform.position,enemy.AimPoint))continue;
+                var target=enemy;var sample=batch.Enemy(target,damage,damageEvent);
+                if(sample!=null)sample.after=result=>{if(result.healthLoss+result.energyLoss>0&&target)target.GetComponent<EnemyHazardAwareness>()?.NotifyHurt(this);};
+            }
+            foreach(var objective in DamageableObjective.ActiveSnapshot())
+                if(objective&&objective.Alive&&ClassSkillArea.Contains(center,objective.transform.position,objective.AimPoint))batch.Objective(objective,damage,damageEvent);
+            foreach(var device in RelayDevice.ActiveSnapshot())
+                if(device&&device.Alive&&ClassSkillArea.Contains(center,device.Carrier?device.Carrier.transform.position:device.transform.position,device.AimPoint))batch.Device(device,damage,damageEvent);
+            batch.Apply();
             // The same occupancy/LOS rule applies to the caster. It is an ordinary self-damage source.
             if (owner && owner.health > 0 && ClassSkillArea.Contains(center, owner.transform.position, owner.transform.position + Vector3.up * .9f)) owner.Hurt(damage, center + Vector3.up * .2f);
         }

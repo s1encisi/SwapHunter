@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -29,6 +29,7 @@ namespace SwapHunter
    new ExpeditionLevel(10,"反相设施","局部干扰 · 外环取核","取核心权限后沿外环撤离。两个干扰区独立可关；仅Q两端入场受限，无需关闭全部场区。","核心权限取得，封锁指挥官就在前方。",-1,0),
    new ExpeditionLevel(11,"核心突破","双高台授权 · Boss争位","取得双高台授权和地面核心，击败指挥官，从对侧撤离。随从同时至多两名，Boss死后撤销未部署随从。","核心回收成功，十二段空间行动完成。",-1,0)
   };
+  static ExpeditionCatalog(){for(int i=0;i<Levels.Length;i++){Levels[i].brief=StoryContent.Chapters[i].brief;Levels[i].ending=StoryContent.Chapters[i].ending;}}
   public static readonly string[] Specializations={"突入","生存","机动"};
   public static readonly string[] Attachments={"标准组件","补偿器","扩容备弹","轻量握把"};
   public static readonly string[] AttachmentRules={"无额外收益或代价","散布 −15%，装填 +8%","备用弹药 +25%，移动 −4%","移动 +5%，散布 +12%"};

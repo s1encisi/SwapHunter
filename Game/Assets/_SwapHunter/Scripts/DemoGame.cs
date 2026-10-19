@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -94,7 +94,12 @@ namespace SwapHunter
             ApplySettings(!qaMode); SetState(RunState.Menu);
             if (!string.IsNullOrEmpty(SettingsStore.LastWarning)) Toast(SettingsStore.LastWarning, 8);
             Record("boot", "SwapHunter "+Application.version+" / " + Application.unityVersion);
+            var d2Args=Environment.GetCommandLineArgs();
+            DamageResolution.ExtendedPlayerMarking=Array.IndexOf(d2Args,"-d2LegacyMark")<0;
+            FireControlRelay.FeatureEnabled=Array.IndexOf(d2Args,"-d2NoRelay")<0;
+            EnemyHazardAwareness.DecisionsEnabled=Array.IndexOf(d2Args,"-d2NoHazardAI")<0;
             if (RunStorage.IsDemonstration) { BeginDemonstration(); yield break; }
+            if(RunStorage.IsStoryD2Validation){gameObject.AddComponent<StoryD2QA>();yield break;}
             if (RunStorage.IsSynergyValidation) gameObject.AddComponent<SynergyQA>();
             else if (RunStorage.IsModelsValidation) gameObject.AddComponent<ModelsFinalQA>();
             else if (RunStorage.IsUiValidation) gameObject.AddComponent<TacticalUIQA>();
@@ -147,6 +152,7 @@ namespace SwapHunter
             if (state == RunState.Loading) return;
             TickAttemptMetrics();
             TickTrialSession();
+            bool storyWasModal=StoryModal;TickStory(); if(storyWasModal||StoryModal)return;
             if (TrialSessionActive || RunStorage.IsDirectedTrial && trialChildClosed) return;
             if (trialDialog || trialResultVisible)
             {
@@ -284,6 +290,7 @@ namespace SwapHunter
         public bool Interact()
         {
             if (player && player.SwapActionsLocked) return false;
+            if(D2HoldInteraction.HasCandidate)return false;
             if(tutorialCourse&&tutorialCourse.Active)return tutorialCourse.Interact();
             if (expeditionActive) return UseExpeditionNode(FindExpeditionNode());
             if (campaignActive) { var station = FindCampaignStation(); if (station) return UseCampaignStation(station); }
@@ -321,7 +328,7 @@ namespace SwapHunter
         void OnApplicationFocus(bool focus) { if (!qaMode && !Application.isBatchMode) { AudioListener.pause = !focus && options.muteWhenUnfocused; if (!focus) HandleFocusLoss(); } }
         public void Toast(string message, float duration = 2) { toast = message; toastUntil = Time.unscaledTime + duration; }
         public bool ToastVisible => Time.unscaledTime < toastUntil;
-        public string Objective => tutorialCourse&&tutorialCourse.Active?tutorialCourse.Instruction:expeditionActive ? ExpeditionObjective : campaignActive ? CampaignObjective : ObjectiveClassic;
+        public string Objective => D2TrialScenarioActive?D2TrialObjective:tutorialCourse&&tutorialCourse.Active?tutorialCourse.Instruction:expeditionActive ? ExpeditionObjective : campaignActive ? CampaignObjective : ObjectiveClassic;
         public string ObjectiveClassic
         {
             get

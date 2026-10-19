@@ -2,7 +2,7 @@
 .SYNOPSIS
 生成D1.1本地Windows试玩包和可公开源码包，不启动Unity/游戏、不上传。
 .DESCRIPTION
-默认同构建Tactical专项及真实5/7/12路线是门禁；-Profile models改为同构建Models专项+5/7/12路线，不宣称重跑经济。UI、性能、干净重建单独报告。
+默认同构建Tactical专项及真实5/7/12路线是门禁；-Profile models改为同构建Models专项+5/7/12路线，不宣称重跑经济。-Profile storyd2要求同构建StoryD2专项及新UI证据，不重跑旧套件。UI、性能、干净重建单独报告。
 所选验证根包含build-identity、assembly-sha256、run-config和summary。
 CC0与依赖许可按THIRD_PARTY_ASSETS.json逐项检查；旧打包器/旧包保留。
 输出必须位于工程与原玩家目录之外的新目录，建议当前Codex工作区outputs下新建名称。
@@ -14,7 +14,7 @@ param(
     [Parameter(Mandatory=$true)][string]$ExecutablePath,
     [Parameter(Mandatory=$true)][string[]]$ValidationDirectory,
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
-    [ValidateSet('tactical','models','synergy')][string]$Profile='tactical',
+    [ValidateSet('tactical','models','synergy','storyd2')][string]$Profile='tactical',
     [string]$UIReview,
     [string]$SourceExecutablePath,
     [string]$VerificationRoot,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -435,39 +435,46 @@ namespace SwapHunter
             string region="";
             if(def.mechanism==FireMechanism.Grenade)
                 PlayerOrdnance.Launch(this,Eye.position,Eye.forward,EffectiveWeaponStats.Read(weapon,G.config).Damage*G.ExpeditionDamageMultiplier*G.ModuleShotDamage(0)*abilityMultiplier);
-            else for(int i=0;i<count;i++)
+            else
             {
-                Vector2 spread=UnityEngine.Random.insideUnitCircle*Mathf.Tan(spreadAngle*Mathf.Deg2Rad);
-                Vector3 direction=(Eye.forward+Eye.right*spread.x+Eye.up*spread.y).normalized;
-                Vector3 endpoint=Eye.position+direction*90;
-                if(EnemyActor.CastWeaponRay(Eye.position,direction,90,transform,out var hit))
+                var batch=new DamageBatch(DamageSource.PlayerBullet,transform,Eye.position);
+                for(int i=0;i<count;i++)
                 {
-                    endpoint=hit.point;var enemy=hit.collider.GetComponentInParent<EnemyActor>();Collider collider=hit.collider;
-                    if(enemy)
+                    Vector2 spread=UnityEngine.Random.insideUnitCircle*Mathf.Tan(spreadAngle*Mathf.Deg2Rad);
+                    Vector3 direction=(Eye.forward+Eye.right*spread.x+Eye.up*spread.y).normalized;
+                    Vector3 endpoint=Eye.position+direction*90;
+                    if(EnemyActor.CastWeaponRay(Eye.position,direction,90,transform,out var hit))
                     {
-                        Vector3 actualPoint=hit.point;
-                        collider=enemy.ResolveHitCollider(new Ray(Eye.position,direction),collider,ref actualPoint);
-                        endpoint=actualPoint;
-                        float damage=ShotDamage(def,hit.distance,abilityMultiplier);
-                        bool alive=enemy.Alive,damaged=enemy.Hit(damage,actualPoint,collider,Eye.position);
-                        anyDamage|=damaged;anyKill|=alive&&!enemy.Alive;anyShield|=!damaged&&alive;
-                        if(damaged)
+                        endpoint=hit.point;Collider collider=hit.collider;
+                        var device=collider.GetComponentInParent<RelayDevice>();
+                        var enemy=device?null:collider.GetComponentInParent<EnemyActor>();
+                        if(enemy)collider=enemy.ResolveHitCollider(new Ray(Eye.position,direction),collider,ref endpoint);
+                        var sample=batch.Direct(collider,ShotDamage(def,hit.distance,abilityMultiplier),endpoint,batch.NewEvent());
+                        if(sample!=null)
                         {
-                            G.totalHits++;if(region!="头部")region=enemy.LastHitRegionLabel;
-                            if(def.mechanism==FireMechanism.PhaseMark&&enemy.Alive){enemy.MarkPhase(5);region="相位标记";}
+                            var hitEnemy=enemy;
+                            sample.after=result=>{
+                                anyDamage|=result.applied;anyKill|=result.killed;anyShield|=result.blocked;
+                                if(result.applied)
+                                {
+                                    G.totalHits++;
+                                    if(hitEnemy)
+                                    {
+                                        if(region!="头部")region=hitEnemy.LastHitRegionLabel;
+                                        if(def.mechanism==FireMechanism.PhaseMark&&hitEnemy.Alive){hitEnemy.MarkPhase(5);region="相位标记";}
+                                    }
+                                    else region=result.receiverKind=="device"?"中继设备":"任务装置";
+                                }
+                            };
+                            if(enemy)G.tutorialShot=true;
                         }
-                        G.tutorialShot=true;
-                    }
-                    else
-                    {
-                        var objective=hit.collider.GetComponentInParent<DamageableObjective>();
-                        if(objective&&objective.ApplyDamage(ShotDamage(def,hit.distance,abilityMultiplier),Eye.position))
-                        {anyDamage=true;G.totalHits++;region="任务装置";}
                         else {anySurface=true;surfacePoint=hit.point;}
+                        if(impactCount++<3)Shapes.Impact(endpoint,hit.normal,enemy&&enemy.IsShieldCollider(collider));
                     }
-                    if(impactCount++<3)Shapes.Impact(endpoint,hit.normal,enemy&&enemy.IsShieldCollider(collider));
+                    if(def.Shotgun||weapon>=6||shots%2==1)Shapes.Trace(TracerOrigin(),endpoint,def.tracer,weapon==10?.07f:.023f,weapon==10?.012f:.0035f);
                 }
-                if(def.Shotgun||weapon>=6||shots%2==1)Shapes.Trace(TracerOrigin(),endpoint,def.tracer,weapon==10?.07f:.023f,weapon==10?.012f:.0035f);
+                // All pellet rays have captured their original receivers before a carrier can die.
+                batch.Apply();
             }
             if(anyDamage)ReportWeaponHit(anyKill,region);
             else if(anyShield){HitRegionLabel="盾牌";hitFlash=killFlash=0;blockFlash=.6f;G.sound.Play("shield");G.Record("shot_blocked","shield");}
@@ -589,7 +596,7 @@ namespace SwapHunter
         public SwapTarget FindTarget()
         {
             AimingAtShield = false;
-            if (!CombatRay.Cast(Eye.position, Eye.forward, 70, transform, out var hit)) return null;
+            if (!EnemyActor.CastWeaponRay(Eye.position, Eye.forward, 70, transform, out var hit)) return null;
             var candidate = hit.collider.GetComponentInParent<SwapTarget>();
             AimingAtShield = candidate is EnemyActor enemy && enemy.Alive && enemy.IsShieldCollider(hit.collider);
             return candidate;
@@ -724,7 +731,7 @@ namespace SwapHunter
             G.Record("swap_endpoints","beforePlayer="+oldPlayer.ToString("F3")+"; beforeTarget="+oldTarget.ToString("F3")+"; actualPlayer="+transform.position.ToString("F3")+"; actualTarget="+candidate.transform.position.ToString("F3"));
             if(swapHeldReload){reloadLeft=0;ResetReloadPresentation();G.Toast("换位成功 · 装填中断",1.3f);}swapHeldReload=false;
             verticalSpeed = 0; blockFlash = 0; candidate.AfterSwap(); cooldown = G.CampaignCooldown * G.ExpeditionCooldownMultiplier; G.OnCampaignSwap(candidate);
-            swapCount++; G.totalSwaps++;if(G.tutorialCourse)G.tutorialCourse.NotifySwap(wasAirborne); G.tutorialSwapped = true; phaseFlash = .18f; lastSwapTarget = oldPlayer; targetArrowTime = 2;
+            swapCount++; G.totalSwaps++;EnemyTacticalAI.NotifySwap(oldPlayer,transform.position,candidate as EnemyActor);if(G.tutorialCourse)G.tutorialCourse.NotifySwap(wasAirborne); G.tutorialSwapped = true; phaseFlash = .18f; lastSwapTarget = oldPlayer; targetArrowTime = 2;
             Shapes.Echo(oldPlayer); Shapes.Echo(oldTarget); Shapes.Trace(oldPlayer + Vector3.up, oldTarget + Vector3.up, new Color(.2f, 1, .9f), .13f, .09f);
             G.sound.Play("phase"); RecordSwap("swap_success", candidate, new SwapValidationResult(SwapFailureReason.None), legacyDetail: oldPlayer + " -> " + oldTarget); swapRoutine = null; pendingSwapTarget = null; pendingSwapTelemetry = null;
         }

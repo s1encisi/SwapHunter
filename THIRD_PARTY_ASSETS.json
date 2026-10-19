@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedUtc": "2026-10-10T03:54:04.991587+00:00",
+  "updatedUtc": "2026-10-19T03:15:07.633965+00:00",
   "entries": [
     {
       "name": "Quaternius — Ultimate Modular Sci-Fi Pack (selected files)",
@@ -4770,6 +4770,294 @@
           "path": "Tools/VisualAuthoring/Sources/KenneyBlasterKit/License.txt",
           "sha256": "bece5f4d99cca9dcf86931221a69909862ff6cc95e1735462ee678516a1063e2",
           "bytes": 700
+        }
+      ]
+    },
+    {
+      "name": "N1 audio — vitalezzz — Singularity calm/action",
+      "author": "vitalezzz",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/singularity-0",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/music_explore.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/music_combat.ogg"
+      ],
+      "licenseFiles": [
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/CC0-1.0-legalcode.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/音频素材来源与使用说明.md",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/audio-manifest.json",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Singularity-original.html"
+      ],
+      "allowSource": true,
+      "allowPlayer": true,
+      "version": "Publisher originals checked 2026-10-19; selected OGG conversions",
+      "obtainedUtc": "2026-10-19T03:15:07.633965+00:00",
+      "usedFor": "N1/D2 state music, radio cues, combat feedback, and harbor ambience; no Chinese character voice acting",
+      "modifications": "Per-file processing, source names, channel/duration/peak and SHA-256 in AudioN1/audio-manifest.json",
+      "verification": "Original author/publisher pages and included Kenney licenses checked as CC0; decoded samples finite, encoded peaks below 1. Runtime results are recorded separately in homecoming-d2-validation.zh-CN.md.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/music_explore.ogg",
+          "sha256": "c5e2cc651aa88877f25f21dee61bce11d8406d8388f5bed690ceb70fe2cbe339",
+          "bytes": 3136429,
+          "originalFile": "singularity_calm.wav"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/music_combat.ogg",
+          "sha256": "c8552c1069abc28573dfa4715fcc1dc59021a636e96490dc02e440720c70ccc1",
+          "bytes": 3179358,
+          "originalFile": "singularity_action.wav"
+        }
+      ]
+    },
+    {
+      "name": "N1 audio — The Cynic Project / cynicmusic.com / pixelsphere.org — Vaporware",
+      "author": "The Cynic Project / cynicmusic.com / pixelsphere.org",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/calm-piano-1-vaporware",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/music_ending.ogg"
+      ],
+      "licenseFiles": [
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/CC0-1.0-legalcode.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/音频素材来源与使用说明.md",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/audio-manifest.json",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Vaporware-original.html"
+      ],
+      "allowSource": true,
+      "allowPlayer": true,
+      "version": "Publisher originals checked 2026-10-19; selected OGG conversions",
+      "obtainedUtc": "2026-10-19T03:15:07.633965+00:00",
+      "usedFor": "N1/D2 state music, radio cues, combat feedback, and harbor ambience; no Chinese character voice acting",
+      "modifications": "Per-file processing, source names, channel/duration/peak and SHA-256 in AudioN1/audio-manifest.json",
+      "verification": "Original author/publisher pages and included Kenney licenses checked as CC0; decoded samples finite, encoded peaks below 1. Runtime results are recorded separately in homecoming-d2-validation.zh-CN.md.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/music_ending.ogg",
+          "sha256": "7f792fd58ef4c6efe9654885e3075046454059a319cb96db415f5438ff6cc857",
+          "bytes": 2092334,
+          "originalFile": "003_Vaporware_2.mp3"
+        }
+      ]
+    },
+    {
+      "name": "N1 audio — RandomMind — Vistula harbor ambience",
+      "author": "RandomMind",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/sea-and-river-wave-sounds",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/ambient_harbor.ogg"
+      ],
+      "licenseFiles": [
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/CC0-1.0-legalcode.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/音频素材来源与使用说明.md",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/audio-manifest.json",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Vistula-original.html"
+      ],
+      "allowSource": true,
+      "allowPlayer": true,
+      "version": "Publisher originals checked 2026-10-19; selected OGG conversions",
+      "obtainedUtc": "2026-10-19T03:15:07.633965+00:00",
+      "usedFor": "N1/D2 state music, radio cues, combat feedback, and harbor ambience; no Chinese character voice acting",
+      "modifications": "Per-file processing, source names, channel/duration/peak and SHA-256 in AudioN1/audio-manifest.json",
+      "verification": "Original author/publisher pages and included Kenney licenses checked as CC0; decoded samples finite, encoded peaks below 1. Runtime results are recorded separately in homecoming-d2-validation.zh-CN.md.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/ambient_harbor.ogg",
+          "sha256": "181a509da094ab24528efcc2bf5d027ae0098d7b691cbcc9a3cc722ee1371a15",
+          "bytes": 779053,
+          "originalFile": "VistulaShort_0.mp3"
+        }
+      ]
+    },
+    {
+      "name": "N1 audio — Kenney — sci-fi-sounds",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://kenney.nl/assets/sci-fi-sounds",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_phase.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_shield.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_radio_in.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_radio_out.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_objective.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_reload.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_gun_light.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_gun_heavy.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_explosion.ogg"
+      ],
+      "licenseFiles": [
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/CC0-1.0-legalcode.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/音频素材来源与使用说明.md",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/audio-manifest.json",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Kenney-sci-fi-original.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Kenney-scifi-License.txt"
+      ],
+      "allowSource": true,
+      "allowPlayer": true,
+      "version": "Publisher originals checked 2026-10-19; selected OGG conversions",
+      "obtainedUtc": "2026-10-19T03:15:07.633965+00:00",
+      "usedFor": "N1/D2 state music, radio cues, combat feedback, and harbor ambience; no Chinese character voice acting",
+      "modifications": "Per-file processing, source names, channel/duration/peak and SHA-256 in AudioN1/audio-manifest.json",
+      "verification": "Original author/publisher pages and included Kenney licenses checked as CC0; decoded samples finite, encoded peaks below 1. Runtime results are recorded separately in homecoming-d2-validation.zh-CN.md.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_phase.ogg",
+          "sha256": "ac7e6eda84967e1fa92ea375904e1b1e0e89c2bfcf8d315e9c4d5dbee11c6e55",
+          "bytes": 11230,
+          "originalFile": "forceField_001.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_shield.ogg",
+          "sha256": "80601385fb834fbf2ebaa3c817888d92012af561ff1b1d0489f94fa81e2540af",
+          "bytes": 11479,
+          "originalFile": "forceField_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_radio_in.ogg",
+          "sha256": "03f4ff306b5d11862229cb157cfd53decd8951af1ca5c3d32f155256c735b581",
+          "bytes": 5894,
+          "originalFile": "computerNoise_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_radio_out.ogg",
+          "sha256": "90d783fda8db96cd6acc59d22c3ea942cb8d39e4907361bf2c67063a5762df73",
+          "bytes": 5120,
+          "originalFile": "computerNoise_001.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_objective.ogg",
+          "sha256": "672e8cce0dc9b1b42f50a673dac0effd7cf666c0159f203c709018e00273ad51",
+          "bytes": 9779,
+          "originalFile": "doorOpen_001.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_reload.ogg",
+          "sha256": "68ed17f969b59dc5f8310965add465e95f7b330831395c2f2db37d78193e31e1",
+          "bytes": 9727,
+          "originalFile": "doorClose_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_gun_light.ogg",
+          "sha256": "8a387225fec7f5b68f50b98ec453c71678c8c5d7bd0e26dfb141b0d943920625",
+          "bytes": 5853,
+          "originalFile": "laserSmall_001.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_gun_heavy.ogg",
+          "sha256": "092f6c0e6683a8dd684e3f26da39a8b170a4696472e1458de69e6be317e16fa8",
+          "bytes": 10044,
+          "originalFile": "laserLarge_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_explosion.ogg",
+          "sha256": "d8fa49b9ddf10742ea8b132e43118bc4fad241d91ba6423235dcd2f58dac79ca",
+          "bytes": 13973,
+          "originalFile": "explosionCrunch_000.ogg + lowFrequency_explosion_000.ogg"
+        }
+      ]
+    },
+    {
+      "name": "N1 audio — Kenney — interface-sounds",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://kenney.nl/assets/interface-sounds",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_confirm.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_error.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_click.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_back.ogg"
+      ],
+      "licenseFiles": [
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/CC0-1.0-legalcode.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/音频素材来源与使用说明.md",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/audio-manifest.json",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Kenney-interface-original.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Kenney-interface-License.txt"
+      ],
+      "allowSource": true,
+      "allowPlayer": true,
+      "version": "Publisher originals checked 2026-10-19; selected OGG conversions",
+      "obtainedUtc": "2026-10-19T03:15:07.633965+00:00",
+      "usedFor": "N1/D2 state music, radio cues, combat feedback, and harbor ambience; no Chinese character voice acting",
+      "modifications": "Per-file processing, source names, channel/duration/peak and SHA-256 in AudioN1/audio-manifest.json",
+      "verification": "Original author/publisher pages and included Kenney licenses checked as CC0; decoded samples finite, encoded peaks below 1. Runtime results are recorded separately in homecoming-d2-validation.zh-CN.md.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_confirm.ogg",
+          "sha256": "59cb64a6673df89ee16f8132989c01be9a850d81717818142484d0a55fe56397",
+          "bytes": 6959,
+          "originalFile": "confirmation_002.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_error.ogg",
+          "sha256": "b873097dae96b820f7f1f32ff132fb183318a7944c5ab3a72d3d86153de38705",
+          "bytes": 5526,
+          "originalFile": "error_002.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_click.ogg",
+          "sha256": "5527138ceaa95ff19ddf1e361898a1b6011a82f974fd36cd3e89a6e92dd4469b",
+          "bytes": 4342,
+          "originalFile": "click_001.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_ui_back.ogg",
+          "sha256": "4ae0f9e0dbf0de8df2c29e39e6ec5f5bf8395268d41414534bc573a06ab929b8",
+          "bytes": 4668,
+          "originalFile": "back_001.ogg"
+        }
+      ]
+    },
+    {
+      "name": "N1 audio — Kenney — impact-sounds",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://kenney.nl/assets/impact-sounds",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_impact.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_kill.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_step_a.ogg",
+        "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_step_b.ogg"
+      ],
+      "licenseFiles": [
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/CC0-1.0-legalcode.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/音频素材来源与使用说明.md",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/audio-manifest.json",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Kenney-impact-original.html",
+        "Game/Assets/StreamingAssets/ThirdParty/AudioN1/Kenney-impact-License.txt"
+      ],
+      "allowSource": true,
+      "allowPlayer": true,
+      "version": "Publisher originals checked 2026-10-19; selected OGG conversions",
+      "obtainedUtc": "2026-10-19T03:15:07.633965+00:00",
+      "usedFor": "N1/D2 state music, radio cues, combat feedback, and harbor ambience; no Chinese character voice acting",
+      "modifications": "Per-file processing, source names, channel/duration/peak and SHA-256 in AudioN1/audio-manifest.json",
+      "verification": "Original author/publisher pages and included Kenney licenses checked as CC0; decoded samples finite, encoded peaks below 1. Runtime results are recorded separately in homecoming-d2-validation.zh-CN.md.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_impact.ogg",
+          "sha256": "0feb446fca8d302b19446ae4bcea8866f5a7fd622e4097c44e1fc28bc03da8e1",
+          "bytes": 5651,
+          "originalFile": "impactMetal_light_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_kill.ogg",
+          "sha256": "df01704902f4caad73335481d8c00d409443187d9d60f11a775d3de0441de59e",
+          "bytes": 4591,
+          "originalFile": "impactMetal_heavy_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_step_a.ogg",
+          "sha256": "a0917458f388c9e050bc18ba701ce331c9dedca59789b18ff32dc9b5948076b3",
+          "bytes": 4566,
+          "originalFile": "footstep_concrete_000.ogg"
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/N1/sfx_step_b.ogg",
+          "sha256": "2ccd04456dc583819e00cd9b7bbcd8824b36d432e4bc17a6f1391bde5e26394c",
+          "bytes": 4702,
+          "originalFile": "footstep_concrete_001.ogg"
         }
       ]
     }

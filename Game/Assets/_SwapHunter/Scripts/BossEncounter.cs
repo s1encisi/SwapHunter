@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 namespace SwapHunter
 {
  public enum BossPhase { EnergyMelee, Rifle, Combined, Defeated }
@@ -57,7 +57,6 @@ namespace SwapHunter
    {
     // Resource phase changes immediately. A warning/execution keeps its original cast,
     // while the next action selects from the new phase after the existing recovery.
-    skillSequence=0;openingSkillPending=true;
     if(SkillStep==BossSkillStep.Ready)nextSkillAt=Time.time+.15f;
     if(!committedMelee&&burst==0)attackAt=Time.time+.9f;
    }
@@ -67,7 +66,7 @@ namespace SwapHunter
   }
   public void Tick(float dt)
   {
-   RefreshPhase();if(Phase==BossPhase.Defeated||!Owner.Alive)return;
+   RefreshPhase();if(Phase==BossPhase.Defeated||!Owner.Alive)return;ObserveSpatialTarget(dt);
    meleeSwing=Mathf.Max(0,meleeSwing-dt);float elbowSwing=Skill==BossSkill.SwapElbow&&SkillStep==BossSkillStep.Execute&&SkillSeconds<.22f?1-SkillSeconds/.22f:0;
    Vector3 visualAim=Skill==BossSkill.Attraction&&(SkillStep==BossSkillStep.Telegraph||SkillStep==BossSkillStep.Execute)?DangerCenter+Vector3.up*1.2f:G.player.Eye.position;
    Vector3 facing=Vector3.ProjectOnPlane(visualAim-Owner.AimPoint,Vector3.up);

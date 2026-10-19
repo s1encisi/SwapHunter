@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -56,6 +56,7 @@ namespace SwapHunter
   }
   void ClearExpeditionWorld()
   {
+   ClearStoryAttempt();
    if(mission!=null){mission.Stop("world_clear");mission=null;}
    ClearDeployments();
    if(expeditionMap!=null)
@@ -98,7 +99,8 @@ namespace SwapHunter
     var layout=expeditionMap.root.GetComponent<MissionLayout>();
     if(!layout)throw new InvalidOperationException("章节未绑定 MissionLayout");
     mission=new MissionRuntime(this,layout,MissionCatalog.Get(level));
-    SetState(RunState.Playing);BeginAttemptMetrics();mission.Tick(0);
+    SetState(RunState.Playing);BeginAttemptMetrics();BeginStoryAttempt();mission.Tick(0);
+    Record("d2_configuration","rules="+TacticalPrototypeRules.Version+";extendedMark="+DamageResolution.ExtendedPlayerMarking+";relay="+FireControlRelay.FeatureEnabled+";hazardChoices="+EnemyHazardAwareness.DecisionsEnabled+";facility="+D2MaintenanceFacility.FeatureEnabled+";relayRange=13/14;connect=.8;deviceHP=48");
     Toast(mission.Definition.instruction,9);Record("expedition_start",(level+1)+":"+run);
     return true;
    }
@@ -234,7 +236,7 @@ namespace SwapHunter
     Record("expedition_settlement",JsonUtility.ToJson(expeditionReceipt));
     // mission_exit is intent; only a successfully persisted receipt reaches this snapshot.
     RecordExpeditionResources(expeditionReceipt);
-    EndAttemptMetrics(success?"success":"abandon");RecordAttemptSettlement(expeditionReceipt);return true;
+    EndAttemptMetrics(success?"success":"abandon");RecordAttemptSettlement(expeditionReceipt);StorySettlement(expeditionReceipt);return true;
    }
    catch(Exception e){expeditionNotice="结算保存失败，可重试；结果已锁定："+e.Message;SetState(RunState.Paused);return false;}
   }
@@ -244,7 +246,7 @@ namespace SwapHunter
    if(!IsPlaying&&!expeditionInventory)return false;
    float before=player.health;expeditionMedkits--;player.health=Mathf.Min(config.playerHealth,player.health+(TacticalExpedition?TacticalPrototypeRules.MedkitHeal:40));RecordAttemptConsumable(0,player.health-before);sound.Play("confirm");Record("medkit",expeditionMedkits.ToString());return true;
   }
-  int ExpeditionReserveLimit(int id) => Mathf.RoundToInt(EffectiveWeaponStats.Read(id,config).Reserve * (ActiveExpeditionAttachment(id) == 2 ? 1.25f : 1));
+  internal int ExpeditionReserveLimit(int id) => Mathf.RoundToInt(EffectiveWeaponStats.Read(id,config).Reserve * (ActiveExpeditionAttachment(id) == 2 ? 1.25f : 1));
   public bool UseExpeditionAmmo()
   {
    if(expeditionPending||!expeditionInventory||expeditionAmmoPacks<=0||expeditionReceipt!=null)return false;

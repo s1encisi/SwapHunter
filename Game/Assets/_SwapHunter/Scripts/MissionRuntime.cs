@@ -314,6 +314,12 @@ namespace SwapHunter
         {
             if (member.state != EncounterBudgetState.Warning || stopped) throw new InvalidOperationException("Deployment no longer belongs to this mission.");
             member.actor = actor; member.state = EncounterBudgetState.Deployed;
+            if(Definition.level==4 && member.group.id=="left")
+            {
+                var relay=layout.GetComponent<FireControlRelay>();
+                if(!relay)relay=layout.gameObject.AddComponent<FireControlRelay>();
+                relay.Bind(member.Key,actor);
+            }
             var binding = layout.Spawn(member.group.id, member.index);
             actor.gameObject.AddComponent<MissionEncounterAgent>().Configure(layout, member.group.id, member.role.fixedPost || binding.fixedPost);
             if (member.role.firstGrenade) actor.gameObject.AddComponent<EncounterGrenadeCue>();

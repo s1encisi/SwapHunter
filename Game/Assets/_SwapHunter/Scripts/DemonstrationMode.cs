@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections;
 using System.Text;
@@ -54,7 +54,7 @@ namespace SwapHunter
                 throw new InvalidOperationException("演示档案自检仅接受 -batchmode，不打开交互窗口。");
             if (!TryParseLevel(Environment.GetCommandLineArgs(), out int level, out string error))
                 throw new ArgumentException(error);
-            Level = RunStorage.IsDirectedTrial ? (DirectedTrialBootstrap.Request.scenario==0?0:4) : level;
+            Level = RunStorage.IsDirectedTrial ? D2TrialCatalog.LevelFor(DirectedTrialBootstrap.Request.scenario) : level;
             bool tactical=RunStorage.IsTacticalDemo;
             string folder=Path.Combine(RunStorage.Root,tactical?"Expedition-Tactical-v6":"Expedition-v4");
             Directory.CreateDirectory(folder);
@@ -69,7 +69,7 @@ namespace SwapHunter
             }
             if(RunStorage.IsDirectedTrial)seed=DirectedTrialBootstrap.CreateProfile();
             WriteNew(Path.Combine(folder,tactical?"expedition-v6.json":"expedition-v4.json"),JsonUtility.ToJson(seed,true));
-            WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=tactical?"四职业全武器/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
+            WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=RunStorage.IsDirectedTrial?"定向商品与请求等级；其余技能1级、合法双枪、基础配件、零携带道具；情境="+DirectedTrialBootstrap.Request.scenario:tactical?"四职业全武器/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
         }
         static void WriteNew(string path, string text)
         {
@@ -100,7 +100,7 @@ namespace SwapHunter
         void BeginDemonstration()
         {
             if(!RunStorage.IsDirectedTrial&&RunStorage.IsTacticalDemo&&Array.IndexOf(Environment.GetCommandLineArgs(),"-demoMenu")>=0){OpenExpeditionBoard();expeditionTab=2;Toast(DemonstrationSession.Badge+"；所有职业、武器和技能为展示预置。",8);return;}
-            Record("demonstration_seed", (RunStorage.IsTacticalDemo?"tactical-all-skills-level3;":"legacy;")+"all-weapons;knife-rank=3;no-completion-history;temporary-profile;chapter=" + (DemonstrationSession.Level + 1));
+            Record("demonstration_seed", (RunStorage.IsDirectedTrial?"directed-trial-product-level="+DirectedTrialBootstrap.Request.level+";scenario="+DirectedTrialBootstrap.Request.scenario+";":RunStorage.IsTacticalDemo?"tactical-all-skills-level3;":"legacy;")+"all-weapons;knife-rank=3;no-completion-history;temporary-profile;chapter=" + (DemonstrationSession.Level + 1));
             if (!BeginExpedition(DemonstrationSession.Level))
             {
                 Record("demonstration_start_failed", expeditionNotice);
@@ -108,6 +108,7 @@ namespace SwapHunter
                 Application.Quit(2);
                 return;
             }
+            if(RunStorage.IsDirectedTrial)BeginD2TrialScenario();
             Toast(DemonstrationSession.Badge + (RunStorage.IsTacticalDemo?"；四职业武器、技能和道具为展示预置，正常伤害与任务规则。":"；武器/飞刀为演示预置，任务与伤害规则不变。"), 8);
             Record("demonstration_started", "chapter=" + (DemonstrationSession.Level + 1));
             if (Array.IndexOf(Environment.GetCommandLineArgs(), "-demoSmoke") >= 0)

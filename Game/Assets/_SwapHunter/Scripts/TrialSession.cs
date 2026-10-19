@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -15,7 +15,8 @@ namespace SwapHunter
     }
     [Serializable] public sealed class DirectedTrialResult
     {
-        public string sessionId,outcome,mode,endedUtc,isolatedRoot;
+        public string sessionId,outcome,mode,endedUtc,isolatedRoot,scenarioSummary;
+        public int scenarioId;
         public int rulesVersion,shots,hits,reloads,completedReloads,controls,swaps;
         public float damage,healthLost,activeSeconds;
         public bool complete;
@@ -41,15 +42,17 @@ namespace SwapHunter
         }
         public static void Validate(DirectedTrialRequest r)
         {
-            if(r==null||!Guid.TryParseExact(r.sessionId,"N",out _)||r.rulesVersion!=TacticalPrototypeRules.Version||!TacticalPrototypeRules.ValidClass(r.classId)||r.level<1||r.level>3||r.scenario<0||r.scenario>1)throw new ArgumentException("试用请求或规则版本不匹配");
+            if(r==null||!Guid.TryParseExact(r.sessionId,"N",out _)||r.rulesVersion!=TacticalPrototypeRules.Version||!TacticalPrototypeRules.ValidClass(r.classId)||r.level<1||r.level>3||!D2TrialCatalog.Valid(r.scenario))throw new ArgumentException("试用请求或规则版本不匹配");
             if(r.kind=="weapon"){if(!TacticalPrototypeRules.ClassCanUseWeapon(r.classId,r.productId))throw new ArgumentException("试用武器与职业不匹配");}
             else if(r.kind=="class"){if(!TacticalPrototypeRules.ClassCanUseSkill(r.classId,r.productId))throw new ArgumentException("试用技能与职业不匹配");}
             else if(r.kind=="general"){if(!TacticalPrototypeRules.ValidSkill(r.productId,true))throw new ArgumentException("通用技能不存在");}
             else throw new ArgumentException("试用商品类型不存在");
+            if(!D2TrialCatalog.Compatible(r.kind,r.productId,r.classId,r.scenario,out string reason))throw new ArgumentException(reason);
         }
-        public static ExpeditionProfile CreateProfile()
+        public static ExpeditionProfile CreateProfile() => CreateProfile(Request);
+        public static ExpeditionProfile CreateProfile(DirectedTrialRequest r)
         {
-            var r=Request;var p=TacticalDemoProfile.Create(r.classId);
+            Validate(r);var p=TacticalDemoProfile.Create(r.classId);
             for(int i=0;i<p.classSkillLevels.Length;i++)p.classSkillLevels[i]=1;
             p.generalLevels[0]=p.generalLevels[1]=1;
             var l=p.classLoadouts[r.classId];l.primary=0;l.secondary=TacticalPrototypeRules.StarterWeapon(r.classId);
@@ -57,6 +60,11 @@ namespace SwapHunter
             if(r.kind=="weapon"){l.primary=r.productId;l.secondary=r.productId==0?TacticalPrototypeRules.StarterWeapon(r.classId):0;}
             else if(r.kind=="class"){l.classSkillId=TacticalPrototypeRules.SkillIds[r.productId];p.classSkillLevels[r.productId]=r.level;}
             else{l.tacticalSkillId=TacticalPrototypeRules.GeneralSkillIds[r.productId];p.generalLevels[r.productId]=r.level;}
+            if(r.scenario==D2TrialCatalog.MarkComparison)
+            {
+                // A legal remote-class pair includes the actual marker, retaining the requested product and skill.
+                l.primary=r.kind=="weapon"?r.productId:11;l.secondary=l.primary==11?9:11;
+            }
             // Fixed comparison conditions: base attachments and no carried consumables.
             l.attachments=new int[WeaponCatalog.Count];l.itemTypes=new[]{-1,-1};l.itemCounts=new int[2];l.medkitCarry=0;
             p.primary=l.primary;p.secondary=l.secondary;p.mobilityLevel=p.classSkillLevels[1];p.shieldLevel=p.generalLevels[0];
@@ -68,6 +76,14 @@ namespace SwapHunter
         Process trialProcess;DirectedTrialRequest trialRequest;DirectedTrialResult childTrialResult;
         bool trialDialog,trialChildClosed,trialResultVisible;float trialChildStarted=-1;
         int trialScenario;bool trialEqualTier;
+        D2TrialScenario d2TrialScenario;
+        public bool D2TrialScenarioActive=>d2TrialScenario;
+        public string D2TrialObjective=>d2TrialScenario?d2TrialScenario.Objective:"";
+        void BeginD2TrialScenario()
+        {
+            var request=DirectedTrialBootstrap.Request;
+            if(request!=null&&request.scenario>=2)d2TrialScenario=D2TrialScenario.Create(this,request);
+        }
         public bool TrialSessionActive=>trialProcess!=null;
         public bool TrialDialogOpen=>trialDialog;
         public bool TrialAccountReadBlocked {get;private set;}
@@ -158,11 +174,12 @@ namespace SwapHunter
         void EnsureChildTrialResult()
         {
             if(childTrialResult!=null)return;var r=DirectedTrialBootstrap.Request;trialChildStarted=Time.realtimeSinceStartup;
-            childTrialResult=new DirectedTrialResult{isolatedRoot=RunStorage.Root,sessionId=r.sessionId,rulesVersion=r.rulesVersion,mode=string.IsNullOrEmpty(r.smokeOutcome)?"Trial":"QA"};
+            childTrialResult=new DirectedTrialResult{isolatedRoot=RunStorage.Root,sessionId=r.sessionId,rulesVersion=r.rulesVersion,mode=string.IsNullOrEmpty(r.smokeOutcome)?"Trial":"QA",scenarioId=r.scenario};
         }
         public void ObserveTrialEvent(string evt,string detail)
         {
             if(!RunStorage.IsDirectedTrial||!demonstrationPrepared)return;EnsureChildTrialResult();
+            if(d2TrialScenario)d2TrialScenario.Observe(evt,detail);
             if(evt=="enemy_effective_damage"&&float.TryParse(detail,NumberStyles.Float,CultureInfo.InvariantCulture,out float damage))childTrialResult.damage+=damage;
             if(evt=="enemy_silenced"||evt=="enemy_staggered"||evt=="boss_basic_burst_interrupted")childTrialResult.controls++;
             if(evt=="weapon_reload_begin")childTrialResult.reloads++;
@@ -173,6 +190,7 @@ namespace SwapHunter
         {
             if(!RunStorage.IsDirectedTrial||trialChildClosed)return;EnsureChildTrialResult();trialChildClosed=true;
             childTrialResult.outcome=outcome;childTrialResult.endedUtc=DateTime.UtcNow.ToString("o");childTrialResult.shots=totalShots;childTrialResult.hits=totalHits;childTrialResult.swaps=totalSwaps;childTrialResult.complete=true;
+            if(d2TrialScenario)childTrialResult.scenarioSummary=d2TrialScenario.Summary;
             try{File.WriteAllText(Path.Combine(DirectedTrialBootstrap.Folder,"result.json"),JsonUtility.ToJson(childTrialResult,true));}
             catch(Exception e)when(e is IOException||e is UnauthorizedAccessException){Debug.LogWarning("试用摘要未保存："+e.Message);}
             Application.Quit(0);
@@ -192,7 +210,13 @@ namespace SwapHunter
                 var r=DirectedTrialBootstrap.Request;
                 Fill(new Rect(18,14,Mathf.Min(viewWidth-36,1020),108),new Color(.015f,.035f,.065f,.94f));
                 Text("定向试用 / "+TrialProductName(r)+" / "+TacticalPrototypeRules.ClassNames[r.classId]+(r.kind=="weapon"?" / 基础参数":" / "+r.level+"级"),new Rect(34,24,770,31),23,Paper);
-                Text(r.kind=="weapon"?"武器基础参数；固定其它配置、基础配件与零道具，正常伤害和AI。":(r.equalTier?"同阶比较":"采购结果预览")+"；正式拥有 "+r.formalLevel+"级，采购结果 "+r.purchaseLevel+"级。固定其它配置，正常伤害与AI。",new Rect(34,63,780,48),17,Muted);
+                Text(r.kind=="weapon"?"武器基础参数；固定其它配置、基础配件与零道具；情境条件见下方。":(r.equalTier?"同阶比较":"采购结果预览")+"；正式拥有 "+r.formalLevel+"级，采购结果 "+r.purchaseLevel+"级。固定其它配置；情境条件见下方。",new Rect(34,63,780,48),17,Muted);
+                if(d2TrialScenario)
+                {
+                    Fill(new Rect(18,128,Mathf.Min(viewWidth-36,1020),172),new Color(.015f,.035f,.065f,.92f));
+                    Text(D2TrialCatalog.Name(r.scenario)+" · "+D2TrialCatalog.Purpose(r.scenario),new Rect(34,140,Mathf.Min(viewWidth-68,988),67),17,Paper);
+                    Text(d2TrialScenario.Summary,new Rect(34,211,Mathf.Min(viewWidth-68,988),78),16,new Color(.4f,1,.9f));
+                }
                 if(Button("结束试用",new Rect(viewWidth-198,25,175,44)))FinishDirectedTrial("returned");return;
             }
             if(TrialSessionActive)
@@ -209,24 +233,37 @@ namespace SwapHunter
                 Text(TrialReturnNotice,new Rect(x+24,190,w-48,82),25,Paper);
                 var a=LastTrialResult;if(a!=null)Text("有效用时 "+a.activeSeconds.ToString("0.0")+" 秒；出弹 "+a.shots+"；有效命中 "+a.hits+"；实际伤害 "+a.damage.ToString("0.0")+
                     "\n装填开始/完成 "+a.reloads+" / "+a.completedReloads+"；记录的沉默/震荡事件 "+a.controls+"；换位 "+a.swaps+"；承受生命伤害 "+a.healthLost.ToString("0.0")+
-                    "\n各指标用途不同，不合成强度分。扫描等信息能力请结合实际选路判断。",new Rect(x+24,310,w-48,170),23,Paper);
-                Text("本次不发放正式货币、装备或通关奖励。采购使用已重新读取的当前余额和拥有状态。",new Rect(x+24,534,w-48,80),19,Muted);
+                    "\n各指标用途不同，不合成强度分。扫描等信息能力请结合实际选路判断。",new Rect(x+24,310,w-48,144),21,Paper);
+                if(a!=null&&!string.IsNullOrEmpty(a.scenarioSummary))Text(D2TrialCatalog.Name(a.scenarioId)+"："+a.scenarioSummary,new Rect(x+24,465,w-48,92),18,Paper);
+                Text("本次不发放正式货币、装备或通关奖励。采购使用已重新读取的当前余额和拥有状态。",new Rect(x+24,571,w-48,64),18,Muted);
                 if(Button(TrialAccountReadBlocked?"重新读取当前档案":"回到原商品",new Rect(x+24,651,w-48,50),true)){if(TrialAccountReadBlocked)RetryTrialAccountRead();else trialResultVisible=false;}return;
             }
             Text("定向试用 / "+TrialProductName(trialRequest),new Rect(x+24,184,w-48,45),30,Paper);
             Text("选择场景：固定其它装备和基础配件，改变本次比较的商品。",new Rect(x+24,246,w-48,40),20,Muted);
-            if(Button("近距与转场 / 第1章",new Rect(x+24,300,(w-64)/2,49),trialScenario==0))trialScenario=0;
-            if(Button("长视线与火力间歇 / 第5章",new Rect(x+40+(w-64)/2,300,(w-64)/2,49),trialScenario==1))trialScenario=1;
+            DrawTrialScenarioChoice(0,new Rect(x+24,294,(w-64)/2,44));
+            DrawTrialScenarioChoice(1,new Rect(x+40+(w-64)/2,294,(w-64)/2,44));
+            float third=(w-80)/3;
+            for(int i=2;i<=4;i++)DrawTrialScenarioChoice(i,new Rect(x+24+(third+16)*(i-2),350,third,44));
+            string disabled="";
+            foreach(int id in new[]{2,4})if(!D2TrialCatalog.Compatible(trialRequest.kind,trialRequest.productId,trialRequest.classId,id,out string reason))disabled+=(disabled.Length>0?"；":"")+reason;
+            Text(disabled.Length>0?disabled:D2TrialCatalog.Cost(trialScenario),new Rect(x+24,405,w-48,44),17,Muted);
             if(trialRequest.kind!="weapon")
             {
-                if(Button("按本次采购结果等级",new Rect(x+24,372,(w-64)/2,46),!trialEqualTier))trialEqualTier=false;
-                if(Button("明确比较3级效果",new Rect(x+40+(w-64)/2,372,(w-64)/2,46),trialEqualTier))trialEqualTier=true;
+                if(Button("按本次采购结果等级",new Rect(x+24,462,(w-64)/2,44),!trialEqualTier))trialEqualTier=false;
+                if(Button("明确比较3级效果",new Rect(x+40+(w-64)/2,462,(w-64)/2,44),trialEqualTier))trialEqualTier=true;
             }
             var preview=MakeTrialRequest(trialRequest.kind,trialRequest.productId,trialScenario,trialEqualTier);
             Text((preview.kind=="weapon"?"武器基础参数；"+(preview.formalLevel>0?"正式已拥有":"正式未拥有")+" / 采购标价 "+preview.purchasePrice+" 信用点。\n":"试用 "+preview.level+"级；正式拥有 "+preview.formalLevel+"级；本次采购结果 "+preview.purchaseLevel+"级 / 标价 "+preview.purchasePrice+" 信用点。\n")+
-                (preview.kind!="weapon"&&preview.formalLevel==0?"购买基础1级为100；从1升到3另需260。可领取的保障请先在商品页领取。":"购买与强化仍需在返回后自行点击；武器须满足上架和职业资格。"),new Rect(x+24,457,w-48,105),22,Paper);
+                (preview.kind!="weapon"&&preview.formalLevel==0?"购买基础1级为100；从1升到3另需260。可领取的保障请先在商品页领取。":"购买与强化仍需在返回后自行点击；武器须满足上架和职业资格。"),new Rect(x+24,525,w-48,104),20,Paper);
             if(Button("启动独立试用窗口",new Rect(x+24,645,(w-64)/2,52),true))StartDirectedTrial(preview);
             if(Button("取消",new Rect(x+40+(w-64)/2,645,(w-64)/2,52)))trialDialog=false;
+        }
+        void DrawTrialScenarioChoice(int scenario,Rect bounds)
+        {
+            bool compatible=D2TrialCatalog.Compatible(trialRequest.kind,trialRequest.productId,trialRequest.classId,scenario,out _);
+            bool prior=GUI.enabled;GUI.enabled=prior&&compatible;
+            if(Button(D2TrialCatalog.Name(scenario)+(compatible?"":" / 不相容"),bounds,trialScenario==scenario))trialScenario=scenario;
+            GUI.enabled=prior;
         }
     }
 }

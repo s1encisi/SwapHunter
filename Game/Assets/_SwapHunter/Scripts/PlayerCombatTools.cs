@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 namespace SwapHunter
 {
@@ -49,23 +49,39 @@ namespace SwapHunter
    meleeCooldown=.75f;pose=poseDuration=.38f;throwingPose=false;
    if(owner.classSkill)owner.classSkill.EndForAttack("melee");
    G.sound.Play("knife_swipe");
-   foreach(var e in G.enemies.ToArray())
+   D2HoldInteraction.CancelForAction();
+   var contacts=new Dictionary<int,RaycastHit>();var deviceCarriers=new HashSet<int>();
+   void Probe(Vector3 aim)
    {
-    if(!e||!e.Alive)continue;Vector3 delta=e.AimPoint-owner.Eye.position;
-    if(delta.magnitude>2.5f||Vector3.Dot(delta.normalized,owner.Eye.forward)<.65f)continue;
-    if(!CombatRay.Cast(owner.Eye.position,delta.normalized,delta.magnitude+.2f,owner.transform,out var hit)||hit.collider.GetComponentInParent<EnemyActor>()!=e)continue;
-    if(!e.Hit(24,hit.point,hit.collider,owner.Eye.position))continue;
-    MeleeHits++;if(e.Alive){e.stunLeft=Mathf.Max(e.stunLeft,.35f);e.motion.Push(Vector3.ProjectOnPlane(delta,Vector3.up).normalized*.85f);}
-    Shapes.Impact(hit.point,-delta.normalized);G.sound.Play("hit",hit.point);
+    Vector3 delta=aim-owner.Eye.position;
+    if(delta.magnitude>2.5f||Vector3.Dot(delta.normalized,owner.Eye.forward)<.65f)return;
+    if(!EnemyActor.CastWeaponRay(owner.Eye.position,delta.normalized,delta.magnitude+.2f,owner.transform,out var hit))return;
+    var device=hit.collider.GetComponentInParent<RelayDevice>();
+    var enemy=device?null:hit.collider.GetComponentInParent<EnemyActor>();
+    var objective=device||enemy?null:hit.collider.GetComponentInParent<DamageableObjective>();
+    int id=device?device.GetInstanceID():enemy?enemy.GetInstanceID():objective?objective.GetInstanceID():0;
+    if(id!=0)contacts[id]=hit;
+    if(device&&device.Carrier)deviceCarriers.Add(device.Carrier.GetInstanceID());
    }
-   foreach(var objective in DamageableObjective.ActiveSnapshot())
+   foreach(var enemy in G.enemies.ToArray())if(enemy&&enemy.Alive)Probe(enemy.AimPoint);
+   foreach(var objective in DamageableObjective.ActiveSnapshot())if(objective&&objective.Alive)Probe(objective.AimPoint);
+   foreach(var device in RelayDevice.ActiveSnapshot())if(device&&device.Alive)Probe(device.AimPoint);
+   var batch=new DamageBatch(DamageSource.PlayerMelee,owner.transform,owner.Eye.position);long damageEvent=batch.NewEvent();
+   foreach(var contact in contacts.Values)
    {
-    if(!objective||!objective.Alive)continue;Vector3 delta=objective.AimPoint-owner.Eye.position;
-    if(delta.magnitude>2.5f||Vector3.Dot(delta.normalized,owner.Eye.forward)<.65f)continue;
-    if(!CombatRay.Cast(owner.Eye.position,delta.normalized,delta.magnitude+.2f,owner.transform,out var hit)||hit.collider.GetComponentInParent<DamageableObjective>()!=objective)continue;
-    if(!objective.ApplyDamage(24,owner.Eye.position))continue;
-    MeleeHits++;Shapes.Impact(hit.point,-delta.normalized);G.sound.Play("hit",hit.point);
+    var device=contact.collider.GetComponentInParent<RelayDevice>();
+    var enemy=device?null:contact.collider.GetComponentInParent<EnemyActor>();
+    if(enemy&&deviceCarriers.Contains(enemy.GetInstanceID()))continue;
+    var sample=batch.Direct(contact.collider,24,contact.point,damageEvent,false);if(sample==null)continue;
+    Vector3 point=contact.point,delta=point-owner.Eye.position;var target=enemy;
+    sample.after=result=>{
+     if(!result.applied)return;
+     MeleeHits++;
+     if(target&&target.Alive){target.stunLeft=Mathf.Max(target.stunLeft,.35f);target.motion.Push(Vector3.ProjectOnPlane(delta,Vector3.up).normalized*.85f);}
+     Shapes.Impact(point,-delta.normalized);G.sound.Play("hit",point);
+    };
    }
+   batch.Apply();
    G.Record("player_melee","hits="+MeleeHits);return true;
   }
   public bool Throw()
@@ -102,12 +118,13 @@ namespace SwapHunter
   public bool HitSilence {get;private set;}
   public bool AreaSilence {get;private set;}
   readonly HashSet<int> hitThisLeg=new HashSet<int>();
+  long legEvent;
   public static ThrownKnife Launch(PlayerCombatTools tools,PlayerMotor p,Vector3 origin,Vector3 dir,int rank,bool tacticalRules=false)
   {
    Transform root=KnifeGeometry.Create(DemoGame.I.effects,"Silence knife / outbound");root.position=origin;root.rotation=Quaternion.LookRotation(dir);
-   var k=root.gameObject.AddComponent<ThrownKnife>();k.tools=tools;k.owner=p;k.HitSilence=rank>=(tacticalRules?2:1);k.AreaSilence=rank>=(tacticalRules?3:2);k.direction=dir.normalized;k.LaunchPoint=origin;return k;
+   var k=root.gameObject.AddComponent<ThrownKnife>();k.tools=tools;k.owner=p;k.HitSilence=rank>=(tacticalRules?2:1);k.AreaSilence=rank>=(tacticalRules?3:2);k.direction=dir.normalized;k.LaunchPoint=origin;k.legEvent=DamageResolution.NextEventId();return k;
   }
-  public void BeginReturn(){Returning=true;Flying=false;if(!returnStarted)hitThisLeg.Clear();returnStarted=true;gameObject.name="Silence knife / recall";}
+  public void BeginReturn(){Returning=true;Flying=false;if(!returnStarted){hitThisLeg.Clear();legEvent=DamageResolution.NextEventId();}returnStarted=true;gameObject.name="Silence knife / recall";}
   void Update()
   {
    if(!DemoGame.I.IsPlaying)return;
@@ -129,26 +146,40 @@ namespace SwapHunter
    float allowed=wall?Mathf.Max(0,obstacle.distance-.025f):step;
    var hits=Physics.SphereCastAll(old,.07f,direction,allowed,1<<Layers.Actor,QueryTriggerInteraction.Collide);
    System.Array.Sort(hits,(a,b)=>a.distance.CompareTo(b.distance));
+   var batch=new DamageBatch(Returning?DamageSource.KnifeReturn:DamageSource.KnifeOutbound,owner.transform,old);
    foreach(var hit in hits)
    {
+    var device=hit.collider.GetComponentInParent<RelayDevice>();
+    if(device)
+    {
+     if(device.Alive&&hitThisLeg.Add(device.GetInstanceID()))batch.Device(device,Returning?22:28,legEvent);
+     allowed=Mathf.Min(allowed,hit.distance);wall=true;break;
+    }
     var objective=hit.collider.GetComponentInParent<DamageableObjective>();
     if(objective&&objective.Alive)
     {
-     if(hitThisLeg.Add(objective.GetInstanceID()))objective.ApplyDamage(Returning?22:28,old);
+     if(hitThisLeg.Add(objective.GetInstanceID()))batch.Objective(objective,Returning?22:28,legEvent);
      allowed=Mathf.Min(allowed,hit.distance);wall=true;break;
     }
     var e=hit.collider.GetComponentInParent<EnemyActor>();if(!e||!e.Alive)continue;
-    // Physical shields stop both directions, including after this leg has hit the owner's body.
+    // Shields stop both legs even after this leg has previously touched the body.
     if(e.IsShieldCollider(hit.collider)){allowed=Mathf.Min(allowed,hit.distance);wall=true;break;}
-    if(hitThisLeg.Contains(e.GetInstanceID()))continue;
-    hitThisLeg.Add(e.GetInstanceID());e.Damage(Returning?22:28);
-    if(Returning){RecallHits++;tools.ReturnedHit();}else OutboundHits++;
-    if(HitSilence)e.ApplySilence(3.2f);
+    if(!hitThisLeg.Add(e.GetInstanceID()))continue;
+    var sample=batch.Enemy(e,Returning?22:28,legEvent);bool returning=Returning;var targetEnemy=e;Vector3 hitPoint=hit.point;
+    // Sample area-control recipients before damage can disable a carrier's colliders.
+    var silenceTargets=new List<EnemyActor>();
     if(AreaSilence)foreach(var nearby in DemoGame.I.enemies)
-     if(nearby&&nearby.Alive&&Vector3.Distance(nearby.AimPoint,hit.point)<4&&!Physics.Linecast(hit.point,nearby.AimPoint,Layers.WorldMask))nearby.ApplySilence(3.2f);
-    Shapes.Burst(hit.point,new Color(.3f,.85f,1),.3f);DemoGame.I.sound.Play("hit",hit.point);
+     if(nearby&&nearby.Alive&&Vector3.Distance(nearby.AimPoint,hitPoint)<4&&!Physics.Linecast(hitPoint,nearby.AimPoint,Layers.WorldMask))silenceTargets.Add(nearby);
+    if(sample!=null)sample.after=result=>{
+     if(!result.applied)return;
+     if(returning){RecallHits++;tools.ReturnedHit();}else OutboundHits++;
+     if(HitSilence&&targetEnemy)targetEnemy.ApplySilence(3.2f);
+     foreach(var nearby in silenceTargets)if(nearby&&nearby.Alive)nearby.ApplySilence(3.2f);
+     Shapes.Burst(hitPoint,new Color(.3f,.85f,1),.3f);DemoGame.I.sound.Play("hit",hitPoint);
+    };
     if(!Returning){allowed=Mathf.Min(allowed,hit.distance);Flying=false;break;}
    }
+   batch.Apply();
    transform.position=old+direction*allowed;transform.rotation=Quaternion.LookRotation(direction);
    Shapes.Trace(old,transform.position,Returning?new Color(.35f,1,.72f):new Color(.3f,.7f,1),.12f,.025f);
    distance+=allowed;

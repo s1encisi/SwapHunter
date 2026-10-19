@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 namespace SwapHunter
@@ -57,6 +57,10 @@ namespace SwapHunter
         public bool HasPhysicalShield => shieldCollider && shieldCollider.enabled;
         public bool IsShieldCollider(Collider candidate) => HasPhysicalShield && candidate && candidate == shieldCollider;
         float fireAt, grenadeAt, nextPath, flashLeft, age; bool dying;
+        float sniperRearmWork;
+        public float SniperRearmWork => sniperRearmWork;
+        internal void BeginSniperRearm(){sniperRearmWork=2.4f;}
+        internal void AdvanceSniperRearm(float dt){sniperRearmWork=Mathf.Max(0,sniperRearmWork-Mathf.Max(0,dt)*FireControlRelay.RearmRate(this));}
         int burstLeft;
         Vector3 shotLock, home;
         Vector3 lastKnownPlayer, gaitPrevious;
@@ -117,7 +121,7 @@ namespace SwapHunter
         {
             if (dying) { AnimateDeath(); return; }
             if (!Alive || !G.IsPlaying) return;
-            float dt = Time.deltaTime; age += dt; silenceLeft=Mathf.Max(0,silenceLeft-dt); stunLeft = Mathf.Max(0, stunLeft - dt); flashLeft = Mathf.Max(0, flashLeft - dt);
+            float dt = Time.deltaTime; if(kind==EnemyKind.Sniper)AdvanceSniperRearm(dt); age += dt; silenceLeft=Mathf.Max(0,silenceLeft-dt); stunLeft = Mathf.Max(0, stunLeft - dt); flashLeft = Mathf.Max(0, flashLeft - dt);
             if (agent.enabled && agent.isOnNavMesh) agent.isStopped = stunLeft > 0 || suppressAI || G.qaSuppressAI || kind == EnemyKind.Training || grenadeCue && grenadeCue.Preparing;
             Vector3 displacement=Vector3.ProjectOnPlane(transform.position-gaitPrevious,Vector3.up);
             gaitPrevious=transform.position;float strideDistance=displacement.magnitude;
@@ -127,17 +131,18 @@ namespace SwapHunter
             float targetGait=Mathf.Clamp01(actualSpeed/3.4f);
             gaitWeight=Mathf.MoveTowards(gaitWeight,targetGait,dt*(targetGait>gaitWeight?4:7));
             VisualRig.SetLocomotion(actualSpeed,gaitWeight,stunLeft>0);
-            VisualRig.SetAim(G.player.Eye.position);
+            if(tactical)tactical.ObservePlayer();
+            VisualRig.SetAim(tactical?tactical.ObservedPlayerAim:G.player.Eye.position);
             VisualRig.SetGrenadePreparing(grenadeCue&&grenadeCue.Preparing);
             UpdateHitVisual();
             if (suppressAI || G.qaSuppressAI || kind == EnemyKind.Training) { ClearLaser(); return; }
             // Ordinary stagger pauses basic actions; the Boss owns an independent spatial clock.
             if(boss){boss.Tick(dt);return;}
             if (stunLeft > 0) { ClearLaser(); return; }
-            Vector3 playerAim = G.player.transform.position + Vector3.up * 1.1f;
+            Vector3 playerAim = tactical?tactical.ObservedPlayerAim:G.player.transform.position + Vector3.up * 1.1f;
             Vector3 toPlayer = playerAim - AimPoint;
             Vector3 flat = Vector3.ProjectOnPlane(toPlayer, Vector3.up);
-            if (flat.sqrMagnitude > .01f) FaceSafely(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145)));
+            if ((!tactical||tactical.HasPlayerMemory)&&flat.sqrMagnitude > .01f) FaceSafely(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145)));
             if(grenadeCue && grenadeCue.Preparing) return;
             if(tactical){tactical.Tick(dt);return;}
             bool visible = !Physics.Linecast(AimPoint, playerAim, Layers.WorldMask);
@@ -179,9 +184,9 @@ namespace SwapHunter
                     if (warningLeft > .32f) shotLock = playerAim;
                     if (!laser) laser = Shapes.Line(G.effects, AimPoint, shotLock, new Color(1, .2f, .22f), .013f);
                     laser.SetPosition(0, AimPoint); laser.SetPosition(1, shotLock);
-                    if (warningLeft <= 0) { Shoot(shotLock, 30, 90); fireAt = Time.time + 2.4f; ClearLaser(); }
+                    if (warningLeft <= 0) { Shoot(shotLock, 30, 90); BeginSniperRearm(); ClearLaser(); }
                 }
-                else if (Time.time > fireAt) { warningLeft = 1.2f; shotLock = playerAim; G.sound.Play("warning", transform.position); }
+                else if (Time.time > fireAt && sniperRearmWork<=0) { warningLeft = 1.2f; shotLock = playerAim; G.sound.Play("warning", transform.position); }
             }
             else if (Time.time > fireAt)
             {
@@ -205,14 +210,27 @@ namespace SwapHunter
         void ClearLaser() { if (laser) Destroy(laser.gameObject); laser = null; }
         public bool Hit(float damage, Vector3 point, Collider collider, Vector3 source)
         {
-            if (!Alive) return false;
-            LastHitRegion=RegionOf(collider);
-            if (IsShieldCollider(collider))
+            var contextSource=DamageSource.PlayerBullet;
+            return DamageResolution.Single(this,damage,contextSource,G.player?G.player.transform:null,source,RegionOf(collider)).applied;
+        }
+        internal DamageResult ReceiveDamage(DamageContext context,float damage,EnemyHitRegion region)
+        {
+            var result=new DamageResult{receiverKind="enemy",region=region,markMultiplier=1};
+            if(!Alive||damage<=0||float.IsNaN(damage)||float.IsInfinity(damage))return result;
+            LastHitRegion=region;
+            if(region==EnemyHitRegion.Shield)
             {
-                Shapes.Impact(point, (point - source).normalized * -1, true); return false;
+                result.blocked=true;DamageResolution.Record(context,GetInstanceID(),damage,result);return result;
             }
-            float regionMultiplier=LastHitRegion==EnemyHitRegion.Head?1.5f:LastHitRegion==EnemyHitRegion.Limb?.8f:1;
-            Damage(damage*regionMultiplier*(Marked?1.2f:1)); return true;
+            bool bullet=context.source==DamageSource.PlayerBullet||context.source==DamageSource.EnemyBullet;
+            float regionMultiplier=bullet?(region==EnemyHitRegion.Head?1.5f:region==EnemyHitRegion.Limb?.8f:1):1;
+            float beforeMark=damage*regionMultiplier;
+            result.markMultiplier=DamageResolution.MarkMultiplier(context.source,Marked);
+            float hpBefore=health,energyBefore=boss?boss.Energy:0;
+            ApplyResolvedDamage(beforeMark*result.markMultiplier);
+            result.applied=true;result.killed=!Alive;
+            result.healthLoss=Mathf.Max(0,hpBefore-health);result.energyLoss=Mathf.Max(0,energyBefore-(boss?boss.Energy:0));
+            DamageResolution.Record(context,GetInstanceID(),beforeMark,result);return result;
         }
         void BuildHurtboxes(float scale)
         {
@@ -242,7 +260,8 @@ namespace SwapHunter
             foreach(var h in Physics.RaycastAll(origin,direction,distance,1<<Layers.Actor,QueryTriggerInteraction.Collide))
             {
                 var part=h.collider.GetComponent<EnemyHitPart>();
-                if(!part||!part.owner||!part.owner.Alive||h.distance>=nearest)continue;
+                var device=h.collider.GetComponentInParent<RelayDevice>();
+                if((!device||!device.Alive)&&(!part||!part.owner||!part.owner.Alive)||h.distance>=nearest)continue;
                 if(ignore&&(h.collider.transform==ignore||h.collider.transform.IsChildOf(ignore)))continue;
                 hit=h;nearest=h.distance;found=true;
             }
@@ -257,7 +276,8 @@ namespace SwapHunter
                 if(pair.Key&&pair.Key.enabled&&pair.Key.Raycast(ray,out var h,nearest)){nearest=h.distance;point=h.point;selected=pair.Key;}
             return selected?selected:fallback;
         }
-        public void Damage(float damage)
+        public void Damage(float damage) => DamageResolution.Single(this,damage,DamageSource.Environment,null,transform.position);
+        void ApplyResolvedDamage(float damage)
         {
             if (!Alive) return;
             float resourcesBefore=health+(boss?boss.Energy:0);
@@ -272,6 +292,7 @@ namespace SwapHunter
             dying = true;if(VisualRig)VisualRig.BeginDeath();
             Shapes.Burst(AimPoint, new Color(1, .55f, .15f), .8f); G.sound.Play("death", AimPoint);
             gameObject.AddComponent<TimedEffect>().life = 2.5f;
+            DamageResolution.CarrierDied(this);
             G.EnemyKilled(this); G.Record("enemy_killed", kind.ToString());
         }
         void RefreshVisualReferences()

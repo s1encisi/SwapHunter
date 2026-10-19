@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 namespace SwapHunter
 {
     // A bounded, swept ballistic projectile. Damage cannot cross world cover.
@@ -26,18 +26,29 @@ namespace SwapHunter
         {
             if(exploded)return;exploded=true;var g=DemoGame.I;if(!g){Destroy(gameObject);return;}
             Vector3 point=transform.position;const float radius=BlastRadius;bool any=false,killed=false;
+            var batch=new DamageBatch(DamageSource.PlayerGrenade,owner?owner.transform:null,point);long damageEvent=batch.NewEvent();
             foreach(var enemy in g.enemies.ToArray())
             {
                 if(!enemy||!enemy.Alive)continue;float distance=Vector3.Distance(point,enemy.AimPoint);
                 if(distance>=radius||Physics.Linecast(point,enemy.AimPoint,Layers.WorldMask))continue;
-                bool alive=enemy.Alive;enemy.Damage(damage*Mathf.Lerp(1,.2f,distance/radius));any=true;killed|=alive&&!enemy.Alive;
+                var sample=batch.Enemy(enemy,damage*Mathf.Lerp(1,.2f,distance/radius),damageEvent);
+                if(sample!=null)sample.after=result=>{any|=result.applied;killed|=result.killed;};
             }
             foreach(var objective in DamageableObjective.ActiveSnapshot())
             {
                 if(!objective||!objective.Alive)continue;float distance=Vector3.Distance(point,objective.AimPoint);
                 if(distance>=radius||Physics.Linecast(point,objective.AimPoint,Layers.WorldMask))continue;
-                any|=objective.ApplyDamage(damage*Mathf.Lerp(1,.2f,distance/radius),point);
+                var sample=batch.Objective(objective,damage*Mathf.Lerp(1,.2f,distance/radius),damageEvent);
+                if(sample!=null)sample.after=result=>any|=result.applied;
             }
+            foreach(var device in RelayDevice.ActiveSnapshot())
+            {
+                if(!device||!device.Alive)continue;float distance=Vector3.Distance(point,device.AimPoint);
+                if(distance>=radius||Physics.Linecast(point,device.AimPoint,Layers.WorldMask))continue;
+                var sample=batch.Device(device,damage*Mathf.Lerp(1,.2f,distance/radius),damageEvent);
+                if(sample!=null)sample.after=result=>any|=result.applied;
+            }
+            batch.Apply();
             if(owner&&Vector3.Distance(point,owner.Eye.position)<radius&&!Physics.Linecast(point,owner.Eye.position,Layers.WorldMask))
                 owner.Hurt(damage*.65f*Mathf.Clamp01(1-Vector3.Distance(point,owner.Eye.position)/radius),point);
             if(owner&&any){owner.ReportWeaponHit(killed,"爆炸");g.totalHits++;}

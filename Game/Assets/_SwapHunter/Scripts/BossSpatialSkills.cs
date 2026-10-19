@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 namespace SwapHunter
 {
  public enum BossSkill { None, SweepLaser, Attraction, AdvantageSwap, GroundWave, SwapElbow, OmniFire }
@@ -44,9 +44,7 @@ namespace SwapHunter
   public SwapTarget SpatialTarget=>skillTarget;
   public float SkillSeconds=>skillTime;
   float skillTime,nextSkillAt,skillAge,pulseAt,groundY;
-  int skillSequence;bool skillHit,openingSkillPending=true;
-  static readonly BossSkill[] RifleSkills={BossSkill.Attraction,BossSkill.AdvantageSwap};
-  static readonly BossSkill[] CombinedSkills={BossSkill.OmniFire,BossSkill.GroundWave,BossSkill.SweepLaser,BossSkill.Attraction,BossSkill.AdvantageSwap};
+  bool skillHit;
   Vector3 skillCenter,skillForward,skillDestination;
   SwapTarget skillTarget;
   LineRenderer zone,pathPreview;
@@ -67,7 +65,7 @@ namespace SwapHunter
       ||!EnemyMotion.ClearVolume(transform.position,target.Radius,target.Height,transform,target.transform))return false;
    return !Physics.Linecast(Owner.AimPoint,target.AimPoint,Layers.WorldMask,QueryTriggerInteraction.Ignore);
   }
-  SwapTarget ChooseTarget(bool elbow)
+  SwapTarget ChooseTarget(bool elbow,Vector3 observedPlayer)
   {
    SwapTarget best=null;float score=float.NegativeInfinity;
    foreach(var t in G.anchors)Consider(t);
@@ -76,7 +74,7 @@ namespace SwapHunter
    void Consider(SwapTarget t)
    {
     if(!ValidExchange(t))return;
-    float playerDistance=Vector3.Distance(t.transform.position,G.player.transform.position);
+    float playerDistance=Vector3.Distance(t.transform.position,observedPlayer);
     float travel=Vector3.Distance(t.transform.position,transform.position);
     if(travel<4||elbow&&playerDistance>4.2f)return;
     float s=elbow?-playerDistance:t.transform.position.y*4-Mathf.Abs(playerDistance-12)+travel*.1f;
@@ -85,23 +83,29 @@ namespace SwapHunter
   }
   public bool TryBeginSkill(BossSkill skill)
   {
+   if(!TryGetSpatialObservation(out var observed))return false;
+   var target=skill==BossSkill.AdvantageSwap||skill==BossSkill.SwapElbow?ChooseTarget(skill==BossSkill.SwapElbow,observed.position):null;
+   return TryBeginSkill(skill,observed,target);
+  }
+  bool TryBeginSkill(BossSkill skill,BossSpatialObservation observed,SwapTarget proposedTarget)
+  {
    if(!Owner||!Owner.Alive||Owner.Silenced||!SkillAllowed(skill)||SkillStep==BossSkillStep.Telegraph||SkillStep==BossSkillStep.Execute||!G.IsPlaying
     ||SkillStep==BossSkillStep.Recover&&Time.time<nextSkillAt)return false;
    skillTarget=null;
    if(skill==BossSkill.AdvantageSwap||skill==BossSkill.SwapElbow)
-   {skillTarget=ChooseTarget(skill==BossSkill.SwapElbow);if(!skillTarget)return false;skillDestination=skillTarget.transform.position;}
+   {skillTarget=proposedTarget;if(!ValidExchange(skillTarget))return false;skillDestination=skillTarget.transform.position;}
    ClearWarning();ClearSpatialVisuals();Skill=skill;SkillStep=BossSkillStep.Telegraph;skillAge=0;skillHit=false;
-   skillCenter=G.player.transform.position;groundY=skillCenter.y;
+   skillCenter=observed.position;groundY=skillCenter.y;
    if(Physics.Raycast(skillCenter+Vector3.up*.2f,Vector3.down,out var floor,30,Layers.WorldMask))groundY=floor.point.y;
    if(skill==BossSkill.SweepLaser||skill==BossSkill.GroundWave)
    {
     // Ground attacks remain on the arena floor even when the player already holds a tower.
-    groundY=GroundThreatFloor();
+    groundY=observed.ground;
    }
    skillCenter.y=groundY+.06f;
    skillForward=Vector3.ProjectOnPlane(skillCenter-transform.position,Vector3.up).normalized;
    if(skillForward.sqrMagnitude<.1f)skillForward=Vector3.forward;
-   skillTime=(skill==BossSkill.SweepLaser||skill==BossSkill.Attraction)?Mathf.Max(1.5f,G.player.cooldown+.45f):skill==BossSkill.OmniFire?1.2f:skill==BossSkill.GroundWave&&G.expeditionActive&&G.expeditionLevel==11?2.5f:1.5f;
+   skillTime=(skill==BossSkill.SweepLaser||skill==BossSkill.Attraction)?observed.reactionWindow:skill==BossSkill.OmniFire?1.2f:skill==BossSkill.GroundWave&&G.expeditionActive&&G.expeditionLevel==11?2.5f:1.5f;
    CurrentCast=new BossCastParameters(skill,Phase,skillTime);
    switch(skill)
    {
@@ -111,12 +115,12 @@ namespace SwapHunter
     case BossSkill.OmniFire:Warning="全向火力 · A盾朝向指挥官，或进入掩体";zone=Shapes.Ring(G.effects,transform.position+Vector3.up*.1f,2.4f,Danger,.1f);break;
     default:Warning=skill==BossSkill.SwapElbow?"换位肘击 · 离开标记目标附近":"指挥官即将换位 · 观察橙色落点";zone=Shapes.Ring(G.effects,skillDestination+Vector3.up*.08f,CurrentCast.radius,Danger,.09f);pathPreview=Shapes.Line(G.effects,Owner.AimPoint,skillTarget.AimPoint,Danger,.06f);break;
    }
-   StopMotion();G.sound.Play("warning",transform.position);G.Record("boss_telegraph",skill+" center="+skillCenter+" seconds="+skillTime);return true;
+   RememberSpatialCast(skill);StopMotion();G.sound.Play("warning",transform.position);G.Record("boss_telegraph",skill+" center="+skillCenter+" seconds="+skillTime);return true;
   }
-  float GroundThreatFloor()
+  float GroundThreatFloor(Vector3 observedPlayer)
   {
    if(G.expeditionActive)return 0;
-   Vector3 player=G.player.transform.position;float floorY=player.y;
+   Vector3 player=observedPlayer;float floorY=player.y;
    if(Physics.Raycast(player+Vector3.up*.2f,Vector3.down,out var floor,30,Layers.WorldMask))floorY=floor.point.y;
    for(int k=0;k<8;k++)
    {
@@ -125,31 +129,22 @@ namespace SwapHunter
    }
    return floorY;
   }
-  bool PlayerAboveGroundThreats()=>G.player.transform.position.y>GroundThreatFloor()+1.2f;
-  BossSkill OpeningSkill()
-  {
-   if(Phase==BossPhase.EnergyMelee)return BossSkill.SwapElbow;
-   bool high=PlayerAboveGroundThreats();
-   if(Phase==BossPhase.Rifle)return high?BossSkill.AdvantageSwap:BossSkill.Attraction;
-   if(high)return BossSkill.OmniFire;
-   float distance=Vector3.ProjectOnPlane(G.player.transform.position-transform.position,Vector3.up).magnitude;
-   return distance<=12?BossSkill.GroundWave:BossSkill.SweepLaser;
-  }
   bool BeginNextSpatialSkill()
   {
-   BossSkill[] rotation=Phase==BossPhase.Rifle?RifleSkills:CombinedSkills;
-   BossSkill selected=Phase==BossPhase.EnergyMelee?BossSkill.SwapElbow:openingSkillPending?OpeningSkill():rotation[skillSequence%rotation.Length];
-   openingSkillPending=false;
-   if(!TryBeginSkill(selected))
+   if(!TryGetSpatialObservation(out var observed))
    {
-    if(selected!=BossSkill.AdvantageSwap)return false;
-    BossSkill fallback=Phase==BossPhase.Combined&&PlayerAboveGroundThreats()?BossSkill.OmniFire:BossSkill.Attraction;
-    G.Record("boss_skill_fallback",selected+" unavailable -> "+fallback);
-    if(!TryBeginSkill(fallback))return false;
-    selected=fallback;
+    LastSpatialDecision=new BossSpatialDecision{sequence=++decisionSequence,observation="unavailable",observationAge=Time.time-lastObservedAt};
+    G.Record("boss_spatial_decision",JsonUtility.ToJson(LastSpatialDecision));return false;
    }
-   if(Phase!=BossPhase.EnergyMelee)skillSequence=(System.Array.IndexOf(rotation,selected)+1)%rotation.Length;
-   return true;
+   var decision=BuildSpatialDecision(observed);LastSpatialDecision=decision;
+   foreach(var candidate in decision.candidates)
+   {
+    if(!candidate.legal)continue;
+    if(TryBeginSkill(candidate.skill,observed,candidate.target))
+    {decision.selected=candidate.skill;G.Record("boss_spatial_decision",JsonUtility.ToJson(decision));return true;}
+    candidate.reason+="; start rejected with original snapshot";
+   }
+   G.Record("boss_spatial_decision",JsonUtility.ToJson(decision));return false;
   }
   void StopMotion(){if(Owner.agent.enabled&&Owner.agent.isOnNavMesh){Owner.agent.ResetPath();Owner.agent.isStopped=true;}}
   bool TickSpatialSkills(float dt,bool allowNewAction)
@@ -161,7 +156,7 @@ namespace SwapHunter
    if(SkillStep==BossSkillStep.Ready||SkillStep==BossSkillStep.Recover)
    {
     if(!allowNewAction||Owner.Silenced||Time.time<nextSkillAt)return false;
-    if(!BeginNextSpatialSkill()){nextSkillAt=Time.time+1.5f;return false;}
+    if(!BeginNextSpatialSkill()){nextSkillAt=Time.time+1f;return false;}
    }
    StopMotion();skillTime-=dt;
    if(SkillStep==BossSkillStep.Telegraph)

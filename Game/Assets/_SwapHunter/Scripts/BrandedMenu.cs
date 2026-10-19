@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 namespace SwapHunter
 {
  public sealed partial class DemoGame
@@ -14,9 +14,9 @@ namespace SwapHunter
    Fill(new Rect(left,91,44,4),Cyan);
    Text("SWAPHUNTER",new Rect(left,113,width,32),19,new Color(.64f,.87f,.89f));
    Text("换位猎手",new Rect(left-5,165,width+35,105),74,Color.white);
-   Text("夺取位置。决定战局。",new Rect(left,290,width+20,42),26,new Color(.76f,.95f,.95f));
-   Text("观察空间，改变交火的两端。",new Rect(left,345,width+15,34),18,new Color(.68f,.77f,.81f));
-   if(Button("开始相位行动     →",new Rect(left,422,width,61),true)){OpenExpeditionBoard();expeditionTab=0;}
+   Text("归航行动",new Rect(left,290,width+20,42),26,new Color(.76f,.95f,.95f));
+   Text("改变位置，把回来的路留给每个人。",new Rect(left,345,width+15,34),18,new Color(.68f,.77f,.81f));
+   if(Button("开始归航行动     →",new Rect(left,422,width,61),true))OpenHomecoming();
    if(Button("逐步实战教学",new Rect(left,497,width,52)))StartTutorial();
    if(Button("经典战役",new Rect(left,563,(width-12)/2,46)))StartRun();
    if(Button("经典合约",new Rect(left+(width+12)/2,563,(width-12)/2,46)))OpenCampaignBoard();

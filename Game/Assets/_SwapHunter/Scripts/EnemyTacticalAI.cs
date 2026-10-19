@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 namespace SwapHunter
@@ -14,16 +14,35 @@ namespace SwapHunter
  public enum TacticalState { Approach, MeleeWarning, Recover, CoverSelection, MoveToCover, Hide, Peek, Fire, Reposition }
  public sealed class EnemyTacticalAI:MonoBehaviour
  {
-  EnemyActor owner;CoverSite cover;Vector3 hide,peek,lockedMelee,lastKnownPlayer;float clock,rethink,fireAt,grenadeAt,nextSelect,lastSeen=-100;int burst,lastSwap=-1;
+  EnemyActor owner;CoverSite cover;Vector3 hide,peek,lockedMelee,lastKnownPlayer;float clock,rethink,fireAt,grenadeAt,nextSelect,lastSeen=-100;int burst; EnemyHazardAwareness hazard;
   public TacticalState State {get;private set;}
   public int CoverSelections {get;private set;}
   public int MeleeAttacks {get;private set;}
   public int StatesVisited {get;private set;}
   public Vector3 HidePoint=>hide;public Vector3 PeekPoint=>peek;
   public bool HasCover=>cover;
+  public bool HasPlayerMemory=>Time.time-lastSeen<=3;
+  public Vector3 ObservedPlayerAim=>HasPlayerMemory?lastKnownPlayer+Vector3.up*1.1f:owner.AimPoint+transform.forward*10;
+  public void ObservePlayer(){if(owner&&G&&G.player&&Visible(transform.position)){lastKnownPlayer=G.player.transform.position;lastSeen=Time.time;}}
+  public static void NotifySwap(Vector3 source,Vector3 destination,EnemyActor swapped)
+  {
+   var g=DemoGame.I;if(!g)return;
+   foreach(var e in g.enemies)
+   {
+    if(!e||!e.Alive||!e.tactical||e==swapped)continue;
+    bool seen=(Vector3.Distance(e.AimPoint,source)<28&&!Physics.Linecast(e.AimPoint,source+Vector3.up,Layers.WorldMask))||(Vector3.Distance(e.AimPoint,destination)<28&&!Physics.Linecast(e.AimPoint,destination+Vector3.up,Layers.WorldMask));
+    if(seen)e.tactical.LocalPositionChanged();
+   }
+   FireControlRelay.RevalidateAll();
+  }
+  void LocalPositionChanged()
+  {
+   ObservePlayer();rethink=nextSelect=0;
+   if(State!=TacticalState.MeleeWarning&&State!=TacticalState.Recover&&State!=TacticalState.Fire)cover=null;
+  }
   LineRenderer meleeRing;
   DemoGame G=>DemoGame.I;
-  public void Initialize(EnemyActor e){owner=e;grenadeAt=Time.time+7;Set(e.kind==EnemyKind.Shield?TacticalState.Approach:TacticalState.CoverSelection);}
+  public void Initialize(EnemyActor e){owner=e;hazard=gameObject.AddComponent<EnemyHazardAwareness>();hazard.Initialize(e);grenadeAt=Time.time+7;Set(e.kind==EnemyKind.Shield?TacticalState.Approach:TacticalState.CoverSelection);}
   void Set(TacticalState next,float seconds=0){State=next;clock=seconds;StatesVisited|=1<<(int)next;if(owner&&owner.kind==EnemyKind.Shield)owner.UpdateShieldMeleePresentation(State,clock);}
   public void Invalidate(){cover=null;rethink=nextSelect=0;burst=0;if(meleeRing)Destroy(meleeRing.gameObject);Set(owner.kind==EnemyKind.Shield?TacticalState.Approach:TacticalState.Reposition);}
   bool Move(Vector3 p,float stop=.15f)
@@ -37,6 +56,7 @@ namespace SwapHunter
   }
   void Stop(){if(owner.agent.enabled&&owner.agent.isOnNavMesh){owner.agent.isStopped=true;owner.agent.ResetPath();}}
   bool Visible(Vector3 feet)=>!Physics.Linecast(feet+Vector3.up*1.12f,G.player.Eye.position,Layers.WorldMask);
+  bool ObservedRay(Vector3 feet)=>HasPlayerMemory&&!Physics.Linecast(feet+Vector3.up*1.12f,ObservedPlayerAim,Layers.WorldMask);
   bool Reachable(Vector3 requested,out Vector3 point)
   {
    point=requested;if(!NavMesh.SamplePosition(requested,out var hit,.6f,NavMesh.AllAreas)||Mathf.Abs(hit.position.y-requested.y)>.5f)return false;
@@ -48,23 +68,24 @@ namespace SwapHunter
   }
   bool SelectCover()
   {
+   if(!HasPlayerMemory)return false;
    CoverSelections++;float best=float.NegativeInfinity;CoverSite chosen=null;Vector3 chosenHide=default,chosenPeek=default;
    foreach(var site in CoverSite.Active)
    {
     if(!site||!site.Shape||!site.gameObject.activeInHierarchy)continue;
     Bounds b=site.Shape.bounds;if(Vector3.Distance(b.center,transform.position)>24||b.size.y<1.0f)continue;
-    Vector3 away=Vector3.ProjectOnPlane(b.center-G.player.transform.position,Vector3.up);
+    Vector3 away=Vector3.ProjectOnPlane(b.center-lastKnownPlayer,Vector3.up);
     Vector3 n=Mathf.Abs(away.x)>Mathf.Abs(away.z)?Vector3.right*Mathf.Sign(away.x):Vector3.forward*Mathf.Sign(away.z);
     Vector3 tangent=Vector3.Cross(Vector3.up,n);float deep=Mathf.Abs(n.x)*b.extents.x+Mathf.Abs(n.z)*b.extents.z;
     float side=Mathf.Abs(tangent.x)*b.extents.x+Mathf.Abs(tangent.z)*b.extents.z;
     Vector3 wanted=new Vector3(b.center.x,b.min.y,b.center.z)+n*(deep+.65f);
-    if(!Reachable(wanted,out var h)||Visible(h)||Vector3.Distance(h,G.player.transform.position)<6)continue;
+    if(!Reachable(wanted,out var h)||ObservedRay(h)||Vector3.Distance(h,lastKnownPlayer)<6)continue;
     for(int sign=-1;sign<=1;sign+=2)
     {
-     if(!Reachable(wanted+tangent*(side+1.35f)*sign,out var p)||!Visible(p))continue;
+     if(!Reachable(wanted+tangent*(side+1.35f)*sign,out var p)||!ObservedRay(p))continue;
      // A cover-to-peek transition must have a traversable nav path as well.
      var path=new NavMeshPath();if(!NavMesh.CalculatePath(h,p,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)continue;
-     float score=12-Vector3.Distance(transform.position,h)*.4f-Mathf.Abs(Vector3.Distance(p,G.player.transform.position)-12)*.15f;
+     float score=12-Vector3.Distance(transform.position,h)*.4f-Mathf.Abs(Vector3.Distance(p,lastKnownPlayer)-12)*.15f+1.5f*FireControlRelay.ConnectionValue(owner,p)-6*Mathf.Clamp01(hazard.PredictedDamage(p,path)/Mathf.Max(1,owner.health));
      if(site==cover)score-=3;
      if(score>best){best=score;chosen=site;chosenHide=h;chosenPeek=p;}
     }
@@ -74,10 +95,15 @@ namespace SwapHunter
   public void Tick(float dt)
   {
    clock-=dt;
-   if(lastSwap!=G.totalSwaps){lastSwap=G.totalSwaps;Invalidate();}
+   ObservePlayer();
+   if(State!=TacticalState.MeleeWarning&&State!=TacticalState.Recover&&State!=TacticalState.Fire)
+   {
+    Vector3 preferred=cover?(State==TacticalState.Peek?peek:hide):transform.position;
+    if(hazard.TryMovement(preferred,ObservedPlayerAim,HasPlayerMemory,out var safeHazard)){bool arrived=Move(safeHazard,.2f);if(arrived&&owner.kind!=EnemyKind.Shield&&Visible(transform.position))Fire();return;}
+   }
    if(owner.kind==EnemyKind.Shield){TickMelee();return;}
-   Vector3 player=G.player.transform.position;if(Visible(transform.position)){lastSeen=Time.time;lastKnownPlayer=player;}float distance=Vector3.Distance(transform.position,player);
-   if(distance<5&&State!=TacticalState.Reposition){cover=null;Set(TacticalState.Reposition,1);rethink=0;}
+   Vector3 player=HasPlayerMemory?lastKnownPlayer:transform.position;float distance=HasPlayerMemory?Vector3.Distance(transform.position,player):12;
+   if(HasPlayerMemory&&distance<5&&State!=TacticalState.Reposition){cover=null;Set(TacticalState.Reposition,1);rethink=0;}
    switch(State)
    {
     case TacticalState.CoverSelection:
@@ -85,7 +111,7 @@ namespace SwapHunter
      if(Time.time>=nextSelect){nextSelect=Time.time+1.2f;if(SelectCover()){Set(TacticalState.MoveToCover,6);rethink=0;break;}}
      // No usable cover: keep rifle standoff, move along a real path, and keep firing when visible.
      Vector3 away=Vector3.ProjectOnPlane(transform.position-player,Vector3.up).normalized;
-     Vector3 destination=distance<8?transform.position+away*4:distance>15?player+away*12:transform.position;
+     Vector3 destination=!HasPlayerMemory?transform.position:distance<8?transform.position+away*4:distance>15?player+away*12:transform.position;
      if(Reachable(destination,out var safe))Move(safe,.5f);else Stop();
      if(Visible(transform.position))Fire();
      if(clock<=0){Set(TacticalState.CoverSelection,1.2f);}break;
@@ -105,7 +131,7 @@ namespace SwapHunter
      if(clock<=0||burst>=3||!Visible(transform.position)){Set(TacticalState.Hide,.9f);rethink=0;}
      break;
    }
-   if(!owner.Silenced&&Time.time>grenadeAt&&distance>7&&distance<20&&Time.time-lastSeen<6&&(G.stage>=2||G.expeditionActive&&G.expeditionLevel>=3))
+   if(!owner.Silenced&&Time.time>grenadeAt&&distance>7&&distance<20&&Time.time-lastSeen<3&&(G.stage>=2||G.expeditionActive&&G.expeditionLevel>=3))
    {grenadeAt=Time.time+11;owner.grenadesThrown++;GrenadeActor.Spawn(owner.AimPoint+Vector3.up*.4f,lastKnownPlayer+Vector3.up*.15f);G.Record("grenade_throw","last visible player position");}
   }
   void Fire()
@@ -119,7 +145,7 @@ namespace SwapHunter
   void TickMelee()
   {
    owner.UpdateShieldMeleePresentation(State,clock);
-   float distance=Vector3.Distance(G.player.transform.position,transform.position);
+   float distance=HasPlayerMemory?Vector3.Distance(lastKnownPlayer,transform.position):float.PositiveInfinity;
    if(State==TacticalState.MeleeWarning)
    {
     Stop();if(clock>0)return;
@@ -128,7 +154,7 @@ namespace SwapHunter
    }
    if(State==TacticalState.Recover){Stop();if(clock<=0)Set(TacticalState.Approach);return;}
    owner.agent.speed=3.6f;
-   if(distance>2.35f||!Visible(transform.position)){Move(G.player.transform.position,1.9f);return;}
+   if(distance>2.35f||!Visible(transform.position)){if(HasPlayerMemory)Move(lastKnownPlayer,1.9f);else Stop();return;}
    Stop();lockedMelee=G.player.transform.position;Set(TacticalState.MeleeWarning,.65f);
    meleeRing=Shapes.Ring(G.effects,transform.position+Vector3.up*.07f,2.7f,new Color(1,.5f,.2f),.07f);G.sound.Play("warning",transform.position);
   }

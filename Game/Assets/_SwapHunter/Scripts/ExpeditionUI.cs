@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 namespace SwapHunter
 {
@@ -30,6 +30,7 @@ namespace SwapHunter
    Text((TacticalExpedition?"信用点  ":"研究点  ")+p.credits+"    |    进度 "+Array.FindAll(p.cleared,v=>v).Length+" / 12",new Rect(viewWidth-570,102,515,35),21,Paper,TextAnchor.MiddleRight);
    string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购","配装路线"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
    for(int i=0;i<tabs.Length;i++)if(Button(tabs[i],new Rect(48+i*205,200,192,47),expeditionTab==i))expeditionTab=i;
+   if(Button("归航档案",new Rect(viewWidth-194,200,145,47)))OpenStoryArchive();
    if(expeditionTab==0)ExpeditionLevelsUI();else if(expeditionTab==1)ExpeditionWeaponsUI();
    else if(expeditionTab==2){if(TacticalExpedition)ExpeditionAssaultSkillsUI();else ExpeditionSpecializationUI();}
    else if(expeditionTab==4&&TacticalExpedition)DrawLoadoutRoutes();
@@ -54,8 +55,8 @@ namespace SwapHunter
    var selected=ExpeditionCatalog.Levels[expeditionSelected];var definition=MissionCatalog.Get(expeditionSelected);float rx=leftW+80,rw=viewWidth-rx-48;
    Fill(new Rect(rx,271,rw,523),PanelBlue);
    Text((expeditionSelected+1).ToString("00")+" / "+selected.name,new Rect(rx+22,291,rw-44,50),29,Paper);
-   Text(selected.lesson,new Rect(rx+22,353,rw-44,62),21,PhaseBlue);
-   Text(definition.instruction,new Rect(rx+22,427,rw-44,145),20,Paper);
+   Text(StoryContent.Chapters[expeditionSelected].subtitle,new Rect(rx+22,353,rw-44,40),24,PhaseBlue);
+   Text(StoryContent.Chapters[expeditionSelected].brief+"\n\n"+definition.instruction,new Rect(rx+22,405,rw-44,155),18,Paper);
    int reward=p.cleared[expeditionSelected]?ExpeditionCatalog.ReplayReward(expeditionSelected):selected.reward;
    string bonusRule=expeditionSelected<3?definition.bonusRisk:"额外数据 +40（成功撤离） · "+definition.bonusRisk;
    if(TacticalExpedition)
@@ -65,7 +66,7 @@ namespace SwapHunter
     Text("成功奖励 "+reward+" 信用点 · "+bonusRule+"\n撤离："+definition.extraction+"\n失败或主动退出恢复出发状态；允许不带道具。",new Rect(rx+22,578,rw-44,128),17,Muted);
     if(!expeditionStore.HasCurrentClassStarter||expeditionStore.EquippedClassSkill<0||expeditionStore.EquippedGeneralSkill<0)
     {if(Button("选择职业技能与入门装备",new Rect(rx+22,719,rw-44,54),true))expeditionTab=2;}
-    else if(Button("部署行动   →",new Rect(rx+22,719,rw-44,54),true))BeginExpedition(expeditionSelected);
+    else if(Button(p.cleared[expeditionSelected]?"行动复盘   →":"部署行动   →",new Rect(rx+22,719,rw-44,54),true))BeginExpedition(expeditionSelected);
    }
    else
    {
@@ -311,7 +312,8 @@ namespace SwapHunter
     Text(ExpeditionTitle+" / "+ExpeditionObjective+"\n"+TacticalAttemptSummary(),new Rect(x+34,254,w-68,120),21,Muted);
     if(Button("继续行动",new Rect(x+34,406,w-68,52),true)){expeditionAbandonConfirm=false;SetState(RunState.Playing);}
     if(Button("战术背包",new Rect(x+34,474,w-68,49))){expeditionAbandonConfirm=false;expeditionInventory=true;}
-    if(Button("设置",new Rect(x+34,539,w-68,49)))OpenSettings();
+    if(Button("设置",new Rect(x+34,539,(w-80)/2,49)))OpenSettings();
+    if(Button("通讯记录",new Rect(x+w/2+6,539,(w-80)/2,49)))OpenStoryArchive(true);
     if(Button(expeditionAbandonConfirm?"确认退出 / 恢复出发状态，本轮无收益":"退出并返回准备",new Rect(x+34,632,w-68,52)))
     {if(expeditionAbandonConfirm)TacticalReturnToPreparation();else expeditionAbandonConfirm=true;}
     if(!string.IsNullOrEmpty(expeditionNotice))Text(expeditionNotice,new Rect(x+34,717,w-68,51),17,Amber);
@@ -320,7 +322,7 @@ namespace SwapHunter
    var receipt=expeditionReceipt;bool success=receipt!=null&&receipt.success;
    Text(success?(expeditionLevel==11?"封锁解除":"行动完成"):"行动已中止",new Rect(x+34,165,w-68,63),42,success?Paper:Amber);
    Text(ExpeditionTitle+" / "+FormatTime(runSeconds),new Rect(x+34,245,w-68,40),23,PhaseBlue);
-   Text(success?"奖励已计入共享信用点，随身道具仅扣本次实际消耗。回到整备页可采购新上架武器、强化技能并选择下一场配置。":receipt!=null?"已恢复出发时的库存与装配，本次无收益。返回准备后可以重新整备。":"尚未保存退出结果。请重试退出保存，原出发记录保留。",new Rect(x+34,310,w-68,118),22,Paper);
+   Text(success?StoryContent.Chapters[expeditionLevel].ending:receipt!=null?"已恢复出发时的库存与装配，本次无收益。返回准备后可以重新整备。":"尚未保存退出结果。请重试退出保存，原出发记录保留。",new Rect(x+34,310,w-68,118),22,Paper);
    if(receipt!=null)
     Text("信用点 +"+receipt.reward+"（行动 "+receipt.baseReward+" + 首通 "+receipt.firstReward+" + 可选 "+receipt.bonusReward+"）\n道具消耗 医疗 "+receipt.medkitsUsed+" / 弹药 "+receipt.ammoUsed+" / 护甲 "+receipt.armorUsed+" · 尝试 "+receipt.attempts+" 次 · 死亡 "+receipt.deaths+" 次",new Rect(x+34,457,w-68,105),20,Muted);
    Text(AttemptMetricsSummary,new Rect(x+34,568,w-68,95),17,Paper);

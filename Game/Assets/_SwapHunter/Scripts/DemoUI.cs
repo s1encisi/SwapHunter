@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SwapHunter
 {
@@ -64,6 +64,7 @@ namespace SwapHunter
                     Text("正在接入相位信标",new Rect(64,345,800,70),38);
                     Text("准备行动区域…",new Rect(68,468,800,36),18,Muted);return;
                 }
+                if(DrawStoryModal())return;
                 if(settingsOpen||TrialSessionActive||trialDialog||trialResultVisible)GUI.enabled=false;
                 bool expeditionScreen=DrawExpeditionScreen();
                 if(!expeditionScreen)
@@ -171,7 +172,7 @@ namespace SwapHunter
                 Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,25,bounds.height),damage);Fill(new Rect(viewWidth-25,bounds.yMin,25,bounds.height),damage);Fill(new Rect(0,bounds.yMax-25,viewWidth,25),damage);
             }
             if (player.phaseFlash > 0) { Color phase = new Color(.1f, 1, .8f, player.phaseFlash * 1.2f); Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,12,bounds.height),phase);Fill(new Rect(viewWidth-12,bounds.yMin,12,bounds.height),phase); }
-            CampaignHudUI();DrawBossHud();DrawTacticsHud();
+            CampaignHudUI();DrawBossHud();DrawTacticsHud();DrawStoryRadio();DrawD2Context();
             if(!string.IsNullOrEmpty(player.ActionLabel))Text(player.ActionLabel,new Rect(33,738,330,32),18,Cyan);
             if(player.ChargeProgress>0){Fill(new Rect(x-72,y+35,144,4),new Color(.1f,.16f,.24f));Fill(new Rect(x-72,y+35,144*player.ChargeProgress,4),Cyan);}
             Text(KeyName(10) + " / " + KeyName(11) + " 切枪     " + KeyName(7) + " 装填     Esc 暂停", new Rect(35, 875, 600, 22), 16, Muted, TextAnchor.MiddleLeft);

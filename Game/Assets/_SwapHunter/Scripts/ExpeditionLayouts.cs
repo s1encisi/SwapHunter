@@ -106,9 +106,10 @@ namespace SwapHunter
             Cover(0, 34, 1.15f, 4); Cover(-16, 31, 1.1f, 2, 4.4f);
             Cover(16, 44, 1.1f, 2, 3.3f);
             Anchor(new Vector3(-9, 4.42f, 31)); Anchor(new Vector3(9, 3.32f, 43));
-            Anchor(new Vector3(0, .02f, 29));
-            Spawn("left", 0, new Vector3(-12, 4.4f, 28), 145, true);
-            Spawn("left", 1, new Vector3(-8, 0, 20), 160);
+            var centralAnchor=Anchor(new Vector3(0, .02f, 29));
+            if(D2MaintenanceFacility.FeatureEnabled)D2MaintenanceFacility.Create(root,centralAnchor,new Vector3(0,.02f,31.5f),new Vector3(-2,.02f,25.5f),new Vector3(0,0,39));
+            Spawn("left", 0, new Vector3(-7.6f, 4.4f, 28), 145, true);
+            Spawn("left", 1, new Vector3(-4, 0, 22), 160);
             Spawn("right", 0, new Vector3(12, 3.3f, 41), 215, true);
             Spawn("right", 1, new Vector3(9, 0, 32), 210);
             Spawn("guard", 0, new Vector3(1, 0, 27), 180);
@@ -123,8 +124,9 @@ namespace SwapHunter
             Door("a", new Vector3(-6.5f, 0, 44), 3.5f, "左塔接通 / 遮蔽通道");
             Door("b", new Vector3(6.5f, 0, 44), 3.5f, "右塔接通 / 遮蔽通道");
             Exit(new Vector3(0, 0, 60), "中央货运出口");
-            Bonus(new Vector3(-17, 0, 54), "远端数据 / 额外绕路");
-            Supply(new Vector3(-17, 0, 24)); Supply(new Vector3(17, 0, 37));
+            if(!D2MaintenanceFacility.FeatureEnabled)Supply(new Vector3(-17,0,24));
+            Supply(new Vector3(17, 0, 37));
+            Label("R背部设备可独立击毁；保全后击败载体，可回收 +40",new Vector3(-4,2.8f,16),.3f,true);
             Label("观察另一座塔，再决定第一次换位", new Vector3(0, 3, 10), .45f);
             map.walkingCheckpoints.Add(new Vector3(-12, 4.4f, 27));
             map.walkingCheckpoints.Add(new Vector3(12, 3.3f, 40));

@@ -1,5 +1,5 @@
-"""Build local D1.1 Windows/Source packages from one identified player.
-Requires focused Tactical QA (default) or Models QA plus actual chapter 5/7/12 route evidence.
+"""Build local Windows/Source packages from one identified player.
+Profiles: Tactical/Models with routes, Synergy with UI, or StoryD2 with UI.
 Does not execute Unity, players, downloads, publishing, or old full-suite gates.
 """
 from __future__ import annotations
@@ -22,6 +22,7 @@ from package_demo_v06 import (
 from verify_package_v06 import verify_archive
 
 REPORTS = {
+    "StoryD2": "story-d2-report.json",
     "Synergy": "synergy-report.json",
     "Tactical": "tactical-campaign-report.json", "Models": "models-final-report.json", "Routes": "route-v06-report.json",
     "Visual": "visual-v06-report.json", "Performance": "performance-v06-report.json",
@@ -73,7 +74,7 @@ def checks_pass(row, report):
 
 
 def collect_evidence(directories, identity, ui_review, profile="tactical"):
-    require(profile in ("tactical", "models", "synergy"), "Unknown packaging profile")
+    require(profile in ("tactical", "models", "synergy", "storyd2"), "Unknown packaging profile")
     evidence, records, route_records = {}, {}, []
     levels = set()
     for run_index, directory in enumerate(directories, 1):
@@ -105,6 +106,8 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
             if "version" in report or suite == "Models":
                 require(report.get("version") == identity["version"], "Report version differs")
             passed = checks_pass(row, report)
+            if suite == "StoryD2":
+                passed = passed and report.get("completed") is True
             entry = {"status": "passed" if passed else "failed", "evidence": prefix + relative,
                      "checks": len(report.get("checks", [])), "displayMode": row.get("displayMode"),
                      "scope": report.get("scope", report.get("kind", "")),
@@ -213,6 +216,7 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
     status = {"profile": profile, "tactical": tactical,
               "models": records.get("Models", {"status": "not_run"}),
               "synergy": records.get("Synergy", {"status": "not_run"}),
+              "storyd2": records.get("StoryD2", {"status": "not_run"}),
               "routes": {"status": "passed" if route_ok else "failed", "requiredLevels": sorted(REQUIRED_ROUTES),
                          "actualLevels": sorted(levels), "runs": route_records,
                          "scope": "清敌/耗尽跳板的保底路线夹具，非真人/真实战斗通关；不宣称全十二关重新验收"},
@@ -222,17 +226,20 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
               "allocation": records.get("Allocation", {"status": "not_run"}),
               "cleanRebuild": {"status": "not_run_by_packager"},
               "humanPlaytesting": {"status": "not_certified_by_packager"}}
-    if profile == "synergy":
+    if profile == "storyd2":
+        require(status["storyd2"]["status"] == "passed", "D2/N1 requires completed same-build StoryD2 QA")
+        require(ui["status"] == "passed", "D2/N1 requires supplied same-build native UI evidence")
+    elif profile == "synergy":
         require(status["synergy"]["status"] == "passed", "SSU-01 requires same-build Synergy QA")
         require(ui["status"] == "passed", "SSU-01 requires supplied native UI evidence")
     elif profile == "models":
         require(status["models"]["status"] == "passed", "Models packaging requires passed Models QA for this exact build")
     else:
         require(tactical["status"] == "passed", "D1.1 packaging requires passed Tactical full QA for this exact build")
-    if profile != "synergy":
+    if profile not in ("synergy", "storyd2"):
         require(route_ok, "D1.1 packaging requires actual same-build routes 5, 7, 12; no skipped checkpoints")
     elif not route_records:
-        status["routes"].update(status="not_run", requiredLevels=[], scope="SSU-01 mission invariants are checked in Synergy QA; geometry unchanged, old route reports are not reused as new evidence.")
+        status["routes"].update(status="not_run", requiredLevels=[], scope=("D2/N1 changed chapter-5 geometry and rule boundaries are checked in StoryD2 QA; old Routes/Models/Synergy reports are not reused as new evidence." if profile == "storyd2" else "SSU-01 mission invariants are checked in Synergy QA; geometry unchanged, old route reports are not reused as new evidence."))
     return status, evidence
 
 
@@ -373,8 +380,8 @@ def main():
     parser.add_argument("--source-executable", type=Path,
                         help="Separately successful source build for the exact pinned-MCP local-source variant")
     parser.add_argument("--ui-review", type=Path)
-    parser.add_argument("--profile", choices=("tactical", "models", "synergy"), default="tactical",
-                        help="models requires same-build Models QA and routes 5/7/12; does not claim a new economy run")
+    parser.add_argument("--profile", choices=("tactical", "models", "synergy", "storyd2"), default="tactical",
+                        help="storyd2 requires same-build StoryD2 + UI; synergy requires Synergy + UI; models requires Models + routes 5/7/12")
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--verification-root", type=Path)
     parser.add_argument("--check-only", action="store_true")
@@ -437,13 +444,13 @@ if($Menu){$launchArguments+='-demoMenu'}
         add_same(windows_payload, "Licenses/" + name, source_payload[name])
     add_same(windows_payload, "THIRD_PARTY_ASSETS.md", source_payload["THIRD_PARTY_ASSETS.md"])
     add_same(windows_payload, "THIRD_PARTY_ASSETS.json", ledger_bytes)
-    for name in WINDOWS_DOCS + (("docs/models-final.zh-CN.md", "docs/media/models-class.png", "docs/media/models-weapons.png", "docs/media/models-islands.png", "docs/media/models-actors.png") if args.profile == "models" else ("docs/system-synergy-playguide.zh-CN.md", "docs/system-synergy-validation.zh-CN.md") if args.profile == "synergy" else ()):
+    for name in WINDOWS_DOCS + (("docs/homecoming-d2-playguide.zh-CN.md", "docs/homecoming-d2-validation.zh-CN.md") if args.profile == "storyd2" else ("docs/models-final.zh-CN.md", "docs/media/models-class.png", "docs/media/models-weapons.png", "docs/media/models-islands.png", "docs/media/models-actors.png") if args.profile == "models" else ("docs/system-synergy-playguide.zh-CN.md", "docs/system-synergy-validation.zh-CN.md") if args.profile == "synergy" else ()):
         require(contained(project, name).is_file() and name in source_payload,
                 "Final Chinese delivery document is missing or ignored: " + name)
         add_same(windows_payload, name, source_payload[name])
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    base = ("SwapHunter-SSU01-" if args.profile == "synergy" else "SwapHunter-ModelsFinal-" if args.profile == "models" else "SwapHunter-D11-") + stamp
-    status = {"schemaVersion": 1, "releaseLabel": "SSU-01 local candidate" if args.profile == "synergy" else "Models final" if args.profile == "models" else "D1.1",
+    base = ("SwapHunter-D2N1-" if args.profile == "storyd2" else "SwapHunter-SSU01-" if args.profile == "synergy" else "SwapHunter-ModelsFinal-" if args.profile == "models" else "SwapHunter-D11-") + stamp
+    status = {"schemaVersion": 1, "releaseLabel": "D2/N1 homecoming local candidate" if args.profile == "storyd2" else "SSU-01 local candidate" if args.profile == "synergy" else "Models final" if args.profile == "models" else "D1.1",
               "profile": args.profile, "buildIdentity": identity,
               "validation": validation, "sourceSnapshot": source_info,
               "sourceBuildIdentity": source_identity, "sourceVariant": source_variant,
@@ -475,7 +482,32 @@ if($Menu){$launchArguments+='-demoMenu'}
 `validation-status.json` 和交付目录 `evidence/` 保存实际验证范围。源码包不含玩家存档、Library、Git 和旧构建。
 第三方材料的许可见 `THIRD_PARTY_ASSETS.md/json` 和 `Licenses/`。
 """
-    readme = template.format(synergy_status=validation["synergy"]["status"], build_version=identity["version"], executable=executable.name,
+    if args.profile == "storyd2":
+        template = """# 换位猎手 D2/N1 · 归航行动本地试玩版
+
+游戏基础版本：{build_version}；D2 规则版本 4；本候选未发布到远端。
+
+- 同构建剧情与系统联动专项：{storyd2_status}。
+- 同构建新界面检查：{ui_status}。原生窗口脚本与截图。
+- 专项覆盖本次 N1 剧情、D2 设备/中继/设施/伤害/AI/试用/Boss 和音乐资源；旧模型、旧路线和旧 Synergy 报告不作为本次新证据。
+
+先阅读 `docs/homecoming-d2-playguide.zh-CN.md`，了解剧情按键、第5章联动玩法与两种启动入口。
+验收范围与实际结果见 `docs/homecoming-d2-validation.zh-CN.md`、`validation-status.json` 及交付目录 `evidence/`。
+
+N1 使用中文剧情卡、战斗无线电字幕与通讯回看。音频包含 3 首完整配乐映射 5 种状态、17 个选用音效及 1 段港口水岸环境声；无线电有接通提示音，无中文角色配音。
+
+源码导入 Unity Hub 时选择 Source 包中的 `Game`，编辑器 6000.3.25f1。
+
+构建输入 SHA-256：`{source_sha256}`
+
+程序集 SHA-256：`{assembly_sha256}`
+
+源码基准：`{source_commit}`；含工作树修改：{dirty}。
+
+源码包不含玩家存档、Library、Git 和旧构建。第三方音乐、音效与模型的许可见 `THIRD_PARTY_ASSETS.md/json` 和 `Licenses/`。
+本地脚本验收和画面检查不代表真人通关、平衡结论或性能提升。
+"""
+    readme = template.format(storyd2_status=validation["storyd2"]["status"], synergy_status=validation["synergy"]["status"], build_version=identity["version"], executable=executable.name,
         models_status=validation["models"]["status"],
         tactical_status=validation["tactical"]["status"], routes_status=validation["routes"]["status"],
         ui_status=validation["uiReview"]["status"], visual_status=validation["nativeVisual"]["status"],
