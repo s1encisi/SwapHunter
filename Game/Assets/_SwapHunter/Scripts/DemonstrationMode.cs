@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections;
 using System.Text;
@@ -11,7 +11,7 @@ namespace SwapHunter
     public static class DemonstrationSession
     {
         public const string Capability = "SWAPHUNTER_ISOLATED_DEMO_V1";
-        public const string Badge = "演示档 · 不写正式进度";
+        public static string Badge => RunStorage.IsFullPreview?"全内容试玩 · 章节 / 剧情 / 六刀已解锁":"演示档 · 不写正式进度";
         public static int Level { get; private set; } = 1; // UI default: chapter 2.
 
         public static bool TryParseLevel(string[] arguments, out int level, out string error)
@@ -58,7 +58,7 @@ namespace SwapHunter
             bool tactical=RunStorage.IsTacticalDemo;
             string folder=Path.Combine(RunStorage.Root,tactical?"Expedition-Tactical-v6":"Expedition-v4");
             Directory.CreateDirectory(folder);
-            var seed=tactical?TacticalDemoProfile.Create():CreateSeedProfile();
+            var seed=tactical?(RunStorage.IsFullPreview?TacticalDemoProfile.CreateFullPreview():TacticalDemoProfile.Create()):CreateSeedProfile();
             if(tactical)
             {
                 var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-demoClass");
@@ -70,7 +70,7 @@ namespace SwapHunter
             if(tactical&&!RunStorage.IsDirectedTrial)seed.meleeKnives=new[]{true,true,true,true,true,true};
             if(RunStorage.IsDirectedTrial)seed=DirectedTrialBootstrap.CreateProfile();
             WriteNew(Path.Combine(folder,tactical?"expedition-v6.json":"expedition-v4.json"),JsonUtility.ToJson(seed,true));
-            WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=RunStorage.IsDirectedTrial?"定向商品与请求等级；其余技能1级、合法双枪、基础配件、零携带道具；情境="+DirectedTrialBootstrap.Request.scenario:tactical?"四职业全枪械/六刀/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
+            WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=RunStorage.IsFullPreview?"全内容试玩预置：十二章通关标记、全部剧情/附录/结局、六刀、枪械、技能；无真实成绩或交易收据。":RunStorage.IsDirectedTrial?"定向商品与请求等级；其余技能1级、合法双枪、基础配件、零携带道具；情境="+DirectedTrialBootstrap.Request.scenario:tactical?"四职业全枪械/六刀/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
         }
         static void WriteNew(string path, string text)
         {
@@ -100,7 +100,9 @@ namespace SwapHunter
         }
         void BeginDemonstration()
         {
-            if(!RunStorage.IsDirectedTrial&&RunStorage.IsTacticalDemo&&Array.IndexOf(Environment.GetCommandLineArgs(),"-demoMenu")>=0){OpenExpeditionBoard();expeditionTab=2;Toast(DemonstrationSession.Badge+"；所有职业、武器和技能为展示预置。",8);return;}
+            if(!RunStorage.IsDirectedTrial&&RunStorage.IsTacticalDemo&&Array.IndexOf(Environment.GetCommandLineArgs(),"-demoMenu")>=0)
+            {OpenExpeditionBoard();expeditionTab=RunStorage.IsFullPreview?5:2;Toast(DemonstrationSession.Badge+"；可自由选装备并前往行动地图。",6);
+             if(RunStorage.IsFullPreview&&Array.IndexOf(Environment.GetCommandLineArgs(),"-previewSmoke")>=0)StartCoroutine(VerifyFullPreviewStartup());return;}
             Record("demonstration_seed", (RunStorage.IsDirectedTrial?"directed-trial-product-level="+DirectedTrialBootstrap.Request.level+";scenario="+DirectedTrialBootstrap.Request.scenario+";":RunStorage.IsTacticalDemo?"tactical-all-skills-level3;":"legacy;")+"all-weapons;knife-rank=3;no-completion-history;temporary-profile;chapter=" + (DemonstrationSession.Level + 1));
             if (!BeginExpedition(DemonstrationSession.Level))
             {
@@ -116,6 +118,18 @@ namespace SwapHunter
                 StartCoroutine(VerifyDemonstrationStorage());
         }
 
+        [Serializable] sealed class FullPreviewReport
+        {public bool passed,allKnives,allChapters,allStory,allAppendices,noFakeRecords,allKnifeEquipments,allIconsRendered;public string screenshot,profilePath,settingsPath;}
+        IEnumerator VerifyFullPreviewStartup()
+        {
+            while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;yield return new WaitForSecondsRealtime(.4f);var p=expeditionStore.Profile;
+            var report=new FullPreviewReport{allKnives=Array.TrueForAll(p.meleeKnives,x=>x),allChapters=p.highestUnlocked==11&&Array.TrueForAll(p.cleared,x=>x),noFakeRecords=p.receipts.Count==0&&Array.TrueForAll(p.bestSeconds,x=>x==0),allStory=true,allAppendices=true,allKnifeEquipments=true,profilePath=expeditionStore.SavePath,settingsPath=SettingsStore.FilePath,screenshot="full-content-preview.png"};
+            for(int i=0;i<12;i++){report.allStory&=StoryChapterUnlocked(i);report.allAppendices&=StoryAppendixUnlocked(i);}
+            int original=p.classLoadouts[p.activeClass].knifeId;for(int i=0;i<6;i++){expeditionStore.EquipMeleeKnife(i);report.allKnifeEquipments&=expeditionStore.Profile.classLoadouts[p.activeClass].knifeId==i;}expeditionStore.EquipMeleeKnife(original);
+            float iconsDeadline=Time.realtimeSinceStartup+5;KnifeArmoryPreviewV2 catalogue;do{yield return null;catalogue=GetComponent<KnifeArmoryPreviewV2>();}while((!catalogue||Array.Exists(catalogue.Icons,x=>!x))&&Time.realtimeSinceStartup<iconsDeadline);report.allIconsRendered=catalogue&&Array.TrueForAll(catalogue.Icons,x=>x);yield return new WaitForEndOfFrame();var previewPixels=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(RunStorage.Root,report.screenshot),previewPixels.EncodeToPNG());Destroy(previewPixels);yield return null;
+            report.passed=report.allKnives&&report.allChapters&&report.allStory&&report.allAppendices&&report.noFakeRecords&&report.allKnifeEquipments&&report.allIconsRendered;
+            File.WriteAllText(Path.Combine(RunStorage.Root,"full-content-preview-report.json"),JsonUtility.ToJson(report,true));Debug.Log("SWAPHUNTER_FULL_PREVIEW="+report.passed+";root="+RunStorage.Root);Application.Quit(report.passed?0:1);
+        }
         [Serializable] sealed class DemonstrationSmokeReport
         {
             public string kind = "Native startup/storage isolation smoke; no UI, input skill or player-experience conclusion";

@@ -4,23 +4,32 @@ namespace SwapHunter
     // A bounded, swept ballistic projectile. Damage cannot cross world cover.
     public sealed class PlayerOrdnance : MonoBehaviour
     {
-        PlayerMotor owner; Vector3 velocity; float damage, fuse=2.4f; bool exploded;
+        PlayerMotor owner; Vector3 velocity,launchPoint; float damage,fuse,gravity,maximumRange; bool exploded;
         public const float BlastRadius = 3.1f;
         public bool Live => !exploded && isActiveAndEnabled;
         public float FuseLeft => fuse;
+        public float ConfiguredDamage=>damage;
+        public float MaximumRange=>maximumRange;
         public static PlayerOrdnance Launch(PlayerMotor player,Vector3 origin,Vector3 direction,float power)
         {
             var go=Shapes.Make("Player ballistic grenade",PrimitiveType.Sphere,DemoGame.I.effects,origin,Vector3.one*.12f,6);
-            var shot=go.AddComponent<PlayerOrdnance>();shot.owner=player;shot.velocity=direction.normalized*19+Vector3.up*2.2f;shot.damage=power;
+            var definition=WeaponCatalog.Get(9);
+            var shot=go.AddComponent<PlayerOrdnance>();shot.owner=player;shot.velocity=direction.normalized*definition.projectileSpeed+Vector3.up*definition.projectileLift;shot.damage=power;shot.launchPoint=origin;shot.gravity=definition.projectileGravity;shot.fuse=definition.projectileFuse;shot.maximumRange=definition.range;
             return shot;
         }
         void Update()
         {
             var g=DemoGame.I;if(!g||!g.IsPlaying)return;
-            float dt=Time.deltaTime;velocity+=Vector3.down*12*dt;Vector3 travel=velocity*dt;
+            float dt=Time.deltaTime;velocity+=Vector3.down*gravity*dt;Vector3 travel=velocity*dt;
+            bool rangeEnd=(transform.position+travel-launchPoint).sqrMagnitude>maximumRange*maximumRange;
+            if(rangeEnd&&travel.sqrMagnitude>.000001f)
+            {
+                Vector3 offset=transform.position-launchPoint,axis=travel.normalized;float b=Vector3.Dot(offset,axis),c=offset.sqrMagnitude-maximumRange*maximumRange;
+                float remaining=-b+Mathf.Sqrt(Mathf.Max(0,b*b-c));travel=axis*Mathf.Clamp(remaining,0,travel.magnitude);
+            }
             if(CombatRay.Cast(transform.position,travel.normalized,travel.magnitude,owner?owner.transform:null,out var hit))
             {transform.position=hit.point+hit.normal*.035f;Explode();return;}
-            transform.position+=travel;fuse-=dt;if(fuse<=0)Explode();
+            transform.position+=travel;fuse-=dt;if(fuse<=0||rangeEnd)Explode();
         }
         public void Explode()
         {

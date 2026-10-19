@@ -1,0 +1,4 @@
+These four listed assets are CC0 1.0 Universal. Their original asset URLs and SHA-256 hashes are retained in sources.json.
+Official asset-license statements verified: https://docs.ambientcg.com/license/ and https://polyhaven.com/license
+Full CC0 legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+The source photos/textures are not claimed as original SwapHunter artwork.

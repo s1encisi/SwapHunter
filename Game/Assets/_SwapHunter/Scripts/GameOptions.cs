@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -148,12 +148,14 @@ namespace SwapHunter
     }
     public static class SettingsStore
     {
-        public static string FilePath => Path.Combine(RunStorage.Root, "settings-v5.json");
-        public static string LegacyFilePath => Path.Combine(RunStorage.Root, "settings-v4.json");
-        public static string OldestFilePath => Path.Combine(RunStorage.Root, "settings-v2.json");
+        // Preview progress is fresh, but the user's preview key bindings survive a restart.
+        static string DirectoryPath=>RunStorage.IsFullPreview?Path.Combine(Application.persistentDataPath,"FullContentPreviewSettings"):RunStorage.Root;
+        public static string FilePath => Path.Combine(DirectoryPath, "settings-v5.json");
+        public static string LegacyFilePath => Path.Combine(DirectoryPath, "settings-v4.json");
+        public static string OldestFilePath => Path.Combine(DirectoryPath, "settings-v2.json");
         public static string LastWarning { get; private set; } = "";
 
-        public static GameOptions Load() => LoadDirectory(RunStorage.Root, !RunStorage.IsIsolated);
+        public static GameOptions Load() => LoadDirectory(DirectoryPath, !RunStorage.IsIsolated);
 
         // Explicit directory API for isolated storage checks and imported profiles.
         // It never reads PlayerPrefs, changes RunStorage.Root, or automatically writes a recovered file.

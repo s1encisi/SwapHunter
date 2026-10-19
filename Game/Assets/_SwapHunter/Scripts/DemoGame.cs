@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -99,6 +99,7 @@ namespace SwapHunter
             FireControlRelay.FeatureEnabled=Array.IndexOf(d2Args,"-d2NoRelay")<0;
             EnemyHazardAwareness.DecisionsEnabled=Array.IndexOf(d2Args,"-d2NoHazardAI")<0;
             if (RunStorage.IsDemonstration) { BeginDemonstration(); yield break; }
+            if(RunStorage.IsFocusValidation){gameObject.AddComponent<FocusRefinementQA>();yield break;}
             if(RunStorage.IsMapV2Validation){gameObject.AddComponent<MapV2QA>();yield break;}
             if(RunStorage.IsStoryD2Validation){gameObject.AddComponent<StoryD2QA>();yield break;}
             if (RunStorage.IsSynergyValidation) gameObject.AddComponent<SynergyQA>();

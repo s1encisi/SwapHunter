@@ -4,7 +4,7 @@ namespace SwapHunter
     // Base expedition values. Attachments and temporary effects are applied by their owners.
     public readonly struct EffectiveWeaponStats
     {
-        public readonly float Damage, Rate, Reload, Spread, Movement;
+        public readonly float Damage, Rate, Reload, Spread, Movement, Range;
         public readonly int Magazine, Reserve, Pellets;
         EffectiveWeaponStats(int id, DemoConfig config)
         {
@@ -14,7 +14,7 @@ namespace SwapHunter
             Reload = id == 0 ? config.rifleReload : id == 1 ? config.shotgunReload : d.reload;
             Magazine = id == 0 ? config.rifleMagazine : id == 1 ? config.shotgunMagazine : d.magazine;
             Reserve = d.reserve; Pellets = id == 1 ? config.shotgunPellets : d.pellets;
-            Spread = id == 0 ? config.stationarySpread : d.spread; Movement = d.movement;
+            Spread = id == 0 ? config.stationarySpread : d.spread; Movement = d.movement;Range=d.range;
         }
         public static EffectiveWeaponStats Read(int id, DemoConfig config)
         {

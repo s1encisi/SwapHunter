@@ -51,11 +51,12 @@ namespace SwapHunter
  {
   PlayerMotor p;DemoGame G=>DemoGame.I;KnifeV2Visual held;KnifePickupV2 pickup;
   readonly HashSet<int> collected=new HashSet<int>();readonly HashSet<string> acquiredIds=new HashSet<string>();
-  float pickupAge=-1,grabTime,readyTime,endTime,equipLeft,attackAge=-1,inspectAge=-1;bool pickupCommitted,table,heavy,quick,damageCommitted,wasEquipped;
+  float pickupAge=-1,grabTime,readyTime,endTime,equipLeft,equipAge=-1,attackAge=-1,inspectAge=-1,recoverAge=-1;Vector3 actionStartHand;Quaternion actionStartRotation;bool pickupCommitted,table,heavy,quick,damageCommitted,wasEquipped;
   Vector3 originalGrip,originalFeet,reachStart;Quaternion originalRotation;
   public int KnifeId{get;private set;}public bool Equipped{get;private set;}
   public bool PickingUp=>pickupAge>=0;
   public bool AttackActive=>attackAge>=0;
+  public float AttackSeconds=>attackAge;public float InspectSeconds=>inspectAge;public float EquipSeconds=>equipAge;
   public bool Ready=>(!PickingUp||pickupCommitted&&pickupAge>=readyTime)&&equipLeft<=0;
   public KnifeV2Visual HeldVisual=>held;
   public float LastPickupGripError{get;private set;}
@@ -67,14 +68,20 @@ namespace SwapHunter
   public void Initialize(PlayerMotor player){p=player;ResetForAttempt();}
   public void ResetForAttempt()
   {
-   CancelPickup();collected.Clear();acquiredIds.Clear();attackAge=inspectAge=-1;Equipped=false;equipLeft=0;
+   CancelPickup();collected.Clear();acquiredIds.Clear();attackAge=inspectAge=equipAge=recoverAge=-1;Equipped=false;equipLeft=0;
    KnifeId=G.expeditionActive&&G.expeditionStore!=null&&G.expeditionStore.IsTactical&&G.expeditionStore.Profile.deployment!=null?G.expeditionStore.Profile.deployment.knifeId:0;
    ReplaceHeld(KnifeV2Visual.Create(KnifeId,p.Eye,Layers.ViewModel));if(held)held.gameObject.SetActive(false);
   }
   void ReplaceHeld(KnifeV2Visual model){if(held&&held!=model)Destroy(held.gameObject);held=model;KnifeId=model.KnifeId;held.transform.SetParent(p.Eye,true);}
-  public void Inspect(){if(Equipped&&Ready)inspectAge=0;}
+  public bool ReviewEquipKnife(int id)
+  {
+   if(!RunStorage.IsValidation||id<0||id>=6||!p||!G)return false;
+   CancelForAction();ReplaceHeld(KnifeV2Visual.Create(id,p.Eye,Layers.ViewModel));Equipped=true;equipLeft=.30f;equipAge=0;recoverAge=-1;return true;
+  }
+  void CaptureHandTransition(){if(!held)return;actionStartHand=p.Eye.InverseTransformPoint(held.Grip.position);actionStartRotation=Quaternion.Inverse(p.Eye.rotation)*held.Grip.rotation;}
+  public void Inspect(){if(Equipped&&Ready&&!AttackActive&&!PickingUp)inspectAge=0;}
   public void Equip()
-  {if(!G.IsPlaying||p.health<=0||p.SwapActionsLocked||p.TacticalAdvanceActive)return;CancelPickup();p.SuspendReloadV2();Equipped=true;equipLeft=.30f;inspectAge=-1;G.sound.Play("knife_swipe");}
+  {if(!G.IsPlaying||p.health<=0||p.SwapActionsLocked||p.TacticalAdvanceActive)return;CancelPickup();p.SuspendReloadV2();Equipped=true;equipLeft=.30f;equipAge=0;inspectAge=-1;recoverAge=-1;G.sound.Play("knife_swipe");}
   public void Unequip(){CancelPickup();Equipped=false;attackAge=inspectAge=-1;if(held)held.gameObject.SetActive(false);p.SetV2EquipmentVisibility(true);p.RestoreFirearmHands();}
   public bool TryPickup(KnifePickupV2 target)
   {
@@ -87,7 +94,7 @@ namespace SwapHunter
    if(target.Closed&&target.KnifeId==3){readyTime+=.12f;endTime+=.12f;}
    G.Record("knife_pickup_reserve",target.InstanceId+";knife="+target.KnifeId);return true;
   }
-  public void CancelForAction(){CancelPickup();if(quick&&AttackActive)Equipped=wasEquipped;attackAge=inspectAge=-1;}
+  public void CancelForAction(){CaptureHandTransition();CancelPickup();if(quick&&AttackActive)Equipped=wasEquipped;attackAge=inspectAge=-1;recoverAge=Equipped?0:-1;if(held)held.ReleaseInspect();}
   public void CancelPickup()
   {
    if(!PickingUp)return;
@@ -100,7 +107,7 @@ namespace SwapHunter
   {
    if(!p||!G.IsPlaying)return;
    if(p.health<=0){CancelPickup();return;}
-   float dt=Time.deltaTime;equipLeft=Mathf.Max(0,equipLeft-dt);
+   float dt=Time.deltaTime;equipLeft=Mathf.Max(0,equipLeft-dt);if(equipAge>=0&&(equipAge+=dt)>=.40f)equipAge=-1;if(recoverAge>=0&&(recoverAge+=dt)>=.14f)recoverAge=-1;
    if(G.Pressed(25))Equip();if(G.Pressed(28))Inspect();
    if(PickingUp)
    {
@@ -123,7 +130,7 @@ namespace SwapHunter
    }
    else if(Equipped&&Ready)
    {if(G.Pressed(12))BeginAttack(false,false);else if(G.Pressed(13))BeginAttack(true,false);}
-   if(inspectAge>=0){inspectAge+=dt;if(inspectAge>=1.2f)inspectAge=-1;}
+   if(inspectAge>=0){inspectAge+=dt;if(inspectAge>=1.2f){inspectAge=-1;held.ReleaseInspect();}}
    if(attackAge>=0)
    {
     attackAge+=dt;
@@ -136,7 +143,7 @@ namespace SwapHunter
   {
    if(!G.IsPlaying||p.health<=0||p.SwapActionsLocked||p.TacticalAdvanceActive||AttackActive||equipLeft>0)return false;
    if(PickingUp){if(pickupAge<readyTime)return false;CancelPickup();}
-   p.SuspendReloadV2();wasEquipped=Equipped;Equipped=true;heavy=isHeavy;quick=quickAttack;attackAge=0;damageCommitted=false;inspectAge=-1;
+   CaptureHandTransition();recoverAge=-1;equipAge=-1;if(held)held.ReleaseInspect();p.SuspendReloadV2();wasEquipped=Equipped;Equipped=true;heavy=isHeavy;quick=quickAttack;attackAge=0;damageCommitted=false;inspectAge=-1;
    if(p.classSkill)p.classSkill.EndForAttack("melee");D2HoldInteraction.CancelForAction();G.sound.Play("knife_swipe");return true;
   }
   void ApplyMelee()
@@ -162,7 +169,7 @@ namespace SwapHunter
    if(!show&&p.V2ItemsSelected)return;
    p.SetV2EquipmentVisibility(!show||(PickingUp&&pickupAge<.10f));held.gameObject.SetActive(show&&(!PickingUp||pickupCommitted));
    if(!show)return;
-   Vector3 rest=p.Eye.TransformPoint(new Vector3(.20f,-.25f,.48f));Quaternion rotation=p.Eye.rotation*Quaternion.Euler(-12,-12,0)*(KnifeId==2?Quaternion.Euler(165,0,15):Quaternion.identity);
+   var pose=KnifeMotionV3.Sample(KnifeId,equipAge,inspectAge,attackAge,heavy);Vector3 rest=p.Eye.TransformPoint(pose.handLocal);Quaternion rotation=p.Eye.rotation*pose.gripRotation;
    if(PickingUp)
    {
     float bend=table?.1f:Mathf.Sin(Mathf.Clamp01(pickupAge/endTime)*Mathf.PI);
@@ -183,12 +190,14 @@ namespace SwapHunter
     return;
    }
    p.SetPickupBody(0);
-   float sweep=attackAge<0?0:Mathf.Sin(Mathf.Clamp01(attackAge/(heavy?.55f:.32f))*Mathf.PI);
-   Vector3 position=rest+p.Eye.forward*sweep*(heavy?.32f:.20f)+p.Eye.right*sweep*-.2f;
-   if(inspectAge>=0){float t=inspectAge/1.2f;held.SetInspect(t);rotation*=Quaternion.Euler(0,Mathf.Sin(t*Mathf.PI)*60,Mathf.Sin(t*Mathf.PI)*25);}
-   if(equipLeft>0)position-=p.Eye.up*.25f*(equipLeft/.3f);
-   held.AlignGrip(position,rotation*Quaternion.Euler(sweep*35,sweep*-35,0));p.PoseKnifeHands(held.Grip,1);
+   Vector3 local=pose.handLocal;Quaternion localRotation=pose.gripRotation;
+   if(attackAge>=0&&attackAge<.06f){float t=SmoothV3(attackAge/.06f);local=Vector3.Lerp(actionStartHand,local,t);localRotation=Quaternion.Slerp(actionStartRotation,localRotation,t);}
+   if(recoverAge>=0){float t=SmoothV3(recoverAge/.14f);local=Vector3.Lerp(actionStartHand,local,t);localRotation=Quaternion.Slerp(actionStartRotation,localRotation,t);}
+   if(inspectAge>=0)held.SetInspect(inspectAge/1.2f);else held.ReleaseInspect();
+   held.AlignGrip(p.Eye.TransformPoint(local),p.Eye.rotation*localRotation);p.PoseKnifeHands(held.Grip,1,null,pose.leftSupport);
+
   }
+  static float SmoothV3(float t){t=Mathf.Clamp01(t);return t*t*t*(t*(t*6-15)+10);}
   void OnDisable(){CancelPickup();}
  }
 }

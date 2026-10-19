@@ -8,6 +8,8 @@ namespace SwapHunter
         public string name, description, sound="rifle", accent="";
         public FireMechanism mechanism;
         public float damage, rate, reload, spread, recoil=.7f, movement=1, aimZoom=.84f, chargeTime=.65f;
+        public float range=90,falloffStart=20,falloffEnd=45,minimumDamageMultiplier=.6f;
+        public float projectileSpeed,projectileFuse,projectileGravity=12,projectileLift=2.2f;
         public Color tracer=new Color(1,.84f,.55f);
         // Magazine motion in its authored parent frame. Most magazines leave downward.
         public Vector3 magazineExitDirection=Vector3.down;
@@ -15,6 +17,7 @@ namespace SwapHunter
         public Vector3 reloadMagazineGripPoint,reloadHandContactPoint,reloadHandEuler;
         public bool Automatic => mechanism==FireMechanism.Automatic;
         public bool Shotgun => mechanism==FireMechanism.Pump || mechanism==FireMechanism.DoubleBarrel;
+        public float DistanceMultiplier(float distance)=>minimumDamageMultiplier>=1?1:Mathf.Lerp(1,minimumDamageMultiplier,Mathf.InverseLerp(falloffStart,falloffEnd,distance));
     }
     public static class WeaponCatalog
     {
@@ -35,6 +38,14 @@ namespace SwapHunter
         };
         static WeaponCatalog()
         {
+            // Real ray, falloff, projectile flight and armory read this same table.
+            SetRange(0,140,35,90,.6f);SetRange(1,90,8,24,.3f);
+            SetRange(2,160,45,115,.6f);SetRange(3,140,40,100,.6f);
+            SetRange(4,100,16,45,.35f);SetRange(5,90,7,21,.3f);
+            SetRange(6,220,220,220,1);SetRange(7,250,250,250,1);
+            SetRange(8,160,45,110,.6f);SetRange(9,90,0,0,1);
+            SetRange(10,220,220,220,1);SetRange(11,140,35,90,.6f);
+            All[9].projectileSpeed=30;All[9].projectileFuse=4.2f;
             for(int i=2;i<Count;i++){All[i].sound="weapon_"+i.ToString("00");All[i].accent="";}
             All[1].movement=.96f; All[3].movement=.94f; All[4].movement=1.04f; All[4].magazineExitDirection=Vector3.up;
             // Top of the authored .043m-radius cylinder and underside of the .055m-thick glove palm.
@@ -45,6 +56,8 @@ namespace SwapHunter
             All[6].aimZoom=.63f; All[7].aimZoom=.40f; All[7].movement=.9f; All[8].movement=.86f;
             All[9].movement=.92f; All[10].aimZoom=.65f; All[10].tracer=new Color(.25f,.9f,1); All[11].tracer=new Color(.65f,.35f,1);
         }
+        static void SetRange(int id,float range,float start,float end,float minimum)
+        {var d=All[id];d.range=range;d.falloffStart=start;d.falloffEnd=end;d.minimumDamageMultiplier=minimum;}
         static WeaponDefinition W(int id,string name,FireMechanism mode,float damage,float rate,int magazine,int reserve,float reload,float spread,float recoil,string description,int pellets=1,string sound="rifle",string accent="")
             =>new WeaponDefinition{id=id,name=name,mechanism=mode,damage=damage,rate=rate,magazine=magazine,reserve=reserve,reload=reload,spread=spread,recoil=recoil,description=description,pellets=pellets,sound=sound,accent=accent};
         public static bool Valid(int id)=>id>=0&&id<Count;

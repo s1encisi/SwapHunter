@@ -32,7 +32,7 @@ namespace SwapHunter
    Shapes.Box("One-use tutorial launch pad",props,LaunchPoint,new Vector3(1.8f,.08f,1.8f),4);
    marker=Shapes.Ring(props,new Vector3(0,.08f,5),1,new Color(.1f,.9f,1),.09f);
    foreach(var e in G.enemies)if(e&&e.Alive){target=e;break;}
-   if(target){target.maximumHealth=target.health=500;stageHealth=target.health;}
+   if(target){target.maximumHealth=target.health=EnemyV2Definition.ScaleHealth(500);stageHealth=target.health;}
    moved=0;G.Record("tutorial_step","0");G.Toast(Instruction,5);
   }
   void Mark(Vector3 point)
@@ -40,7 +40,7 @@ namespace SwapHunter
   void PlaceTarget(EnemyKind kind,Vector3 point)
   {
    if(target){target.gameObject.SetActive(false);Destroy(target.gameObject);}
-   target=EnemyActor.Spawn(kind,point,0);if(target){target.suppressAI=kind==EnemyKind.Training;target.maximumHealth=target.health=kind==EnemyKind.Training?500:120;stageHealth=target.health;}
+   target=EnemyActor.Spawn(kind,point,0);if(target){target.suppressAI=kind==EnemyKind.Training;target.maximumHealth=target.health=EnemyV2Definition.ScaleHealth(kind==EnemyKind.Training?500:120);stageHealth=target.health;}
   }
   void Next()
   {

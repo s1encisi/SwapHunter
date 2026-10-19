@@ -5,7 +5,7 @@ namespace SwapHunter
  // Continuous life layers and basic attacks; spatial skills share this state in BossSpatialSkills.
  public sealed partial class BossEncounter:MonoBehaviour
  {
-  public const float ShieldMaximum=360,HealthMaximum=7200,SilenceResistanceDuration=4.5f;
+  public const float ShieldMaximum=360,HealthMaximum=7200*EnemyV2Definition.HealthScale,SilenceResistanceDuration=4.5f;
   public EnemyActor Owner {get;private set;}
   public BossPhase Phase {get;private set;}
   public float Energy {get;private set;}
@@ -29,7 +29,7 @@ namespace SwapHunter
   {
    Owner=owner;Energy=ShieldMaximum;Phase=BossPhase.EnergyMelee;Owner.maximumHealth=HealthMaximum;Owner.health=HealthMaximum;attackAt=Time.time+1.5f;CancelSpatialSkill();
    Owner.InitializeBossPresentation();
-   G.Record("boss_begin","Energy Shield 360 -> HP 7200");
+   G.Record("boss_begin","Energy Shield "+ShieldMaximum+" -> HP "+HealthMaximum);
   }
   public float Absorb(float damage)
   {

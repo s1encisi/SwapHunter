@@ -28,7 +28,8 @@ namespace SwapHunter
         public Transform Blade{get;private set;}
         public float OpenAmount{get;private set;}=1;
         public float PoseSeconds{get;private set;}
-        Transform hingeA,hingeB;Quaternion aRest,bRest;Transform[] rope=Array.Empty<Transform>();Quaternion[] ropeRest=Array.Empty<Quaternion>();
+        public float HingeSeparation=>KnifeId!=3?0:hingeA&&hingeB&&pivotA&&pivotB?Mathf.Max(Vector3.Distance(hingeA.position,pivotA.position),Vector3.Distance(hingeB.position,pivotB.position)):float.PositiveInfinity;
+        Transform hingeA,hingeB,pivotA,pivotB,latch;Quaternion aRest,bRest,latchRest;Transform[] rope=Array.Empty<Transform>();Quaternion[] ropeRest=Array.Empty<Quaternion>();
         public static readonly string[] Names={"普通匕首","M9宝石刀","爪子刀","蝴蝶刀","系绳匕首","锯齿刀"};
         public static KnifeV2Visual Create(int id,Transform parent,int layer=0)
         {
@@ -39,7 +40,7 @@ namespace SwapHunter
             if(!result.Grip||!result.Tip||!result.Blade)throw new InvalidOperationException("刀具缺少握点/刃尖/刀刃: "+id);
             // Positive Unity marker orientation, preserving the real authored point.
             Vector3 gp=result.Grip.position;result.Grip.SetParent(root,true);result.Grip.SetPositionAndRotation(gp,root.rotation);
-            result.hingeA=ImportedModels.Find(root,"HandleHingeA");result.hingeB=ImportedModels.Find(root,"HandleHingeB");
+            result.hingeA=ImportedModels.Find(root,"HandleHingeA");result.hingeB=ImportedModels.Find(root,"HandleHingeB");result.pivotA=ImportedModels.Find(root,"BladePivotA");result.pivotB=ImportedModels.Find(root,"BladePivotB");result.latch=ImportedModels.Find(root,"LatchHinge");if(result.latch)result.latchRest=result.latch.localRotation;
             if(result.hingeA)result.aRest=result.hingeA.localRotation;if(result.hingeB){result.bRest=result.hingeB.localRotation;if(id==3)result.Grip.SetParent(result.hingeB,true);}
             return result;
         }
@@ -54,10 +55,19 @@ namespace SwapHunter
         public void SetInspect(float normalized)
         {
             PoseSeconds=Mathf.Clamp01(normalized);float turn=Mathf.Sin(PoseSeconds*Mathf.PI);
-            if(KnifeId==3)SetFold(1-.72f*Mathf.Sin(PoseSeconds*2*Mathf.PI)*Mathf.Sin(PoseSeconds*2*Mathf.PI));
+            if(KnifeId==3)
+            {
+                // The held handle stays locked to the palm. Only the free handle opens
+                // through its real pin; the blade never closes into the gripping fingers.
+                float phase=Mathf.InverseLerp(.16f,.42f,PoseSeconds)*(1-Mathf.InverseLerp(.68f,.92f,PoseSeconds));phase=phase*phase*(3-2*phase);
+                if(hingeB)hingeB.localRotation=bRest;if(hingeA)hingeA.localRotation=aRest*Quaternion.AngleAxis(48*phase,Vector3.forward);
+                if(latch)latch.localRotation=latchRest*Quaternion.AngleAxis(35*phase,Vector3.forward);OpenAmount=1;
+            }
             // The holder positions this root; no autonomous rotation or ownership transfer occurs here.
             if(KnifeId==4)UpdateLanyard(turn);
         }
+        public void ReleaseInspect()
+        {if(KnifeId!=3)return;if(hingeA)hingeA.localRotation=Quaternion.RotateTowards(hingeA.localRotation,aRest,620*Time.deltaTime);if(hingeB)hingeB.localRotation=Quaternion.RotateTowards(hingeB.localRotation,bRest,620*Time.deltaTime);if(latch)latch.localRotation=Quaternion.RotateTowards(latch.localRotation,latchRest,500*Time.deltaTime);OpenAmount=1;}
         void UpdateLanyard(float motion)
         {
             if(rope.Length==0){var all=GetComponentsInChildren<Transform>();var list=new System.Collections.Generic.List<Transform>();foreach(var t in all)if(t.name.StartsWith("Lanyard segment",StringComparison.Ordinal))list.Add(t);rope=list.ToArray();ropeRest=new Quaternion[rope.Length];for(int i=0;i<rope.Length;i++)ropeRest[i]=rope[i].localRotation;}

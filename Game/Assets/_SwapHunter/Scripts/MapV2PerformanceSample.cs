@@ -28,9 +28,13 @@ namespace SwapHunter
   }
   static bool PlaceRegion(MissionLayout layout,EncounterGroup group)
   {
-   if(group==null||!layout.TryRegion(group.region,out var bounds))return false;Vector3 spawn=layout.Spawn(group.id,0).position;var candidates=new List<Vector3>{new Vector3(bounds.center.x,spawn.y,bounds.center.z)};
-   foreach(var offset in new[]{Vector3.back*10,Vector3.left*10,Vector3.right*10,Vector3.forward*10,Vector3.back*5})candidates.Add(spawn+offset);
-   foreach(var p in candidates)if(Feet(p,out var feet)&&bounds.Contains(feet+Vector3.up*.2f)){P.SetFeet(feet);P.verticalSpeed=0;Look(spawn+Vector3.up);Physics.SyncTransforms();return true;}return false;
+   if(group==null||!layout.TryRegion(group.region,out var bounds))return false;Vector3 spawn=layout.Spawn(group.id,0).position;var candidates=new List<Vector3>();
+   // A compact region may be centred on the actual spawn. Standing on that
+   // point correctly defers the live deployment under FairDeployment's 7 m
+   // rule; the observer must enter from a legal adjacent position instead.
+   foreach(var offset in new[]{Vector3.back*10,Vector3.left*10,Vector3.right*10,Vector3.forward*10,Vector3.back*12})candidates.Add(spawn+offset);
+   candidates.Add(new Vector3(bounds.center.x,spawn.y,bounds.center.z));
+   foreach(var p in candidates)if(Feet(p,out var feet)&&bounds.Contains(feet+Vector3.up*.2f)&&Vector3.Distance(feet,spawn)>=8){P.SetFeet(feet);P.verticalSpeed=0;Look(spawn+Vector3.up);Physics.SyncTransforms();return true;}return false;
   }
   static EncounterGroup Group(MissionDefinition definition,string id){foreach(var g in definition.groups)if(g.id==id)return g;return null;}
   static EnemyActor Member(string group){foreach(var m in G.mission.Members)if(m.group.id==group&&m.actor&&m.actor.Alive)return m.actor;return null;}
@@ -64,7 +68,7 @@ namespace SwapHunter
    }
    if(best<=0)return false;P.SetFeet(choice);P.verticalSpeed=0;Look(target);Physics.SyncTransforms();return true;
   }
-  public static IEnumerator Run(Action<string,bool,string> add,string output)
+  public static IEnumerator Run(Action<string,bool,string> add,string output,int[] selectedLevels=null)
   {
    if(!RunStorage.IsIsolated){add("performance_isolated",false,"Refusing formal save");yield break;}Directory.CreateDirectory(output);
    var report=new Report{utc=DateTime.UtcNow.ToString("O"),unity=Application.unityVersion,operatingSystem=SystemInfo.operatingSystem,cpu=SystemInfo.processorType,cpuCores=SystemInfo.processorCount,gpu=SystemInfo.graphicsDeviceName,graphicsApi=SystemInfo.graphicsDeviceType.ToString(),systemMemoryMB=SystemInfo.systemMemorySize,gpuMemoryMB=SystemInfo.graphicsMemorySize};
@@ -72,11 +76,11 @@ namespace SwapHunter
    try
    {
     Time.timeScale=1;G.qaSuppressAI=false;G.qaInputEnabled=false;P.enabled=true;P.SetViewActive(true);
-    foreach(int level in new[]{4,11})
+    foreach(int level in selectedLevels??new[]{4,11})
     {
      if(G.StoryModal)G.CloseStoryModal();if(G.expeditionActive&&G.expeditionReceipt==null)G.AbandonExpedition();G.OpenExpeditionBoard();
      string storage=Path.Combine(RunStorage.Root,"mapv2-perf-"+level);Directory.CreateDirectory(storage);File.WriteAllText(Path.Combine(storage,"expedition-v6.json"),JsonUtility.ToJson(TacticalDemoProfile.Create(0,true)));G.expeditionStore=new ExpeditionStore(storage,true);
-     var sample=new Sample{chapter=level+1,preparation="Legal NavMesh positions selected from actual region and member bindings; no budget edits."};report.samples.Add(sample);
+     var sample=new Sample{chapter=level+1,preparation="Legal NavMesh positions selected from actual region and member bindings, at least 8 m away from the primary pending spawn; no budget edits."};report.samples.Add(sample);
      bool began=G.BeginExpedition(level);if(!began){sample.preparation="Deployment failed: "+G.expeditionNotice;add("performance_ch"+(level+1)+"_sample",false,sample.preparation);continue;}
      KeepAlive();yield return null;var layout=G.expeditionMap.root.GetComponent<MissionLayout>();var definition=G.mission.Definition;sample.plannedBudget=definition.TotalBudget;sample.liveLimit=definition.liveLimit;sample.escortLimit=definition.maximumEscorts;
      float prepareStart=Time.realtimeSinceStartup;int preparationShots=P.shots;bool finalReady=false;

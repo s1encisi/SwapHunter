@@ -1,0 +1,93 @@
+{
+  "downloaded": "2026-10-19",
+  "scope": "Only focused chapters 1 and 12",
+  "assets": [
+    {
+      "id": "Concrete034",
+      "provider": "ambientCG",
+      "license": "CC0-1.0",
+      "source": "https://ambientcg.com/view?id=Concrete034",
+      "licenseUrl": "https://docs.ambientcg.com/license/",
+      "download": "https://ambientcg.com/get?file=Concrete034_1K-JPG.zip",
+      "archiveSha256": "5839d284d94ffb8d2a56df742ec522b13dd311c52dbd42b8fd33f0409ceedb81",
+      "files": [
+        {
+          "file": "concrete_color.jpg",
+          "sha256": "8ceb9186d990b31fce785e06fdc6974c160f1d27c43f6160266f164deba713aa"
+        },
+        {
+          "file": "concrete_normalgl.jpg",
+          "sha256": "e509eb9dfa978e780fbebfd2acacc2ce158b5b7ced722ddc0759039dd51e18ca"
+        },
+        {
+          "file": "concrete_roughness.jpg",
+          "sha256": "a4a9e39857a19afd23a778e5abf44fcdf6bd7f93918f1cf6878b41933e553511"
+        }
+      ]
+    },
+    {
+      "id": "Asphalt012",
+      "provider": "ambientCG",
+      "license": "CC0-1.0",
+      "source": "https://ambientcg.com/view?id=Asphalt012",
+      "licenseUrl": "https://docs.ambientcg.com/license/",
+      "download": "https://ambientcg.com/get?file=Asphalt012_1K-JPG.zip",
+      "archiveSha256": "c077e5d1b21a4333829bb655043ee6a45ddcf82fef850528f91f4305ac11193d",
+      "files": [
+        {
+          "file": "asphalt_color.jpg",
+          "sha256": "c7a142a1c12f517024d1b4c92472c700af86cfe3bfc12263c4260e414d4c2c59"
+        },
+        {
+          "file": "asphalt_normalgl.jpg",
+          "sha256": "4e1d22a2216769d575d3481c548555ab955f7e6d7cb06f0c5eda99835612deb1"
+        },
+        {
+          "file": "asphalt_roughness.jpg",
+          "sha256": "0f3bdc4408c43fb8cfbef8089ea6aa9dbfbd104fcfc0ea7a63200fed79cb395c"
+        }
+      ]
+    },
+    {
+      "id": "MetalPlates006",
+      "provider": "ambientCG",
+      "license": "CC0-1.0",
+      "source": "https://ambientcg.com/view?id=MetalPlates006",
+      "licenseUrl": "https://docs.ambientcg.com/license/",
+      "download": "https://ambientcg.com/get?file=MetalPlates006_1K-JPG.zip",
+      "archiveSha256": "0b7d3736bf76103f158bc2f550e28b54a2ea9ba553c9253ac172eca3bafb02b5",
+      "files": [
+        {
+          "file": "metal_color.jpg",
+          "sha256": "08478c9e8ae9fe42c9f1378fd5259f4839cd31788a4716a523853324ef40e714"
+        },
+        {
+          "file": "metal_normalgl.jpg",
+          "sha256": "1e1f2e483b70e0f54f0816b47bcc1a1e137d73abf9a82e0aeabad996acb9cf5c"
+        },
+        {
+          "file": "metal_roughness.jpg",
+          "sha256": "032a9011dd812b2b2bf653b9b2d173d7474c7ffe021a2e127c2e14d204b56abb"
+        }
+      ]
+    },
+    {
+      "id": "kloofendal_48d_partly_cloudy_puresky",
+      "provider": "Poly Haven",
+      "authors": [
+        "Greg Zaal",
+        "Jarod Guest"
+      ],
+      "license": "CC0-1.0",
+      "source": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+      "licenseUrl": "https://polyhaven.com/license",
+      "download": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/kloofendal_48d_partly_cloudy_puresky_2k.hdr",
+      "files": [
+        {
+          "file": "coastal_sky.hdr",
+          "sha256": "5244534e9cf5b606f2ff513aa00ddb161b0a4826ffd88a0d3bd03ac29247d198"
+        }
+      ]
+    }
+  ]
+}

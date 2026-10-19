@@ -55,7 +55,7 @@ namespace SwapHunter
       C("AI_miniboss_"+boss.Id,boss.CompletedCasts>=2&&actor.boss==null,"hp="+actor.maximumHealth+";casts="+boss.CastCount+";completed="+boss.CompletedCasts+";independentFinalBoss="+(actor.boss==null));
       actor.ApplySilence(3);float silence=actor.silenceLeft;actor.ApplySilence(3);C("AI_miniboss_silence_"+boss.Id,silence<=1.5f&&actor.silenceLeft<=silence+.001f,"duration="+silence);
      }
-     yield return Fresh(EnemyKind.Elite,15);actor.EnableBoss();C("AI_final_hp_energy",actor.maximumHealth==7200&&actor.boss.Energy==360,"health="+actor.maximumHealth+";energy="+actor.boss.Energy);
+     yield return Fresh(EnemyKind.Elite,15);actor.EnableBoss();C("AI_final_hp_energy",actor.maximumHealth==BossEncounter.HealthMaximum&&actor.boss.Energy==360,"health="+actor.maximumHealth+";energy="+actor.boss.Energy);
      yield return Fresh(EnemyKind.BarrierGunner,18);var device=actor.GetComponentInChildren<EnemyV2Device>();float bodyBefore=actor.health;var batch=new DamageBatch(DamageSource.PlayerBullet,P.transform,P.Eye.position);batch.V2Device(device,72,batch.NewEvent());batch.Apply();C("AI_component_independent",device&&device.Health==72&&actor.health==bodyBefore,"device="+(device?device.Health:0)+";body="+actor.health);
      var field=EnemyV2DynamicField.Spawn(origin+Vector3.right*12);C("AI_dynamic_field_endpoints",field&&EnemyV2DynamicField.BlocksQ(origin+Vector3.right*12)&&!EnemyV2DynamicField.BlocksQ(origin),"sphere_radius=6");if(field){field.Device.ApplyDamage(144,P.transform.position);yield return null;C("AI_field_destroyed",!EnemyV2DynamicField.BlocksQ(origin+Vector3.right*12));}
      yield return KnifeChecks();
@@ -78,7 +78,7 @@ namespace SwapHunter
    }
    IEnumerator BlastShieldChecks()
    {
-    yield return Fresh(EnemyKind.Assault,12);P.ResetAt(origin+new Vector3(0,.03f,-1.2f));P.health=100000;Physics.SyncTransforms();Vector3 blast=origin+Vector3.forward*1.5f;
+    yield return Fresh(EnemyKind.Assault,12);actor.health=actor.maximumHealth=10000;P.ResetAt(origin+new Vector3(0,.03f,-1.2f));P.health=100000;Physics.SyncTransforms();Vector3 blast=origin+Vector3.forward*1.5f;
     float playerBefore=P.health,enemyBefore=actor.health;EnemyV2Danger.Area(actor,blast,3,24,shieldExplosion:true);yield return new WaitForSeconds(.2f);float playerBase=playerBefore-P.health,enemyBase=enemyBefore-actor.health;
     var shield=DirectionalBarrier.Spawn(origin+new Vector3(0,1.1f,.6f),Vector3.forward,10,null);
     playerBefore=P.health;enemyBefore=actor.health;EnemyV2Danger.Area(actor,blast,3,24,shieldExplosion:true);yield return new WaitForSeconds(.2f);float playerShield=playerBefore-P.health,enemyShield=enemyBefore-actor.health;

@@ -150,14 +150,19 @@ namespace SwapHunter
    try{texture.Create();var request=new RenderPipeline.StandardRequest{destination=texture};RenderPipeline.SubmitRenderRequest(camera,request);RenderTexture.active=texture;pixels=new Texture2D(1600,900,TextureFormat.RGBA32,false);pixels.ReadPixels(new Rect(0,0,1600,900),0,0);pixels.Apply();File.WriteAllBytes(Path.Combine(output,file),pixels.EncodeToPNG());data.views.Add(new View{file=file,feet=feet,lookAt=target});}
    finally{RenderTexture.active=previous;texture.Release();UnityEngine.Object.Destroy(texture);if(pixels)UnityEngine.Object.Destroy(pixels);}
   }
-  public static IEnumerator Run(Action<string,bool,string> add,string output)
+  // selectedLevels uses stable zero-based IDs (0 = chapter 1, 11 = chapter 12).
+  // Omit it to retain the original twelve-chapter run.
+  public static IEnumerator Run(Action<string,bool,string> add,string output,int[] selectedLevels=null)
   {
    Directory.CreateDirectory(output);if(!RunStorage.IsIsolated){add("mapv2_geometry_isolated",false,"Geometry fixture cannot run against formal saves");yield break;}
+   int[] levels=selectedLevels??new[]{0,1,2,3,4,5,6,7,8,9,10,11};if(levels.Length==0)throw new ArgumentException("selectedLevels must contain at least one zero-based chapter ID.");
+   var seenLevels=new HashSet<int>();int expectedBudget=0,actualBudget=0,deployedLevels=0;
+   foreach(int level in levels){if(level<0||level>=12||!seenLevels.Add(level))throw new ArgumentException("selectedLevels must contain distinct IDs in 0..11.");expectedBudget+=MissionCatalog.Get(level).TotalBudget;}
    bool oldSuppress=G.qaSuppressAI;G.qaSuppressAI=true;
-   for(int level=0;level<12;level++)
+   foreach(int level in levels)
    {
     if(G.StoryModal)G.CloseStoryModal();if(G.expeditionActive&&G.expeditionReceipt==null)G.AbandonExpedition();G.OpenExpeditionBoard();string folder=Path.Combine(RunStorage.Root,"mapv2-geometry-"+level);Directory.CreateDirectory(folder);File.WriteAllText(Path.Combine(folder,"expedition-v6.json"),JsonUtility.ToJson(TacticalDemoProfile.Create(0,true)));G.expeditionStore=new ExpeditionStore(folder,true);
-    bool began=G.BeginExpedition(level);add("mapv2_ch"+(level+1)+"_deploy",began,G.expeditionNotice);if(!began)continue;G.mission.Stop("geometry_fixture_cancel_deployment");foreach(var enemy in G.enemies)if(enemy){enemy.gameObject.SetActive(false);UnityEngine.Object.Destroy(enemy.gameObject);}G.enemies.Clear();yield return null;
+    bool began=G.BeginExpedition(level);add("mapv2_ch"+(level+1)+"_deploy",began,G.expeditionNotice);if(!began)continue;deployedLevels++;actualBudget+=G.mission.Members.Count;G.mission.Stop("geometry_fixture_cancel_deployment");foreach(var enemy in G.enemies)if(enemy){enemy.gameObject.SetActive(false);UnityEngine.Object.Destroy(enemy.gameObject);}G.enemies.Clear();yield return null;
     var initial=CaptureGraph(level,"initial authored state");File.WriteAllText(Path.Combine(output,"chapter-"+(level+1).ToString("00")+"-initial.json"),JsonUtility.ToJson(initial));
     var layout=G.expeditionMap.root.GetComponent<MissionLayout>();foreach(var o in MissionCatalog.Get(level).objectives)layout.Complete(o.id);layout.Complete("$calibrated");layout.Complete("$mini");layout.Complete("$main");layout.MarkNavigationDirty();yield return null;
     float deadline=Time.realtimeSinceStartup+90;while(layout.NavigationUpdating&&Time.realtimeSinceStartup<deadline)yield return null;add("mapv2_ch"+(level+1)+"_nav_updated",!layout.NavigationUpdating,"Fixture-opened permanent routes; no gameplay victory implied");
@@ -165,10 +170,20 @@ namespace SwapHunter
     foreach(var t in data.targets)add("mapv2_ch"+(level+1)+"_route_"+t.id,t.anchorReachable&&t.clearance&&((level==2||level==4||level==6||level==8)?t.walkReachable:true),"kind="+t.kind+";target="+t.requested+";stand="+t.standingPoint+";walk="+t.walkReachable+";anchor="+t.anchorReachable+";clear3.2="+t.clearance);
     for(int i=0;i<data.jumpPads.Count;i++){var pad=data.jumpPads[i];add("mapv2_ch"+(level+1)+"_actual_pad_"+i,pad.sourceGrounded&&pad.landingGrounded&&pad.pathClear&&Mathf.Abs(pad.horizontalMetres-20)<.05f,"launch="+pad.launch+";landing="+pad.landing+";horizontal="+pad.horizontalMetres+";source_ground="+pad.sourceGrounded+";landing_ground="+pad.landingGrounded+";same_production_32_capsule_sweep="+pad.pathClear+";reason="+pad.reason);}
     bool matrix=data.configurations.TrueForAll(c=>c.validSnapshot&&c.taskRoutes);add("mapv2_ch"+(level+1)+"_16_loadouts",matrix,"4 classes × 2 class skills × 2 general skills; real level-1 domain snapshots; no consumables; same actual routes; not combat clears");
-    Vector3 spawn=G.expeditionMap.spawn;Vector3 mechanism=spawn+Vector3.forward*30;foreach(var n in G.expeditionMap.nodes)if(n.kind==ExpeditionNodeKind.Objective){mechanism=n.transform.position;break;}Vector3 high=spawn;foreach(var point in G.expeditionMap.walkingCheckpoints)if(point.y>high.y)high=point;Vector3 boss=layout.MiniBossPosts[0];
-    yield return ViewAt(data,output,"01-entry",spawn,spawn+Vector3.forward*35+Vector3.up*3);yield return ViewAt(data,output,"02-mechanism",mechanism+Vector3.back*10,mechanism+Vector3.up);yield return ViewAt(data,output,"03-height",high,high+Vector3.forward*25+Vector3.down*4);yield return ViewAt(data,output,"04-miniboss",boss+Vector3.back*14,boss+Vector3.up*2);
-    File.WriteAllText(Path.Combine(output,"chapter-"+(level+1).ToString("00")+".json"),JsonUtility.ToJson(data));add("mapv2_ch"+(level+1)+"_views",data.views.Count==4&&data.views.TrueForAll(v=>v.file.EndsWith(".png")),"Actual runtime camera render at collision-checked feet; no HUD, no human-play claim");
+    var focused=G.expeditionMap.root.GetComponent<FocusedArenaDefinition>();int expectedViews=4;
+    if(focused&&focused.cameras!=null)
+    {
+     expectedViews=focused.cameras.Length;
+     for(int i=0;i<expectedViews;i++){var view=focused.cameras[i];yield return ViewAt(data,output,(i+1).ToString("00")+"-focused",view.feet,view.lookAt);}
+    }
+    else
+    {
+     Vector3 spawn=G.expeditionMap.spawn;Vector3 mechanism=spawn+Vector3.forward*30;foreach(var n in G.expeditionMap.nodes)if(n.kind==ExpeditionNodeKind.Objective){mechanism=n.transform.position;break;}Vector3 high=spawn;foreach(var point in G.expeditionMap.walkingCheckpoints)if(point.y>high.y)high=point;Vector3 boss=layout.MiniBossPosts[0];
+     yield return ViewAt(data,output,"01-entry",spawn,spawn+Vector3.forward*35+Vector3.up*3);yield return ViewAt(data,output,"02-mechanism",mechanism+Vector3.back*10,mechanism+Vector3.up);yield return ViewAt(data,output,"03-height",high,high+Vector3.forward*25+Vector3.down*4);yield return ViewAt(data,output,"04-miniboss",boss+Vector3.back*14,boss+Vector3.up*2);
+    }
+    File.WriteAllText(Path.Combine(output,"chapter-"+(level+1).ToString("00")+".json"),JsonUtility.ToJson(data));add("mapv2_ch"+(level+1)+"_views",data.views.Count==expectedViews&&data.views.TrueForAll(v=>v.file.EndsWith(".png")),"Actual runtime camera render at collision-checked feet; no HUD, no human-play claim");
    }
+   add(selectedLevels==null?"mapv2_all_budget_counts":"mapv2_selected_budget_counts",deployedLevels==levels.Length&&actualBudget==expectedBudget,"zeroBasedLevels="+string.Join(",",levels)+";deployed="+deployedLevels+";plannedMembers="+actualBudget+";expectedSelectedSum="+expectedBudget+";no unselected chapter deployments");
    if(G.expeditionActive&&G.expeditionReceipt==null)G.AbandonExpedition();G.OpenExpeditionBoard();G.qaSuppressAI=oldSuppress;
   }
  }

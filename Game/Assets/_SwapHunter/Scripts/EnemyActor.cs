@@ -298,7 +298,9 @@ namespace SwapHunter
         public Collider ResolveHitCollider(Ray ray,Collider fallback,ref Vector3 point)
         {
             if(IsShieldCollider(fallback)||hurtboxes.ContainsKey(fallback))return fallback;
-            float nearest=90;Collider selected=null;
+            // Resolve this actor's body parts at the actual hit distance. The old
+            // 90 m constant incorrectly turned long-range head hits into torso hits.
+            float nearest=Vector3.Distance(ray.origin,point)+Height;Collider selected=null;
             if(Physics.Raycast(ray,out var wall,nearest,Layers.WorldMask,QueryTriggerInteraction.Ignore))nearest=wall.distance;
             foreach(var pair in hurtboxes)
                 if(pair.Key&&pair.Key.enabled&&pair.Key.Raycast(ray,out var h,nearest)){nearest=h.distance;point=h.point;selected=pair.Key;}

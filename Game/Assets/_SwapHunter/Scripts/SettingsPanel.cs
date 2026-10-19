@@ -43,6 +43,27 @@ namespace SwapHunter
             availableResolutions.Sort((a,b) => a.x == b.x ? a.y.CompareTo(b.y) : a.x.CompareTo(b.x));
             availableDisplays.Clear(); Screen.GetDisplayLayout(availableDisplays);
         }
+        internal void BeginBindingCapture(int action,int slot)
+        {
+            bindingCapture=action*2+slot;captureAfter=Time.unscaledTime+.15f;pendingConflict=-1;
+            settingsNotice="按键、鼠标键或滚轮上/下滑均可绑定；Esc取消。";
+        }
+        internal bool BindingConflictVisible=>pendingConflict>=0;
+        internal void ResolveBindingConflict(bool accept)
+        {
+            if(accept&&pendingConflict>=0&&bindingCapture>=0)
+            {settingsDraft.Bind(bindingCapture/2,bindingCapture%2,pendingCode,true);settingsNotice="绑定已交换；点击应用后生效。";}
+            pendingConflict=-1;bindingCapture=-1;
+        }
+        void CaptureBindingCode(string code)
+        {
+            if(bindingCapture<0||pendingConflict>=0||string.IsNullOrEmpty(code))return;
+            if(code=="K:F12"){settingsNotice="F12保留用于截图，请选择其他按键。";return;}
+            int action=bindingCapture/2,slot=bindingCapture%2;
+            pendingConflict=settingsDraft.Conflict(code,action,slot);
+            if(pendingConflict>=0){pendingCode=code;return;}
+            settingsDraft.Bind(action,slot,code,false);bindingCapture=-1;settingsNotice="键位已暂存；点击应用后生效。";
+        }
         void UpdateSettingsInput()
         {
             if (settingsDraft == null) settingsDraft = options.Clone();
@@ -53,25 +74,23 @@ namespace SwapHunter
                 return;
             }
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) { bindingCapture = -1; pendingConflict = -1; return; }
-            if (pendingConflict >= 0 || Time.unscaledTime < captureAfter) return;
+            if (pendingConflict >= 0) return;
             string code = null;
-            if (keyboard != null) foreach (var key in keyboard.allKeys) if (key.wasPressedThisFrame) { code = "K:" + key.keyCode; break; }
+            if (keyboard != null) foreach (var key in keyboard.allKeys) if (key != null && key.wasPressedThisFrame) { code = "K:" + key.keyCode; break; }
             if (mouse != null)
             {
-                if (mouse.leftButton.wasPressedThisFrame) code = "M:0";
+                // A wheel impulse is valid immediately. Only ignore the mouse click
+                // that opened capture; delaying all input used to drop a quick wheel tick.
+                if (mouse.scroll.ReadValue().y > .1f) code = "W:Up";
+                else if (mouse.scroll.ReadValue().y < -.1f) code = "W:Down";
+                else if (Time.unscaledTime < captureAfter) { }
+                else if (mouse.leftButton.wasPressedThisFrame) code = "M:0";
                 else if (mouse.rightButton.wasPressedThisFrame) code = "M:1";
                 else if (mouse.middleButton.wasPressedThisFrame) code = "M:2";
                 else if (mouse.backButton.wasPressedThisFrame) code = "M:3";
                 else if (mouse.forwardButton.wasPressedThisFrame) code = "M:4";
-                else if (mouse.scroll.ReadValue().y > .1f) code = "W:Up";
-                else if (mouse.scroll.ReadValue().y < -.1f) code = "W:Down";
             }
-            if (code == null) return;
-            if (code == "K:F12") { settingsNotice = "F12 保留用于截图，请选择其他按键。"; return; }
-            int action = bindingCapture / 2, slot = bindingCapture % 2;
-            pendingConflict = settingsDraft.Conflict(code, action, slot);
-            if (pendingConflict >= 0) { pendingCode = code; return; }
-            settingsDraft.Bind(action, slot, code, false); bindingCapture = -1; settingsNotice = "键位已暂存；点击应用后生效。";
+            CaptureBindingCode(code);
         }
         public void ApplyDraft()
         {
@@ -90,6 +109,10 @@ namespace SwapHunter
         void DrawSettingsV2()
         {
             if (settingsDraft == null) settingsDraft = options.Clone();
+            // IMGUI reports a downward wheel as positive Y, opposite to InputSystem.
+            // Consume it before the bindings list can treat it as list scrolling.
+            if(bindingCapture>=0&&pendingConflict<0&&Event.current.type==EventType.ScrollWheel)
+            {float delta=Event.current.delta.y;if(Mathf.Abs(delta)>.001f){CaptureBindingCode(delta>0?"W:Down":"W:Up");Event.current.Use();}}
             if (inputStyle == null)
             {
                 inputStyle = new GUIStyle(GUI.skin.textField) { font = font, fontSize = 17, alignment = TextAnchor.MiddleRight, padding = new RectOffset(8, 8, 3, 3) };
@@ -98,7 +121,7 @@ namespace SwapHunter
             }
             Fill(FullScreenGuiRect, new Color(.015f,.022f,.045f,1));
             bool outerEnabled = GUI.enabled;
-            GUI.enabled = outerEnabled && pendingConflict < 0 && !resetConfirmation;
+            GUI.enabled = outerEnabled && pendingConflict < 0 && !resetConfirmation && bindingCapture < 0;
             float x = Mathf.Max(36, (viewWidth - 1240) / 2), width = Mathf.Min(1240, viewWidth - 72), cx = x + 222, cw = width - 222;
             Fill(new Rect(0,0,14,900), Cyan);
             Fill(new Rect(viewWidth-176,0,176,900), new Color(.025f,.055f,.13f));
@@ -142,12 +165,12 @@ namespace SwapHunter
                             int capture = i * 2 + slot; string binding = slot == 0 ? settingsDraft.actions[i].primary : settingsDraft.actions[i].secondary;
                             string caption = bindingCapture == capture ? "等待输入…" : BindingInput.Label(binding);
                             float bx = 180 + slot * bindW;
-                            if (SmallButton(caption,new Rect(bx,y+2,bindW-40,28))) { bindingCapture=capture; captureAfter=Time.unscaledTime+.2f; pendingConflict=-1; }
+                            if (SmallButton(caption,new Rect(bx,y+2,bindW-40,28))) BeginBindingCapture(i,slot);
                             if (ClearBindingButton(new Rect(bx+bindW-37,y+2,28,28))) { if(slot==0)settingsDraft.actions[i].primary="";else settingsDraft.actions[i].secondary=""; }
                         }
                     }
                     GUI.EndScrollView();
-                    Text("向下滚动查看蹲伏、背包与消耗品。Esc 取消捕获；F12 保留截图。",new Rect(cx,741,cw,31),16,Muted);
+                    Text("未捕获时滚动列表；点击绑定后可直接上滑/下滑。Esc取消；F12截图。",new Rect(cx,741,cw,31),16,Muted);
                     break;
                 case 2:
                     Text("显示与性能",new Rect(cx,164,cw,40),25,Cyan);
@@ -215,7 +238,15 @@ namespace SwapHunter
             GUI.enabled = outerEnabled;
             if (pendingConflict >= 0)
             {
-                Modal("绑定冲突", BindingInput.Label(pendingCode) + " 已用于“" + GameOptions.ActionNames[pendingConflict / 2] + "”。\n交换两个绑定？若当前槽为空，原动作将被清空。", () => { settingsDraft.Bind(bindingCapture / 2, bindingCapture % 2, pendingCode, true); pendingConflict = -1; bindingCapture = -1; }, () => { pendingConflict = -1; bindingCapture = -1; });
+                Modal("绑定冲突", BindingInput.Label(pendingCode) + " 已用于“" + GameOptions.ActionNames[pendingConflict / 2] + "”。\n交换两个绑定？若当前槽为空，原动作将被清空。", () => ResolveBindingConflict(true), () => ResolveBindingConflict(false));
+            }
+            else if(bindingCapture>=0)
+            {
+                Fill(FullScreenGuiRect,new Color(0,0,0,.65f));float bx=(viewWidth-640)/2;
+                Fill(new Rect(bx,290,640,250),new Color(.025f,.055f,.10f,1));
+                Text("正在绑定："+GameOptions.ActionNames[bindingCapture/2],new Rect(bx+30,316,580,46),28,Cyan);
+                Text("请按键，或向上 / 向下滚动鼠标滚轮",new Rect(bx+30,383,580,48),23);
+                Text("滚轮上下滑均受支持；占用时会提示交换。\nEsc取消捕获，完成后点击“应用并返回”。",new Rect(bx+30,450,580,70),17,Muted);
             }
             else if (resetConfirmation) Modal("恢复本页默认", "只重置当前页面，点击“应用并返回”后保存。", ResetSettingsTab, () => resetConfirmation = false);
         }

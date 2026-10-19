@@ -149,6 +149,8 @@ namespace SwapHunter
         static void V2Knife(int id,Vector3 p){KnifePickupV2.Create(root,id,p,Quaternion.identity,id==3);}
         static void MapV2Build(int level)
         {
+            if(level==0){FocusedCalibration();return;}
+            if(level==11){FocusedFinalArena();return;}
             RenderSettings.fogStartDistance=100;RenderSettings.fogEndDistance=420;
             switch(level){case 0:V2Calibration();break;case 1:V2ShieldLine();break;case 2:V2CoolingWell();break;case 3:V2RailStation();break;case 4:V2DualTowers();break;case 5:V2Refinery();break;case 6:V2Islands();break;case 7:V2Warehouses();break;case 8:V2CliffTower();break;case 9:V2Mine();break;case 10:V2Laboratory();break;case 11:V2Reactor();break;}
             V2ExpandWorksites();V2AuthorArchitecture();

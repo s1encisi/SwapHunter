@@ -6,11 +6,15 @@ namespace SwapHunter
 {
  public static class EnemyV2Definition
  {
+  // This rebalance applies once to creature health at initialization. Devices and
+  // the final boss's separate shield energy do not use this multiplier.
+  public const float HealthScale=.5f;
+  public static float ScaleHealth(float previousBase)=>previousBase*HealthScale;
   static readonly string[] labels={"校准训练机","突击兵","哨戒狙击手","实体盾卫","战术精英","屏障射手","跃袭追猎者","破障冲击兵","曲射掷弹兵","维修工兵","标记侦察机","反相干扰员","牵引控制者","架设压制机"};
   static readonly float[] addedHealth={960,720,1440,840,600,600,840,960,1200};
   public static string Name(EnemyKind k)=>labels[Mathf.Clamp((int)k,0,labels.Length-1)];
   public static float Health(EnemyKind k,DemoConfig config)
-  {int n=(int)k;return n>=5?addedHealth[n-5]:10*(k==EnemyKind.Sniper?config.sniperHealth:k==EnemyKind.Shield?config.shieldHealth:k==EnemyKind.Elite?config.eliteHealth:config.assaultHealth);}
+  {int n=(int)k;float previousBase=n>=5?addedHealth[n-5]:10*(k==EnemyKind.Sniper?config.sniperHealth:k==EnemyKind.Shield?config.shieldHealth:k==EnemyKind.Elite?config.eliteHealth:config.assaultHealth);return ScaleHealth(previousBase);}
  }
  public enum EnemyAbilityPhase { Ready, Telegraph, Execute, Recover }
  public static class EnemySkillReservations

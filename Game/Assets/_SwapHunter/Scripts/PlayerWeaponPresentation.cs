@@ -33,16 +33,15 @@ namespace SwapHunter
             public readonly Vector3 palm;
             public Vector3 stanceOffset;
             readonly Vector3 upperPosition,forePosition,handPosition;
-            readonly Quaternion upperRotation,foreRotation,handRotation,bindRigRotation;
-            readonly Vector3 bindPalmAxis;
-            public Cc0ArmChain(Transform upperBone,Transform foreBone,Transform handBone,Vector3 palmPoint,Transform reference)
+            readonly Quaternion upperRotation,foreRotation,handRotation,gripFrameInHand;readonly bool left;
+            public Cc0ArmChain(Transform upperBone,Transform foreBone,Transform handBone,Vector3 palmPoint,Transform reference,Transform authoredFrame,Transform authoredUp,Transform authoredForward,bool isLeft)
             {
                 upper=upperBone;fore=foreBone;hand=handBone;palm=palmPoint;
                 upperPosition=upper.localPosition;forePosition=fore.localPosition;handPosition=hand.localPosition;
                 upperRotation=upper.localRotation;foreRotation=fore.localRotation;handRotation=hand.localRotation;
-                bindRigRotation=Quaternion.Inverse(reference.rotation)*hand.rotation;
-                bindPalmAxis=reference.InverseTransformDirection(hand.TransformVector(palm)).normalized;
-                if(bindPalmAxis.sqrMagnitude<.5f)throw new InvalidOperationException("新手臂PalmContact不构成实际掌心偏移");
+                if(!authoredFrame||!authoredUp||!authoredForward)throw new InvalidOperationException("连续手套缺少掌面握持方向");
+                var palmFrame=Quaternion.LookRotation(authoredForward.position-authoredFrame.position,authoredUp.position-authoredFrame.position);
+                gripFrameInHand=Quaternion.Inverse(hand.rotation)*palmFrame;left=isLeft;
             }
             public void Reset()
             {
@@ -50,7 +49,11 @@ namespace SwapHunter
                 upper.localRotation=upperRotation;fore.localRotation=foreRotation;hand.localRotation=handRotation;
             }
             public Quaternion GripRotation(Quaternion frame,Vector3 palmAxis)
-                =>frame*Quaternion.FromToRotation(bindPalmAxis,palmAxis.normalized)*bindRigRotation;
+            {
+                Quaternion axis=Quaternion.FromToRotation(Vector3.up,palmAxis.normalized);
+                if(left&&palmAxis.z>.5f)axis*=Quaternion.Euler(0,180,0);
+                return frame*axis*Quaternion.Inverse(gripFrameInHand);
+            }
             public void Solve(Vector3 contact,Quaternion rotation,Vector3 pole,float weight)
             {
                 weight=Mathf.Clamp01(weight);if(weight<=0)return;
@@ -106,8 +109,8 @@ namespace SwapHunter
             reloadPalmContact=reloadHand.InverseTransformPoint(leftPalm.position);
             rightPalmContact=rightHand.InverseTransformPoint(rightPalm.position);
             reloadForearm.parent.position+=Eye.forward*.16f+Eye.right*.04f;
-            leftCc0Arm=new Cc0ArmChain(reloadForearm.parent,reloadForearm,reloadHand,reloadPalmContact,weaponRoot);
-            rightCc0Arm=new Cc0ArmChain(rightForearm.parent,rightForearm,rightHand,rightPalmContact,weaponRoot);
+            leftCc0Arm=new Cc0ArmChain(reloadForearm.parent,reloadForearm,reloadHand,reloadPalmContact,weaponRoot,ImportedModels.Find(viewArms,"PalmFrame_L"),ImportedModels.Find(viewArms,"PalmToolUp_L"),ImportedModels.Find(viewArms,"PalmToolForward_L"),true);
+            rightCc0Arm=new Cc0ArmChain(rightForearm.parent,rightForearm,rightHand,rightPalmContact,weaponRoot,ImportedModels.Find(viewArms,"PalmFrame_R"),ImportedModels.Find(viewArms,"PalmToolUp_R"),ImportedModels.Find(viewArms,"PalmToolForward_R"),false);
             foreach(var animator in viewArms.GetComponentsInChildren<Animator>(true))animator.enabled=false;
             foreach(var skin in viewArms.GetComponentsInChildren<SkinnedMeshRenderer>(true))skin.updateWhenOffscreen=true;
         }
@@ -131,7 +134,7 @@ namespace SwapHunter
             viewArms.localPosition=new Vector3(.23f,-.28f,.53f);rightCc0Arm.Reset();
             float first=Vector3.Distance(chain[0].position,chain[1].position),second=Vector3.Distance(chain[1].position,chain[2].position);
             Vector3 desired=V2PickupShoulder(table);viewArms.position+=desired-chain[0].position;
-            rightCc0Arm.Solve(grip.position,rightCc0Arm.GripRotation(grip.rotation,Vector3.up),transform.TransformDirection(new Vector3(1,-.7f,-.25f)),1);
+            rightCc0Arm.Solve(grip.position,rightCc0Arm.GripRotation(KnifeHandFrameV3(grip),Vector3.up),transform.TransformDirection(new Vector3(1,-.7f,-.25f)),1);
             float error=V2KnifeGripError(grip);
             LastV2PickupDiagnostic="table="+table+";feet="+transform.position.ToString("F3")+";shoulder="+chain[0].position.ToString("F3")+";wrist="+chain[2].position.ToString("F3")+";grip="+grip.position.ToString("F3")+";lengths="+first.ToString("F4")+"/"+second.ToString("F4")+";error="+error.ToString("F5");
             viewArms.localPosition=rootLocal;for(int i=0;i<3;i++){chain[i].localPosition=positions[i];chain[i].localRotation=rotations[i];}
@@ -154,7 +157,7 @@ namespace SwapHunter
         public void SetV2EquipmentVisibility(bool firearm)
         {for(int i=0;i<weaponModels.Length;i++)if(weaponModels[i])weaponModels[i].gameObject.SetActive(firearm&&i==weapon);if(viewArms)viewArms.gameObject.SetActive(true);}
         public void RestoreFirearmHands(){if(leftCc0Arm!=null)leftCc0Arm.stanceOffset=Vector3.zero;ResetCc0Hands();PoseRightCc0Hand();if(supportGrips[weapon])PlaceSupportHand(supportGrips[weapon].position,1);SetKnifeFingers(1);SetPickupBody(0);}
-        public void PoseKnifeHands(Transform grip,float fingerClose,Vector3? reach=null)
+        public void PoseKnifeHands(Transform grip,float fingerClose,Vector3? reach=null,float leftSupport=0)
         {
             if(!grip||rightCc0Arm==null)return;
             viewArms.localPosition=new Vector3(.23f,-.28f,.53f);viewArms.localRotation=Quaternion.identity;ResetCc0Hands();
@@ -167,22 +170,36 @@ namespace SwapHunter
                 viewArms.position+=wanted-rightCc0Arm.upper.position;
             }
             Vector3 target=reach??grip.position;
-            rightCc0Arm.Solve(target,rightCc0Arm.GripRotation(grip.rotation,Vector3.up),transform.TransformDirection(new Vector3(1,-.7f,-.25f)),1);
-            if(leftCc0Arm!=null)leftCc0Arm.Solve(Eye.TransformPoint(new Vector3(-.23f,-.26f,.31f)),leftCc0Arm.GripRotation(Eye.rotation,Vector3.forward),Eye.TransformDirection(new Vector3(-1,-1,-.2f)),1);
+            rightCc0Arm.Solve(target,rightCc0Arm.GripRotation(KnifeHandFrameV3(grip),Vector3.up),transform.TransformDirection(new Vector3(1,-.7f,-.25f)),1);
+            if(leftCc0Arm!=null)leftCc0Arm.Solve(Vector3.Lerp(Eye.TransformPoint(new Vector3(-.23f,-.26f,.31f)),grip.position-grip.right*.045f-grip.up*.025f,Mathf.Clamp01(leftSupport)),leftCc0Arm.GripRotation(Eye.rotation,Vector3.forward),Eye.TransformDirection(new Vector3(-1,-1,-.2f)),1);
             SetKnifeFingers(fingerClose);
             if(v2BodyBend>0&&playerBody){var worldRig=playerBody.GetComponent<ActorVisualRig>();if(worldRig)worldRig.SetPickupHand(rightHand.position);}
             var knife=grip.GetComponentInParent<KnifeV2Visual>();if(knife&&knife.KnifeId==2&&knife.Ring&&fingerClose>.8f)PoseIndexContactV2(knife.Ring.position);
         }
-        readonly Dictionary<Transform,Quaternion> knifeFingerRest=new Dictionary<Transform,Quaternion>();
+        static Quaternion KnifeHandFrameV3(Transform grip)
+        {var knife=grip?grip.GetComponentInParent<KnifeV2Visual>():null;return grip.rotation*(knife&&knife.KnifeId==2?Quaternion.Euler(0,0,180):Quaternion.identity);}
+        readonly Dictionary<Transform,Quaternion> knifeFingerRest=new Dictionary<Transform,Quaternion>(),fingerClosedV3=new Dictionary<Transform,Quaternion>(),fingerTriggerV3=new Dictionary<Transform,Quaternion>();
         void SetKnifeFingers(float closed)
         {
             if(!viewArms)return;
-            if(knifeFingerRest.Count==0)foreach(var t in viewArms.GetComponentsInChildren<Transform>(true))if(t.name.StartsWith("Finger",StringComparison.Ordinal))knifeFingerRest[t]=t.localRotation;
-            foreach(var entry in knifeFingerRest)if(entry.Key)
+            if(knifeFingerRest.Count==0)foreach(var t in viewArms.GetComponentsInChildren<Transform>(true))
             {
-                float opening=1-Mathf.Clamp01(closed);float angle=entry.Key.name.Contains("_mid")?58:entry.Key.name.Contains("_tip")?45:38;
-                entry.Key.localRotation=entry.Value*Quaternion.Euler(opening*angle,0,0);
+                if(!t.name.StartsWith("Finger",StringComparison.Ordinal)||!(t.name.EndsWith(".R",StringComparison.Ordinal)||t.name.EndsWith(".L",StringComparison.Ordinal)))continue;
+                var shut=ImportedModels.Find(viewArms,"ClosedPose_"+t.name);var trigger=ImportedModels.Find(viewArms,"TriggerPose_"+t.name);
+                if(!shut||!trigger)throw new InvalidOperationException("连续手套缺少指节姿态："+t.name);
+                knifeFingerRest[t]=t.localRotation;
+                Quaternion calibration=Quaternion.Inverse(FingerDirectionFrameV3("Open",t.name))*t.rotation;
+                fingerClosedV3[t]=Quaternion.Inverse(t.parent.rotation)*FingerDirectionFrameV3("Closed",t.name)*calibration;
+                fingerTriggerV3[t]=Quaternion.Inverse(t.parent.rotation)*FingerDirectionFrameV3("Trigger",t.name)*calibration;
             }
+            foreach(var entry in knifeFingerRest)if(entry.Key)entry.Key.localRotation=Quaternion.Slerp(entry.Value,fingerClosedV3[entry.Key],Mathf.Clamp01(closed));
+        }
+        Quaternion FingerDirectionFrameV3(string pose,string bone)
+        {
+            var head=ImportedModels.Find(viewArms,pose+"Head_"+bone);var tail=ImportedModels.Find(viewArms,pose+"Tail_"+bone);var side=ImportedModels.Find(viewArms,pose+"Side_"+bone);
+            if(!head||!tail||!side)throw new InvalidOperationException("缺少指节几何方向："+pose+"/"+bone);
+            Vector3 up=(tail.position-head.position).normalized,right=(side.position-head.position).normalized;
+            return Quaternion.LookRotation(Vector3.Cross(right,up),up);
         }
         float v2BodyBend;bool v2PickupTable;
         public void SetPickupBody(float crouchWeight,bool table=false)
@@ -211,15 +228,18 @@ namespace SwapHunter
         public float V2TriggerFingerError{get;private set;}
         void PoseIndexContactV2(Vector3 target)
         {
-            var end=ImportedModels.Find(viewArms,"Finger1_tip.R");if(!end)return;
-            Transform middle=end.parent,first=middle?middle.parent:null;if(!first)return;
-            Vector3 Endpoint()=>end.TransformPoint(Vector3.up*.02524f);
-            for(int pass=0;pass<5;pass++)foreach(var joint in new[]{middle,first})
+            var tip=ImportedModels.Find(viewArms,"FingerIndexTip_R");if(!tip)return;
+            foreach(var entry in fingerTriggerV3)if(entry.Key&&entry.Key.name.StartsWith("Finger1",StringComparison.Ordinal)&&entry.Key.name.EndsWith(".R",StringComparison.Ordinal))entry.Key.localRotation=entry.Value;
+            // Bounded correction to the authored trigger pose. It rotates real finger joints,
+            // keeps their lengths fixed and never moves the palm off its handle surface.
+            var end=ImportedModels.Find(viewArms,"Finger1_tip.R");if(!end)return;var middle=end.parent;var first=middle.parent;
+            for(int pass=0;pass<3;pass++)foreach(var joint in new[]{end,middle,first})
             {
-                var from=Endpoint()-joint.position;var toward=target-joint.position;if(from.sqrMagnitude<.00001f||toward.sqrMagnitude<.00001f)continue;
-                Quaternion turn=Quaternion.FromToRotation(from,toward);joint.rotation=Quaternion.RotateTowards(Quaternion.identity,turn,35)*joint.rotation;
+                Vector3 from=tip.position-joint.position,toward=target-joint.position;if(from.sqrMagnitude<.000001f||toward.sqrMagnitude<.000001f)continue;
+                var turn=Quaternion.RotateTowards(Quaternion.identity,Quaternion.FromToRotation(from,toward),10);joint.rotation=turn*joint.rotation;
+                if(knifeFingerRest.TryGetValue(joint,out var open))joint.localRotation=Quaternion.RotateTowards(open,joint.localRotation,joint==first?95:110);
             }
-            V2TriggerFingerError=Vector3.Distance(Endpoint(),target);
+            V2TriggerFingerError=Vector3.Distance(tip.position,target);
         }
         void PoseCc0ToolHand(Vector3 contact,Quaternion frame)
         {
@@ -244,6 +264,7 @@ namespace SwapHunter
                 }
                 supportGrips[i]=ImportedModels.Find(weaponModels[i],"SupportGrip");
                 primaryGrips[i]=ImportedModels.Find(weaponModels[i],"Grip");
+                if(primaryGrips[i])primaryGrips[i].position-=weaponModels[i].forward*.020f;
                 pumps[i]=ImportedModels.Find(weaponModels[i],"foregrip");if(pumps[i])pumpOrigins[i]=pumps[i].localPosition;
                 if(i==1&&pumps[i]&&supportGrips[i])supportGrips[i].SetParent(pumps[i],true);
                 string hingeName=i==5?"break_action":i==8?"feed_cover":i==9?"cylinder_hinge":"";

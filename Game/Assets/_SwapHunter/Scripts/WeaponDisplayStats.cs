@@ -45,6 +45,7 @@ namespace SwapHunter
         public float ReloadSeconds { get; private set; }
         public float HipSpreadDegrees { get; private set; }
         public float MovementMultiplier { get; private set; }
+        public float MaximumRange { get; private set; }
         public float ChargeSeconds { get; private set; }
         public int BurstRounds { get; private set; }
         public float BurstPostRecoverySeconds { get; private set; }
@@ -123,6 +124,7 @@ namespace SwapHunter
                 Pellets = stats.Pellets,
                 HipSpreadDegrees = stats.Spread,
                 MovementMultiplier = stats.Movement,
+                MaximumRange = stats.Range,
                 IsShotgun = definition.Shotgun,
                 IsExplosive = definition.mechanism == FireMechanism.Grenade,
                 UsesSpread = definition.mechanism != FireMechanism.Grenade,
@@ -138,14 +140,10 @@ namespace SwapHunter
                     ? "爆炸基准伤害，实际伤害按爆心距离与遮挡计算；不是直接命中伤害，也不套用射线命中的头部/肢体倍率。"
                     : "单发基础命中伤害；未计部位、标记及战斗增益，距离规则单独说明。";
             value.FalloffExplanation = value.IsExplosive
-                ? "爆炸半径3.1米；范围内按爆心到目标瞄准点的距离由100%降至20%，并检查实体墙遮挡。"
-                : value.IsShotgun
-                    ? "每丸在6米内保持基础伤害，6—16米降至30%；射线最远检测90米。"
-                    : id == 4
-                        ? "12米内保持基础伤害，12—32米降至35%；射线最远检测90米。"
-                        : id == 6 || id == 7 || id == 10
-                            ? "90米射线检测范围内不做距离衰减；仍受遮挡与命中部位影响。"
-                            : "20米内保持基础伤害，20—45米降至60%；射线最远检测90米。";
+                ? "初速 "+Number(definition.projectileSpeed)+" 米/秒，引信 "+Number(definition.projectileFuse)+" 秒，离发射点最远 "+Number(stats.Range)+" 米；实际落点受仰角、重力和遮挡影响。爆炸半径3.1米，爆心距离由100%降至20%，基础伤害不变。"
+                : definition.minimumDamageMultiplier>=1
+                    ? Number(stats.Range)+" 米射线检测范围内不做距离衰减；仍受遮挡与命中部位影响。"
+                    : (value.IsShotgun?"每丸":"单发")+"在 "+Number(definition.falloffStart)+" 米内保持基础伤害，"+Number(definition.falloffStart)+"—"+Number(definition.falloffEnd)+" 米降至 "+Number(definition.minimumDamageMultiplier*100)+"%；射线最远检测 "+Number(stats.Range)+" 米。";
             value.ConfigOverrideNotes = id == 0
                 ? "伤害、击发间隔、装填与容量读当前 DemoConfig；静止散布读 stationarySpread；入场备弹读 WeaponCatalog。"
                 : id == 1

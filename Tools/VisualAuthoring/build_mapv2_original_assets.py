@@ -57,8 +57,8 @@ def export(name,sub,root=None,anim=False):
 
 def knife(i):
  clear();steel=mat('Brushed blade steel',(.36,.42,.46),.94,.23);edge=mat('Honed bright edge',(.68,.74,.79),1,.17);rubber=mat('Milled tactical grip',(.035,.045,.049),.10,.62);brass=mat('Grip fasteners',(.41,.31,.16),.9,.31);rope=mat('Braided olive lanyard',(.20,.25,.11),0,.85)
- if i==1:steel=mat('Opaque layered emerald steel',(.015,.32,.22),.92,.16)
- root=empty('KnifeRoot',(0,0,0));objects=[];grip=empty('Grip',(.014 if i==3 else 0,0,-.045 if i==2 else 0));tipz=.31
+ blade_metal=mat('Opaque layered emerald steel',(.015,.32,.22),.92,.22) if i==1 else steel
+ root=empty('KnifeRoot',(0,0,0));objects=[];grip=empty('Grip',(.014 if i==3 else 0,.018,-.020 if i==2 else 0));tipz=.31
  if i==2:
   outline=[(-.018,.062),(-.039,.13),(-.048,.21),(-.026,.27),(.026,.29),(.011,.253),(-.009,.231),(-.015,.19),(.014,.11),(.019,.062)];tipz=.29
  elif i==1: outline=[(-.033,.075),(-.033,.27),(-.015,.30),(.005,.35),(.035,.25),(.034,.075)];tipz=.35
@@ -67,19 +67,29 @@ def knife(i):
   for j in range(9):outline.extend([(-.023,.085+j*.018),(-.034,.092+j*.018),(-.023,.099+j*.018)])
   outline.extend([(-.02,.27),(0,.335),(.03,.267),(.031,.074)]);tipz=.335
  else: outline=[(-.02,.071),(-.02,.25),(0,.315),(.022,.246),(.022,.071)]
- b=blade('Blade',outline,.006 if i!=1 else .008,steel,edge);objects.append(b)
+ b=blade('Blade',outline,.006 if i!=1 else .008,blade_metal,edge);objects.append(b)
  if i==3:
   # Independent handles pivot about the actual tang hinges. Open at rest; Fold drives +180/-180.
+  handles={}
   for side in (-1,1):
-   hinge=empty('HandleHinge'+('A' if side<0 else 'B'),(side*.014,0,.075));h=box('Butterfly split handle '+str(side),(side*.014,0,-.005),(.022,.024,.158),rubber,.006);parent_keep(h,hinge);objects.append(hinge)
+   hinge=empty('HandleHinge'+('A' if side<0 else 'B'),(side*.014,0,.075));h=box('Butterfly split handle '+str(side),(side*.014,0,-.005),(.022,.024,.158),rubber,.006);parent_keep(h,hinge);objects.append(hinge);handles[side]=hinge
+   empty('BladePivot'+('A' if side<0 else 'B'),(side*.014,0,.075),root)
    for j in range(6):
     riv=rod('Handle through insert',(side*.014,-.013,-.065+j*.023),(side*.014,.013,-.065+j*.023),.0045,brass,vertices=20);parent_keep(riv,hinge)
    pin=rod('Hinge pivot',(side*.014,-.019,.075),(side*.014,.019,.075),.006,edge,vertices=32);objects.append(pin)
-  latch=box('Latch',(.026,.0,-.088),(.025,.010,.012),steel,.002);objects.append(latch)
+  latch=box('Latch',(.026,.0,-.088),(.025,.010,.012),steel,.002);latch_axis=empty('LatchHinge',(.014,0,-.078));bpy.context.view_layer.update();parent_keep(latch,latch_axis);parent_keep(latch_axis,handles[1])
  else:
-  h=sphere('Ergonomic handle',(0,0,0),(.024,.020,.078),rubber);objects.append(h)
-  for j in range(9):
-   tor=ring('Raised nonslip grip rib',(0,0,-.060+j*.014),.020,.0016,rubber);tor.scale.x=1.12;tor.scale.y=.88;objects.append(tor)
+  # One contoured full-size handle surface, with inset scale ribs instead of floating rings.
+  verts=[];faces=[];sections=[(-.078,.016,.010),(-.067,.020,.014),(-.038,.023,.016),(0,.022,.016),(.038,.023,.015),(.066,.020,.013),(.078,.016,.010)];n=48
+  for z,w,d in sections:
+   for j in range(n):
+    t=2*math.pi*j/n;c=math.cos(t);ss=math.sin(t);verts.append((math.copysign(abs(c)**.6,c)*w,math.copysign(abs(ss)**.6,ss)*d,z))
+  for k in range(len(sections)-1):
+   for j in range(n):a=k*n+j;bb=k*n+(j+1)%n;faces.append((a,bb,bb+n,a+n))
+  faces.extend([tuple(reversed(range(n))),tuple((len(sections)-1)*n+j for j in range(n))]);me=bpy.data.meshes.new('Continuous contoured grip');me.from_pydata(verts,[],faces);me.update();h=bpy.data.objects.new('Contoured full-tang grip',me);bpy.context.collection.objects.link(h);finish(h,h.name,rubber);objects.append(h)
+  for j in range(6):
+   z=-.052+j*.020
+   for side in (-1,1):objects.append(box('Inset grip traction',(.0,side*.0162,z),(.033,.0013,.003),rubber,.0006))
   guard=box('Full tang hand guard',(0,0,.073),(.082 if i==1 else .062,.029,.012),steel,.003);objects.append(guard)
   pom=box('Solid tang pommel',(0,0,-.079),(.035,.030,.016),steel,.004);objects.append(pom)
   for z in (-.042,.035):objects.append(rod('Grip scale rivet',(-.025,0,z),(.025,0,z),.003,brass,vertices=24))
@@ -95,7 +105,8 @@ def knife(i):
  for o in list(bpy.context.scene.objects):
   if o!=root and not o.parent:parent_keep(o,root)
  empty('Tip',(0,0,tipz),root);empty('BladeDanger',(0,0,.19),root);empty('Palm',(0,-.015,0),root)
- # Blender Z blade becomes Unity Y; blade lies in X/Y plane for grasp-friendly upright knives.
+ root.scale=Vector((.67,.75,.58,.64,.70,.72)[i] for _ in range(3));bpy.context.view_layer.update()
+ # Blender Z blade becomes Unity Y; dimensions are real metres after the authored scale.
  export('knife_%02d'%i,'Knives');bpy.ops.wm.save_as_mainfile(filepath=str(preview/('knife_%02d.blend'%i)))
  return
 
@@ -209,7 +220,10 @@ for i in range(6):
  if not a.only or a.only=='knife_%02d'%i:knife(i)
 for i in range(4):
  if not a.only or a.only=='class_%02d'%i:human('class_%02d'%i,i)
-if not a.only or a.only=='fps_arms':human('fps_arms',0,True)
+if not a.only or a.only=='fps_arms':
+ sys.path.insert(0,str(Path(__file__).resolve().parent))
+ from author_continuous_hands import build
+ build(globals())
 if a.only and (preview/'asset-report.json').exists():
  old=json.loads((preview/'asset-report.json').read_text(encoding='utf-8'));report['models']=[r for r in old['models'] if r['id']!=a.only]+report['models']
 (preview/'asset-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')

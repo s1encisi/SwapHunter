@@ -490,9 +490,7 @@ namespace SwapHunter
         float ShotDamage(WeaponDefinition def,float distance,float abilityMultiplier=1)
         {
             float damage=EffectiveWeaponStats.Read(weapon,G.config).Damage;
-            float falloff=def.Shotgun?Mathf.Lerp(1,.3f,Mathf.InverseLerp(6,16,distance)):
-                weapon==4?Mathf.Lerp(1,.35f,Mathf.InverseLerp(12,32,distance)):
-                weapon==6||weapon==7||weapon==10?1:Mathf.Lerp(1,.6f,Mathf.InverseLerp(20,45,distance));
+            float falloff=def.DistanceMultiplier(distance);
             return damage*falloff*G.ModuleShotDamage(distance)*G.ExpeditionDamageMultiplier*abilityMultiplier;
         }
         public void ReportWeaponHit(bool killed,string region)

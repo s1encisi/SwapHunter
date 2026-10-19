@@ -4,6 +4,15 @@ namespace SwapHunter
 {
     public static class TacticalDemoProfile
     {
+        public static ExpeditionProfile CreateFullPreview(int selectedClass=0)
+        {
+            var p=Create(selectedClass,true);p.credits=100000;p.consumables=new[]{99,99,99};p.medkitStock=99;
+            p.meleeKnives=new[]{true,true,true,true,true,true};
+            for(int i=0;i<p.cleared.Length;i++)p.cleared[i]=true;
+            foreach(var loadout in p.classLoadouts)loadout.knifeId=1;
+            // Explicit preview progress only; no fabricated records, best times or purchases.
+            ExpeditionStore.Validate(p);return p;
+        }
         public static ExpeditionProfile Create(int selectedClass=0,bool testFunds=false)
         {
             if(!RunStorage.IsIsolated)throw new InvalidOperationException("展示种子仅用于隔离演示或验证目录");

@@ -8,6 +8,7 @@ namespace SwapHunter
  {
   static readonly string[] names={"校准监理","闸门执法官","升井监察机","站场壁垒官","双塔校射官","泄压炉卫","断桥牵引者","分拣执行官","巡天猎隼","运输督导","反相审查者","相位门卫"};
   static readonly float[] hp={1440,2400,2880,3360,3840,4320,3840,4320,4800,4800,4800,3840};
+  public static float MaximumHealthForChapter(int chapter)=>EnemyV2Definition.ScaleHealth(hp[Mathf.Clamp(chapter,0,11)]);
   static readonly MiniBossAction[,] actions={{MiniBossAction.Pulse,MiniBossAction.Turn},{MiniBossAction.Rush,MiniBossAction.Gate},{MiniBossAction.Sweep,MiniBossAction.Transfer},{MiniBossAction.Shield,MiniBossAction.AimBurst},{MiniBossAction.Crossfire,MiniBossAction.Transfer},{MiniBossAction.Heat,MiniBossAction.Rush},{MiniBossAction.TetherLine,MiniBossAction.Sweep},{MiniBossAction.Cart,MiniBossAction.Slam},{MiniBossAction.Transfer,MiniBossAction.AimBurst},{MiniBossAction.Suppress,MiniBossAction.Rush},{MiniBossAction.Jammer,MiniBossAction.Crossfire},{MiniBossAction.Shield,MiniBossAction.DoublePulse}};
   EnemyActor owner;DemoGame G=>DemoGame.I;Vector3[] posts=Array.Empty<Vector3>();Vector3 locked,second,direction,start,destination;float timer,total,nextAt,elapsed,shotAt,silenceUntil,lastLanded,fieldAt,gateAt;int sequence,shots;bool scripted,hit,componentLost;EnemyV2Device component;LineRenderer telegraph,secondary;
   public int Chapter{get;private set;}public string DisplayName=>names[Chapter];public string Id=>"B"+(Chapter+1).ToString("00");
@@ -16,12 +17,12 @@ namespace SwapHunter
   public float SilenceResistanceLeft=>owner&&owner.Silenced?0:Mathf.Max(0,silenceUntil-Time.time);
   public void Initialize(EnemyActor actor,int chapter)
   {
-   owner=actor;Chapter=Mathf.Clamp(chapter,0,11);owner.maximumHealth=owner.health=hp[Chapter];owner.VisualRig.ConfigureVariant(4,Chapter);owner.name=Id+" "+DisplayName;
+   owner=actor;Chapter=Mathf.Clamp(chapter,0,11);owner.maximumHealth=owner.health=MaximumHealthForChapter(Chapter);owner.VisualRig.ConfigureVariant(4,Chapter);owner.name=Id+" "+DisplayName;
    if(Chapter==1)owner.AddMiniBossPhysicalShield();else owner.DisablePhysicalShield();
    nextAt=Time.time+1.6f;lastLanded=Time.time;
    var mount=owner.VisualRig.Weakpoint("equipment");component=EnemyV2Device.Create(mount?mount:transform,mount?mount.position:owner.AimPoint-transform.forward*.5f,"暴露组件",240,Chapter==3,owner,()=>{componentLost=true;Interrupt("component");});
    D2WorldText.Create(transform,Id+" · "+DisplayName,owner.transform.position+Vector3.up*2.7f,.23f);
-   G.Record("mini_boss_begin",Id+";health="+hp[Chapter]+";independent=true");
+   G.Record("mini_boss_begin",Id+";health="+owner.maximumHealth+";independent=true");
   }
   public void SetPosts(Vector3[] values){posts=values??Array.Empty<Vector3>();}
   public bool TryReceiveSilence(float seconds)

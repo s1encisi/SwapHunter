@@ -28,7 +28,7 @@ namespace SwapHunter{
    float w=(viewWidth-128)/3;var p=expeditionStore.Profile;int current=p.classLoadouts[p.activeClass].knifeId;
    for(int i=0;i<6;i++){
     int id=i;float x=48+(i%3)*(w+16),y=269+(i/3)*268;Fill(new Rect(x,y,w,251),PanelBlue);
-    if(knifePreview.Icons[i])GUI.DrawTexture(new Rect(x+12,y+9,w-24,115),knifePreview.Icons[i],ScaleMode.ScaleToFit);
+    if(knifePreview.Icons[i])GUI.DrawTexture(new Rect(x+12,y+9,w-24,115),knifePreview.Icons[i],ScaleMode.ScaleToFit);else Text("模型加载中…",new Rect(x+18,y+45,w-36,30),16,Muted);
     Text(KnifeV2Visual.Names[i],new Rect(x+18,y+128,w-36,29),22,Paper);
     Text("轻击72 / 重击144 · 背击×3",new Rect(x+18,y+165,w-36,25),16,Muted);
     Fill(new Rect(x+18,y+192,w-36,4),new Color(.13f,.22f,.29f));Fill(new Rect(x+18,y+192,(w-36)*.5f,4),Cyan);

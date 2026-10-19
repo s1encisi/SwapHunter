@@ -49,7 +49,7 @@ namespace SwapHunter
       actor.transform.rotation=Quaternion.identity;actors.Add(actor);
       // Inspection labels replace per-component gameplay prompts only in this disposable fixture.
       foreach(var text in actor.GetComponentsInChildren<TextMesh>(true))text.gameObject.SetActive(false);
-      string label=finalBoss?"原最终Boss\nHP 7200 / 能量 360":actor.miniBoss?actor.miniBoss.Id+" "+actor.miniBoss.DisplayName+"\nHP "+actor.maximumHealth:((int)actor.kind).ToString("00")+" "+EnemyV2Definition.Name(actor.kind)+"\nHP "+actor.maximumHealth;
+      string label=finalBoss?"原最终Boss\nHP "+actor.maximumHealth+" / 能量 "+BossEncounter.ShieldMaximum:actor.miniBoss?actor.miniBoss.Id+" "+actor.miniBoss.DisplayName+"\nHP "+actor.maximumHealth:((int)actor.kind).ToString("00")+" "+EnemyV2Definition.Name(actor.kind)+"\nHP "+actor.maximumHealth;
       var name=D2WorldText.Create(root.transform,label,feet+Vector3.up*2.65f,.22f);labels.Add(name.gameObject);
      }
      for(int angle=0;angle<2;angle++)

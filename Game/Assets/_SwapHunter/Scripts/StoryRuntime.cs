@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace SwapHunter
@@ -19,7 +19,7 @@ namespace SwapHunter
   public bool StoryEventTriggered(string key)=>storyEvents.Contains(key);
   public IReadOnlyList<StoryLine> StoryTranscript=>storyTranscript;
   public bool StoryChapterUnlocked(int level)=>expeditionStore!=null&&level>=0&&level<12&&expeditionStore.Profile.cleared[level];
-  public bool StoryAppendixUnlocked(int level){if(expeditionStore==null)return false;foreach(var r in expeditionStore.Profile.receipts)if(r.level==level&&r.success&&r.bonus)return true;return false;}
+  public bool StoryAppendixUnlocked(int level){if(expeditionStore==null||level<0||level>=12)return false;if(RunStorage.IsFullPreview)return true;foreach(var r in expeditionStore.Profile.receipts)if(r.level==level&&r.success&&r.bonus)return true;return false;}
   public bool StoryOptionalComplete{get{for(int i=3;i<12;i++)if(!StoryAppendixUnlocked(i))return false;return true;}}
   void BeginStoryAttempt()
   {
