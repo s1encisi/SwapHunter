@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace SwapHunter
 {
@@ -19,7 +20,7 @@ namespace SwapHunter
         Vector3 reloadContactWorld;
         GameObject discardedMagazine;
         readonly List<Mesh> ownedWeaponMeshes=new List<Mesh>();
-        public float ReloadProgress=>reloadLeft>0?Mathf.Clamp01(1-reloadLeft/Mathf.Max(.1f,reloadDuration)):0;
+        public float ReloadProgress=>ReloadV2Pending?Mathf.Clamp01(ReloadV2Elapsed/Mathf.Max(.1f,ReloadV2Total)):reloadLeft>0?Mathf.Clamp01(1-reloadLeft/Mathf.Max(.1f,reloadDuration)):0;
         public string ReloadStageTag {get;private set;}="ready";
         public int DiscardedMagazineCount=>discardedMagazineCount;
         public float MagazineSeparation=>magazines[weapon]?Vector3.Distance(magazines[weapon].localPosition,magazineOrigins[weapon]):0;
@@ -30,6 +31,7 @@ namespace SwapHunter
         {
             public readonly Transform upper,fore,hand;
             public readonly Vector3 palm;
+            public Vector3 stanceOffset;
             readonly Vector3 upperPosition,forePosition,handPosition;
             readonly Quaternion upperRotation,foreRotation,handRotation,bindRigRotation;
             readonly Vector3 bindPalmAxis;
@@ -54,7 +56,7 @@ namespace SwapHunter
                 weight=Mathf.Clamp01(weight);if(weight<=0)return;
                 Vector3 priorPosition=upper.localPosition;
                 Quaternion priorUpper=upper.localRotation,priorFore=fore.localRotation,priorHand=hand.localRotation;
-                Reset();
+                Reset();upper.position+=stanceOffset;
                 Vector3 wrist=contact-rotation*Vector3.Scale(palm,hand.lossyScale);
                 float first=Vector3.Distance(upper.position,fore.position),second=Vector3.Distance(fore.position,hand.position);
                 if(first<.01f||second<.01f)throw new InvalidOperationException("新手臂骨链长度无效");
@@ -103,10 +105,99 @@ namespace SwapHunter
                 throw new InvalidOperationException("新CC0 FPS双臂缺少真实上臂/前臂/手与掌心链");
             reloadPalmContact=reloadHand.InverseTransformPoint(leftPalm.position);
             rightPalmContact=rightHand.InverseTransformPoint(rightPalm.position);
+            reloadForearm.parent.position+=Eye.forward*.16f+Eye.right*.04f;
             leftCc0Arm=new Cc0ArmChain(reloadForearm.parent,reloadForearm,reloadHand,reloadPalmContact,weaponRoot);
             rightCc0Arm=new Cc0ArmChain(rightForearm.parent,rightForearm,rightHand,rightPalmContact,weaponRoot);
             foreach(var animator in viewArms.GetComponentsInChildren<Animator>(true))animator.enabled=false;
             foreach(var skin in viewArms.GetComponentsInChildren<SkinnedMeshRenderer>(true))skin.updateWhenOffscreen=true;
+        }
+        public Vector3 V2RightPalmWorld=>rightHand?rightHand.TransformPoint(rightPalmContact):Eye.position;
+        public float V2KnifeGripError(Transform grip)=>grip?Vector3.Distance(V2RightPalmWorld,grip.position):float.PositiveInfinity;
+        public string LastV2PickupDiagnostic{get;private set;}="";
+        public Vector3 V2PickupShoulder(bool table)
+        {
+            float bend=table?.1f:1;float angle=70*bend*Mathf.Deg2Rad;
+            return transform.TransformPoint(new Vector3(table?.235f:.295f,1.04f-.62f*bend+.4f*Mathf.Cos(angle)-(table?0:.04f),.4f*Mathf.Sin(angle)-.22f*bend));
+        }
+        public bool V2PickupReachable(Transform grip,bool table)
+        {
+            if(!grip||rightCc0Arm==null)return false;
+            // Preview the same physical two-bone solve used at the grab event, then restore it.
+            // A camera-relative distance estimate is wrong while looking down at a floor/table.
+            Vector3 rootLocal=viewArms.localPosition;
+            Transform[] chain={rightCc0Arm.upper,rightCc0Arm.fore,rightCc0Arm.hand};
+            var positions=new Vector3[3];var rotations=new Quaternion[3];
+            for(int i=0;i<3;i++){positions[i]=chain[i].localPosition;rotations[i]=chain[i].localRotation;}
+            viewArms.localPosition=new Vector3(.23f,-.28f,.53f);rightCc0Arm.Reset();
+            float first=Vector3.Distance(chain[0].position,chain[1].position),second=Vector3.Distance(chain[1].position,chain[2].position);
+            Vector3 desired=V2PickupShoulder(table);viewArms.position+=desired-chain[0].position;
+            rightCc0Arm.Solve(grip.position,rightCc0Arm.GripRotation(grip.rotation,Vector3.up),transform.TransformDirection(new Vector3(1,-.7f,-.25f)),1);
+            float error=V2KnifeGripError(grip);
+            LastV2PickupDiagnostic="table="+table+";feet="+transform.position.ToString("F3")+";shoulder="+chain[0].position.ToString("F3")+";wrist="+chain[2].position.ToString("F3")+";grip="+grip.position.ToString("F3")+";lengths="+first.ToString("F4")+"/"+second.ToString("F4")+";error="+error.ToString("F5");
+            viewArms.localPosition=rootLocal;for(int i=0;i<3;i++){chain[i].localPosition=positions[i];chain[i].localRotation=rotations[i];}
+            return error<=.035f;
+        }
+        public int V2HandsRenderLayer=>viewArms?viewArms.gameObject.layer:-1;
+        public void SetPickupProjectionV2(bool active)
+        {
+            // Pickup is a world-space contact, so hands, world knife and torso use the same
+            // projection and normal depth. The narrow firearm FOV resumes after the action.
+            if(viewArms)ImportedModels.SetLayer(viewArms,active?Layers.Actor:Layers.ViewModel);
+            if(weaponRoot)ImportedModels.SetLayer(weaponRoot,active?Layers.Actor:Layers.ViewModel);
+            if(weaponCamera&&cameraView)
+            {
+                if(active)weaponCamera.fieldOfView=cameraView.fieldOfView;
+                else weaponCamera.fieldOfView=Mathf.Lerp(weaponCamera.fieldOfView,G.options.viewModelFov,1-Mathf.Exp(-18*Time.unscaledDeltaTime));
+                weaponCamera.enabled=cameraView.enabled&&!active;
+            }
+        }
+        public void SetV2EquipmentVisibility(bool firearm)
+        {for(int i=0;i<weaponModels.Length;i++)if(weaponModels[i])weaponModels[i].gameObject.SetActive(firearm&&i==weapon);if(viewArms)viewArms.gameObject.SetActive(true);}
+        public void RestoreFirearmHands(){if(leftCc0Arm!=null)leftCc0Arm.stanceOffset=Vector3.zero;ResetCc0Hands();PoseRightCc0Hand();if(supportGrips[weapon])PlaceSupportHand(supportGrips[weapon].position,1);SetKnifeFingers(1);SetPickupBody(0);}
+        public void PoseKnifeHands(Transform grip,float fingerClose,Vector3? reach=null)
+        {
+            if(!grip||rightCc0Arm==null)return;
+            viewArms.localPosition=new Vector3(.23f,-.28f,.53f);viewArms.localRotation=Quaternion.identity;ResetCc0Hands();
+            if(v2BodyBend>0)
+            {
+                float bodyBlend=v2PickupTable?Mathf.Clamp01(v2BodyBend*10):v2BodyBend;
+                viewArms.rotation=Quaternion.Slerp(Eye.rotation,transform.rotation,bodyBlend);
+                if(leftCc0Arm!=null)leftCc0Arm.stanceOffset=(-viewArms.forward*.16f-viewArms.right*(v2PickupTable?.04f:.16f))*bodyBlend;
+                Vector3 wanted=Vector3.Lerp(rightCc0Arm.upper.position,V2PickupShoulder(v2PickupTable),bodyBlend);
+                viewArms.position+=wanted-rightCc0Arm.upper.position;
+            }
+            Vector3 target=reach??grip.position;
+            rightCc0Arm.Solve(target,rightCc0Arm.GripRotation(grip.rotation,Vector3.up),transform.TransformDirection(new Vector3(1,-.7f,-.25f)),1);
+            if(leftCc0Arm!=null)leftCc0Arm.Solve(Eye.TransformPoint(new Vector3(-.23f,-.26f,.31f)),leftCc0Arm.GripRotation(Eye.rotation,Vector3.forward),Eye.TransformDirection(new Vector3(-1,-1,-.2f)),1);
+            SetKnifeFingers(fingerClose);
+            if(v2BodyBend>0&&playerBody){var worldRig=playerBody.GetComponent<ActorVisualRig>();if(worldRig)worldRig.SetPickupHand(rightHand.position);}
+            var knife=grip.GetComponentInParent<KnifeV2Visual>();if(knife&&knife.KnifeId==2&&knife.Ring&&fingerClose>.8f)PoseIndexContactV2(knife.Ring.position);
+        }
+        readonly Dictionary<Transform,Quaternion> knifeFingerRest=new Dictionary<Transform,Quaternion>();
+        void SetKnifeFingers(float closed)
+        {
+            if(!viewArms)return;
+            if(knifeFingerRest.Count==0)foreach(var t in viewArms.GetComponentsInChildren<Transform>(true))if(t.name.StartsWith("Finger",StringComparison.Ordinal))knifeFingerRest[t]=t.localRotation;
+            foreach(var entry in knifeFingerRest)if(entry.Key)
+            {
+                float opening=1-Mathf.Clamp01(closed);float angle=entry.Key.name.Contains("_mid")?58:entry.Key.name.Contains("_tip")?45:38;
+                entry.Key.localRotation=entry.Value*Quaternion.Euler(opening*angle,0,0);
+            }
+        }
+        float v2BodyBend;bool v2PickupTable;
+        public void SetPickupBody(float crouchWeight,bool table=false)
+        {
+            v2BodyBend=Mathf.Clamp01(crouchWeight);v2PickupTable=table;
+            if(playerBody)
+            {
+                var bodyRig=playerBody.GetComponent<ActorVisualRig>();if(bodyRig)
+                {
+                    bodyRig.SetPickupBody(crouchWeight);bodyRig.EvaluatePickupPose();
+                    // The world body keeps its full crouch. First-person framing uses arms only;
+                    // central torso/knees would occlude a ground-level contact point.
+                }
+            }
+            if(viewArms&&v2BodyBend<=0){viewArms.localPosition=new Vector3(.23f,-.28f,.53f);viewArms.localRotation=Quaternion.identity;if(leftCc0Arm!=null)leftCc0Arm.stanceOffset=Vector3.zero;}
         }
         void ResetCc0Hands(){if(leftCc0Arm!=null)leftCc0Arm.Reset();if(rightCc0Arm!=null)rightCc0Arm.Reset();}
         void PoseRightCc0Hand()
@@ -114,7 +205,21 @@ namespace SwapHunter
             rightGrip=primaryGrips[weapon];
             if(rightCc0Arm==null||!rightGrip)return;
             rightCc0Arm.Solve(rightGrip.position,rightCc0Arm.GripRotation(rightGrip.rotation,Vector3.up),
-                Eye.TransformDirection(new Vector3(1,-1,-.2f)),1);
+                Eye.TransformDirection(new Vector3(1,-1,-.2f)),1);SetKnifeFingers(1);
+            PoseIndexContactV2(weaponModels[weapon].TransformPoint(new Vector3(.008f,-.059f,-.052f)));
+        }
+        public float V2TriggerFingerError{get;private set;}
+        void PoseIndexContactV2(Vector3 target)
+        {
+            var end=ImportedModels.Find(viewArms,"Finger1_tip.R");if(!end)return;
+            Transform middle=end.parent,first=middle?middle.parent:null;if(!first)return;
+            Vector3 Endpoint()=>end.TransformPoint(Vector3.up*.02524f);
+            for(int pass=0;pass<5;pass++)foreach(var joint in new[]{middle,first})
+            {
+                var from=Endpoint()-joint.position;var toward=target-joint.position;if(from.sqrMagnitude<.00001f||toward.sqrMagnitude<.00001f)continue;
+                Quaternion turn=Quaternion.FromToRotation(from,toward);joint.rotation=Quaternion.RotateTowards(Quaternion.identity,turn,35)*joint.rotation;
+            }
+            V2TriggerFingerError=Vector3.Distance(Endpoint(),target);
         }
         void PoseCc0ToolHand(Vector3 contact,Quaternion frame)
         {
@@ -129,6 +234,7 @@ namespace SwapHunter
         {
             for(int i=0;i<WeaponCatalog.Count;i++)
             {
+                firearmRestPositionV2[i]=weaponModels[i].localPosition;if(bolts[i])boltRestRotationV2[i]=bolts[i].localRotation;
                 if(magazines[i])
                 {
                     magazineRestRotations[i]=magazines[i].localRotation;
@@ -175,7 +281,7 @@ namespace SwapHunter
             for(int i=0;i<WeaponCatalog.Count;i++)RestoreWeaponParts(i);
             if(discardedMagazine)Destroy(discardedMagazine);
             reloadGripWeight=0;ReloadStageTag="ready";
-            ResetCc0Hands();PoseRightCc0Hand();
+            ApplyFirearmMotionV2();ResetCc0Hands();PoseRightCc0Hand();
             if(supportGrips[weapon])PlaceSupportHand(supportGrips[weapon].position,1);
         }
         void RestoreWeaponParts(int i)
@@ -185,7 +291,7 @@ namespace SwapHunter
             if(roundGroups[i]){roundGroups[i].gameObject.SetActive(true);roundGroups[i].localPosition=roundOrigins[i];}
             if(belts[i])belts[i].gameObject.SetActive(true);
             if(pumps[i])pumps[i].localPosition=pumpOrigins[i];
-            if(bolts[i])bolts[i].localPosition=boltOrigins[i];
+            if(bolts[i]){bolts[i].localPosition=boltOrigins[i];bolts[i].localRotation=boltRestRotationV2[i];}
         }
         float ReloadPoseWeight=>reloadLeft>0?PoseWindow(ReloadProgress,0,.12f,.88f,1):0;
         Vector3 ReloadPoseOffset=>(weapon==5?new Vector3(.035f,.025f,.075f):new Vector3(.035f,.065f,.08f))*ReloadPoseWeight;
@@ -195,16 +301,18 @@ namespace SwapHunter
         {
             if(!presentationReady)return;
             for(int i=0;i<WeaponCatalog.Count;i++)RestoreWeaponParts(i);
-            ResetCc0Hands();PoseRightCc0Hand();
+            ApplyFirearmMotionV2();ResetCc0Hands();PoseRightCc0Hand();
             if(supportGrips[weapon])PlaceSupportHand(supportGrips[weapon].position,1);
-            if(reloadLeft<=0)
+            if(!ReloadV2Pending&&reloadLeft<=0)
             {
                 ReloadStageTag="ready";reloadGripWeight=0;
                 UpdateCyclingParts();
                 if(supportGrips[weapon]&&authoredReloadRig)PlaceSupportHand(supportGrips[weapon].position,1);
                 return;
             }
-            float phase=ReloadProgress;
+            float realPhase=ReloadProgress;
+            if(weapon==1&&ReloadV2Pending){PoseTubeReloadV2();return;}
+            float phase=RemapReloadV2(realPhase);
             ReloadStageTag=phase<.20f?"reach":phase<.40f?"extract":phase<.50f?"stow":phase<.56f?"fetch":phase<.79f?"insert":phase<.91f?(reloadWasEmpty||weapon==5||weapon==9?"chamber":"return"):"ready";
             var magazine=magazines[weapon];if(!magazine)return;
             bool breakAction=weapon==5,rotary=weapon==9;
@@ -284,16 +392,63 @@ namespace SwapHunter
             effect.velocity=Eye.right*-.72f+Eye.up*.52f+Eye.forward*.10f;
             discardedMagazineCount++;
         }
+        readonly Vector3[] firearmRestPositionV2=new Vector3[WeaponCatalog.Count];
+        readonly Quaternion[] boltRestRotationV2=new Quaternion[WeaponCatalog.Count];
+        int visualWeaponV2=-1,lastCaseShotV2=-1;float visualSwitchAtV2;
+        Transform tubeShellV2;
+        float RemapReloadV2(float p)
+        {
+            float commit=ReloadV2CommitFraction(weapon);
+            if(p<=commit)return p/Mathf.Max(.01f,commit)*.79f;
+            return .79f+(p-commit)/Mathf.Max(.01f,1-commit)*.21f;
+        }
+        void ApplyFirearmMotionV2()
+        {
+            if(visualWeaponV2!=weapon){visualWeaponV2=weapon;visualSwitchAtV2=Time.time;}
+            var profile=WeaponMotionV2.Get(weapon);float since=Time.time-lastShotAt;
+            float impulse=since<.035f?Mathf.Clamp01(since/.035f):1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.035f,profile.recoilReturn,since));
+            float entry=1-Mathf.SmoothStep(0,1,(Time.time-visualSwitchAtV2)/profile.readySeconds);
+            if(weaponModels[weapon])weaponModels[weapon].localPosition=firearmRestPositionV2[weapon]+new Vector3(.025f*entry,-.12f*entry,-profile.recoilTravel*impulse);
+            if(tubeShellV2)tubeShellV2.gameObject.SetActive(weapon==1&&ReloadV2Pending);
+            float ejectAt=weapon==1?.35f:weapon==7?.56f:.035f;
+            if(shots!=lastCaseShotV2&&since>=ejectAt&&since<ejectAt+.12f&&weapon<9&&weapon!=5){lastCaseShotV2=shots;EjectCaseV2();}
+        }
+        void PoseTubeReloadV2()
+        {
+            ReloadStageTag=ReloadV2Stage;float elapsed=ReloadV2Elapsed;
+            float roundPhase=Mathf.Repeat(Mathf.Max(0,elapsed-.25f),.4f)/.4f;
+            if(!tubeShellV2)
+            {
+                var go=GameObject.CreatePrimitive(PrimitiveType.Cylinder);go.name="Single physical loading shell";go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());go.transform.SetParent(weaponModels[1],false);go.transform.localScale=new Vector3(.017f,.031f,.017f);go.GetComponent<Renderer>().sharedMaterial=Shapes.Mat(4);ImportedModels.SetLayer(go.transform,Layers.ViewModel);tubeShellV2=go.transform;
+            }
+            Vector3 port=weaponModels[1].TransformPoint(new Vector3(-.03f,-.065f,-.08f));
+            Vector3 supply=Eye.TransformPoint(new Vector3(-.21f,-.52f,.28f));
+            float insert=PoseEase(.10f,.84f,roundPhase);tubeShellV2.position=Vector3.Lerp(supply,port,insert);tubeShellV2.rotation=weaponModels[1].rotation*Quaternion.Euler(90,0,0);
+            tubeShellV2.gameObject.SetActive(elapsed>=.25f&&ReloadV2Stage!="return"&&roundPhase<.88f);
+            PlaceReloadHand(tubeShellV2.position,tubeShellV2.rotation,1);reloadContactWorld=tubeShellV2.position;reloadGripWeight=1;
+            if(ReloadV2Stage=="return")PlaceSupportHand(supportGrips[1].position,Mathf.Clamp01((elapsed-(ReloadV2Total-.25f))/.25f));
+        }
+        void EjectCaseV2()
+        {
+            if(!weaponModels[weapon])return;var go=GameObject.CreatePrimitive(PrimitiveType.Cylinder);go.name="Case from receiver / "+weapon;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());
+            go.transform.SetParent(G.effects,false);go.transform.localScale=new Vector3(.008f,.019f,.008f);
+            go.transform.position=bolts[weapon]?bolts[weapon].position:weaponModels[weapon].TransformPoint(new Vector3(.045f,.035f,.015f));go.transform.rotation=weaponModels[weapon].rotation*Quaternion.Euler(0,0,90);go.GetComponent<Renderer>().sharedMaterial=Shapes.Mat(4);go.layer=Layers.ViewModel;
+            var effect=go.AddComponent<DiscardedMagazineVisual>();effect.velocity=Eye.right*1.1f+Eye.up*.6f;effect.weaponId=weapon;
+        }
         void UpdateCyclingParts()
         {
-            float elapsed=Time.time-lastShotAt;
-            float duration=Mathf.Min(.72f,1/Mathf.Max(.1f,Rate)*.85f);
-            if(elapsed<0||elapsed>duration)return;
-            float phase=elapsed/duration,cycle=PoseWindow(phase,.16f,.43f,.58f,.91f);
+            float t=Time.time-lastShotAt;
             if(CurrentWeaponDefinition.mechanism==FireMechanism.Pump&&pumps[weapon])
-                pumps[weapon].localPosition=pumpOrigins[weapon]-Vector3.forward*(.11f*cycle);
-            if(CurrentWeaponDefinition.mechanism==FireMechanism.BoltAction&&bolts[weapon])
-                bolts[weapon].localPosition=boltOrigins[weapon]-Vector3.forward*(.09f*cycle);
+            {
+                float pull=PoseEase(.12f,.35f,t)*(1-PoseEase(.35f,.56f,t));pumps[weapon].localPosition=pumpOrigins[weapon]-Vector3.forward*(.11f*pull);
+            }
+            if(CurrentWeaponDefinition.mechanism==FireMechanism.BoltAction&&bolts[weapon]&&t>=.18f&&t<=1.25f)
+            {
+                float lift=PoseEase(.18f,.32f,t)*(1-PoseEase(.88f,1.05f,t)),pull=PoseEase(.32f,.56f,t)*(1-PoseEase(.66f,.88f,t));
+                bolts[weapon].localPosition=boltOrigins[weapon]-Vector3.forward*(.09f*pull);bolts[weapon].localRotation=boltRestRotationV2[weapon]*Quaternion.Euler(0,0,-55*lift);
+                float hold=PoseWindow(t,.18f,.29f,1.05f,1.25f);
+                if(rightCc0Arm!=null)rightCc0Arm.Solve(bolts[weapon].position,rightCc0Arm.GripRotation(bolts[weapon].rotation,Vector3.up),Eye.TransformDirection(new Vector3(1,-.7f,-.1f)),hold);
+            }
         }
         GameObject CreateMuzzleFlash(Transform marker)
         {

@@ -17,7 +17,8 @@ namespace SwapHunter
         public virtual bool Ready(out string reason){reason="";return true;}
         protected virtual void OnEnable(){active.Add(this);}
         protected virtual void OnDisable(){active.Remove(this);if(holding==this)CancelForAction();}
-        public static bool HasCandidate=>FindCandidate();
+        public static IEnumerable<D2HoldInteraction> CandidatesForV2=>active;
+        public static bool HasCandidate=>!InteractionV2.Active&&FindCandidate();
         public static string Hint { get { var candidate=FindCandidate();return candidate?candidate.Prompt+" · 按住 E "+candidate.Duration.ToString("0.#")+"秒":""; } }
         public static float Progress=>holding?Mathf.Clamp01(elapsed/holding.Duration):0;
         public static bool Holding=>holding;
@@ -39,6 +40,7 @@ namespace SwapHunter
         static bool Busy(PlayerMotor p) => p.SwapActionsLocked||p.reloadLeft>0||p.ChargeProgress>0||p.IsVaulting||p.combatTools&&p.combatTools.PoseActive;
         internal static void Tick()
         {
+            if(InteractionV2.Active){CancelForAction();return;}
             var g=DemoGame.I;if(!g||!g.player)return;
             if(!g.IsPlaying){if(g.state!=RunState.Paused)CancelForAction();return;}
             var p=g.player;var candidate=FindCandidate();

@@ -331,13 +331,14 @@ namespace SwapHunter
             if (retired || !DemoGame.I.IsPlaying) return;
             Vector3 old = transform.position; Vector3 travel = velocity * Time.deltaTime;
             var tactics=DemoGame.I.player?DemoGame.I.player.tactics:null;
-            if(tactics&&tactics.Intercept(old,old+travel,out var barrierHit)){transform.position=barrierHit;Retire();return;}
+            if(DirectionalBarrier.Intercept(old,old+travel,out var barrierHit)){transform.position=barrierHit;Retire();return;}
             if (CombatRay.Cast(old, travel.normalized, travel.magnitude, owner ? owner.transform : null, out RaycastHit hit))
             {
                 PlayerMotor player = hit.collider.GetComponentInParent<PlayerMotor>();
                 EnemyActor enemy = hit.collider.GetComponentInParent<EnemyActor>();
-                if (player) player.Hurt(damage, old);
-                else if(enemy!=owner)
+                if(owner)owner.ReportProjectileHit(player!=null);
+                if (player) player.Hurt(damage, old,false);
+                else if(!enemy)
                 {
                     var batch=new DamageBatch(DamageSource.EnemyBullet,owner?owner.transform:null,old);
                     batch.Direct(hit.collider,damage,hit.point,batch.NewEvent());batch.Apply();
@@ -398,11 +399,11 @@ namespace SwapHunter
             float radius = game.config.grenadeRadius;
             var batch=new DamageBatch(DamageSource.EnemyGrenade,null,center);long damageEvent=batch.NewEvent();
             foreach(EnemyActor enemy in game.enemies.ToArray())
-                if(enemy&&enemy.Alive)Blast(enemy.transform.position,enemy.AimPoint,d=>batch.Enemy(enemy,d,damageEvent));
+                if(enemy&&enemy.Alive)Blast(enemy.transform.position,enemy.AimPoint,d=>batch.Enemy(enemy,d*(enemy.IsBoss?4:10)*DirectionalBarrier.ExplosionMultiplier(center,enemy.AimPoint),damageEvent));
             foreach(var objective in DamageableObjective.ActiveSnapshot())
                 if(objective&&objective.Alive)Blast(objective.transform.position,objective.AimPoint,d=>batch.Objective(objective,d,damageEvent));
             batch.Apply();
-            if(game.player)Blast(game.player.transform.position,game.player.Eye.position,d=>game.player.Hurt(d,center));
+            if(game.player)Blast(game.player.transform.position,game.player.Eye.position,d=>game.player.Hurt(d*DirectionalBarrier.ExplosionMultiplier(center,game.player.Eye.position),center,false));
             Shapes.Burst(center, new Color(1, .6f, .12f), radius);
             Shapes.Ring(game.effects, center, radius, new Color(1, .7f, .2f), .1f).gameObject.AddComponent<TimedEffect>().life = .25f;
             game.sound.Play("explosion", center); game.Record("grenade_explode", center.ToString());

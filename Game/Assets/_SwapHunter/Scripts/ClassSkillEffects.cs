@@ -20,7 +20,7 @@ namespace SwapHunter
             {
                 if(!enemy||!enemy.Alive)continue;
                 float factor=BlastFactor(center,enemy.AimPoint);
-                if(factor>0)batch.Enemy(enemy,power*factor,damageEvent);
+                if(factor>0)batch.Enemy(enemy,power*factor*DirectionalBarrier.ExplosionMultiplier(center,enemy.AimPoint),damageEvent);
             }
             foreach (var objective in DamageableObjective.ActiveSnapshot())
             {
@@ -38,7 +38,7 @@ namespace SwapHunter
             if (owner && owner.health > 0)
             {
                 float factor = BlastFactor(center, owner.transform.position + Vector3.up * .9f);
-                if (factor > 0) owner.Hurt(power * factor * ClassSkillTuning.RemoteSelfScale, center);
+                if (factor > 0) owner.Hurt((power/3) * factor * ClassSkillTuning.RemoteSelfScale * DirectionalBarrier.ExplosionMultiplier(center,owner.Eye.position), center,false);
             }
         }
         static float BlastFactor(Vector3 center, Vector3 aim)
@@ -160,7 +160,7 @@ namespace SwapHunter
                 if(device&&device.Alive&&ClassSkillArea.Contains(center,device.Carrier?device.Carrier.transform.position:device.transform.position,device.AimPoint))batch.Device(device,damage,damageEvent);
             batch.Apply();
             // The same occupancy/LOS rule applies to the caster. It is an ordinary self-damage source.
-            if (owner && owner.health > 0 && ClassSkillArea.Contains(center, owner.transform.position, owner.transform.position + Vector3.up * .9f)) owner.Hurt(damage, center + Vector3.up * .2f);
+            if (owner && owner.health > 0 && ClassSkillArea.Contains(center, owner.transform.position, owner.transform.position + Vector3.up * .9f)) owner.Hurt(damage/3, center + Vector3.up * .2f,false);
         }
         public void Cancel() { if (ended) return; ended = true; Destroy(gameObject); }
     }

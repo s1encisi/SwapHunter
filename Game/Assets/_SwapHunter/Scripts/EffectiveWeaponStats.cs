@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 namespace SwapHunter
 {
     // Base expedition values. Attachments and temporary effects are applied by their owners.
@@ -9,7 +9,7 @@ namespace SwapHunter
         EffectiveWeaponStats(int id, DemoConfig config)
         {
             var d = WeaponCatalog.Get(id);
-            Damage = id == 0 ? config.rifleDamage : id == 1 ? config.shotgunDamage : d.damage;
+            Damage = 3 * (id == 0 ? config.rifleDamage : id == 1 ? config.shotgunDamage : d.damage);
             Rate = id == 0 ? config.rifleRate : id == 1 ? config.shotgunRate : d.rate;
             Reload = id == 0 ? config.rifleReload : id == 1 ? config.shotgunReload : d.reload;
             Magazine = id == 0 ? config.rifleMagazine : id == 1 ? config.shotgunMagazine : d.magazine;

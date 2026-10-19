@@ -27,6 +27,7 @@ namespace SwapHunter
     {
         internal EnemyActor enemy;
         internal RelayDevice device;
+        internal EnemyV2Device v2device;
         internal DamageableObjective objective;
         internal float amount;
         internal EnemyHitRegion region;
@@ -34,7 +35,7 @@ namespace SwapHunter
         public Vector3 point;
         public DamageResult Result {get;internal set;}
         public Action<DamageResult> after;
-        internal int ReceiverId=>device?device.GetInstanceID():enemy?enemy.GetInstanceID():objective?objective.GetInstanceID():0;
+        internal int ReceiverId=>v2device?v2device.GetInstanceID():device?device.GetInstanceID():enemy?enemy.GetInstanceID():objective?objective.GetInstanceID():0;
     }
     public sealed class DamageBatch
     {
@@ -58,12 +59,16 @@ namespace SwapHunter
         {return enemy&&enemy.Alive?Add(new DamageSample{enemy=enemy,amount=amount,region=region,point=enemy.AimPoint},eventId):null;}
         public DamageSample Device(RelayDevice device,float amount,long eventId)
         {return device&&device.Alive&&DamageResolution.IsPlayer(source)?Add(new DamageSample{device=device,amount=amount,point=device.AimPoint},eventId):null;}
+        public DamageSample V2Device(EnemyV2Device device,float amount,long eventId)
+        {return device&&device.Alive?Add(new DamageSample{v2device=device,amount=amount,point=device.AimPoint},eventId):null;}
         public DamageSample Objective(DamageableObjective objective,float amount,long eventId)
         {return objective&&objective.Alive?Add(new DamageSample{objective=objective,amount=amount,point=objective.AimPoint},eventId):null;}
         public DamageSample Direct(Collider collider,float amount,Vector3 point,long eventId,bool bodyRegions=true)
         {
             if(!collider)return null;
             // An independent child receiver must win before the parent EnemyActor.
+            var v2=collider.GetComponentInParent<EnemyV2Device>();
+            if(v2)return V2Device(v2,amount,eventId);
             var device=collider.GetComponentInParent<RelayDevice>();
             DamageSample sample;
             if(device)sample=Device(device,amount,eventId);
@@ -89,7 +94,9 @@ namespace SwapHunter
                 foreach(var sample in samples)
                 {
                     DamageResult result=default;
-                    if(sample.enemy)result=sample.enemy.ReceiveDamage(sample.context,sample.amount,sample.region);
+                    if(sample.v2device)
+                    {float before=sample.v2device.Health;result.applied=sample.v2device.ApplyDamage(sample.amount,sample.context.origin);result.healthLoss=Mathf.Max(0,before-sample.v2device.Health);result.markMultiplier=1;result.receiverKind="enemy_device";DamageResolution.Record(sample.context,sample.v2device.GetInstanceID(),sample.amount,result);}
+                    else if(sample.enemy)result=sample.enemy.ReceiveDamage(sample.context,sample.amount,sample.region);
                     else if(sample.device)
                     {
                         float before=sample.device.Health;

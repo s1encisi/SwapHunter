@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -58,7 +58,7 @@ namespace SwapHunter
             foreach(var enemy in game.enemies)if(enemy)enemy.gameObject.SetActive(false);
             foreach(var anchor in game.anchors)if(anchor)anchor.gameObject.SetActive(false);
             if(game.expeditionMap!=null)foreach(var node in game.expeditionMap.nodes)if(node)node.gameObject.SetActive(false);
-            Vector3 origin=new Vector3(0,0,-110);
+            Vector3 origin=new Vector3(-600,0,-600);
             Shapes.Box("Trial deck",transform,origin+Vector3.down*.5f,new Vector3(36,1,44),1,true,Layers.World);
             Shapes.Box("Left boundary",transform,origin+new Vector3(-18,1.2f,0),new Vector3(.5f,2.4f,44),3,true,Layers.World);
             Shapes.Box("Right boundary",transform,origin+new Vector3(18,1.2f,0),new Vector3(.5f,2.4f,44),3,true,Layers.World);

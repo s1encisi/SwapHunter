@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 namespace SwapHunter
 {
     // D1.1 implementation balance, versioned separately from save schemas.
     public static class TacticalPrototypeRules
     {
-        public const int Version=4, ClassCount=4, AssaultClass=0;
+        public const int Version=5, ClassCount=4, AssaultClass=0;
         public const int ShockSkillIndex=0,MobilitySkillIndex=1,FortifySkillIndex=2,ReloadSkillIndex=3,ScanSkillIndex=4,PrecisionSkillIndex=5,RemoteSkillIndex=6,DenialSkillIndex=7;
         public const int ShieldGeneralIndex=0,KnifeGeneralIndex=1;
         public const int MedkitPrice=20,AmmoPrice=25,ArmorPrice=25,MedkitCarryLimit=2,AmmoMagazineCount=2,OptionalReward=40;
         public const float MedkitHeal=40f,ArmorAmount=40f;
         public const string MobilitySkillId="rapid_mobility",ShieldSkillId="a_shield";
         public static readonly string[] ClassNames={"突击兵","重装兵","侦查兵","远程兵"};
-        public static readonly string[] ClassSkillNames={"震荡突击","快速机动","阵地加固","快速装填","战术扫描","精确射击","遥控爆破","区域封锁"};
+        public static readonly string[] ClassSkillNames={"战术推进","快速机动","阵地加固","快速装填","战术扫描","精确射击","遥控爆破","区域封锁"};
         public static readonly string[] GeneralSkillNames={"A盾","相位飞刀"};
         public static readonly string[] ConsumableNames={"医疗包","弹药包","应急护甲"};
         public static readonly string[] SkillIds={"concussive_assault",MobilitySkillId,"field_fortification","rapid_reload","tactical_scan","precision_shot","remote_explosive","area_denial"};

@@ -422,7 +422,7 @@ namespace SwapHunter
             for (int i = 0; i < 8; i++)
             {
                 float side = i % 2 == 0 ? -1 : 1, height = 14 + i % 3 * 7;
-                FinalEnvironmentModels.Create("Props_Vessel_Tall",root,new Vector3(side*(32+i%3*9),height/2-7,8+i*9),new Vector3(7,height,9));
+                FinalEnvironmentModels.Create("Props_Vessel_Tall",root,new Vector3(side*(340+i%3*25),height/2-7,-100+i*90),new Vector3(7,height,9));
             }
         }
 
@@ -435,28 +435,14 @@ namespace SwapHunter
             try
             {
                 Backdrop();
-                switch (level)
-                {
-                    case 0: Calibration(); break;
-                    case 1: ShieldLine(); break;
-                    case 2: VerticalRoute(); break;
-                    case 3: FirstExtraction(); break;
-                    case 4: Crossfire(); break;
-                    case 5: TransferDanger(); break;
-                    case 6: RelayIslands(); break;
-                    case 7: WarehouseChoices(); break;
-                    case 8: TowerDescent(); break;
-                    case 9: CutReinforcements(); break;
-                    case 10: LocalInterference(); break;
-                    case 11: CoreBreakthrough(); break;
-                }
+                MapV2Build(level);
                 Label((level + 1).ToString("00") + " / " + ExpeditionCatalog.Levels[level].name,
                     map.spawn + new Vector3(0, 4, 4), .75f);
                 var surface = root.gameObject.AddComponent<NavMeshSurface>();
                 map.navigation = surface; surface.collectObjects = CollectObjects.Children;
                 surface.layerMask = Layers.WorldMask;
                 surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-                surface.overrideVoxelSize = true; surface.voxelSize = .08f;
+                surface.overrideVoxelSize = true; surface.voxelSize = .16f;
                 Physics.SyncTransforms(); RuntimeNavigationOwner.BuildFresh(surface); Physics.SyncTransforms();
                 return map;
             }

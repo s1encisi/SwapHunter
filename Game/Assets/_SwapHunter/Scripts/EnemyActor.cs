@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace SwapHunter
@@ -12,6 +12,15 @@ namespace SwapHunter
         public EnemyMotion motion;
         public ActorVisualRig VisualRig {get;private set;}
         public BossEncounter boss;
+        public MiniBossController miniBoss;
+        public EnemyV2Ability ability;
+        public bool IsBoss => boss || miniBoss;
+        public bool KnifeExecutable => !IsBoss && kind != EnemyKind.Elite;
+        public int ProjectileHits {get;private set;}
+        public int MuzzleBlockedShots {get;private set;}
+        public float FirstShotTime {get;private set;}=-1;
+        public Vector3 MuzzlePosition=>shotMuzzle?shotMuzzle.position:AimPoint+transform.forward*.85f;
+        public void ReportProjectileHit(bool playerHit){if(playerHit)ProjectileHits++;}
         public EnemyTacticalAI tactical;
         public EncounterGrenadeCue grenadeCue;
         public float health, maximumHealth, stunLeft, warningLeft, silenceLeft;
@@ -20,12 +29,14 @@ namespace SwapHunter
         {
             if(!Alive||seconds<=0)return;
             if(boss&&!boss.TryReceiveSilence(seconds))return;
+            if(miniBoss){seconds=Mathf.Min(1.5f,seconds);if(!miniBoss.TryReceiveSilence(seconds))return;}
+            if(ability)ability.Interrupt("silence");
             if(silenceLeft<=0)DemoGame.I.sound.Play("silence",AimPoint);
             silenceLeft=Mathf.Max(silenceLeft,seconds);DemoGame.I.Record("enemy_silenced",kind+":"+seconds);
         }
         public bool ApplyOrdinaryStagger(float seconds)
         {
-            if(!Alive||boss||seconds<=0)return false;
+            if(!Alive||IsBoss||seconds<=0)return false;
             stunLeft=Mathf.Max(stunLeft,seconds);DemoGame.I.Record("enemy_staggered",kind+":"+seconds);return true;
         }
         public int arena;
@@ -38,7 +49,7 @@ namespace SwapHunter
         public override float Height => kind == EnemyKind.Elite ? 2.1f : 1.8f;
         public override Vector3 AimPoint => transform.position + Vector3.up * (Height * .62f);
         public string Label => (Marked ? BaseLabel + " · 已标记" : BaseLabel)+(Silenced?" · 沉默":"");
-        string BaseLabel => kind == EnemyKind.Training ? "训练机" : kind == EnemyKind.Sniper ? "哨戒狙击手" : kind == EnemyKind.Shield ? "盾卫" : kind == EnemyKind.Elite ? "封锁指挥官" : "突击掷弹兵";
+        string BaseLabel => miniBoss?miniBoss.DisplayName:EnemyV2Definition.Name(kind);
         Transform shotMuzzle;
         Renderer[] bodyRenderers;
         MaterialPropertyBlock impactBlock;
@@ -78,7 +89,7 @@ namespace SwapHunter
             GameObject go = new GameObject(kind.ToString()); go.layer = Layers.Actor; go.transform.position = feet;
             EnemyActor enemy = go.AddComponent<EnemyActor>(); enemy.kind = kind; enemy.arena = arena;
             enemy.Initialize(); DemoGame.I.enemies.Add(enemy);
-            if(kind==EnemyKind.Elite&&DemoGame.I.expeditionActive&&DemoGame.I.expeditionLevel==11)enemy.EnableBoss();
+
             return enemy;
         }
         public BossEncounter EnableBoss()
@@ -87,11 +98,20 @@ namespace SwapHunter
             DisableShieldMeleePresentation();
             if(shieldCollider)shieldCollider.enabled=false;
 
+            if(ability){Destroy(ability);ability=null;}
             boss=gameObject.AddComponent<BossEncounter>();boss.Initialize(this);return boss;
+        }
+        public MiniBossController EnableMiniBoss(int chapter)
+        {
+            if(miniBoss)return miniBoss;
+            DisableShieldMeleePresentation();
+            if(shieldCollider)shieldCollider.enabled=chapter==1;
+            if(ability){Destroy(ability);ability=null;}
+            miniBoss=gameObject.AddComponent<MiniBossController>();miniBoss.Initialize(this,chapter);return miniBoss;
         }
         void Initialize()
         {
-            maximumHealth = kind == EnemyKind.Sniper ? G.config.sniperHealth : kind == EnemyKind.Shield ? G.config.shieldHealth : kind == EnemyKind.Elite ? G.config.eliteHealth : G.config.assaultHealth;
+            maximumHealth = EnemyV2Definition.Health(kind,G.config);
             health = maximumHealth; home = transform.position;
             CharacterController capsule = gameObject.AddComponent<CharacterController>(); capsule.radius = Radius; capsule.height = Height; capsule.center = Vector3.up * Height * .5f; capsule.skinWidth=.02f;capsule.stepOffset=.32f;capsule.slopeLimit=48;capsule.minMoveDistance=0; body = capsule;
             agent = gameObject.AddComponent<NavMeshAgent>(); agent.height = Height; agent.radius = Radius; agent.baseOffset = 0;
@@ -102,7 +122,7 @@ namespace SwapHunter
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
             motion=gameObject.AddComponent<EnemyMotion>();motion.Initialize(this,capsule);
             float modelScale = kind == EnemyKind.Elite ? 1.16f : 1;
-            if (kind == EnemyKind.Shield || kind == EnemyKind.Elite)
+            if (kind == EnemyKind.Shield)
             {
                 var shield = new GameObject("Shield"); shield.layer = Layers.Actor; shield.transform.SetParent(transform, false);
                 shield.transform.localPosition = new Vector3(-.12f, .99f, .57f) * modelScale;
@@ -114,7 +134,8 @@ namespace SwapHunter
             impactBlock = new MaterialPropertyBlock();
             fireAt = Time.time + 1.7f + Random.value; grenadeAt = Time.time + 5 + Random.value * 2;
             transform.rotation = Quaternion.Euler(0, 180, 0); gaitPrevious=transform.position;
-            if(kind==EnemyKind.Assault||kind==EnemyKind.Shield){tactical=gameObject.AddComponent<EnemyTacticalAI>();tactical.Initialize(this);}
+            if(kind!=EnemyKind.Training){tactical=gameObject.AddComponent<EnemyTacticalAI>();tactical.Initialize(this);}
+            if(kind==EnemyKind.Elite||(int)kind>=5){ability=gameObject.AddComponent<EnemyV2Ability>();ability.Initialize(this);}
             if(kind==EnemyKind.Shield)InitializeShieldMeleePresentation();
         }
         void Update()
@@ -136,14 +157,17 @@ namespace SwapHunter
             VisualRig.SetGrenadePreparing(grenadeCue&&grenadeCue.Preparing);
             UpdateHitVisual();
             if (suppressAI || G.qaSuppressAI || kind == EnemyKind.Training) { ClearLaser(); return; }
+            if(Vector3.Distance(transform.position,G.player.transform.position)>80){if(agent.enabled&&agent.isOnNavMesh){agent.isStopped=true;agent.ResetPath();}ClearLaser();return;}
             // Ordinary stagger pauses basic actions; the Boss owns an independent spatial clock.
             if(boss){boss.Tick(dt);return;}
+            if(miniBoss){miniBoss.Tick(dt);return;}
             if (stunLeft > 0) { ClearLaser(); return; }
             Vector3 playerAim = tactical?tactical.ObservedPlayerAim:G.player.transform.position + Vector3.up * 1.1f;
             Vector3 toPlayer = playerAim - AimPoint;
             Vector3 flat = Vector3.ProjectOnPlane(toPlayer, Vector3.up);
-            if ((!tactical||tactical.HasPlayerMemory)&&flat.sqrMagnitude > .01f) FaceSafely(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145)));
+            if ((!ability||!ability.LockFacing)&&(!tactical||!tactical.LocksFacing&&tactical.HasPlayerMemory)&&flat.sqrMagnitude > .01f) FaceSafely(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(flat), dt * (kind == EnemyKind.Shield || kind == EnemyKind.Elite ? 70 : 145)));
             if(grenadeCue && grenadeCue.Preparing) return;
+            if(ability&&ability.Tick(dt))return;
             if(tactical){tactical.Tick(dt);return;}
             bool visible = !Physics.Linecast(AimPoint, playerAim, Layers.WorldMask);
             if (visible) { lastKnownPlayer = G.player.transform.position; lastSawPlayer = Time.time; }
@@ -201,9 +225,13 @@ namespace SwapHunter
         void Shoot(Vector3 point, float damage, float speed)
         {
             if (!Alive || !G.IsPlaying) return;
-            shotsFired++;
             if(VisualRig){VisualRig.SetAim(point);VisualRig.NotifyShot();}
             Vector3 origin = shotMuzzle ? shotMuzzle.position : AimPoint + transform.forward * .85f + transform.right * .24f;
+            if(Physics.Linecast(AimPoint,origin,out var muzzleObstacle,Layers.WorldMask,QueryTriggerInteraction.Ignore))
+            {MuzzleBlockedShots++;if(tactical)tactical.NotifyBlockedMuzzle();G.Record("enemy_muzzle_blocked",kind+":"+muzzleObstacle.collider.name);return;}
+            if(CombatRay.Cast(origin,(point-origin).normalized,Vector3.Distance(origin,point),transform,out var obstruction))
+            {var ally=obstruction.collider.GetComponentInParent<EnemyActor>();if(ally&&ally!=this){MuzzleBlockedShots++;if(tactical)tactical.NotifyBlockedMuzzle();return;}}
+            shotsFired++;if(FirstShotTime<0)FirstShotTime=Time.time;
             Bolt.Spawn(this, origin, point - origin, speed, damage); G.sound.Play("rifle", origin);
             Shapes.Burst(origin, new Color(1, .64f, .25f), .12f);
         }
@@ -223,7 +251,7 @@ namespace SwapHunter
                 result.blocked=true;DamageResolution.Record(context,GetInstanceID(),damage,result);return result;
             }
             bool bullet=context.source==DamageSource.PlayerBullet||context.source==DamageSource.EnemyBullet;
-            float regionMultiplier=bullet?(region==EnemyHitRegion.Head?1.5f:region==EnemyHitRegion.Limb?.8f:1):1;
+            float regionMultiplier=bullet?(region==EnemyHitRegion.Head?(IsBoss?1.5f:2f):region==EnemyHitRegion.Limb?.8f:1):1;
             float beforeMark=damage*regionMultiplier;
             result.markMultiplier=DamageResolution.MarkMultiplier(context.source,Marked);
             float hpBefore=health,energyBefore=boss?boss.Energy:0;
@@ -285,8 +313,12 @@ namespace SwapHunter
             health = Mathf.Max(0, health - damage); flashLeft = .12f;if(VisualRig)VisualRig.NotifyHit();
             if(boss)boss.RefreshPhase();
             float effectiveDamage=Mathf.Max(0,resourcesBefore-health-(boss?boss.Energy:0));
+            if(effectiveDamage>0&&ability)ability.NotifyHurt(effectiveDamage);
+            if(effectiveDamage>0&&miniBoss)miniBoss.NotifyHurt(effectiveDamage);
+            if(effectiveDamage>0&&tactical)tactical.NotifyHurt();
             if(effectiveDamage>0)G.Record("enemy_effective_damage",effectiveDamage.ToString("R",System.Globalization.CultureInfo.InvariantCulture));
             if (health > 0) return;
+            if(ability)ability.Interrupt("death");if(miniBoss)miniBoss.OnKilled();
             ClearLaser(); flashLeft = 0; UpdateHitVisual(); agent.enabled = false;
             foreach (Collider collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
             dying = true;if(VisualRig)VisualRig.BeginDeath();
@@ -344,11 +376,20 @@ namespace SwapHunter
         {
             var territory=GetComponent<MissionEncounterAgent>();
             if(territory)territory.RebaseAfterSwap();
+            if(ability)ability.Interrupt("swap");if(miniBoss)miniBoss.AfterSwap();
             stunLeft = Mathf.Max(stunLeft,G.config.swapStun); warningLeft = 0; ClearLaser();if(tactical)tactical.Invalidate();
             fireAt = Mathf.Max(fireAt, Time.time + stunLeft + .25f);
             if (agent.enabled && agent.isOnNavMesh) { agent.ResetPath(); agent.isStopped = true; }
         }
         void OnDestroy() { ClearLaser(); }
+        internal void DisablePhysicalShield(){if(shieldCollider)shieldCollider.enabled=false;}
+        internal void AddMiniBossPhysicalShield()
+        {
+            if(shieldCollider){shieldCollider.enabled=true;return;}
+            var go=new GameObject("执法官实体盾碰撞");go.layer=Layers.Actor;go.transform.SetParent(transform,false);go.transform.localPosition=new Vector3(-.12f,1.05f,.64f);
+            shieldCollider=go.AddComponent<BoxCollider>();shieldCollider.size=new Vector3(1.15f,1.7f,.16f);
+            foreach(var c in GetComponentsInChildren<Collider>())if(c!=shieldCollider)Physics.IgnoreCollision(c,shieldCollider,true);
+        }
         void UpdateHitVisual()
         {
             bool flashing = flashLeft > 0;

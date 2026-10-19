@@ -93,7 +93,7 @@ namespace SwapHunter
     var deployment=expeditionStore.Profile.deployment;
     player.SetLoadout(TacticalExpedition?deployment.primary:expeditionStore.Primary,TacticalExpedition?deployment.secondary:expeditionStore.Secondary);
     foreach(int w in player.EquippedWeapons)if(ActiveExpeditionAttachment(w)==2)player.reserve[w]=Mathf.RoundToInt(player.reserve[w]*1.25f);
-    if(level==9)foreach(int w in player.EquippedWeapons)player.reserve[w]=Mathf.RoundToInt(player.reserve[w]*.5f);
+    // V2: each control region has authored finite supplies; no arbitrary half-reserve penalty.
     expeditionMedkits=TacticalExpedition?deployment.carriedConsumables[0]:Spec==1?3:2;expeditionAmmoPacks=TacticalExpedition?deployment.carriedConsumables[1]:1;expeditionArmorPacks=TacticalExpedition?deployment.carriedConsumables[2]:0;
     MissionCatalog.Validate();
     var layout=expeditionMap.root.GetComponent<MissionLayout>();
@@ -147,15 +147,14 @@ namespace SwapHunter
    }
    if(!IsPlaying)return;
    runSeconds+=Time.deltaTime;
-   if(Pressed(19))UseExpeditionMedkit();
+   // ConsumableUseV2 owns F/T timing and commits through the same use methods.
    if(mission!=null)mission.Tick(Time.deltaTime);
    foreach(var node in expeditionMap.nodes)if(node&&node.kind==ExpeditionNodeKind.Extraction)node.SetExtractionReady(ExpeditionMainComplete);
-   var n=FindExpeditionNode();
-   if(n&&Time.unscaledTime>toastUntil)
-    Toast(KeyName(8)+" · "+n.DisplayLabel+(n.kind==ExpeditionNodeKind.Bonus?" / "+MissionCatalog.Get(expeditionLevel).bonusRisk+" · 成功撤离 +40":""),.15f);
+
   }
   public ExpeditionNode FindExpeditionNode()
   {
+   if(InteractionV2.Active){InteractionV2.Instance.RefreshFocus();return InteractionV2.Instance.Focus as ExpeditionNode;}
    if(!expeditionActive||expeditionMap==null||!player)return null;ExpeditionNode nearest=null;float range=2.8f;
    foreach(var n in expeditionMap.nodes)
    {
@@ -231,7 +230,7 @@ namespace SwapHunter
    }
    try
    {
-    expeditionReceipt=expeditionStore.Settle(expeditionRun,success,expeditionBonus,runSeconds,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[0]-expeditionMedkits:0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[1]-expeditionAmmoPacks:0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[2]-expeditionArmorPacks:0);expeditionPending=false;
+    expeditionReceipt=expeditionStore.Settle(expeditionRun,success,expeditionBonus,runSeconds,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[0]-expeditionMedkits:0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[1]-expeditionAmmoPacks:0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[2]-expeditionArmorPacks:0,player.meleeEquipment?player.meleeEquipment.AttemptPickups:null,player.meleeEquipment?player.meleeEquipment.KnifeId:0);expeditionPending=false;
     expeditionInventory=false;expeditionAwaitingRetry=false;SetState(success?RunState.Victory:RunState.Dead);
     Record("expedition_settlement",JsonUtility.ToJson(expeditionReceipt));
     // mission_exit is intent; only a successfully persisted receipt reaches this snapshot.
@@ -249,7 +248,7 @@ namespace SwapHunter
   internal int ExpeditionReserveLimit(int id) => Mathf.RoundToInt(EffectiveWeaponStats.Read(id,config).Reserve * (ActiveExpeditionAttachment(id) == 2 ? 1.25f : 1));
   public bool UseExpeditionAmmo()
   {
-   if(expeditionPending||!expeditionInventory||expeditionAmmoPacks<=0||expeditionReceipt!=null)return false;
+   if(expeditionPending||(!expeditionInventory&&!IsPlaying)||expeditionAmmoPacks<=0||expeditionReceipt!=null)return false;
    bool useful=false;foreach(int w in player.EquippedWeapons)if(player.reserve[w]<ExpeditionReserveLimit(w))useful=true;
    if(!useful)return false;expeditionAmmoPacks--;
    int granted=0;foreach(int w in player.EquippedWeapons){int before=player.reserve[w];player.reserve[w]=Mathf.Max(before,Mathf.Min(ExpeditionReserveLimit(w),before+EffectiveWeaponStats.Read(w,config).AmmoPackRounds));granted+=player.reserve[w]-before;}

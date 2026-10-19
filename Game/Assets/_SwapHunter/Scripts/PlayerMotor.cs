@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,6 +17,7 @@ namespace SwapHunter
         public PlayerTactics tactics;
         public PlayerCombatTools combatTools;
         public PlayerClassSkill classSkill;
+        public MeleeEquipmentV2 meleeEquipment;
         public float TemporaryArmor { get; private set; }
         public int weapon, shots, swapCount;
         public int[] ammo = new int[WeaponCatalog.Count], reserve = new int[WeaponCatalog.Count];
@@ -190,7 +191,7 @@ namespace SwapHunter
         public void SetViewActive(bool active) { cameraView.enabled = active; weaponCamera.enabled = active; if (playerBody) playerBody.gameObject.SetActive(active); }
         public void ResetAt(Vector3 feet)
         {
-            if(tactics)tactics.ResetCombat();if(combatTools)combatTools.ResetCombat();if(classSkill)classSkill.ResetCombat();
+            StopV2Travel();ResetAllReloadV2();CancelConsumableV2();if(meleeEquipment)meleeEquipment.ResetForAttempt();if(tactics)tactics.ResetCombat();if(combatTools)combatTools.ResetCombat();if(classSkill)classSkill.ResetCombat();
             ClearArmor(); CancelActions(); IsCrouching=false; controller.height=1.8f; controller.center=Vector3.up*.9f;
             Eye.localPosition=Vector3.up*1.62f; SetFeet(feet); health = G.config.playerHealth;
             EquippedWeapons=new[]{0,1};
@@ -208,7 +209,7 @@ namespace SwapHunter
             pendingSwapTarget = null; pendingSwapTelemetry = null;
             if(vaultRoutine!=null)StopCoroutine(vaultRoutine);vaultRoutine=null;IsVaulting=false;IsSprinting=false;
             CancelFireSequence();
-            swapRoutine = null; pendingSwapTarget = null; preparing = false; swapAcceptedFrame = -1; swapHeldReload = false; reloadLeft = 0; ResetReloadPresentation(); fireArmed = false; ignoreLook = 2; IsAiming = false; sprintLatched = false; horizontal = Vector3.zero;
+            swapRoutine = null; pendingSwapTarget = null; preparing = false; swapAcceptedFrame = -1; swapHeldReload = false; SuspendReloadV2(); ResetReloadPresentation(); fireArmed = false; ignoreLook = 2; IsAiming = false; sprintLatched = false; horizontal = Vector3.zero;
         }
         public void SetFeet(Vector3 feet) { controller.enabled = false; transform.position = feet; controller.enabled = true; Physics.SyncTransforms(); }
         public bool Launch(float speed=18)
@@ -226,7 +227,7 @@ namespace SwapHunter
         {
             if(classSkill)classSkill.Tick(Time.deltaTime);
             if (!G.IsPlaying || health<=0) return;
-            float dt = Time.deltaTime; float oldCooldown = cooldown; cooldown = Mathf.Max(0, cooldown - dt);
+            float dt = Time.deltaTime;TickV2Travel(dt); float oldCooldown = cooldown; cooldown = Mathf.Max(0, cooldown - dt);
             if (oldCooldown > 0 && cooldown == 0) G.sound.Play("confirm");
             blockFlash = Mathf.Max(0, blockFlash - dt); hitFlash = Mathf.Max(0, hitFlash - dt); killFlash = Mathf.Max(0, killFlash - dt); hurtFlash = Mathf.Max(0, hurtFlash - dt); phaseFlash = Mathf.Max(0, phaseFlash - dt); targetArrowTime = Mathf.Max(0, targetArrowTime - dt);
             if (Time.time - lastShotAt > .12f)
@@ -241,13 +242,7 @@ namespace SwapHunter
             Eye.localPosition=Vector3.Lerp(Eye.localPosition,Vector3.up*(IsCrouching?.98f:1.62f),1-Mathf.Exp(-18*dt));
             AdvanceFireSequence();
             if(IsVaulting){if(classSkill)classSkill.ProcessInput();UpdateEquipment(Vector2.zero,false,dt);return;}
-            if (reloadLeft > 0 && !ReloadSuspendedForSwap)
-            {
-                reloadLeft -= dt; float phase = 1 - Mathf.Max(0,reloadLeft) / reloadDuration;
-                if (phase > .20f && !reloadSoundA) { reloadSoundA = true; G.sound.Play("reload_out"); }
-                if (phase > .79f && !reloadSoundB) { reloadSoundB = true; G.sound.Play("reload_in"); }
-                if (reloadLeft <= 0) { int take = Mathf.Min(Capacity(weapon) - ammo[weapon], reserve[weapon]); ammo[weapon] += take; reserve[weapon] -= take; G.Record("weapon_reload_complete",weapon+":"+take); if(reloadWasEmpty||weapon==5||weapon==9)G.sound.Play("reload_bolt"); }
-            }
+            TickReloadV2(dt);
             Mouse mouse = G.qaMode && !G.qaInputEnabled ? null : G.MouseDevice;
             Vector2 delta = mouse == null ? Vector2.zero : mouse.delta.ReadValue();
             if (ignoreLook > 0) ignoreLook--;
@@ -273,16 +268,18 @@ namespace SwapHunter
             transform.rotation = Quaternion.Euler(0, yaw, 0);
             bool grounded = Grounded; float fallSpeed = verticalSpeed;
             float speed = (sprint ? G.config.sprintSpeed : G.Held(9) ? G.config.slowSpeed : G.config.walkSpeed) * G.options.moveSpeedScale;
+            speed *= EnemyV2Tether.PlayerMoveMultiplier;
             speed *= G.ModuleMovement * G.ModuleAimMovement * G.ExpeditionMoveMultiplier * EffectiveWeaponStats.Read(weapon,G.config).Movement * (IsCrouching?.52f:1);
             if(grounded && classSkill && classSkill.MobilityActive) speed *= PlayerClassSkill.GroundSpeedMultiplier;
             Vector3 desired = (transform.forward * movement.y + transform.right * movement.x) * speed;
             float rate = grounded ? (movement.sqrMagnitude < .01f ? G.config.braking : Vector3.Dot(horizontal, desired) < -.1f ? G.config.counterBraking : G.config.acceleration) : G.config.airAcceleration;
-            horizontal = Vector3.MoveTowards(horizontal, desired, rate * dt);
+            horizontal = TacticalAdvanceActive||JumpTransportActive?V2DesiredVelocity(desired):Vector3.MoveTowards(horizontal, desired, rate * dt);
             if (grounded && verticalSpeed < 0) verticalSpeed = -2;
             if(G.Pressed(4)&&grounded)
             {
-                if(TryVault())return;
-                if(!IsCrouching||TrySetCrouch(false))verticalSpeed=Mathf.Sqrt(G.config.jumpHeight*2*22);
+                if(V2JumpPad.TryLaunch(this)){}
+                else if(TryVault())return;
+                else if(!IsCrouching||TrySetCrouch(false))verticalSpeed=Mathf.Sqrt(G.config.jumpHeight*2*22);
             }
             verticalSpeed -= 22 * dt; Vector3 beforeMove = transform.position;
             CollisionFlags collision = controller.Move((horizontal + Vector3.up * verticalSpeed) * dt);
@@ -294,7 +291,7 @@ namespace SwapHunter
             if (stepDistance > (sprint ? 1.75f : 1.4f)) { stepDistance = 0; G.sound.Play("step"); }
             if (transform.position.y < -12) Hurt(1000, transform.position, shieldBlockable:false, kind:PlayerDamageKind.Environment);
             if (G.Pressed(10)) SwitchWeapon(EquippedWeapons[0]); if (G.Pressed(11)) SwitchWeapon(EquippedWeapons[1]);
-            if (G.Pressed(14) || G.Pressed(15)) SwitchWeapon(weapon==EquippedWeapons[0]?EquippedWeapons[1]:EquippedWeapons[0]);
+            if (!V2ItemsSelected && (G.Pressed(14) || G.Pressed(15))) SwitchWeapon(weapon==EquippedWeapons[0]?EquippedWeapons[1]:EquippedWeapons[0]);
             if (G.Pressed(7)) Reload();
             SetEyeRotation(); if (shooting && (CurrentWeaponDefinition.Automatic || G.Pressed(12))) { inputFire=true; Fire(); inputFire=false; } SetEyeRotation();
             target = FindTarget(); swapValidation = ValidateSwap(target);
@@ -307,7 +304,7 @@ namespace SwapHunter
             float motion = G.options.weaponMotion;
             float moving = Mathf.Clamp01(CurrentSpeed / G.config.walkSpeed) * (grounded ? 1 : .2f);
             sway = Vector2.Lerp(sway, Vector2.ClampMagnitude(mouseDelta * .002f, .025f), 1 - Mathf.Exp(-14 * dt));
-            Vector3 targetPosition = IsAiming ? adsPositions[weapon] : new Vector3(.23f,-.28f,.53f);
+            Vector3 targetPosition = IsAiming ? adsPositions[weapon] : new Vector3(.23f,-.28f,.41f);
             targetPosition += new Vector3(-sway.x, -sway.y + Mathf.Sin(travel * 3) * .007f * moving, 0) * motion;
             targetPosition.z -= visualKick * .026f;
             if(combatTools&&combatTools.PoseActive)targetPosition+=new Vector3(.08f,-.16f,-.08f)*Mathf.Sin(combatTools.PoseProgress*Mathf.PI);
@@ -340,7 +337,7 @@ namespace SwapHunter
         {
             if(!WeaponCatalog.Valid(primary)||!WeaponCatalog.Valid(secondary)||primary==secondary)
                 throw new ArgumentException("Loadout requires two different valid weapon IDs.");
-            CancelActions(); EquippedWeapons=new[]{primary,secondary};
+            CancelActions();ResetAllReloadV2(); EquippedWeapons=new[]{primary,secondary};
             foreach(int id in EquippedWeapons){ammo[id]=Capacity(id);reserve[id]=EffectiveWeaponStats.Read(id,G.config).Reserve;}
             weapon=primary;ShowWeapon();nextShot=Time.time+.2f;
         }
@@ -356,24 +353,15 @@ namespace SwapHunter
         }
         public void SwitchWeapon(int slot)
         {
-            if(slot==weapon||!WeaponCatalog.Valid(slot)||Array.IndexOf(EquippedWeapons,slot)<0||IsVaulting||SwapActionsLocked)return;
-            CancelFireSequence();reloadLeft=0;ResetReloadPresentation();IsAiming=false;sprintLatched=IsSprinting=false;
-            weapon=slot;ShowWeapon();nextShot=Mathf.Max(nextShot,Time.time+.20f);
+            if(!WeaponCatalog.Valid(slot)||Array.IndexOf(EquippedWeapons,slot)<0||IsVaulting||SwapActionsLocked)return;
+            bool changed=slot!=weapon||V2ItemsSelected||meleeEquipment&&meleeEquipment.Equipped;
+            if(!changed)return;if(meleeEquipment)meleeEquipment.Unequip();CancelConsumableV2();
+            CancelFireSequence();SuspendReloadV2();ResetReloadPresentation();IsAiming=false;sprintLatched=IsSprinting=false;
+            weapon=slot;ShowWeapon();ResumeReloadV2();nextShot=Mathf.Max(nextShot,Time.time+WeaponMotionV2.Get(weapon).readySeconds);
             G.sound.Play("reload");
         }
-        public bool Reload()
-        {
-            if(!G.IsPlaying||health<=0||IsVaulting||SwapActionsLocked||reloadLeft>0||ammo[weapon]>=Capacity(weapon)||reserve[weapon]<=0)return false;
-            CancelFireSequence();IsAiming=false;sprintLatched=IsSprinting=false;
-            BeginReloadPresentation();
-            reloadDuration=EffectiveWeaponStats.Read(weapon,G.config).Reload*G.ModuleReload*G.ExpeditionReloadMultiplier;
-            reloadLeft=reloadDuration;reloadSoundA=reloadSoundB=false;G.Record("weapon_reload_begin",weapon.ToString());return true;
-        }
-        public bool AccelerateCurrentReload(float remainingMultiplier)
-        {
-            if(!G.IsPlaying || health<=0 || SwapActionsLocked || reloadLeft<=0 || ammo[weapon]>=Capacity(weapon) || reserve[weapon]<=0 || remainingMultiplier<=0 || remainingMultiplier>=1) return false;
-            reloadLeft *= remainingMultiplier; return true;
-        }
+        public bool Reload(){if(meleeEquipment&&meleeEquipment.Equipped)return false;CancelConsumableV2();return BeginReloadV2();}
+        public bool AccelerateCurrentReload(float remainingMultiplier)=>AccelerateReloadV2(remainingMultiplier);
         Vector3 TracerOrigin()
         {
             Vector3 uv=weaponCamera.WorldToViewportPoint(muzzle.position);
@@ -381,6 +369,9 @@ namespace SwapHunter
         }
         public bool Fire()
         {
+            if(!G.IsPlaying||health<=0||meleeEquipment&&meleeEquipment.Equipped||TacticalAdvanceActive)return false;
+            if(V2UsingConsumable)CancelConsumableV2();
+            if(!EnsureReloadV2Ready())return false;
             if(!G.IsPlaying||health<=0||Time.time<nextShot||reloadLeft>0||IsVaulting||SwapActionsLocked||charging||burstRemaining>0||combatTools&&combatTools.PoseActive)return false;
             if(ammo[weapon]<=0){if(!Reload()){nextShot=Time.time+.3f;G.sound.Play("empty");}return false;}
             sprintLatched=IsSprinting=false;
@@ -442,13 +433,15 @@ namespace SwapHunter
                 {
                     Vector2 spread=UnityEngine.Random.insideUnitCircle*Mathf.Tan(spreadAngle*Mathf.Deg2Rad);
                     Vector3 direction=(Eye.forward+Eye.right*spread.x+Eye.up*spread.y).normalized;
-                    Vector3 endpoint=Eye.position+direction*90;
-                    if(EnemyActor.CastWeaponRay(Eye.position,direction,90,transform,out var hit))
+                    Vector3 endpoint;
+                    bool found=V2WeaponRay(direction,out var hit,out endpoint,out var actualRay,out bool shieldBlocked);
+                    if(shieldBlocked){anyShield=true;Shapes.Trace(TracerOrigin(),endpoint,def.tracer,.04f,.01f);continue;}
+                    if(found)
                     {
                         endpoint=hit.point;Collider collider=hit.collider;
                         var device=collider.GetComponentInParent<RelayDevice>();
-                        var enemy=device?null:collider.GetComponentInParent<EnemyActor>();
-                        if(enemy)collider=enemy.ResolveHitCollider(new Ray(Eye.position,direction),collider,ref endpoint);
+                        var enemy=device||collider.GetComponentInParent<EnemyV2Device>()?null:collider.GetComponentInParent<EnemyActor>();
+                        if(enemy)collider=enemy.ResolveHitCollider(actualRay,collider,ref endpoint);
                         var sample=batch.Direct(collider,ShotDamage(def,hit.distance,abilityMultiplier),endpoint,batch.NewEvent());
                         if(sample!=null)
                         {
@@ -542,7 +535,7 @@ namespace SwapHunter
             Vector3 raised=transform.position+Vector3.up*(rise+.12f);
             for(int i=1;i<=6;i++)if(!StandingRoom(Vector3.Lerp(raised,landing+Vector3.up*.1f,i/6f)))return false;
             if(IsCrouching&&!TrySetCrouch(false))return false;
-            CancelFireSequence();reloadLeft=0;IsAiming=false;sprintLatched=IsSprinting=false;IsVaulting=true;
+            CancelFireSequence();SuspendReloadV2();IsAiming=false;sprintLatched=IsSprinting=false;IsVaulting=true;
             vaultRoutine=StartCoroutine(VaultMotion(raised,landing));return true;
         }
         IEnumerator VaultMotion(Vector3 raised,Vector3 landing)
@@ -603,6 +596,8 @@ namespace SwapHunter
         }
         public SwapValidationResult ValidateSwap(SwapTarget candidate)
         {
+            if(TacticalAdvanceActive)return new SwapValidationResult(SwapFailureReason.ActionInProgress);
+            if(EnemyV2DynamicField.BlocksQ(transform.position)||(candidate&&EnemyV2DynamicField.BlocksQ(candidate.transform.position)))return new SwapValidationResult(SwapFailureReason.Interference);
             if (!G.IsPlaying) return new SwapValidationResult(SwapFailureReason.NotPlaying);
             if (IsVaulting || charging) return new SwapValidationResult(SwapFailureReason.ActionInProgress);
             if (cooldown > .001f) return new SwapValidationResult(SwapFailureReason.Cooldown);
@@ -660,10 +655,12 @@ namespace SwapHunter
         }
         public bool RequestSwap(SwapTarget candidate)
         {
+            if(BufferV2Swap(candidate))return false;
             var result = ValidateSwap(candidate);
             var context = CaptureSwapTelemetry(candidate, ++nextSwapTelemetryId);
             RecordSwap("swap_attempt", candidate, result, context);
             if (!result.IsValid) { G.Toast("换位未开始："+result.ToDisplayText(G.config.swapRange), 1.2f); RecordSwap("swap_fail", candidate, result, context); return false; }
+            CancelConsumableV2();if(meleeEquipment)meleeEquipment.CancelForAction();
             pendingSwapTelemetry = context;
             int canceledRounds=burstRemaining;
             if(canceledRounds>0)
@@ -709,7 +706,7 @@ namespace SwapHunter
             var finalResult = ValidateSwap(candidate);
             if (!finalResult.IsValid) { swapRoutine = null; pendingSwapTarget = null; G.Toast("换位取消：" + finalResult.ToDisplayText(G.config.swapRange)+(swapHeldReload?" · 装填继续":""), 1.3f);swapHeldReload=false; RecordSwap("swap_cancel", candidate, finalResult); pendingSwapTelemetry = null; yield break; }
             bool wasAirborne=!Grounded;
-            Vector3 oldPlayer = transform.position, oldTarget = candidate.transform.position;
+            StopV2Travel();Vector3 oldPlayer = transform.position, oldTarget = candidate.transform.position;
             // Success/rollback coordinates describe the real execution endpoints,
             // while the earlier attempt retains the request-time coordinates.
             pendingSwapTelemetry = CaptureSwapTelemetry(candidate, pendingSwapTelemetry != null ? pendingSwapTelemetry.attemptId : 0);
@@ -729,14 +726,15 @@ namespace SwapHunter
             Physics.SyncTransforms();controller.enabled=true;Physics.SyncTransforms();
             G.Record("swap_mode",wasAirborne?"air":"ground");
             G.Record("swap_endpoints","beforePlayer="+oldPlayer.ToString("F3")+"; beforeTarget="+oldTarget.ToString("F3")+"; actualPlayer="+transform.position.ToString("F3")+"; actualTarget="+candidate.transform.position.ToString("F3"));
-            if(swapHeldReload){reloadLeft=0;ResetReloadPresentation();G.Toast("换位成功 · 装填中断",1.3f);}swapHeldReload=false;
-            verticalSpeed = 0; blockFlash = 0; candidate.AfterSwap(); cooldown = G.CampaignCooldown * G.ExpeditionCooldownMultiplier; G.OnCampaignSwap(candidate);
+            if(swapHeldReload){SuspendReloadV2();ResetReloadPresentation();G.Toast("换位成功 · 保留装填机械进度",1.3f);}swapHeldReload=false;
+            verticalSpeed = 0; blockFlash = 0; candidate.AfterSwap(); cooldown = G.CampaignCooldown * G.ExpeditionCooldownMultiplier; G.OnCampaignSwap(candidate);EnemyV2Tether.RecheckAll();
             swapCount++; G.totalSwaps++;EnemyTacticalAI.NotifySwap(oldPlayer,transform.position,candidate as EnemyActor);if(G.tutorialCourse)G.tutorialCourse.NotifySwap(wasAirborne); G.tutorialSwapped = true; phaseFlash = .18f; lastSwapTarget = oldPlayer; targetArrowTime = 2;
             Shapes.Echo(oldPlayer); Shapes.Echo(oldTarget); Shapes.Trace(oldPlayer + Vector3.up, oldTarget + Vector3.up, new Color(.2f, 1, .9f), .13f, .09f);
             G.sound.Play("phase"); RecordSwap("swap_success", candidate, new SwapValidationResult(SwapFailureReason.None), legacyDetail: oldPlayer + " -> " + oldTarget); swapRoutine = null; pendingSwapTarget = null; pendingSwapTelemetry = null;
         }
     }
 }
+
 
 
 

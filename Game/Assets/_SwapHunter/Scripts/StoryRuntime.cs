@@ -62,7 +62,7 @@ namespace SwapHunter
     }
    }
    if(storyLevel==7){if(mission.CompletedObjectives>=2)StoryEmit("data-two");if(mission.CompletedObjectives>=3)StoryEmit("data-three");}
-   if(storyLevel==11)foreach(var m in mission.Members)if(m.role.kind==EnemyKind.Elite&&m.Defeated){StoryEmit("boss-down");break;}
+   if(storyLevel==11)foreach(var m in mission.Members)if(m.group.id=="boss"&&m.Defeated){StoryEmit("boss-down");break;}
    if(mission.CanExtract)StoryEmit("ready");if(expeditionBonus)StoryEmit("bonus");
    if(storyRadio==null)AdvanceStoryRadio();else{storyRadioLeft-=Time.deltaTime;if(storyRadioLeft<=0)SkipStoryRadio();}
   }
@@ -86,9 +86,9 @@ namespace SwapHunter
   void DrawStoryRadio()
   {
    if(!StoryRadioActive)return;float x=600,w=viewWidth-x-32;
-   Fill(new Rect(x,548,w,187),new Color(.012f,.035f,.055f,.94f));Fill(new Rect(x,548,4,187),Cyan);
-   Text("救援专线 / "+storyRadio.speaker,new Rect(x+20,559,w-40,28),17,Cyan);Text(storyRadio.text,new Rect(x+20,593,w-40,110),22,Paper);
-   Text("F9 下一句 · F10 通讯记录",new Rect(x+20,710,w-40,20),12,Muted,TextAnchor.MiddleRight);
+   Fill(new Rect(x,268,w,118),new Color(.012f,.035f,.055f,.94f));Fill(new Rect(x,268,4,118),Cyan);
+   Text("救援专线 / "+storyRadio.speaker,new Rect(x+20,278,w-40,22),17,Cyan);Text(storyRadio.text,new Rect(x+20,308,w-40,58),20,Paper);
+   Text("F9 下一句 · F10 通讯记录",new Rect(x+20,365,w-40,18),12,Muted,TextAnchor.MiddleRight);
   }
   bool DrawStoryModal()
   {

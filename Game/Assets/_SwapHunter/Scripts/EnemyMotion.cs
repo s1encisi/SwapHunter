@@ -9,6 +9,9 @@ namespace SwapHunter
  {
   EnemyActor owner;CharacterController capsule;NavMeshAgent agent;float fallingSpeed;
   public bool Airborne {get;private set;}
+  bool scripted;
+  public void BeginScripted(){scripted=true;if(agent.enabled&&agent.isOnNavMesh){agent.isStopped=true;agent.ResetPath();}}
+  public void EndScripted(){scripted=false;if(GroundAt(transform.position,out var p)){Airborne=false;if(!agent.enabled)agent.enabled=true;if(agent.isOnNavMesh){agent.Warp(p);agent.nextPosition=transform.position;agent.ResetPath();}}else{if(agent.enabled)agent.enabled=false;Airborne=true;fallingSpeed=0;}}
   public void Initialize(EnemyActor e,CharacterController c){owner=e;capsule=c;agent=e.agent;agent.updatePosition=false;agent.nextPosition=transform.position;}
   public static bool ClearVolume(Vector3 feet,float radius,float height,Transform ignore=null,Transform secondIgnore=null)
   {
@@ -54,7 +57,7 @@ namespace SwapHunter
    // A void destination is allowed: falling out of the arena is resolved as a fall, never a rescue teleport.
    if(agent.enabled)agent.enabled=false;capsule.enabled=false;transform.position=feet;Physics.SyncTransforms();capsule.enabled=true;
    Airborne=!ground;fallingSpeed=0;
-   if(ground){agent.enabled=true;if(!agent.isOnNavMesh)return false;agent.Warp(feet);agent.nextPosition=feet;agent.ResetPath();}
+   if(ground){agent.enabled=true;if(!agent.isOnNavMesh){agent.enabled=false;Airborne=true;}else{agent.Warp(feet);agent.nextPosition=feet;agent.ResetPath();}}
    Physics.SyncTransforms();return true;
   }
   public void Push(Vector3 displacement)
@@ -66,6 +69,7 @@ namespace SwapHunter
   void LateUpdate()
   {
    if(!owner||!owner.Alive||!capsule.enabled||!DemoGame.I.IsPlaying)return;
+   if(scripted)return;
    if(Airborne)
    {
     if(transform.position.y < -12){owner.Damage(owner.maximumHealth+1);return;}

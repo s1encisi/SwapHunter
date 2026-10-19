@@ -44,6 +44,7 @@ namespace SwapHunter
  }
  [Serializable] public sealed class ClassLoadout
  {
+  public int knifeId;
   public int classId,primary,secondary,medkitCarry;public int[] attachments,itemTypes,itemCounts;
   public string classSkillId="",tacticalSkillId="",starterSkillId="";
   public bool starterWeaponClaimed,starterSkillClaimed;
@@ -51,6 +52,7 @@ namespace SwapHunter
  [Serializable] public sealed class TacticalDeployment
  {
   // No initializers: JsonUtility's empty inline object must differ from a real snapshot.
+  public int knifeId;
   public string runId,classSkillId,tacticalSkillId;
   public int level,classId,primary,secondary,medkits,ammoPacks,armorPacks,inventoryMedkits,attempts,deaths;
   public int classSkillLevel,generalSkillLevel,baseReward,firstReward,bonusReward,rulesVersion;
@@ -63,6 +65,7 @@ namespace SwapHunter
  }
  [Serializable] public sealed class ExpeditionProfile
  {
+  public bool[] meleeKnives=new[]{true,false,false,false,false,false};
   public int version=4,credits,highestUnlocked,primary=0,secondary=1,specialization,knifeRank;
   public int[] ranks=new int[3],attachments=new int[12];
   public bool[] cleared=new bool[12],weapons=new bool[12];
@@ -134,7 +137,7 @@ namespace SwapHunter
   {
    string json=File.ReadAllText(path);
    if(!json.Contains("\"version\"")||!json.Contains("\"weapons\"")||!json.Contains("\"receipts\""))throw new InvalidDataException("章节存档字段缺失");
-   var p=JsonUtility.FromJson<ExpeditionProfile>(json);NormalizeEmptyDeployment(p);Validate(p);
+   var p=JsonUtility.FromJson<ExpeditionProfile>(json);if(p!=null&&(p.meleeKnives==null||p.meleeKnives.Length==0))p.meleeKnives=new[]{true,false,false,false,false,false};NormalizeEmptyDeployment(p);Validate(p);
    if(p.version!=(IsTactical?6:4))throw new InvalidDataException("存档版本与当前模式不符；未导入、迁移或覆盖原档");
    return p;
   }
@@ -173,6 +176,7 @@ namespace SwapHunter
   {
    if(p==null||(p.version!=4&&p.version!=6)||p.credits<0||p.highestUnlocked<0||p.highestUnlocked>11||p.ranks==null||p.ranks.Length!=3||!ValidAttachments(p.attachments)||p.weapons==null||p.weapons.Length!=12||p.cleared==null||p.cleared.Length!=12||p.bestSeconds==null||p.bestSeconds.Length!=12||p.receipts==null||p.specialization<0||p.specialization>2)throw new InvalidDataException("章节存档不完整，保留原文件");
    if(p.version==4&&(!WeaponCatalog.Valid(p.primary)||!WeaponCatalog.Valid(p.secondary)||p.primary==p.secondary||!p.weapons[p.primary]||!p.weapons[p.secondary]||!p.weapons[0]||!p.weapons[1]))throw new InvalidDataException("武器装配无效");
+   if(p.meleeKnives==null||p.meleeKnives.Length!=6||!p.meleeKnives[0])throw new InvalidDataException("近战刀具拥有状态无效");
    if(p.knifeRank<0||p.knifeRank>3)throw new InvalidDataException("飞刀研究等级无效");
    foreach(int r in p.ranks)if(r<0||r>3)throw new InvalidDataException("专精等级无效");
    foreach(float t in p.bestSeconds)if(float.IsNaN(t)||float.IsInfinity(t)||t<0)throw new InvalidDataException("时间无效");
@@ -192,6 +196,7 @@ namespace SwapHunter
    {
     var l=p.classLoadouts[i];
     if(l==null||l.classId!=i||!TacticalPrototypeRules.ClassCanUseWeapon(i,l.primary)||!TacticalPrototypeRules.ClassCanUseWeapon(i,l.secondary)||l.primary==l.secondary||!ValidAttachments(l.attachments)||!ValidItems(l.itemTypes,l.itemCounts))throw new InvalidDataException("职业预设不合法");
+    if(l.knifeId<0||l.knifeId>=6||!p.meleeKnives[l.knifeId])throw new InvalidDataException("近战刀具装配与拥有状态不符");
     if(l.starterWeaponClaimed&&(!p.weapons[TacticalPrototypeRules.StarterWeapon(i)]||!p.weapons[l.primary]||!p.weapons[l.secondary]))throw new InvalidDataException("武器保障或职业预设与拥有状态不符");
     int skill=TacticalPrototypeRules.SkillIndex(l.classSkillId),general=TacticalPrototypeRules.SkillIndex(l.tacticalSkillId,true),starter=TacticalPrototypeRules.SkillIndex(l.starterSkillId);
     if(!string.IsNullOrEmpty(l.classSkillId)&&(!TacticalPrototypeRules.ClassCanUseSkill(i,skill)||p.classSkillLevels[skill]<1))throw new InvalidDataException("职业技能装配不合法");
@@ -377,7 +382,7 @@ namespace SwapHunter
    if(IsTactical)
    {
     var l=p.classLoadouts[p.activeClass];var carried=new int[3];for(int type=0;type<3;type++)carried[type]=Math.Min(ItemCarry(l,type),p.consumables[type]);
-    p.deployment=new TacticalDeployment{rulesVersion=TacticalPrototypeRules.Version,runId=p.activeRun,level=level,classId=p.activeClass,primary=l.primary,secondary=l.secondary,attachments=(int[])l.attachments.Clone(),classSkillId=l.classSkillId,tacticalSkillId=l.tacticalSkillId,classSkillLevel=EquippedClassSkillLevel,generalSkillLevel=EquippedGeneralSkillLevel,itemTypes=(int[])l.itemTypes.Clone(),itemCounts=(int[])l.itemCounts.Clone(),inventoryConsumables=(int[])p.consumables.Clone(),carriedConsumables=carried,medkits=carried[0],ammoPacks=carried[1],armorPacks=carried[2],inventoryMedkits=p.consumables[0],attempts=1,deaths=0,baseReward=TacticalPrototypeRules.BaseReward(level),firstReward=p.cleared[level]?0:TacticalPrototypeRules.FirstClearExtra(level),bonusReward=TacticalPrototypeRules.OptionalReward,hasMobility=HasMobility,hasShield=HasShield};
+    p.deployment=new TacticalDeployment{knifeId=l.knifeId,rulesVersion=TacticalPrototypeRules.Version,runId=p.activeRun,level=level,classId=p.activeClass,primary=l.primary,secondary=l.secondary,attachments=(int[])l.attachments.Clone(),classSkillId=l.classSkillId,tacticalSkillId=l.tacticalSkillId,classSkillLevel=EquippedClassSkillLevel,generalSkillLevel=EquippedGeneralSkillLevel,itemTypes=(int[])l.itemTypes.Clone(),itemCounts=(int[])l.itemCounts.Clone(),inventoryConsumables=(int[])p.consumables.Clone(),carriedConsumables=carried,medkits=carried[0],ammoPacks=carried[1],armorPacks=carried[2],inventoryMedkits=p.consumables[0],attempts=1,deaths=0,baseReward=TacticalPrototypeRules.BaseReward(level),firstReward=p.cleared[level]?0:TacticalPrototypeRules.FirstClearExtra(level),bonusReward=TacticalPrototypeRules.OptionalReward,hasMobility=HasMobility,hasShield=HasShield};
    }
    Commit(p);return p.activeRun;
   }
@@ -387,7 +392,7 @@ namespace SwapHunter
   {RequireDeployment(run);var p=Copy();p.deployment.attempts=checked(p.deployment.attempts+1);Commit(p);return Profile.deployment;}
   public void RecordDeath(string run)
   {RequireDeployment(run);var p=Copy();p.deployment.deaths=checked(p.deployment.deaths+1);Commit(p);}
-  public ExpeditionReceipt Settle(string run,bool success,bool bonus,float seconds,int medkitsUsed=0,int ammoUsed=0,int armorUsed=0)
+  public ExpeditionReceipt Settle(string run,bool success,bool bonus,float seconds,int medkitsUsed=0,int ammoUsed=0,int armorUsed=0,int[] knifePickups=null,int equippedKnife=0)
   {
    foreach(var old in Profile.receipts)if(old.runId==run)return old;
    if(string.IsNullOrEmpty(run)||Profile.activeRun!=run)throw new InvalidOperationException("结算行动不匹配");
@@ -404,12 +409,16 @@ namespace SwapHunter
    else receipt.reward=success?(first?ExpeditionCatalog.Levels[level].reward:ExpeditionCatalog.ReplayReward(level))+(bonus?40:0):0;
    if(success)
    {
+    if(p.meleeKnives==null||p.meleeKnives.Length!=6)throw new InvalidDataException("近战刀具清单损坏");
+    if(knifePickups!=null)foreach(int knife in knifePickups){if(knife<0||knife>=6)throw new ArgumentOutOfRangeException(nameof(knifePickups));p.meleeKnives[knife]=true;}
+    if(IsTactical&&equippedKnife>=0&&equippedKnife<6&&p.meleeKnives[equippedKnife])p.classLoadouts[p.activeClass].knifeId=equippedKnife;
     p.cleared[level]=true;p.highestUnlocked=Math.Max(p.highestUnlocked,Math.Min(11,level+1));
     if(!IsTactical){int unlock=ExpeditionCatalog.Levels[level].weaponUnlock;if(unlock>=0)p.weapons[unlock]=true;}
     if(p.bestSeconds[level]==0||seconds<p.bestSeconds[level])p.bestSeconds[level]=Math.Max(.01f,seconds);
    }
    p.credits=checked(p.credits+receipt.reward);p.activeRun="";p.receipts.Add(receipt);Commit(p);return receipt;
   }
+  public void EquipMeleeKnife(int id){RequireTactical();RequireIdle();if(id<0||id>=6||!Profile.meleeKnives[id])throw new InvalidOperationException("尚未拥有此刀具");var p=Copy();p.classLoadouts[p.activeClass].knifeId=id;Commit(p);}
   public void Equip(int slot,int weapon)
   {
    RequireIdle();if(slot<0||slot>1||!CanEquip(weapon))throw new InvalidOperationException("武器尚未拥有或不属于当前职业");var p=Copy();

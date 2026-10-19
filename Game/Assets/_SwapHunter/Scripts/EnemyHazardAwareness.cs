@@ -27,6 +27,17 @@ namespace SwapHunter
    h.covered=covered;
   }
   public void NotifyHurt(ClassDenialField field){if(owner)Learn(field,true);}
+  void ObserveWorldDanger(int id,Vector3 center,float dps,float remaining)
+  {
+   Vector3 delta=center+Vector3.up*.15f-owner.AimPoint;
+   bool covered=ClassSkillArea.Contains(center,transform.position,owner.AimPoint);
+   if(!covered&&(delta.sqrMagnitude>22*22||Vector3.Dot(transform.forward,delta.normalized)<-.15f||Physics.Linecast(owner.AimPoint,center+Vector3.up*.15f,Layers.WorldMask)))return;
+   var h=known.Find(k=>k.id==id);bool created=h==null;
+   if(created){h=new Known{id=id,reactAt=Time.time+.35f+Mathf.Abs(id%26)*.01f};known.Add(h);}
+   h.center=center;h.expires=Time.time+remaining;h.dps=dps;
+   if(created||covered&&!h.covered){urgent=true;reactAt=Mathf.Max(reactAt,h.reactAt,Time.time+owner.stunLeft);DemoGame.I.Record("enemy_world_hazard_observed",owner.name+";id="+id+";inside="+covered);}
+   h.covered=covered;
+  }
   void Observe()
   {
    for(int i=known.Count-1;i>=0;i--)if(Time.time>=known[i].expires)known.RemoveAt(i);
@@ -38,6 +49,8 @@ namespace SwapHunter
     if(delta.sqrMagnitude>22*22||(!occupying&&Vector3.Dot(transform.forward,delta.normalized)<-.15f))continue;
     if(!Physics.Linecast(owner.AimPoint,target,Layers.WorldMask,QueryTriggerInteraction.Ignore))Learn(field,false);
    }
+   foreach(var steam in MapV2SteamValve.ActiveSnapshot())if(steam&&steam.Live)ObserveWorldDanger(steam.GetInstanceID(),steam.DangerCenter,owner.IsBoss?32:steam.DamagePerSecond,1);
+   foreach(var danger in EnemyV2Danger.ActiveSnapshot())if(danger&&danger.Live&&danger.Radius>=3)ObserveWorldDanger(danger.GetInstanceID(),danger.Center,danger.DamagePerSecond*(owner.IsBoss?4:10),danger.SecondsLeft);
   }
   public float PredictedDamage(Vector3 candidate,NavMeshPath path=null)
   {

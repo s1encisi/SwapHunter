@@ -24,6 +24,9 @@ namespace SwapHunter
         sealed class Passage { public string objective; public GameObject target; public bool active; }
         readonly List<Passage> passages = new List<Passage>();
         bool navigationDirty, navigationRunning;
+        public bool NavigationUpdating => navigationDirty || navigationRunning;
+        public Vector3[] MiniBossPosts { get; set; } = new Vector3[0];
+        public void MarkNavigationDirty() { navigationDirty = true; if (!navigationRunning) StartCoroutine(RefreshNavigation()); }
 
         static string SpawnKey(string group, int index) => group + ":" + index;
         public void BindObjective(ExpeditionNode node, string id)
@@ -93,7 +96,7 @@ namespace SwapHunter
             foreach (var group in definition.groups)
             {
                 for (int i = 0; i < group.roles.Length; i++) Spawn(group.id, i);
-                if (group.trigger == EncounterTrigger.Region && !regions.ContainsKey(group.region))
+                if ((group.trigger == EncounterTrigger.Region || group.trigger == EncounterTrigger.RegionElapsed || group.trigger == EncounterTrigger.MiniBoss) && !regions.ContainsKey(group.region))
                     throw new InvalidOperationException("Unbound mission region " + group.region);
                 if (!string.IsNullOrEmpty(group.alternativeRegion) && !regions.ContainsKey(group.alternativeRegion))
                     throw new InvalidOperationException("Unbound alternative mission region " + group.alternativeRegion);
@@ -159,6 +162,8 @@ namespace SwapHunter
         readonly MissionLayout layout;
         readonly HashSet<string> completed = new HashSet<string>(), visited = new HashSet<string>(), triggered = new HashSet<string>();
         readonly List<MissionMember> members = new List<MissionMember>();
+        readonly Dictionary<string,float> regionTimes = new Dictionary<string,float>();
+        bool miniCancellationRecorded, calibrationOpened;
         int lastShots;
         bool stopped, bossCancellationRecorded, mainReadyRecorded;
         public MissionDefinition Definition { get; }
@@ -169,6 +174,10 @@ namespace SwapHunter
         public int WarningBudget => Count(EncounterBudgetState.Warning);
         public int DeployedBudget => Count(EncounterBudgetState.Deployed);
         public int CancelledBudget => Count(EncounterBudgetState.Cancelled);
+        public int DefeatedBudget { get { int n=0; foreach(var m in members) if(m.Defeated)n++; return n; } }
+        public int LivingBudget { get { int n=0; foreach(var m in members) if(m.state==EncounterBudgetState.Deployed && m.actor && m.actor.Alive)n++; return n; } }
+        public int LocalActiveBudget { get { int n=0; foreach(var m in members) { var p=m.actor?m.actor.transform.position:layout.Spawn(m.group.id,m.index).position; if (Vector3.Distance(p,game.player.transform.position)>80) continue; if(m.state==EncounterBudgetState.Warning || m.state==EncounterBudgetState.Deployed && m.actor && m.actor.Alive)n++; } return n; } }
+        public int ActiveMiniEscorts { get { int n=0; foreach(var m in members) if(m.group.miniEscort && (m.state==EncounterBudgetState.Warning || m.state==EncounterBudgetState.Deployed && m.actor && m.actor.Alive))n++; return n; } }
         public int ActiveEscorts { get { int n = 0; foreach (var m in members) if (m.group.escort && (m.state == EncounterBudgetState.Warning || m.state == EncounterBudgetState.Deployed && m.actor && m.actor.Alive)) n++; return n; } }
         public int RequiredRemaining { get { int n = 0; foreach (var m in members) if (m.role.required && !m.Defeated) n++; return n; } }
         public int LivingNonRequired { get { int n = 0; foreach (var m in members) if (!m.role.required && m.actor && m.actor.Alive && m.role.kind != EnemyKind.Training) n++; return n; } }
@@ -177,10 +186,11 @@ namespace SwapHunter
         public bool ObjectiveComplete(string id) => completed.Contains(id);
         public bool RegionVisited(string id) => visited.Contains(id);
         public bool GroupTriggered(string id) => triggered.Contains(id);
+        public string CountdownStatus { get { string text="";foreach(var q in Definition.groups)if(q.trigger==EncounterTrigger.RegionElapsed && !completed.Contains(q.cancelOnObjective) && regionTimes.TryGetValue(q.region,out float entered) && !triggered.Contains(q.id)) text+=" · "+q.label+" "+Mathf.CeilToInt(Mathf.Max(0,q.triggerSeconds+q.warningSeconds-(Elapsed-entered)))+"秒";return text; } }
         public string Status => CanExtract
             ? "任务完成 · 前往" + Definition.extraction + " · 可遗留敌人"
             : Definition.instruction + " · 目标 " + CompletedObjectives + "/" + Definition.requiredObjectives
-                + (RequiredRemaining > 0 ? " · 指定威胁 " + RequiredRemaining : "");
+                + (RequiredRemaining > 0 ? " · 指定威胁 " + RequiredRemaining : "") + CountdownStatus;
         int Count(EncounterBudgetState state) { int n = 0; foreach (var m in members) if (m.state == state) n++; return n; }
 
         public MissionRuntime(DemoGame game, MissionLayout layout, MissionDefinition definition)
@@ -215,6 +225,8 @@ namespace SwapHunter
         void Visit(string id, string cause)
         {
             if (!visited.Add(id)) return;
+            regionTimes[id] = Elapsed;
+            foreach(var group in Definition.groups) if(group.trigger==EncounterTrigger.RegionElapsed && group.region==id && !completed.Contains(group.cancelOnObjective)) game.Toast(group.label + " · " + (group.triggerSeconds + group.warningSeconds).ToString("0") + "秒后开始部署，关闭对应控制站可断援", 5);
             game.Record("mission_region", Definition.level + ":" + id + " via=" + cause + " feet=" + game.player.transform.position);
         }
         void DetectRegions()
@@ -234,12 +246,14 @@ namespace SwapHunter
         }
         BossEncounter Boss
         {
-            get { foreach (var member in members) if (member.role.kind == EnemyKind.Elite && member.actor) return member.actor.boss; return null; }
+            get { foreach (var member in members) if (member.group.id == "boss" && member.actor) return member.actor.boss; return null; }
         }
         bool BossDefeated
         {
-            get { foreach (var member in members) if (member.role.kind == EnemyKind.Elite && member.Defeated) return true; return false; }
+            get { foreach (var member in members) if (member.group.id == "boss" && member.Defeated) return true; return false; }
         }
+        bool MiniDefeated { get { foreach(var m in members) if(!string.IsNullOrEmpty(m.group.miniBossId) && m.Defeated)return true; return false; } }
+        bool OriginalRequiredDefeated { get { foreach(var m in members) if(m.role.required && string.IsNullOrEmpty(m.group.miniBossId) && m.group.id!="boss" && !m.Defeated)return false; return true; } }
         bool GroupDefeated(string id)
         {
             bool found = false;
@@ -250,10 +264,13 @@ namespace SwapHunter
         {
             if (!string.IsNullOrEmpty(group.afterDefeated) && !GroupDefeated(group.afterDefeated)) return false;
             if (Definition.level == 0 && group.id == "combat" && game.totalSwaps < 1) return false;
+            if (Definition.level == 1 && group.id == "second") foreach(var m in members) if(m.group.id=="first" && m.role.required && !m.Defeated)return false;
             if (group.trigger == EncounterTrigger.Region && !string.IsNullOrEmpty(group.objective) && !completed.Contains(group.objective)) return false;
             if (!string.IsNullOrEmpty(group.alternativeRegion) && visited.Contains(group.alternativeRegion)) return true;
             switch (group.trigger)
             {
+                case EncounterTrigger.MiniBoss: return layout.TryRegion(group.region,out var arenaBounds) && arenaBounds.Contains(game.player.transform.position+Vector3.up*.2f) && (Definition.level==11 || CompletedObjectives >= Definition.requiredObjectives && OriginalRequiredDefeated && game.totalSwaps>=Definition.minimumSwaps);
+                case EncounterTrigger.RegionElapsed: return regionTimes.TryGetValue(group.region,out float entered) && Elapsed-entered>=group.triggerSeconds;
                 case EncounterTrigger.Start: return Elapsed >= group.triggerSeconds;
                 case EncounterTrigger.Region: return visited.Contains(group.region);
                 case EncounterTrigger.Objective: return completed.Contains(group.objective);
@@ -267,6 +284,7 @@ namespace SwapHunter
         }
         public void RefreshPendingCancellations()
         {
+            if (MiniDefeated && !miniCancellationRecorded) { miniCancellationRecorded=true; layout.Complete("$mini"); foreach(var group in Definition.groups) if(group.miniEscort) CancelGroup(group.id,"mini_boss_defeated"); game.Record("mini_boss_defeated",Definition.level.ToString()); }
             if (Definition.level == 11 && BossDefeated && !bossCancellationRecorded)
             {
                 bossCancellationRecorded = true;
@@ -277,6 +295,7 @@ namespace SwapHunter
         {
             if (stopped || !game.IsPlaying) return;
             Elapsed += Mathf.Max(0, dt); DetectRegions();
+            if(Definition.level==0 && game.totalSwaps>=1 && !calibrationOpened){calibrationOpened=true;layout.Complete("$calibrated");game.Record("world_calibration_passage","opened_after_real_q");}
             RefreshPendingCancellations();
             EvaluateGroups(); CheckMainReady();
         }
@@ -291,7 +310,7 @@ namespace SwapHunter
             foreach (var group in Definition.groups)
             {
                 if (!string.IsNullOrEmpty(group.cancelOnObjective) && completed.Contains(group.cancelOnObjective)) continue;
-                if (group.escort && BossDefeated) continue;
+                if (group.escort && BossDefeated || group.miniEscort && MiniDefeated) continue;
                 if (!triggered.Contains(group.id) && TriggerReady(group))
                 {
                     triggered.Add(group.id); game.expeditionWave = triggered.Count;
@@ -302,7 +321,11 @@ namespace SwapHunter
                 {
                     if (member.group != group || member.state != EncounterBudgetState.Untriggered) continue;
                     if (group.escort && ActiveEscorts >= Definition.maximumEscorts) break;
+                    if (group.miniEscort && ActiveMiniEscorts >= Definition.miniEscortLimit) break;
+                    if (LocalActiveBudget >= Definition.liveLimit - 1 && !member.role.required) break;
+                    if (LocalActiveBudget >= Definition.liveLimit && member.role.required) break;
                     var binding = layout.Spawn(group.id, member.index);
+                    if (Vector3.Distance(binding.position, game.player.transform.position)>100) continue;
                     member.state = EncounterBudgetState.Warning;
                     game.QueueMissionDeployment(member.Key, member.role.kind, binding.position, binding.yaw,
                         member.role.fixedPost || binding.fixedPost, group.warningSeconds, group.label, !member.role.required,
@@ -314,7 +337,9 @@ namespace SwapHunter
         {
             if (member.state != EncounterBudgetState.Warning || stopped) throw new InvalidOperationException("Deployment no longer belongs to this mission.");
             member.actor = actor; member.state = EncounterBudgetState.Deployed;
-            if(Definition.level==4 && member.group.id=="left")
+            if (!string.IsNullOrEmpty(member.group.miniBossId)) { actor.EnableMiniBoss(Definition.level); var controller=actor.GetComponent<MiniBossController>(); if(controller)controller.SetPosts(layout.MiniBossPosts); }
+            else if (member.group.id=="boss") actor.EnableBoss();
+            if(Definition.level==4 && member.group.id=="left" && member.index<2)
             {
                 var relay=layout.GetComponent<FireControlRelay>();
                 if(!relay)relay=layout.gameObject.AddComponent<FireControlRelay>();

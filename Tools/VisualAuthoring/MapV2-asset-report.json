@@ -1,0 +1,218 @@
+{
+  "origin": "Original procedural authored meshes and animation by SwapHunter project; no third-party input",
+  "models": [
+    {
+      "id": "knife_00",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Knives\\knife_00.glb",
+      "triangles": 19820,
+      "bytes": 390420,
+      "parts": [
+        "Blade",
+        "Ergonomic handle",
+        "Raised nonslip grip rib",
+        "Raised nonslip grip rib.001",
+        "Raised nonslip grip rib.002",
+        "Raised nonslip grip rib.003",
+        "Raised nonslip grip rib.004",
+        "Raised nonslip grip rib.005",
+        "Raised nonslip grip rib.006",
+        "Raised nonslip grip rib.007",
+        "Raised nonslip grip rib.008",
+        "Full tang hand guard",
+        "Solid tang pommel",
+        "Grip scale rivet",
+        "Grip scale rivet.001"
+      ]
+    },
+    {
+      "id": "knife_01",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Knives\\knife_01.glb",
+      "triangles": 19860,
+      "bytes": 392588,
+      "parts": [
+        "Blade",
+        "Ergonomic handle",
+        "Raised nonslip grip rib",
+        "Raised nonslip grip rib.001",
+        "Raised nonslip grip rib.002",
+        "Raised nonslip grip rib.003",
+        "Raised nonslip grip rib.004",
+        "Raised nonslip grip rib.005",
+        "Raised nonslip grip rib.006",
+        "Raised nonslip grip rib.007",
+        "Raised nonslip grip rib.008",
+        "Full tang hand guard",
+        "Solid tang pommel",
+        "Grip scale rivet",
+        "Grip scale rivet.001"
+      ]
+    },
+    {
+      "id": "knife_02",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Knives\\knife_02.glb",
+      "triangles": 22192,
+      "bytes": 444792,
+      "parts": [
+        "Blade",
+        "Ergonomic handle",
+        "Raised nonslip grip rib",
+        "Raised nonslip grip rib.001",
+        "Raised nonslip grip rib.002",
+        "Raised nonslip grip rib.003",
+        "Raised nonslip grip rib.004",
+        "Raised nonslip grip rib.005",
+        "Raised nonslip grip rib.006",
+        "Raised nonslip grip rib.007",
+        "Raised nonslip grip rib.008",
+        "Full tang hand guard",
+        "Solid tang pommel",
+        "Grip scale rivet",
+        "Grip scale rivet.001",
+        "Finger ring"
+      ]
+    },
+    {
+      "id": "knife_03",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Knives\\knife_03.glb",
+      "triangles": 2024,
+      "bytes": 87240,
+      "parts": [
+        "Blade",
+        "Butterfly split handle -1",
+        "Handle through insert",
+        "Handle through insert.001",
+        "Handle through insert.002",
+        "Handle through insert.003",
+        "Handle through insert.004",
+        "Handle through insert.005",
+        "Hinge pivot",
+        "Butterfly split handle 1",
+        "Handle through insert.006",
+        "Handle through insert.007",
+        "Handle through insert.008",
+        "Handle through insert.009",
+        "Handle through insert.010",
+        "Handle through insert.011",
+        "Hinge pivot.001",
+        "Latch"
+      ]
+    },
+    {
+      "id": "knife_04",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Knives\\knife_04.glb",
+      "triangles": 23452,
+      "bytes": 500696,
+      "parts": [
+        "Blade",
+        "Ergonomic handle",
+        "Raised nonslip grip rib",
+        "Raised nonslip grip rib.001",
+        "Raised nonslip grip rib.002",
+        "Raised nonslip grip rib.003",
+        "Raised nonslip grip rib.004",
+        "Raised nonslip grip rib.005",
+        "Raised nonslip grip rib.006",
+        "Raised nonslip grip rib.007",
+        "Raised nonslip grip rib.008",
+        "Full tang hand guard",
+        "Solid tang pommel",
+        "Grip scale rivet",
+        "Grip scale rivet.001",
+        "Lanyard grommet",
+        "Lanyard segment 00_0",
+        "Lanyard segment 01_0",
+        "Lanyard segment 02_0",
+        "Lanyard segment 03_0",
+        "Lanyard segment 04_0",
+        "Lanyard segment 05_0",
+        "Lanyard segment 06_0",
+        "Lanyard segment 07_0",
+        "Lanyard segment 08_0",
+        "Lanyard segment 09_0",
+        "Lanyard segment 10_0",
+        "Lanyard segment 11_0",
+        "Lanyard segment 00_1",
+        "Lanyard segment 01_1",
+        "Lanyard segment 02_1",
+        "Lanyard segment 03_1",
+        "Lanyard segment 04_1",
+        "Lanyard segment 05_1",
+        "Lanyard segment 06_1",
+        "Lanyard segment 07_1",
+        "Lanyard segment 08_1",
+        "Lanyard segment 09_1",
+        "Lanyard segment 10_1",
+        "Lanyard segment 11_1",
+        "Lanyard knot"
+      ]
+    },
+    {
+      "id": "knife_05",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Knives\\knife_05.glb",
+      "triangles": 22004,
+      "bytes": 508972,
+      "parts": [
+        "Blade",
+        "Ergonomic handle",
+        "Raised nonslip grip rib",
+        "Raised nonslip grip rib.001",
+        "Raised nonslip grip rib.002",
+        "Raised nonslip grip rib.003",
+        "Raised nonslip grip rib.004",
+        "Raised nonslip grip rib.005",
+        "Raised nonslip grip rib.006",
+        "Raised nonslip grip rib.007",
+        "Raised nonslip grip rib.008",
+        "Full tang hand guard",
+        "Solid tang pommel",
+        "Grip scale rivet",
+        "Grip scale rivet.001"
+      ]
+    },
+    {
+      "id": "class_00",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Actors\\class_00.glb",
+      "triangles": 39476,
+      "bytes": 1747960,
+      "parts": [
+        "Tactical human skinned mesh"
+      ]
+    },
+    {
+      "id": "class_01",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Actors\\class_01.glb",
+      "triangles": 39664,
+      "bytes": 1754960,
+      "parts": [
+        "Tactical human skinned mesh"
+      ]
+    },
+    {
+      "id": "class_02",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Actors\\class_02.glb",
+      "triangles": 39380,
+      "bytes": 1746448,
+      "parts": [
+        "Tactical human skinned mesh"
+      ]
+    },
+    {
+      "id": "class_03",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Actors\\class_03.glb",
+      "triangles": 39652,
+      "bytes": 1767528,
+      "parts": [
+        "Tactical human skinned mesh"
+      ]
+    },
+    {
+      "id": "fps_arms",
+      "path": "E:\\postgraduate1\\CodeWorkspace\\SwapHunter\\Game\\Assets\\_SwapHunter\\Resources\\VisualMapV2\\Characters\\fps_arms.glb",
+      "triangles": 28080,
+      "bytes": 1131504,
+      "parts": [
+        "Tactical human skinned mesh"
+      ]
+    }
+  ]
+}

@@ -16,7 +16,7 @@ MonoBehaviour:
   walkSpeed: 4.3
   sprintSpeed: 6.2
   jumpHeight: 1
-  swapRange: 22
+  swapRange: 50
   swapCooldown: 3.5
   swapWindup: 0.08
   swapStun: 0.65

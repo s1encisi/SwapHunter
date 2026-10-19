@@ -5,7 +5,7 @@ namespace SwapHunter
     // New CC0 meshes; WeaponCatalog remains the sole authority for mechanics and balance.
     public static class WeaponVisualCatalog
     {
-        public const string ArmsResourcePath="VisualV2/Characters/fps_arms";
+        public const string ArmsResourcePath="VisualMapV2/Characters/fps_arms";
         public const string BladeResourcePath="VisualV2/Weapons/phase_blade";
         public static readonly string[] SourceAssets={
             "QuaterniusUltimateGuns/AssaultRifle_1.blend",

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SwapHunter
 {
@@ -14,7 +14,7 @@ namespace SwapHunter
         public const float RemoteSpeed = 12, RemoteLift = 3, RemoteGravity = 12, RemoteEdgeScale = .2f, RemoteSelfScale = 1;
         public const float DenialDuration = 4, DenialTick = .25f, DenialCooldown = 18;
         static readonly float[] cooldowns = { 12, 10, 16, 14, 12, 14, 18, 18 };
-        static readonly string[] names = { "震荡突击", "快速机动", "阵地加固", "快速装填", "战术扫描", "精确射击", "遥控爆破", "区域封锁" };
+        static readonly string[] names = { "战术推进", "快速机动", "阵地加固", "快速装填", "战术扫描", "精确射击", "遥控爆破", "区域封锁" };
         public static float Cooldown(int skill) => skill >= 0 && skill < cooldowns.Length ? cooldowns[skill] : 0;
         public static string Name(int skill) => skill >= 0 && skill < names.Length ? names[skill] : "未装配职业技能";
         public static float ShockSeconds(int level) => .4f + .2f * Mathf.Clamp(level, 1, 3);
@@ -23,15 +23,15 @@ namespace SwapHunter
         public static float ReloadRemaining(int level) => .8f - .1f * Mathf.Clamp(level, 1, 3);
         public static float ScanSeconds(int level) => 2 + Mathf.Clamp(level, 1, 3);
         public static float PrecisionBonus(int level) => .1f + .05f * Mathf.Clamp(level, 1, 3);
-        public static float RemoteDamage(int level) => 48 + 16 * Mathf.Clamp(level, 1, 3);
-        public static float DenialDps(int level) => 12 + 4 * Mathf.Clamp(level, 1, 3);
+        public static float RemoteDamage(int level) => 3 * (48 + 16 * Mathf.Clamp(level, 1, 3));
+        public static float DenialDps(int level) => 3 * (12 + 4 * Mathf.Clamp(level, 1, 3));
         public static float ShieldCooldown(int level) => 11 - Mathf.Clamp(level, 1, 3);
         public static string Describe(int skill, int level)
         {
             level=Mathf.Clamp(level,1,3);
             switch(skill)
             {
-                case 0:return "前方 4 米 / 90°震荡，无直接伤害；墙体与实体盾阻挡。\n普通敌人硬直 "+ShockSeconds(level).ToString("0.0")+" 秒；指挥官仅打断步枪连射。冷却 12 秒。";
+                case 0:return "沿移动方向推进8米，约0.30秒；地面使用，碰撞停止，无无敌。\n冷却 "+(11-level)+"秒；击杀、换位或补给均不刷新。";
                 case 1:return "地面移速 +25%，持续 "+MobilitySeconds(level).ToString("0.0")+" 秒；不增加跳高。\n开枪、近战、投刀或引爆后结束；允许 Q。冷却 10 秒。";
                 case 2:return "固定半径 3 米阵地持续 4 秒，同层且无遮挡时减伤 "+(FortifyReduction(level)*100).ToString("0")+"%。\n离开失效，返回恢复；不减免地波等空间机制。冷却 16 秒。";
                 case 3:return "正在装填时使用，剩余时间减少 "+((1-ReloadRemaining(level))*100).ToString("0")+"%。\n不凭空补弹；Q 成功会中断未完成装填。冷却 14 秒。";
@@ -132,7 +132,7 @@ namespace SwapHunter
             switch (skill)
             {
                 case TacticalPrototypeRules.ShockSkillIndex:
-                    outcome = Shock(level); break;
+                    if(!owner.BeginTacticalAdvance())return Reject("需要落地、空闲的推进起点");outcome="战术推进 · 固定方向8米，不刷新冷却";break;
                 case TacticalPrototypeRules.MobilitySkillIndex:
                     MobilityLeft = ClassSkillTuning.MobilitySeconds(level); outcome = "快速机动 · 地面移速 +25%，攻击后结束"; break;
                 case TacticalPrototypeRules.FortifySkillIndex:
@@ -157,7 +157,7 @@ namespace SwapHunter
                     outcome = "封锁区已建立 · 持续伤害也会伤及自己"; break;
                 default: return Reject("当前职业技能不可用");
             }
-            CooldownLeft = skill == TacticalPrototypeRules.RemoteSkillIndex ? 0 : ClassSkillTuning.Cooldown(skill);
+            CooldownLeft = skill == TacticalPrototypeRules.RemoteSkillIndex ? 0 : skill==TacticalPrototypeRules.ShockSkillIndex?11-level:ClassSkillTuning.Cooldown(skill);
             LastFailure = ""; LastOutcome = outcome;
             game.Record("class_skill_activate", "skill=" + skill + ";level=" + level + ";cooldown=" + CooldownLeft);
             game.sound.Play("confirm"); game.Toast(outcome, 2.5f); return true;

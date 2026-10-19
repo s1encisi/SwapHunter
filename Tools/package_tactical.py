@@ -1,5 +1,5 @@
 """Build local Windows/Source packages from one identified player.
-Profiles: Tactical/Models with routes, Synergy with UI, or StoryD2 with UI.
+Profiles: Tactical/Models with routes, Synergy with UI, StoryD2 with UI, or MapV2 with UI.
 Does not execute Unity, players, downloads, publishing, or old full-suite gates.
 """
 from __future__ import annotations
@@ -22,6 +22,7 @@ from package_demo_v06 import (
 from verify_package_v06 import verify_archive
 
 REPORTS = {
+    "MapV2": "map-v2-report.json",
     "StoryD2": "story-d2-report.json",
     "Synergy": "synergy-report.json",
     "Tactical": "tactical-campaign-report.json", "Models": "models-final-report.json", "Routes": "route-v06-report.json",
@@ -74,7 +75,7 @@ def checks_pass(row, report):
 
 
 def collect_evidence(directories, identity, ui_review, profile="tactical"):
-    require(profile in ("tactical", "models", "synergy", "storyd2"), "Unknown packaging profile")
+    require(profile in ("tactical", "models", "synergy", "storyd2", "mapv2"), "Unknown packaging profile")
     evidence, records, route_records = {}, {}, []
     levels = set()
     for run_index, directory in enumerate(directories, 1):
@@ -106,7 +107,7 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
             if "version" in report or suite == "Models":
                 require(report.get("version") == identity["version"], "Report version differs")
             passed = checks_pass(row, report)
-            if suite == "StoryD2":
+            if suite in ("StoryD2", "MapV2"):
                 passed = passed and report.get("completed") is True
             entry = {"status": "passed" if passed else "failed", "evidence": prefix + relative,
                      "checks": len(report.get("checks", [])), "displayMode": row.get("displayMode"),
@@ -166,6 +167,11 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
                                  byteMeasurementComplete=report.get("byteMeasurementComplete") is True,
                                  eventMeasurementComplete=report.get("eventMeasurementComplete") is True)
                 records[suite] = entry
+            if suite == "MapV2":
+                entry["group"] = report.get("group", "all")
+                for pattern in ("chapter-*.json", "area-comparison.json", "enemy-v2-*.csv"):
+                    for path in sorted(report_path.parent.glob(pattern)):
+                        add_same(evidence, prefix + path.relative_to(directory).as_posix(), path)
             if suite == "Models":
                 frames = report.get("frames", [])
                 require(isinstance(frames, list), "Models frames must be a list")
@@ -193,7 +199,7 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
         for name in review.get("files", []):
             path = contained(review_path.parent, name)
             require(path.is_file() and path.stat().st_size > 0, "UI review attachment missing")
-            if path.name.casefold() == "foreground-performance.json":
+            if path.name.casefold() in ("foreground-performance.json", "performance-map-v2.json"):
                 require(windowed_sample["status"] == "not_run", "Select only one final windowed performance sample")
                 sample, sample_raw = captured_json(path)
                 require(isinstance(sample, dict), "Windowed sample must contain an actual JSON object")
@@ -203,17 +209,18 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
                     "reportSha256": hashlib.sha256(sample_raw).hexdigest(),
                     "scope": sample.get("scope", ""),
                     "sample": sample,
-                    "scopeNote": "Single supplied windowed fixture; raw device/settings/focus fields are retained as reported. Not the Performance suite, human playtesting, a before/after speedup, or a cross-device result.",
+                    "scopeNote": "Supplied native windowed sample report; raw device/settings/focus fields and per-scene samples are retained as reported. Not the Performance suite, human playtesting, a before/after speedup, or a cross-device result.",
                 }
                 add(evidence, "ui-review/" + name, sample_raw)
             else:
                 add(evidence, "ui-review/" + name, path)
         ui = {key: review.get(key) for key in ("status", "method", "scope", "reviewedUtc", "notes")}
-        ui["scopeNote"] = (("Native windowed model fixtures use gameplay/UI review APIs and ScreenCapture; not human or OS-mouse interaction."
+        ui["scopeNote"] = (("Native MapV2 fixtures use the reported gameplay APIs, runtime camera renders and supplied window screenshots; the explicit review scope does not imply a human playthrough." if profile == "mapv2" else "Native windowed model fixtures use gameplay/UI review APIs and ScreenCapture; not human or OS-mouse interaction."
                             if profile == "models" else "Native windowed script uses InputSystem virtual keyboard and ScreenCapture; not human or OS-mouse interaction.")
                            if review.get("method") == "native-windowed-script"
                            else "Packager records the supplied review; it does not perform or certify human testing")
     status = {"profile": profile, "tactical": tactical,
+              "mapv2": records.get("MapV2", {"status": "not_run"}),
               "models": records.get("Models", {"status": "not_run"}),
               "synergy": records.get("Synergy", {"status": "not_run"}),
               "storyd2": records.get("StoryD2", {"status": "not_run"}),
@@ -226,7 +233,11 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
               "allocation": records.get("Allocation", {"status": "not_run"}),
               "cleanRebuild": {"status": "not_run_by_packager"},
               "humanPlaytesting": {"status": "not_certified_by_packager"}}
-    if profile == "storyd2":
+    if profile == "mapv2":
+        require(status["mapv2"]["status"] == "passed", "MapV2 requires completed same-build MapV2 QA")
+        require(status["mapv2"].get("group") == "all", "MapV2 delivery requires the complete all group, not a focused partial fixture")
+        require(ui["status"] == "passed", "MapV2 requires supplied same-build actual UI review")
+    elif profile == "storyd2":
         require(status["storyd2"]["status"] == "passed", "D2/N1 requires completed same-build StoryD2 QA")
         require(ui["status"] == "passed", "D2/N1 requires supplied same-build native UI evidence")
     elif profile == "synergy":
@@ -236,10 +247,10 @@ def collect_evidence(directories, identity, ui_review, profile="tactical"):
         require(status["models"]["status"] == "passed", "Models packaging requires passed Models QA for this exact build")
     else:
         require(tactical["status"] == "passed", "D1.1 packaging requires passed Tactical full QA for this exact build")
-    if profile not in ("synergy", "storyd2"):
+    if profile not in ("synergy", "storyd2", "mapv2"):
         require(route_ok, "D1.1 packaging requires actual same-build routes 5, 7, 12; no skipped checkpoints")
     elif not route_records:
-        status["routes"].update(status="not_run", requiredLevels=[], scope=("D2/N1 changed chapter-5 geometry and rule boundaries are checked in StoryD2 QA; old Routes/Models/Synergy reports are not reused as new evidence." if profile == "storyd2" else "SSU-01 mission invariants are checked in Synergy QA; geometry unchanged, old route reports are not reused as new evidence."))
+        status["routes"].update(status="not_run", requiredLevels=[], scope=("MapV2 geometry, player, enemy and equipment checks are recorded by the supplied MapV2 report; old D2/Synergy/Models/Routes are not substituted." if profile == "mapv2" else "D2/N1 changed chapter-5 geometry and rule boundaries are checked in StoryD2 QA; old Routes/Models/Synergy reports are not reused as new evidence." if profile == "storyd2" else "SSU-01 mission invariants are checked in Synergy QA; geometry unchanged, old route reports are not reused as new evidence."))
     return status, evidence
 
 
@@ -380,8 +391,8 @@ def main():
     parser.add_argument("--source-executable", type=Path,
                         help="Separately successful source build for the exact pinned-MCP local-source variant")
     parser.add_argument("--ui-review", type=Path)
-    parser.add_argument("--profile", choices=("tactical", "models", "synergy", "storyd2"), default="tactical",
-                        help="storyd2 requires same-build StoryD2 + UI; synergy requires Synergy + UI; models requires Models + routes 5/7/12")
+    parser.add_argument("--profile", choices=("tactical", "models", "synergy", "storyd2", "mapv2"), default="tactical",
+                        help="mapv2 requires completed same-build MapV2 + UI; storyd2 requires same-build StoryD2 + UI; synergy requires Synergy + UI; models requires Models + routes 5/7/12")
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--verification-root", type=Path)
     parser.add_argument("--check-only", action="store_true")
@@ -410,6 +421,8 @@ def main():
         if private_file(name):
             del source_payload[name]
     require(set(SOURCE_TOOLS) <= source_payload.keys(), "New public tools/docs/ledger are missing or ignored: " + ", ".join(sorted(set(SOURCE_TOOLS)-source_payload.keys())))
+    if args.profile == "mapv2":
+        require("Tools/measure_map_v2.py" in source_payload, "MapV2 reproducible area tool is missing or ignored")
     for item in source_inputs["files"]:
         require(item["path"] in source_payload, "A build input is forbidden/omitted from source: " + item["path"])
     dependencies = check_local_dependencies(project, source_payload)
@@ -444,13 +457,14 @@ if($Menu){$launchArguments+='-demoMenu'}
         add_same(windows_payload, "Licenses/" + name, source_payload[name])
     add_same(windows_payload, "THIRD_PARTY_ASSETS.md", source_payload["THIRD_PARTY_ASSETS.md"])
     add_same(windows_payload, "THIRD_PARTY_ASSETS.json", ledger_bytes)
-    for name in WINDOWS_DOCS + (("docs/homecoming-d2-playguide.zh-CN.md", "docs/homecoming-d2-validation.zh-CN.md") if args.profile == "storyd2" else ("docs/models-final.zh-CN.md", "docs/media/models-class.png", "docs/media/models-weapons.png", "docs/media/models-islands.png", "docs/media/models-actors.png") if args.profile == "models" else ("docs/system-synergy-playguide.zh-CN.md", "docs/system-synergy-validation.zh-CN.md") if args.profile == "synergy" else ()):
+    selected_docs = (("docs/maps-enemies-v2-playguide.zh-CN.md", "docs/maps-enemies-v2-validation.zh-CN.md", "docs/map-v2-assets.zh-CN.md") if args.profile == "mapv2" else WINDOWS_DOCS + (("docs/homecoming-d2-playguide.zh-CN.md", "docs/homecoming-d2-validation.zh-CN.md") if args.profile == "storyd2" else ("docs/models-final.zh-CN.md", "docs/media/models-class.png", "docs/media/models-weapons.png", "docs/media/models-islands.png", "docs/media/models-actors.png") if args.profile == "models" else ("docs/system-synergy-playguide.zh-CN.md", "docs/system-synergy-validation.zh-CN.md") if args.profile == "synergy" else ()))
+    for name in selected_docs:
         require(contained(project, name).is_file() and name in source_payload,
                 "Final Chinese delivery document is missing or ignored: " + name)
         add_same(windows_payload, name, source_payload[name])
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    base = ("SwapHunter-D2N1-" if args.profile == "storyd2" else "SwapHunter-SSU01-" if args.profile == "synergy" else "SwapHunter-ModelsFinal-" if args.profile == "models" else "SwapHunter-D11-") + stamp
-    status = {"schemaVersion": 1, "releaseLabel": "D2/N1 homecoming local candidate" if args.profile == "storyd2" else "SSU-01 local candidate" if args.profile == "synergy" else "Models final" if args.profile == "models" else "D1.1",
+    base = ("SwapHunter-MapV2-" if args.profile == "mapv2" else "SwapHunter-D2N1-" if args.profile == "storyd2" else "SwapHunter-SSU01-" if args.profile == "synergy" else "SwapHunter-ModelsFinal-" if args.profile == "models" else "SwapHunter-D11-") + stamp
+    status = {"schemaVersion": 1, "releaseLabel": "MapV2 maps/enemies/player local candidate" if args.profile == "mapv2" else "D2/N1 homecoming local candidate" if args.profile == "storyd2" else "SSU-01 local candidate" if args.profile == "synergy" else "Models final" if args.profile == "models" else "D1.1",
               "profile": args.profile, "buildIdentity": identity,
               "validation": validation, "sourceSnapshot": source_info,
               "sourceBuildIdentity": source_identity, "sourceVariant": source_variant,
@@ -507,7 +521,33 @@ N1 使用中文剧情卡、战斗无线电字幕与通讯回看。音频包含 3
 源码包不含玩家存档、Library、Git 和旧构建。第三方音乐、音效与模型的许可见 `THIRD_PARTY_ASSETS.md/json` 和 `Licenses/`。
 本地脚本验收和画面检查不代表真人通关、平衡结论或性能提升。
 """
-    readme = template.format(storyd2_status=validation["storyd2"]["status"], synergy_status=validation["synergy"]["status"], build_version=identity["version"], executable=executable.name,
+    if args.profile == "mapv2":
+        status["rulesVersion"] = 5
+        status["baseApplicationVersion"] = identity["version"]
+        template = """# 换位猎手 MapV2 · 地图与敌人重构本地试玩版
+
+游戏基础版本：{build_version}；规则版本 5；本候选未发布到远端。
+
+- 同构建地图、敌人、操作与装备专项：{mapv2_status}。
+- 同构建实际界面审阅：{ui_status}。
+- 本版采用十二章独立地图、14种敌人原型、每章专属小Boss及保留的最终Boss。普通计划预算325，不是强制击杀数。
+- 相位换位50米；跳板按新的跳跃输入触发、水平投送20米且可重复；六刀实际拾取并在成功结算后永久入库。
+
+先阅读 `docs/maps-enemies-v2-playguide.zh-CN.md`。几何面积、专项范围及实际结果见 `docs/maps-enemies-v2-validation.zh-CN.md`、`validation-status.json` 与交付目录 `evidence/`。
+快速体验使用独立全枪、六刀、技能演示档；正式成长仍由 `SwapHunter.exe` 进入普通v6档。
+
+源码导入Unity Hub时选择Source包内的 `Game`，编辑器6000.3.25f1。
+
+构建输入 SHA-256：`{source_sha256}`
+
+程序集 SHA-256：`{assembly_sha256}`
+
+源码基准：`{source_commit}`；含工作树修改：{dirty}。
+
+本地专项与画面审阅不代表真人十二章通关、平衡结论或性能提升；192配装记录属于任务可达性快照核对，不是192次实战通关。
+源码包不含玩家存档、Library、Git与旧构建。原创建模说明见 `docs/map-v2-assets.zh-CN.md`；既有第三方材料许可见 `THIRD_PARTY_ASSETS.md/json` 与 `Licenses/`。
+"""
+    readme = template.format(mapv2_status=validation["mapv2"]["status"], storyd2_status=validation["storyd2"]["status"], synergy_status=validation["synergy"]["status"], build_version=identity["version"], executable=executable.name,
         models_status=validation["models"]["status"],
         tactical_status=validation["tactical"]["status"], routes_status=validation["routes"]["status"],
         ui_status=validation["uiReview"]["status"], visual_status=validation["nativeVisual"]["status"],

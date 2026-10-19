@@ -18,7 +18,7 @@ Background 不抢焦点；Foreground 只在用户明确安排前台时选择。
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('StoryD2','Synergy','Models','TacticalUI','Tactical','T01','Core','Missions','Routes','Storage','Gunplay','Visual','Allocation','Performance','BossEscape','Pool','Lifecycle','Legacy','All')]
+    [ValidateSet('MapV2','StoryD2','Synergy','Models','TacticalUI','Tactical','T01','Core','Missions','Routes','Storage','Gunplay','Visual','Allocation','Performance','BossEscape','Pool','Lifecycle','Legacy','All')]
     [string[]]$Suite=@('Core','Missions','Routes','Storage','Gunplay'),
     [string]$OutputDirectory,[string]$ExecutablePath,
     [ValidateSet('Background','Foreground')][string]$DisplayMode='Background',
@@ -38,6 +38,7 @@ if(-not(Test-Path -LiteralPath $ExecutablePath -PathType Leaf)){throw '请先构
 $ExecutablePath=(Resolve-Path -LiteralPath $ExecutablePath).Path
 $identity=Get-SwapHunterBuildIdentity $ExecutablePath
 $definitions=@(
+    @{suite='MapV2';name='map-v2';flag='-swapHunterMapV2QA';report='map-v2-report.json'},
     @{suite='StoryD2';name='story-d2';flag='-swapHunterStoryD2QA';report='story-d2-report.json'},
     @{suite='Synergy';name='synergy';flag='-swapHunterSynergyQA';report='synergy-report.json'},
     @{suite='Models';name='models-final';flag='-swapHunterModelsFinalQA';report='models-final-report.json'},

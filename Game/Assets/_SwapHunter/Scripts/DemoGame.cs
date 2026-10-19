@@ -85,7 +85,7 @@ namespace SwapHunter
             Physics.IgnoreLayerCollision(Layers.Grenade, Layers.Actor, true); Physics.IgnoreLayerCollision(Layers.Grenade, Layers.Grenade, true);
             yield return null;
             WorldBuilder.Build(this);
-            GameObject go = new GameObject("Player"); player = go.AddComponent<PlayerMotor>(); player.Initialize();player.tactics=go.AddComponent<PlayerTactics>();player.tactics.Initialize(player);player.combatTools=go.AddComponent<PlayerCombatTools>();player.combatTools.Initialize(player);
+            GameObject go = new GameObject("Player"); player = go.AddComponent<PlayerMotor>(); player.Initialize();player.tactics=go.AddComponent<PlayerTactics>();player.tactics.Initialize(player);player.combatTools=go.AddComponent<PlayerCombatTools>();player.combatTools.Initialize(player);player.meleeEquipment=go.AddComponent<MeleeEquipmentV2>();player.meleeEquipment.Initialize(player);go.AddComponent<InteractionV2>();go.AddComponent<ConsumableUseV2>();
             var cameraData = player.cameraView.GetUniversalAdditionalCameraData(); cameraData.renderPostProcessing = false;
             menuCamera = new GameObject("Menu overview").AddComponent<Camera>(); menuCamera.nearClipPlane = .1f; menuCamera.farClipPlane = 400;
             menuCamera.cullingMask &= ~(1 << Layers.ViewModel);
@@ -99,6 +99,7 @@ namespace SwapHunter
             FireControlRelay.FeatureEnabled=Array.IndexOf(d2Args,"-d2NoRelay")<0;
             EnemyHazardAwareness.DecisionsEnabled=Array.IndexOf(d2Args,"-d2NoHazardAI")<0;
             if (RunStorage.IsDemonstration) { BeginDemonstration(); yield break; }
+            if(RunStorage.IsMapV2Validation){gameObject.AddComponent<MapV2QA>();yield break;}
             if(RunStorage.IsStoryD2Validation){gameObject.AddComponent<StoryD2QA>();yield break;}
             if (RunStorage.IsSynergyValidation) gameObject.AddComponent<SynergyQA>();
             else if (RunStorage.IsModelsValidation) gameObject.AddComponent<ModelsFinalQA>();
@@ -290,7 +291,7 @@ namespace SwapHunter
         public bool Interact()
         {
             if (player && player.SwapActionsLocked) return false;
-            if(D2HoldInteraction.HasCandidate)return false;
+            if(expeditionActive&&InteractionV2.Active)return InteractionV2.Instance.HandlePress();
             if(tutorialCourse&&tutorialCourse.Active)return tutorialCourse.Interact();
             if (expeditionActive) return UseExpeditionNode(FindExpeditionNode());
             if (campaignActive) { var station = FindCampaignStation(); if (station) return UseCampaignStation(station); }

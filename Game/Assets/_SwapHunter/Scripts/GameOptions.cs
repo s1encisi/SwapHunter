@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -31,14 +31,14 @@ namespace SwapHunter
         public int crosshairColor = 0;
         public float moveSpeedScale = 1;
         public ActionBinding[] actions = DefaultBindings();
-        public static readonly string[] ActionNames = { "前进", "后退", "左移", "右移", "跳跃 / 翻越", "冲刺", "相位换位", "装填", "交互", "慢走", "主武器", "副武器", "开火", "瞄准", "上一把武器", "下一把武器", "暂停", "蹲伏", "战术背包", "使用消耗品", "A盾 / 定向屏障", "战术刀 / 近战", "投掷飞刀", "召回飞刀", "职业技能" };
+        public static readonly string[] ActionNames = { "前进", "后退", "左移", "右移", "跳跃 / 翻越", "冲刺", "相位换位", "装填", "交互", "慢走", "主武器", "副武器", "开火", "瞄准", "上一把武器", "下一把武器", "暂停", "蹲伏", "战术背包", "使用消耗品", "A盾 / 定向屏障", "战术刀 / 近战", "投掷飞刀", "召回飞刀", "职业技能", "近战武器", "选择道具", "使用所选道具", "检视武器" };
         public static ActionBinding[] DefaultBindings() => new[]
         {
             new ActionBinding("K:W"),new ActionBinding("K:S"),new ActionBinding("K:A"),new ActionBinding("K:D"),
             new ActionBinding("K:Space"),new ActionBinding("K:LeftShift"),new ActionBinding("K:Q"),new ActionBinding("K:R"),
             new ActionBinding("K:E"),new ActionBinding("K:LeftAlt"),new ActionBinding("K:Digit1"),new ActionBinding("K:Digit2"),
             new ActionBinding("M:0"),new ActionBinding("M:1"),new ActionBinding("W:Up"),new ActionBinding("W:Down"),new ActionBinding("K:Escape"),
-            new ActionBinding("K:LeftCtrl"),new ActionBinding("K:Tab"),new ActionBinding("K:F"),new ActionBinding("K:C"),new ActionBinding("K:V"),new ActionBinding("K:G"),new ActionBinding("K:X"),new ActionBinding("K:Z")
+            new ActionBinding("K:LeftCtrl"),new ActionBinding("K:Tab"),new ActionBinding("K:F"),new ActionBinding("K:C"),new ActionBinding("K:V"),new ActionBinding("K:G"),new ActionBinding("K:X"),new ActionBinding("K:Z"),new ActionBinding("K:Digit3"),new ActionBinding("K:Digit4"),new ActionBinding("K:T"),new ActionBinding("K:H")
         };
         public GameOptions Clone() => JsonUtility.FromJson<GameOptions>(JsonUtility.ToJson(this));
         public void Validate()

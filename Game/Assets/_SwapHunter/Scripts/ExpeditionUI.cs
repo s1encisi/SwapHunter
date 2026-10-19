@@ -15,25 +15,26 @@ namespace SwapHunter
   }
   void ExpeditionAction(Action action)
   {if(TrialSessionActive||TrialAccountReadBlocked)return;try{action();expeditionNotice="";sound.Play("confirm");}catch(Exception e){expeditionNotice=e.Message;sound.Play("warning");}}
-  public void SetExpeditionTabForReview(int tab) { expeditionTab = Mathf.Clamp(tab, 0, TacticalExpedition?4:3); }
+  public void SetExpeditionTabForReview(int tab) { expeditionTab = Mathf.Clamp(tab, 0, TacticalExpedition?5:3); }
   public bool DrawExpeditionScreen()
   {
    if(TacticalExpedition&&ExpeditionAwaitingRetry){DrawExpeditionOverlay();return true;}
    if(expeditionInventory&&expeditionActive){ExpeditionInventoryUI();return true;}
    if(!expeditionBoard||state!=RunState.Menu)return false;
-   string title=expeditionTab==0?"相位行动":expeditionTab==1?"武器装配":TacticalExpedition?(expeditionTab==2?"职业技能":expeditionTab==4?"配装路线":"补给采购"):"补给商店";
+   string title=expeditionTab==0?"相位行动":expeditionTab==1?"武器装配":TacticalExpedition?(expeditionTab==2?"职业技能":expeditionTab==4?"配装路线":expeditionTab==5?"近战刀具":"补给采购"):"补给商店";
    ExpeditionChrome(title,TacticalExpedition?TacticalPrototypeRules.ClassNames[expeditionStore.Profile.activeClass]+" · 关外整备与采购 → 带着出发配置行动 → 成功结算信用点":"战斗 → 带回研究点 → 选择成长与装配 → 下一段行动");
    if(Button("主菜单",new Rect(viewWidth-195,40,145,47))){expeditionBoard=false;return true;}
    if(expeditionStore==null)
    {Text(expeditionNotice,new Rect(50,250,viewWidth-100,220),24);return true;}
    var p=expeditionStore.Profile;
    Text((TacticalExpedition?"信用点  ":"研究点  ")+p.credits+"    |    进度 "+Array.FindAll(p.cleared,v=>v).Length+" / 12",new Rect(viewWidth-570,102,515,35),21,Paper,TextAnchor.MiddleRight);
-   string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购","配装路线"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
-   for(int i=0;i<tabs.Length;i++)if(Button(tabs[i],new Rect(48+i*205,200,192,47),expeditionTab==i))expeditionTab=i;
+   string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购","配装路线","近战刀具"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
+   float tabWidth=Mathf.Min(192,(viewWidth-260)/tabs.Length-10);for(int i=0;i<tabs.Length;i++)if(Button(tabs[i],new Rect(48+i*(tabWidth+10),200,tabWidth,47),expeditionTab==i))expeditionTab=i;
    if(Button("归航档案",new Rect(viewWidth-194,200,145,47)))OpenStoryArchive();
    if(expeditionTab==0)ExpeditionLevelsUI();else if(expeditionTab==1)ExpeditionWeaponsUI();
    else if(expeditionTab==2){if(TacticalExpedition)ExpeditionAssaultSkillsUI();else ExpeditionSpecializationUI();}
    else if(expeditionTab==4&&TacticalExpedition)DrawLoadoutRoutes();
+   else if(expeditionTab==5&&TacticalExpedition)DrawKnifeArmoryV2();
    else{if(TacticalExpedition)ExpeditionProcurementUI();else ExpeditionToolsUI();}
    string status=!string.IsNullOrEmpty(AttemptMetricsNotice)?AttemptMetricsNotice:expeditionNotice;
    if(!string.IsNullOrEmpty(status))Text(status,new Rect(49,840,viewWidth-100,46),18,new Color(1,.69f,.3f));
@@ -106,14 +107,14 @@ namespace SwapHunter
    bool enabled=GUI.enabled;bool canHeal=expeditionMedkits>0&&player.health>0&&player.health<config.playerHealth;
    GUI.enabled=enabled&&canHeal;
    string healText=TacticalExpedition?"使用医疗包 / 恢复"+TacticalPrototypeRules.MedkitHeal.ToString("0.#")+"生命":"使用医疗包 / 恢复40生命";
-   if(Button(expeditionMedkits<=0?"无医疗包":player.health>=config.playerHealth?"生命已满":healText,new Rect(72,562,345,55)))UseExpeditionMedkit();
+   if(Button(expeditionMedkits<=0?"无医疗包":player.health>=config.playerHealth?"生命已满":healText,new Rect(72,562,345,55)))BeginV2InventoryUse(0);
    GUI.enabled=enabled;
    if(TacticalExpedition)Text("弹药包与应急护甲：后续开放\n场地补给只用于本次行动",new Rect(445,561,viewWidth-520,64),18,Muted);
    else
    {
     bool canAmmo=false;foreach(int id in player.EquippedWeapons)if(player.reserve[id]<ExpeditionReserveLimit(id))canAmmo=true;
     GUI.enabled=enabled&&expeditionAmmoPacks>0&&canAmmo;
-    if(Button(expeditionAmmoPacks<=0?"无弹药包":!canAmmo?"备用弹药已满":"使用弹药包 / 补充两匣",new Rect(445,562,345,55)))UseExpeditionAmmo();
+    if(Button(expeditionAmmoPacks<=0?"无弹药包":!canAmmo?"备用弹药已满":"使用弹药包 / 补充两匣",new Rect(445,562,345,55)))BeginV2InventoryUse(1);
     GUI.enabled=enabled;
    }
    var definition=mission!=null?mission.Definition:MissionCatalog.Get(expeditionLevel);
@@ -163,7 +164,7 @@ namespace SwapHunter
   void ExpeditionAssaultSkillsUI()
   {
    var store=expeditionStore;int cls=store.Profile.activeClass;float left=48,classWidth=220,portraitX=288,portraitWidth=248,detailX=560,detailWidth=viewWidth-detailX-48;
-   string[] roles={"近距突入 / 震荡与机动","正面压制 / 阵地与装填","观察点杀 / 扫描与精确射击","范围控制 / 爆破与区域封锁"};
+   string[] roles={"近距突入 / 推进与机动","正面压制 / 阵地与装填","观察点杀 / 扫描与精确射击","范围控制 / 爆破与区域封锁"};
    for(int i=0;i<4;i++)
    {
     int selected=i;float y=278+i*83;
@@ -196,7 +197,7 @@ namespace SwapHunter
    string name=(general?TacticalPrototypeRules.GeneralSkillNames:TacticalPrototypeRules.ClassSkillNames)[index];
    DrawUiPanel(rect,selected);Text(name+"  "+(level>0?level+" / 3":"未拥有"),new Rect(rect.x+14,rect.y+12,rect.width-116,28),20,selected?PhaseBlue:Paper);
    if(Button("试用",new Rect(rect.xMax-86,rect.y+12,72,30)))OpenSkillTrial(index,general);
-   string description=general?(index==0?"固定方向屏障 · 持续4秒\n冷却 "+(10-Mathf.Max(0,level-1))+" 秒":"1级投出与召回，2级命中沉默\n3级范围沉默；墙体与实体盾阻挡"):ClassSkillTuning.Describe(index,Mathf.Max(1,level));
+   string description=general?(index==0?"双方后→前可射，正面拦截 · 4秒\n冷却 "+(10-Mathf.Max(0,level-1))+" 秒":"3把逐投 / X全召回；普通身体处决\n精英84/66；2级沉默，3级范围沉默"):ClassSkillTuning.Describe(index,Mathf.Max(1,level));
    Text(description,new Rect(rect.x+14,rect.y+49,rect.width-28,general?51:102),16,Muted);
    float y=rect.yMax-53,w=(rect.width-36)/2;bool enabled=GUI.enabled;
    int cost=level==0?TacticalPrototypeRules.SkillBasePrice(index,general):level<3?TacticalPrototypeRules.SkillUpgradePrice(level):0;
@@ -273,7 +274,7 @@ namespace SwapHunter
     if(type==1)foreach(int id in player.EquippedWeapons)if(player.reserve[id]<ExpeditionReserveLimit(id))useful=true;
     bool enabled=GUI.enabled;GUI.enabled=enabled&&remaining[type]>0&&useful&&!expeditionPending;
     string reason=remaining[type]<=0?"已用完":!useful?(type==0?"生命已满":type==1?"备弹已满":"现有护甲未耗尽"):"使用";
-    if(Button(reason,new Rect(x+20,626,width-40,46),true)){if(type==0)UseExpeditionMedkit();else if(type==1)UseExpeditionAmmo();else UseExpeditionArmor();}
+    if(Button(reason,new Rect(x+20,626,width-40,46),true)){BeginV2InventoryUse(type);}
     GUI.enabled=enabled;
    }
    Text("当前护甲 "+player.TemporaryArmor.ToString("0")+" · "+ExpeditionObjective,new Rect(50,720,viewWidth-100,47),19,Muted);

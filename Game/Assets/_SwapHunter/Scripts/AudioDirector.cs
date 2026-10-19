@@ -77,7 +77,7 @@ namespace SwapHunter
                     {
                         if (!enemy || !enemy.Alive || enemy.kind == EnemyKind.Training) continue;
                         float distanceSquared = (enemy.transform.position - feet).sqrMagnitude;
-                        if (enemy.boss && distanceSquared < 40 * 40) { boss = true; break; }
+                        if ((enemy.boss || enemy.miniBoss) && distanceSquared < 40 * 40) { boss = true; break; }
                         if (distanceSquared < 24 * 24 && !Physics.Linecast(enemy.AimPoint, game.player.Eye.position, Layers.WorldMask))
                             combatUntil = Mathf.Max(combatUntil, Time.time + 6);
                     }

@@ -30,8 +30,8 @@ namespace SwapHunter
         public Transform Head=>head;
         public Transform Chest=>chest;
         public Transform Pelvis=>hips;
-        public Vector3 HeadAimMarker=>hitMarkersReady?head.TransformPoint(headHitOffset):head.position;
-        public Vector3 TorsoAimMarker=>hitMarkersReady?chest.TransformPoint(torsoHitOffset):chest.position;
+        public Vector3 HeadAimMarker=>equipmentV2&&equipmentV2.MechanicalBody?equipmentV2.Weakpoint("equipment").position:authoredHeadHit?authoredHeadHit.position:hitMarkersReady?head.TransformPoint(headHitOffset):head.position;
+        public Vector3 TorsoAimMarker=>equipmentV2&&equipmentV2.MechanicalBody?transform.TransformPoint(new Vector3(0,1.12f*(owner?owner.Height/1.8f:1),0)):authoredChestHit?authoredChestHit.position:hitMarkersReady?chest.TransformPoint(torsoHitOffset):chest.position;
         public bool IsPlayerShadow=>shadowOnly;
         public Transform BodyRoot=>body?body.transform:null;
         public bool BladeVisible=>blade&&blade.gameObject.activeInHierarchy;
@@ -52,14 +52,15 @@ namespace SwapHunter
         bool displayOnly,shadowOnly,dead,stunned,grenadePreparing,shieldMelee,bossMelee,shotRestart;
         TacticalState shieldState;BossSkill lastBossSkill;BossSkillStep lastBossStep;float telegraphSeconds;
         int displayClass,weaponId;
+        EnemyV2VisualEquipment equipmentV2; int variantV2=-1,bossChapterV2=-1; float pickupBodyWeight;Vector3 pickupHandWorld;bool pickupHandValid; Transform authoredHeadHit,authoredChestHit;
 
         public static ActorVisualRig CreateEnemy(EnemyActor actor,BoxCollider physicalShield)
         {
             var go=new GameObject("New actor visual rig");go.layer=Layers.Actor;go.transform.SetParent(actor.transform,false);
             var rig=go.AddComponent<ActorVisualRig>();rig.owner=actor;rig.shieldProxy=physicalShield;
-            string key=actor.kind==EnemyKind.Elite?"boss_george":actor.kind==EnemyKind.Sniper?"enemy_sniper":actor.kind==EnemyKind.Shield?"enemy_shield":actor.kind==EnemyKind.Training?"class_00":"enemy_assault";
+            string key=actor.kind==EnemyKind.Sniper?"class_02":actor.kind==EnemyKind.Shield||actor.kind==EnemyKind.Elite?"class_01":"class_00";
             rig.weaponId=actor.kind==EnemyKind.Sniper?7:actor.kind==EnemyKind.Elite?8:0;
-            rig.LoadBody(key,actor.kind==EnemyKind.Elite,actor.Height);
+            rig.LoadBody(key,false,actor.Height);rig.ConfigureVariant((int)actor.kind);
             rig.shieldMelee=actor.kind==EnemyKind.Shield;
             if(physicalShield){rig.shield=ActorEquipmentVisuals.CreateShield(physicalShield.transform);rig.shield.localScale=physicalShield.size.y/1.42f*Vector3.one;rig.shieldGrip=ImportedModels.Find(rig.shield,"Grip");}
             rig.aim=actor.AimPoint+actor.transform.forward*10;rig.Evaluate(0);rig.CalibrateHitMarkers();return rig;
@@ -82,11 +83,11 @@ namespace SwapHunter
         }
         void LoadBody(string key,bool mech,float targetHeight)
         {
-            ResourcePath="VisualV2/Actors/"+key;IsMech=mech;bodyScale=targetHeight/(mech?2.1f:1.8f);hitMarkersReady=false;
+            ResourcePath=(mech?"VisualV2/Actors/":"VisualMapV2/Actors/")+key;IsMech=mech;bodyScale=targetHeight/(mech?2.1f:1.8f);hitMarkersReady=false;
             var asset=Resources.Load<GameObject>(ResourcePath);
             if(!asset)throw new InvalidOperationException("Required new actor model is missing: "+ResourcePath);
             ReleaseAnimation();if(WeaponMount)Destroy(WeaponMount.gameObject);if(blade)Destroy(blade.gameObject);if(body){body.SetActive(false);Destroy(body);}
-            body=Instantiate(asset,transform,false);body.name="CC0 body / "+key;body.transform.localPosition=Vector3.zero;body.transform.localRotation=Quaternion.identity;body.transform.localScale=Vector3.one*bodyScale;
+            body=Instantiate(asset,transform,false);body.name=(mech?"CC0 final boss / ":"Original tactical human / ")+key;body.transform.localPosition=Vector3.zero;body.transform.localRotation=Quaternion.identity;body.transform.localScale=Vector3.one*bodyScale;
             foreach(var c in body.GetComponentsInChildren<Collider>(true)){c.enabled=false;Destroy(c);}
             foreach(var r in body.GetComponentsInChildren<Rigidbody>(true))Destroy(r);
             animator=body.GetComponent<Animator>();if(!animator)animator=body.GetComponentInChildren<Animator>(true);if(!animator)animator=body.AddComponent<Animator>();
@@ -101,6 +102,7 @@ namespace SwapHunter
             leftUpper=Bone(new[]{"UpperArm.L","LeftArm","mixamorig:LeftArm","upper_arm.L"});leftLower=Bone(new[]{"LowerArm.L","LeftForeArm","mixamorig:LeftForeArm","forearm.L"});
             rightHand=mech?MechPalm(rightLower,".R"):Bone(new[]{"Fist.R","Hand.R","RightHand","mixamorig:RightHand","hand.R"});leftHand=mech?MechPalm(leftLower,".L"):Bone(new[]{"Fist.L","Hand.L","LeftHand","mixamorig:LeftHand","hand.L"});
             hipsRestInBody=body.transform.InverseTransformPoint(hips.position);
+            authoredHeadHit=ImportedModels.Find(body.transform,"HeadHit");authoredChestHit=ImportedModels.Find(body.transform,"ChestHit");
             var unique=new HashSet<Transform>();foreach(var skin in body.GetComponentsInChildren<SkinnedMeshRenderer>(true)){skin.updateWhenOffscreen=true;foreach(var bone in skin.bones)if(bone)unique.Add(bone);}
             bones=new BonePose[unique.Count];int at=0;foreach(var bone in unique)bones[at++]=new BonePose{bone=bone,restPosition=bone.localPosition,restRotation=bone.localRotation,fromPosition=bone.localPosition,fromRotation=bone.localRotation};
             graph=PlayableGraph.Create("Actor visuals / "+key);graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);output=AnimationPlayableOutput.Create(graph,"Body",animator);graph.Play();
@@ -141,8 +143,34 @@ namespace SwapHunter
                 bladeGrip=ImportedModels.Find(blade,"Grip");Vector3 p=blade.InverseTransformPoint(bladeGrip.position);blade.localPosition=-Vector3.Scale(p,blade.localScale);
             }
         }
+        public void ConfigureVariant(int archetype,int chapterBoss=-1)
+        {
+            if(equipmentV2){equipmentV2.gameObject.SetActive(false);Destroy(equipmentV2.gameObject);}
+            variantV2=archetype;bossChapterV2=chapterBoss;
+            var node=new GameObject("MapV2 enemy equipment / "+archetype+" / "+chapterBoss);node.layer=Layers.Actor;node.transform.SetParent(transform,false);node.transform.localScale=Vector3.one*(owner?owner.Height/1.8f:1);
+            equipmentV2=node.AddComponent<EnemyV2VisualEquipment>();equipmentV2.Build(archetype,chapterBoss);
+            if(body)foreach(var renderer in body.GetComponentsInChildren<Renderer>(true))renderer.enabled=!equipmentV2.MechanicalBody;
+            if(weapon)weapon.gameObject.SetActive(archetype!=0&&archetype!=10);
+        }
+        public void SetAbilityPresentation(string key,float normalized,bool active)
+        {if(equipmentV2)equipmentV2.Pose(key,normalized,active);grenadePreparing=active;}
+        public Transform Weakpoint(string name)=>equipmentV2?equipmentV2.Weakpoint(name):chest;
+        public void SetPickupBody(float crouchWeight){pickupBodyWeight=Mathf.Clamp01(crouchWeight);if(pickupBodyWeight<=0)pickupHandValid=false;}
+        public void EvaluatePickupPose(){Evaluate(0);}
+        public void SetPickupHand(Vector3 point){pickupHandWorld=point;pickupHandValid=true;}
+        void ApplyPickupBody()
+        {
+            if(pickupBodyWeight<=0||IsMech)return;float w=pickupBodyWeight;
+            hips.position-=transform.up*(.62f*w)+transform.forward*(.22f*w);chest.rotation=Quaternion.AngleAxis(70*w,transform.right)*chest.rotation;
+            foreach(string side in new[]{"L","R"})
+            {
+                var thigh=Bone(new[]{"UpperLeg."+side},false);var calf=Bone(new[]{"LowerLeg."+side},false);var foot=Bone(new[]{"Foot."+side},false);
+                if(thigh&&calf&&foot){Vector3 target=transform.TransformPoint(new Vector3(side=="R"?.11f:-.11f,.12f,0));SolveArm(thigh,calf,foot,target,transform.position+transform.forward*.7f+transform.up*.5f);}
+            }
+        }
         public void ConvertToBoss()
         {
+            if(equipmentV2){equipmentV2.gameObject.SetActive(false);Destroy(equipmentV2.gameObject);equipmentV2=null;}variantV2=-1;
             if(!IsMech){weaponId=8;LoadBody("boss_george",true,owner.Height);Evaluate(0);CalibrateHitMarkers();}
             shieldMelee=false;if(shield)shield.gameObject.SetActive(false);
         }
@@ -154,7 +182,7 @@ namespace SwapHunter
         public void BeginDeath(){if(dead)return;dead=true;deathVisualTime=0;}
         public void SetShieldMelee(TacticalState state,float seconds){shieldMelee=true;shieldState=state;shieldSeconds=seconds;if(weapon)weapon.gameObject.SetActive(false);if(blade)blade.gameObject.SetActive(true);}
         public void DisableShieldMelee(){shieldMelee=false;if(blade)blade.gameObject.SetActive(false);if(weapon)weapon.gameObject.SetActive(true);}
-        public void SetBossPresentation(bool melee,float windup,float swing,Vector3 point){bossMelee=melee;bossWindup=windup;bossSwing=swing;aim=point;if(weapon)weapon.gameObject.SetActive(!melee);if(blade)blade.gameObject.SetActive(melee);}
+        public void SetBossPresentation(bool melee,float windup,float swing,Vector3 point){bossMelee=melee;bossWindup=windup;bossSwing=swing;aim=point;if(weapon)weapon.gameObject.SetActive(!melee&&variantV2!=0&&variantV2!=10);if(blade)blade.gameObject.SetActive(melee);}
         void LateUpdate()
         {
             if(displayOnly||(!owner&&!playerOwner)||!DemoGame.I||!DemoGame.I.IsPlaying)return;
@@ -205,7 +233,7 @@ namespace SwapHunter
             }
             if(dead){selected=deathClip;key="death";loop=false;sample=-1;}
             Play(selected,key,dt,loop,sample);
-            LockVisualRoot();
+            LockVisualRoot();ApplyPickupBody();
             if(!dead)PoseHands();
             else
             {
@@ -225,6 +253,7 @@ namespace SwapHunter
         }
         void CalibrateHitMarkers()
         {
+            if(authoredHeadHit&&authoredChestHit){headHitOffset=head.InverseTransformPoint(authoredHeadHit.position);torsoHitOffset=chest.InverseTransformPoint(authoredChestHit.position);hitMarkersReady=true;return;}
             // Centers measured from >.35 named-bone weights in normalized Idle export metadata.
             // Trigger sizes and damage multipliers stay in EnemyActor; only their centers follow bones.
             Vector3 headCenter,torsoCenter;
@@ -260,8 +289,9 @@ namespace SwapHunter
         void PoseHands()
         {
             float scale=owner?owner.Height/1.8f:1;bool melee=shieldMelee||owner&&owner.boss&&bossMelee;
-            if(weapon)weapon.gameObject.SetActive(!melee);if(blade)blade.gameObject.SetActive(melee);
-            Vector3 wrist=transform.TransformPoint(new Vector3(.24f,1.18f,.42f)*scale);
+            if(weapon)weapon.gameObject.SetActive(!melee&&variantV2!=0&&variantV2!=10);if(blade)blade.gameObject.SetActive(melee);
+            Vector3 wrist=transform.TransformPoint((IsMech?new Vector3(.24f,1.18f,.42f):new Vector3(.08f,1.24f,.13f))*scale);
+            if(shadowOnly&&pickupBodyWeight>0&&pickupHandValid)wrist=pickupHandWorld;
             if(melee)
             {
                 float prep=owner&&owner.boss?bossWindup:shieldState==TacticalState.MeleeWarning?Mathf.Clamp01((1-shieldSeconds/.65f)/.7f):0;

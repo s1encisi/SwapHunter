@@ -87,7 +87,7 @@ namespace SwapHunter
             Fill(new Rect(32, 30, 5, 68), Cyan);
             Text(expeditionActive?"相位行动  /  "+(expeditionLevel+1).ToString("00"):stage.ToString("00")+"  /  "+areaNames[stage],new Rect(49,29,540,28),16,Cyan);
             Text(tutorialCourse&&tutorialCourse.Active?tutorialCourse.Title:expeditionActive ? ExpeditionTitle : campaignActive ? activeContract.name : stageNames[stage], new Rect(49, 57, 500, 40), 30);
-            Text(Objective, new Rect(49, 109, Mathf.Min(644, viewWidth * .49f - 54), 60), 19, new Color(.84f, .90f, .92f));
+            Text(expeditionActive&&!D2TrialScenarioActive?V2HudObjective:Objective, new Rect(49, 109, Mathf.Min(644, viewWidth * .49f - 54), 60), 19, new Color(.84f, .90f, .92f));
             Text(FormatTime(runSeconds), new Rect(viewWidth - 195, 32, 150, 35), 25, Color.white, TextAnchor.MiddleRight);
             if(expeditionActive) Text("指定必清 "+ExpeditionRequiredEnemies+" / 可遗留敌人 "+ExpeditionOptionalEnemies,new Rect(viewWidth-345,74,300,30),16,Muted,TextAnchor.MiddleRight);
             else if (AliveEnemies>0) Text("在场敌人  "+AliveEnemies,new Rect(viewWidth-275,74,230,30),16,Muted,TextAnchor.MiddleRight);
@@ -134,12 +134,12 @@ namespace SwapHunter
             Text("生命", new Rect(49, 790, 70, 25), 15, Muted);
             Text(Mathf.CeilToInt(player.health).ToString("000"), new Rect(48, 811, 105, 44), 33);
             Fill(new Rect(163, 830, 126, 8), new Color(.2f, .27f, .29f));
-            Fill(new Rect(163, 830, 126 * player.health / config.playerHealth, 8), player.health < 30 ? new Color(1, .3f, .22f) : Cyan);
+            Fill(new Rect(163, 830, 126 * Mathf.Clamp01(player.health / config.playerHealth), 8), player.health < 30 ? new Color(1, .3f, .22f) : Cyan);
             DrawUiPanel(new Rect(viewWidth-348,778,316,94),true);
-            Text(player.CurrentWeaponName,new Rect(viewWidth-329,790,278,25),16,Muted);
-            Text(player.ammo[player.weapon].ToString("00"), new Rect(viewWidth - 329, 814, 95, 44), 34);
-            Text("/ " + player.reserve[player.weapon], new Rect(viewWidth - 229, 828, 170, 30), 19, Muted);
-            if (player.reloadLeft > 0) Text("装填中…", new Rect(viewWidth - 300, 735, 260, 32), 19, Cyan, TextAnchor.MiddleRight);
+            Text(player.meleeEquipment&&player.meleeEquipment.Equipped?player.meleeEquipment.CurrentName:player.CurrentWeaponName,new Rect(viewWidth-329,790,278,25),16,Muted);
+            Text(player.meleeEquipment&&player.meleeEquipment.Equipped?"72":player.ammo[player.weapon].ToString("00"), new Rect(viewWidth - 329, 814, 95, 44), 34);
+            Text(player.meleeEquipment&&player.meleeEquipment.Equipped?"/ 重击144":"/ " + player.reserve[player.weapon], new Rect(viewWidth - 229, 828, 170, 30), 19, Muted);
+            if (player.ReloadV2Pending) Text(player.ReloadV2Committed?"弹匣已就位 · 待完成机械收势":"装填中 / 切回将续接", new Rect(viewWidth - 300, 735, 260, 32), 19, Cyan, TextAnchor.MiddleRight);
             float abilityX = x - 139;
             DrawUiPanel(new Rect(abilityX,796,278,77),true);
             Text(KeyName(6) + "  相位换位", new Rect(abilityX + 17, 808, 200, 26), 20, Cyan);
@@ -172,7 +172,7 @@ namespace SwapHunter
                 Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,25,bounds.height),damage);Fill(new Rect(viewWidth-25,bounds.yMin,25,bounds.height),damage);Fill(new Rect(0,bounds.yMax-25,viewWidth,25),damage);
             }
             if (player.phaseFlash > 0) { Color phase = new Color(.1f, 1, .8f, player.phaseFlash * 1.2f); Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,12,bounds.height),phase);Fill(new Rect(viewWidth-12,bounds.yMin,12,bounds.height),phase); }
-            CampaignHudUI();DrawBossHud();DrawTacticsHud();DrawStoryRadio();DrawD2Context();
+            CampaignHudUI();DrawBossHud();DrawMiniBossV2Hud();DrawTacticsHud();DrawStoryRadio();DrawD2Context();DrawV2ObjectiveGuide();
             if(!string.IsNullOrEmpty(player.ActionLabel))Text(player.ActionLabel,new Rect(33,738,330,32),18,Cyan);
             if(player.ChargeProgress>0){Fill(new Rect(x-72,y+35,144,4),new Color(.1f,.16f,.24f));Fill(new Rect(x-72,y+35,144*player.ChargeProgress,4),Cyan);}
             Text(KeyName(10) + " / " + KeyName(11) + " 切枪     " + KeyName(7) + " 装填     Esc 暂停", new Rect(35, 875, 600, 22), 16, Muted, TextAnchor.MiddleLeft);

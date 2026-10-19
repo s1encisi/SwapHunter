@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace SwapHunter
 {
  public enum BossPhase { EnergyMelee, Rifle, Combined, Defeated }
  // Continuous life layers and basic attacks; spatial skills share this state in BossSpatialSkills.
  public sealed partial class BossEncounter:MonoBehaviour
  {
-  public const float ShieldMaximum=360,HealthMaximum=720,SilenceResistanceDuration=4.5f;
+  public const float ShieldMaximum=360,HealthMaximum=7200,SilenceResistanceDuration=4.5f;
   public EnemyActor Owner {get;private set;}
   public BossPhase Phase {get;private set;}
   public float Energy {get;private set;}
@@ -29,7 +29,7 @@ namespace SwapHunter
   {
    Owner=owner;Energy=ShieldMaximum;Phase=BossPhase.EnergyMelee;Owner.maximumHealth=HealthMaximum;Owner.health=HealthMaximum;attackAt=Time.time+1.5f;CancelSpatialSkill();
    Owner.InitializeBossPresentation();
-   G.Record("boss_begin","Energy Shield 360 -> HP 720");
+   G.Record("boss_begin","Energy Shield 360 -> HP 7200");
   }
   public float Absorb(float damage)
   {
@@ -100,7 +100,7 @@ namespace SwapHunter
    }
    else if(Vector3.Dot(transform.forward,d.normalized)>.85f&&!Physics.Linecast(Owner.AimPoint,G.player.Eye.position,Layers.WorldMask))
    {
-    Owner.ShootAt(G.player.Eye.position,8,38);burst++;attackAt=Time.time+(burst>=3?1.7f:.25f);if(burst>=3)burst=0;
+    Owner.ShootAt(G.player.transform.position+Vector3.up*(G.player.IsCrouching?.62f:1.05f),8,55);burst++;attackAt=Time.time+(burst>=3?1.7f:.25f);if(burst>=3)burst=0;
    }
   }
   public bool InterruptBasicBurst()

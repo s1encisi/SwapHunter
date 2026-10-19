@@ -67,9 +67,10 @@ namespace SwapHunter
                 seed.primary=seed.classLoadouts[seed.activeClass].primary;seed.secondary=seed.classLoadouts[seed.activeClass].secondary;
                 ExpeditionStore.Validate(seed);
             }
+            if(tactical&&!RunStorage.IsDirectedTrial)seed.meleeKnives=new[]{true,true,true,true,true,true};
             if(RunStorage.IsDirectedTrial)seed=DirectedTrialBootstrap.CreateProfile();
             WriteNew(Path.Combine(folder,tactical?"expedition-v6.json":"expedition-v4.json"),JsonUtility.ToJson(seed,true));
-            WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=RunStorage.IsDirectedTrial?"定向商品与请求等级；其余技能1级、合法双枪、基础配件、零携带道具；情境="+DirectedTrialBootstrap.Request.scenario:tactical?"四职业全武器/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
+            WriteNew(Path.Combine(RunStorage.Root, "demonstration-session.json"), JsonUtility.ToJson(new Manifest { selectedChapter = Level + 1, seed=RunStorage.IsDirectedTrial?"定向商品与请求等级；其余技能1级、合法双枪、基础配件、零携带道具；情境="+DirectedTrialBootstrap.Request.scenario:tactical?"四职业全枪械/六刀/技能3级、4医疗/2弹药/2护甲为展示预置；0信用点，无通关或收据。":"全武器、飞刀3级预置；无预置通关/成绩/收据/研究点，专精默认0阶。" }, true));
         }
         static void WriteNew(string path, string text)
         {

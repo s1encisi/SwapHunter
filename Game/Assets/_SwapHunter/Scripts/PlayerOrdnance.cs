@@ -31,7 +31,7 @@ namespace SwapHunter
             {
                 if(!enemy||!enemy.Alive)continue;float distance=Vector3.Distance(point,enemy.AimPoint);
                 if(distance>=radius||Physics.Linecast(point,enemy.AimPoint,Layers.WorldMask))continue;
-                var sample=batch.Enemy(enemy,damage*Mathf.Lerp(1,.2f,distance/radius),damageEvent);
+                var sample=batch.Enemy(enemy,damage*Mathf.Lerp(1,.2f,distance/radius)*DirectionalBarrier.ExplosionMultiplier(point,enemy.AimPoint),damageEvent);
                 if(sample!=null)sample.after=result=>{any|=result.applied;killed|=result.killed;};
             }
             foreach(var objective in DamageableObjective.ActiveSnapshot())
@@ -50,7 +50,7 @@ namespace SwapHunter
             }
             batch.Apply();
             if(owner&&Vector3.Distance(point,owner.Eye.position)<radius&&!Physics.Linecast(point,owner.Eye.position,Layers.WorldMask))
-                owner.Hurt(damage*.65f*Mathf.Clamp01(1-Vector3.Distance(point,owner.Eye.position)/radius),point);
+                owner.Hurt((damage/3)*DirectionalBarrier.ExplosionMultiplier(point,owner.Eye.position)*.65f*Mathf.Clamp01(1-Vector3.Distance(point,owner.Eye.position)/radius),point,false);
             if(owner&&any){owner.ReportWeaponHit(killed,"爆炸");g.totalHits++;}
             Shapes.Burst(point,new Color(1,.55f,.12f),1.4f);g.sound.Play("explosion",point);g.Record("player_grenade",point.ToString());
             Destroy(gameObject);

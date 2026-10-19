@@ -6,6 +6,7 @@ namespace SwapHunter
   void DrawD2Context()
   {
    if(!IsPlaying||!player)return;
+   if(InteractionV2.Active)DrawV2InteractionContext();
    if(D2HoldInteraction.HasCandidate)
    {
     float x=viewWidth*.5f-295;Text(D2HoldInteraction.Hint,new Rect(x,737,590,32),19,Cyan,TextAnchor.MiddleCenter);

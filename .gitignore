@@ -145,3 +145,10 @@
 
 !/docs/system-synergy-playguide.zh-CN.md
 !/docs/system-synergy-validation.zh-CN.md
+
+# MapV2 public gameplay, validation and original asset documentation.
+!/docs/maps-enemies-v2-playguide.zh-CN.md
+!/docs/maps-enemies-v2-validation.zh-CN.md
+!/docs/map-v2-assets.zh-CN.md
+
+!/Tools/measure_map_v2.py
