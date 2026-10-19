@@ -10,7 +10,7 @@
 | 新Windows玩家构建 | 已完成：Builds/SwapHunter-D2N1-20261019-01/SwapHunter.exe；身份见下 |
 | StoryD2专项 | 128/128通过；Logs/D2N1/acceptance-01/story-d2/story-d2-report.json |
 | 原生窗口画面检查 | 已检查5张1920×1080原生截图：开场、无线电、结局、档案和第5章；同目录ui-review.json |
-| Windows / Source本地包 | 待同构建专项与画面通过后生成；本轮尚未执行打包 |
+| Windows / Source本地包 | 采用同构建 storyd2 模式；ZIP清单、哈希和独立解包结果见交付目录 package-report.json |
 | 真人试玩与平衡结论 | 未执行，不由脚本专项推断 |
 | 远端发布与旧档导入 | 未执行 |
 
@@ -54,3 +54,4 @@
 - 试用：ID2/3/4均实际启动独立子进程、载入相容商品与采购等级并返回，父档字节保持相同；短启动检查没有伪造实战伤害或改道成绩。
 - 画面：五张截图已人工于代理侧查看文字排版；不是人类玩家操作验收。
 - 包装结果以交付目录package-report.json与SHA256SUMS.txt为准，保持与本次构建一致。
+
