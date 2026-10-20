@@ -34,36 +34,38 @@ public sealed partial class DemoGame {
   if(tutorialCourse&&tutorialCourse.Active&&tutorialCourse.Step<5)return;
   if(!player||!player.tactics)return;
   var t=player.tactics;bool tactical=PlayerClassSkill.IsTacticalFlow;
+  float panelX=24,panelY=viewWidth<1400?344:620,panelWidth=Mathf.Min(440,viewWidth*.38f),textX=panelX+16,textWidth=panelWidth-32;
   if(tactical)
   {
    DrawClassScanMarkers();
-   Fill(new Rect(32,586,540,143),new Color(.015f,.03f,.045f,.76f));
-   Text("临时护甲 "+player.TemporaryArmor.ToString("0"),new Rect(49,590,180,28),17,Muted);
-   Fill(new Rect(232,601,155,5),new Color(.18f,.25f,.32f));
-   Fill(new Rect(232,601,155*Mathf.Clamp01(player.TemporaryArmor/TacticalPrototypeRules.ArmorAmount),5),Cyan);
+   Fill(new Rect(panelX,panelY,panelWidth,126),new Color(.015f,.03f,.045f,.76f));
+   Text("临时护甲 "+player.TemporaryArmor.ToString("0"),new Rect(textX,panelY+7,180,22),14,Muted);
+   float armorX=panelX+190,armorWidth=Mathf.Max(50,panelWidth-210);
+   Fill(new Rect(armorX,panelY+18,armorWidth,4),new Color(.18f,.25f,.32f));
+   Fill(new Rect(armorX,panelY+18,armorWidth*Mathf.Clamp01(player.TemporaryArmor/TacticalPrototypeRules.ArmorAmount),4),Cyan);
    var skill=player.classSkill;
-   Text(KeyName(PlayerClassSkill.InputAction)+"  "+(skill?skill.AbilityName:"职业技能")+" · "+(skill?skill.Status:"不可用"),new Rect(49,624,505,28),18,skill&&skill.ActiveSeconds>0?Cyan:Muted);
+   Text(KeyName(PlayerClassSkill.InputAction)+"  "+(skill?skill.AbilityName:"职业技能")+" · "+(skill?skill.Status:"不可用"),new Rect(textX,panelY+34,textWidth,27),16,skill&&skill.ActiveSeconds>0?Cyan:Muted);
    if(expeditionStore.EquippedGeneralSkill==TacticalPrototypeRules.KnifeGeneralIndex&&player.combatTools)
    {
     var tools=player.combatTools;
-    Text(KeyName(22)+" 飞刀 "+tools.KnivesInHand+"/3 · "+KeyName(23)+" 全召回"+(tools.SilenceCooldownLeft>0?" · 沉默CD "+tools.SilenceCooldownLeft.ToString("0.0"):""),new Rect(49,658,505,28),18,Muted);
+    Text(KeyName(22)+" 飞刀 "+tools.KnivesInHand+"/3 · "+KeyName(23)+" 全召回"+(tools.SilenceCooldownLeft>0?" · 沉默CD "+tools.SilenceCooldownLeft.ToString("0.0"):""),new Rect(textX,panelY+62,textWidth,40),16,Muted);
    }
    else
    {
     string shield=!expeditionStore.HasShield?"未装配":t.ShieldActive?"持续 "+t.ShieldLeft.ToString("F1")+"秒":t.ShieldCooldownLeft>0?"冷却 "+t.ShieldCooldownLeft.ToString("F1")+"秒":"就绪";
-    Text(KeyName(20)+"  A盾 · "+shield,new Rect(49,658,505,28),18,t.ShieldActive?Cyan:Muted);
+    Text(KeyName(20)+"  A盾 · "+shield,new Rect(textX,panelY+62,textWidth,27),16,t.ShieldActive?Cyan:Muted);
    }
-   Text(KeyName(21)+" 近战 · 职业技能与通用技能独立",new Rect(49,693,505,28),17,Muted);
+   Text(KeyName(21)+" 近战 · 职业技能与通用技能独立",new Rect(textX,panelY+102,textWidth,22),14,Muted);
    return;
   }
-  Fill(new Rect(32,654,520,75),new Color(.015f,.03f,.045f,.76f));
+  Fill(new Rect(panelX,panelY+54,panelWidth,72),new Color(.015f,.03f,.045f,.76f));
   string s=t.ShieldActive?"持续 "+t.ShieldLeft.ToString("F1")+"秒":t.ShieldCooldownLeft>0?"冷却 "+t.ShieldCooldownLeft.ToString("F1")+"秒":"就绪";
-  Text(KeyName(20)+"  A盾 · "+s,new Rect(49,658,488,28),18,t.ShieldActive?Cyan:Muted);
+  Text(KeyName(20)+"  A盾 · "+s,new Rect(textX,panelY+60,textWidth,27),16,t.ShieldActive?Cyan:Muted);
   if(player.combatTools&&(!tutorialCourse||!tutorialCourse.Active||tutorialCourse.Step>=6))
   {
    var tools=player.combatTools;string toolText=KeyName(21)+" 近战";
    if(!tutorialCourse||!tutorialCourse.Active||tutorialCourse.Step>=7)toolText+="   "+KeyName(22)+" 飞刀 · "+tools.KnifeStatus+"   "+(tools.CanRecallKnife?KeyName(23)+" 召回":"研究 "+tools.KnifeRank+"/3");
-   Text(toolText,new Rect(49,693,488,28),17,Muted);
+   Text(toolText,new Rect(textX,panelY+91,textWidth,31),15,Muted);
   }
  }
  void DrawClassScanMarkers()

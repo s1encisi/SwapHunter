@@ -28,8 +28,9 @@ namespace SwapHunter
             {
                 weaponLibraryPreview.SetVisible(visible);
                 if (visible && expeditionBoard && !expeditionInventory) weaponLibraryPreview.Select(expeditionSelectedWeapon);
-                if (!visible || expeditionInventory) weaponLibraryPreview.AutoRotate = false;
+                weaponLibraryPreview.AutoRotate=visible&&!expeditionInventory&&armoryAutoRotate;
             }
+            if(knifePreview)knifePreview.SetVisible(visible&&!expeditionInventory&&expeditionWeaponSlot==2);
             weaponLibraryWasVisible = visible;
         }
 
@@ -57,108 +58,94 @@ namespace SwapHunter
             textStyle.clipping = clipping;
         }
 
+        int selectedArmoryKnife;
+        bool armoryAutoRotate=true;
         void DrawWeaponLibrary()
         {
-            var store = expeditionStore;
-            var profile = store.Profile;
-            float available = viewWidth - 96;
-            int columns = available >= 1300 ? 3 : 2;
-            int rows = WeaponCatalog.Count / columns;
-            float listWidth = Mathf.Clamp(available * .40f, 360, 710);
-            float detailX = 48 + listWidth + 24, detailWidth = viewWidth - detailX - 48;
-            const float top = 274, bottom = 816;
-            float cardTop = top + 32, cardHeight = (bottom - 28 - cardTop - (rows - 1) * 8) / rows;
-            float cardWidth = (listWidth - (columns - 1) * 8) / columns;
-            Text("武器库  /  12", new Rect(48, top, listWidth, 26), 18, Paper);
-            for (int id = 0; id < WeaponCatalog.Count; id++)
+            var store=expeditionStore;var profile=store.Profile;
+            float available=viewWidth-96,slotWidth=(available-24)/3;
+            int equippedKnife=profile.classLoadouts[profile.activeClass].knifeId;
+            for(int slot=0;slot<3;slot++)
             {
-                var weapon = WeaponCatalog.Get(id);
-                Rect card = new Rect(48 + id % columns * (cardWidth + 8), cardTop + id / columns * (cardHeight + 8), cardWidth, cardHeight);
-                bool selected = expeditionSelectedWeapon == id;
-                if (NavigationButton(weapon.name, card, selected, false)) expeditionSelectedWeapon = id;
-                bool usable = store.CanEquip(id);
-                string status = usable && store.Primary == id ? "主槽" : usable && store.Secondary == id ? "副槽" : store.IsTactical ? (profile.weapons[id]?"其他职业":TacticalPrototypeRules.WeaponListed(id,profile.cleared)?"可采购":"未上架") : usable ? "已解锁" : "未解锁";
-                Text((id + 1).ToString("00"), new Rect(card.x + 10, card.y + 5, 30, 17), 12, selected ? Paper : Muted);
-                WeaponText(status, new Rect(card.x + 44, card.y + 3, card.width - 54, 25), 11,
-                    usable ? PhaseBlue : Muted, TextAnchor.UpperRight);
-                Rect icon = new Rect(card.x + 10, card.y + 29, card.width - 20, card.height - 59);
-                WeaponTexture(icon, weaponLibraryPreview ? weaponLibraryPreview.GetIcon(id) : null, !usable);
-                WeaponText(weapon.name, new Rect(card.x + 10, card.yMax - 27, card.width - 20, 27),
-                    columns == 3 ? 15 : 16, usable ? Paper : Muted, TextAnchor.MiddleCenter);
+                string caption=slot==0?"1  主武器":slot==1?"2  副武器":"3  近战武器";
+                string name=slot==2?KnifeV2Visual.Names[Mathf.Clamp(equippedKnife,0,5)]:WeaponCatalog.Get(slot==0?store.Primary:store.Secondary).name;
+                Rect box=new Rect(48+slot*(slotWidth+12),274,slotWidth,74);
+                if(NavigationButton(caption,box,expeditionWeaponSlot==slot,false))
+                {
+                    expeditionWeaponSlot=slot;
+                    if(slot==2)selectedArmoryKnife=Mathf.Clamp(equippedKnife,0,5);
+                    else expeditionSelectedWeapon=slot==0?store.Primary:store.Secondary;
+                }
+                Text(caption,new Rect(box.x+16,box.y+8,box.width-32,24),15,expeditionWeaponSlot==slot?Amber:Muted);
+                WeaponText(name,new Rect(box.x+16,box.y+35,box.width-32,30),21,Paper);
             }
-            Text(store.IsTactical ? "武器由全档共享，按职业资格装配。\n全部模型可预览；上架后可直接采购。" : "全部武器均可预览；未解锁武器不能装备",
-                new Rect(48, bottom - 18, listWidth, store.IsTactical ? 38 : 24), store.IsTactical ? 12 : 13, Muted);
-
-            int selectedId = expeditionSelectedWeapon;
-            var selectedWeapon = WeaponCatalog.Get(selectedId);
-            bool selectedUsable = store.CanEquip(selectedId);
-            bool canConfigure = !store.IsTactical || store.Profile.deployment == null;
-            Rect panel = new Rect(detailX, top, detailWidth, bottom - top + 18);
-            DrawUiPanel(panel, true);
-            float x = panel.x + 22, width = panel.width - 44;
-            WeaponText(selectedWeapon.name, new Rect(x, top + 15, width - 130, 43), 31, Paper);
-            Text(store.IsTactical ? store.WeaponAvailability(selectedId) : selectedUsable ? "已解锁" : WeaponUnlockLabel(selectedId),
-                new Rect(panel.xMax - 192, top + 13, 170, 47), 13, selectedUsable ? PhaseBlue : Muted, TextAnchor.MiddleRight);
-            if (weaponLibraryStats == null) return;
-            var stats = weaponLibraryStats[selectedId];
-            Text(stats.MechanismLabel + "  ·  常规初始备弹 " + stats.BaseReserve,
-                new Rect(x, top + 62, width, 23), 16, Muted);
-            WeaponText(stats.FireCadenceExplanation, new Rect(x, top + 86, width, 26), 13, Muted);
-
-            float contentTop = top + 122, modelWidth = (width - 24) * .53f, statsX = x + modelWidth + 24;
-            float statsWidth = panel.xMax - 22 - statsX;
-            Rect modelRect = new Rect(x, contentTop, modelWidth, 205);
-            Fill(modelRect, new Color(.018f, .036f, .065f));
-            Fill(new Rect(modelRect.x, modelRect.yMax - 1, modelRect.width, 1), new Color(.16f, .27f, .38f));
-            var preview = weaponLibraryPreview;
-            if (preview && !string.IsNullOrEmpty(preview.SelectedError))
-                Text("模型预览暂不可用", modelRect, 17, Muted, TextAnchor.MiddleCenter);
-            else WeaponTexture(modelRect, preview ? preview.SelectedTexture : null);
-            Text("对应武器模型", new Rect(modelRect.x + 9, modelRect.y + 7, modelRect.width - 18, 18), 12, Muted);
-
-            float controlsY = modelRect.yMax + 8, buttonWidth = (modelWidth - 24) / 5;
-            if (Button("左转", new Rect(x, controlsY, buttonWidth, 31)) && preview) preview.RotateYaw(-30);
-            if (Button("复位", new Rect(x + buttonWidth + 6, controlsY, buttonWidth, 31)) && preview) preview.ResetView();
-            if (Button("右转", new Rect(x + (buttonWidth + 6) * 2, controlsY, buttonWidth, 31)) && preview) preview.RotateYaw(30);
-            if (Button(preview && preview.AutoRotate ? "停止" : "自动", new Rect(x + (buttonWidth + 6) * 3, controlsY, buttonWidth, 31)) && preview) preview.AutoRotate = !preview.AutoRotate;
-            bool trialEnabled=GUI.enabled;GUI.enabled=trialEnabled&&store.IsTactical&&canConfigure&&!TrialSessionActive;
-            if(Button("试用",new Rect(x+(buttonWidth+6)*4,controlsY,buttonWidth,31)))OpenWeaponTrial(selectedId);
-            GUI.enabled=trialEnabled;
-            WeaponText(selectedWeapon.description, new Rect(x, controlsY + 42, modelWidth, 42), 14, Muted);
-
-            Text("基础属性  ·  统一刻度", new Rect(statsX, contentTop - 21, statsWidth, 20), 13, PhaseBlue);
-            float rowHeight = 50;
-            for (int rowIndex = 0; rowIndex < stats.Rows.Length; rowIndex++)
+            float listWidth=Mathf.Clamp(available*.40f,360,650),detailX=48+listWidth+24;
+            Rect panel=new Rect(detailX,374,viewWidth-detailX-48,455);
+            Text(expeditionWeaponSlot==2?"近战刀具 / 6":"枪械 / 12",new Rect(48,363,listWidth,28),17,Muted);
+            DrawUiPanel(panel,true);
+            if(expeditionWeaponSlot==2)
+            { DrawUnifiedKnifeArmory(listWidth,panel);return; }
+            int columns=3,rows=(WeaponCatalog.Count+columns-1)/columns;
+            float cardWidth=(listWidth-16)/columns,cardHeight=(422-(rows-1)*8)/rows;
+            for(int id=0;id<WeaponCatalog.Count;id++)
             {
-                var row = stats.Rows[rowIndex]; float y = contentTop + rowIndex * rowHeight;
-                WeaponText(row.Label, new Rect(statsX, y, statsWidth * .57f, 32), 13, Paper, TextAnchor.MiddleLeft);
-                WeaponText(row.ValueText, new Rect(statsX + statsWidth * .46f, y, statsWidth * .54f, 32), 17, Paper, TextAnchor.MiddleRight);
-                Rect track = new Rect(statsX, y + 33, statsWidth, 6);
-                Fill(track, new Color(.10f, .16f, .23f));
-                if (row.IsApplicable) Fill(new Rect(track.x, track.y, track.width * Mathf.Clamp01(row.Normalized), track.height),
-                    rowIndex == 1 || rowIndex == 2 || rowIndex == 4 ? new Color(.91f, .65f, .36f) : PhaseBlue);
+                var item=WeaponCatalog.Get(id);bool usable=store.CanEquip(id),selected=expeditionSelectedWeapon==id;
+                Rect card=new Rect(48+id%columns*(cardWidth+8),397+id/columns*(cardHeight+8),cardWidth,cardHeight);
+                if(NavigationButton(item.name,card,selected,false))expeditionSelectedWeapon=id;
+                string status=store.Primary==id?"主槽":store.Secondary==id?"副槽":usable?"可装备":profile.weapons[id]?"其他职业":"未拥有";
+                WeaponText(status,new Rect(card.x+8,card.y+4,card.width-16,20),11,selected?Amber:Muted,TextAnchor.MiddleRight);
+                WeaponTexture(new Rect(card.x+8,card.y+23,card.width-16,card.height-49),weaponLibraryPreview?weaponLibraryPreview.GetIcon(id):null,!usable);
+                WeaponText(item.name,new Rect(card.x+8,card.yMax-27,card.width-16,25),14,Paper,TextAnchor.MiddleCenter);
             }
-            WeaponText(store.IsTactical ? "基础值未计配件与战斗加成；时长、散布越低越好" : "基础值未计配件、专精与战斗加成；条形表示数值大小", new Rect(x, bottom - 124, width, 23), 11, Muted, TextAnchor.MiddleLeft);
-            float actionY = bottom - 100, slotWidth = Mathf.Min(125, width * .20f);
-            for (int slot = 0; slot < 2; slot++)
-                if (Button(slot == 0 ? "主武器槽" : "副武器槽", new Rect(x + slot * (slotWidth + 8), actionY, slotWidth, 36), expeditionWeaponSlot == slot)) expeditionWeaponSlot = slot;
-            bool previous = GUI.enabled;
-            GUI.enabled = previous && selectedUsable && canConfigure;
-            float equipX = x + (slotWidth + 8) * 2;
-            bool equipped = selectedUsable && (expeditionWeaponSlot == 0 ? store.Primary : store.Secondary) == selectedId;
-            bool starterOffer=store.IsTactical&&!profile.weapons[selectedId]&&(selectedId==0||selectedId==1||selectedId==2||selectedId==3||selectedId==9);
-            bool buyable=store.IsTactical&&!profile.weapons[selectedId]&&!starterOffer&&TacticalPrototypeRules.WeaponListed(selectedId,profile.cleared);
+            int selectedId=expeditionSelectedWeapon;
+            var weapon=WeaponCatalog.Get(selectedId);bool usableSelected=store.CanEquip(selectedId);
+            float x=panel.x+20,y=panel.y+17,width=panel.width-40;
+            WeaponText(weapon.name,new Rect(x,y,width*.65f,40),29,Paper);
+            WeaponText(store.IsTactical?store.WeaponAvailability(selectedId):usableSelected?"已解锁":WeaponUnlockLabel(selectedId),new Rect(x+width*.65f,y,width*.35f,43),13,usableSelected?Cyan:Muted,TextAnchor.MiddleRight);
+            if(weaponLibraryStats==null)return;
+            var stats=weaponLibraryStats[selectedId];
+            WeaponText(stats.MechanismLabel+" · "+stats.FireCadenceExplanation,new Rect(x,y+48,width,36),14,Muted);
+            float modelWidth=width*.55f,statsX=x+modelWidth+20,statsWidth=width-modelWidth-20;
+            Rect modelRect=new Rect(x,y+93,modelWidth,190);
+            DrawArmoryPreview(modelRect,weaponLibraryPreview?weaponLibraryPreview.SelectedTexture:null);
+            WeaponText(weapon.description,new Rect(x,modelRect.yMax+8,modelWidth,40),13,Muted);
+            for(int index=0;index<stats.Rows.Length;index++)
+            {
+                var row=stats.Rows[index];float rowY=y+86+index*36;
+                WeaponText(row.Label,new Rect(statsX,rowY,statsWidth*.52f,25),12,Muted,TextAnchor.MiddleLeft);
+                WeaponText(row.ValueText,new Rect(statsX+statsWidth*.49f,rowY,statsWidth*.51f,25),15,Paper,TextAnchor.MiddleRight);
+                Fill(new Rect(statsX,rowY+26,statsWidth,3),new Color(.18f,.25f,.27f));
+                if(row.IsApplicable)Fill(new Rect(statsX,rowY+26,statsWidth*Mathf.Clamp01(row.Normalized),3),index%2==0?Cyan:Amber);
+            }
+            bool canConfigure=!store.IsTactical||profile.deployment==null;
+            int attachment=store.AttachmentFor(selectedId);
+            WeaponText("配件："+ExpeditionCatalog.Attachments[attachment]+" · "+ExpeditionCatalog.AttachmentRules[attachment],new Rect(x,panel.yMax-101,width,24),12,Muted);
+            bool enabled=GUI.enabled;
+            float attachWidth=(width-12)/ExpeditionCatalog.Attachments.Length;
+            GUI.enabled=enabled&&usableSelected&&canConfigure;
+            for(int i=0;i<ExpeditionCatalog.Attachments.Length;i++)
+            { int choice=i;if(Button(ExpeditionCatalog.Attachments[i],new Rect(x+i*attachWidth,panel.yMax-75,attachWidth-4,29),attachment==i))ExpeditionAction(()=>store.SetAttachment(selectedId,choice)); }
+            GUI.enabled=enabled;
+            float controlY=panel.yMax-40,rotateWidth=Mathf.Min(185,width*.37f);
+            if(Button(armoryAutoRotate?"自动旋转预览 · 开":"自动旋转预览 · 关",new Rect(x,controlY,rotateWidth,32)))armoryAutoRotate=!armoryAutoRotate;
+            bool equipped=usableSelected&&(expeditionWeaponSlot==0?store.Primary:store.Secondary)==selectedId;
+            bool starter=store.IsTactical&&!profile.weapons[selectedId]&&(selectedId==0||selectedId==1||selectedId==2||selectedId==3||selectedId==9);
+            bool buyable=store.IsTactical&&!profile.weapons[selectedId]&&!starter&&TacticalPrototypeRules.WeaponListed(selectedId,profile.cleared);
             int price=store.IsTactical?TacticalPrototypeRules.WeaponPrice(selectedId):0;
-            GUI.enabled=previous&&canConfigure&&((selectedUsable&&!equipped)||starterOffer||(buyable&&profile.credits>=price));
-            string actionLabel=equipped?"已装备至所选槽":selectedUsable?"装备至所选槽":starterOffer?"前往职业入门保障":buyable?"购买 / "+price+" 信用点":store.IsTactical?"当前不可装备":"完成章节后解锁";
-            if(Button(actionLabel,new Rect(equipX,actionY,panel.xMax-22-equipX,36),true))
-                ExpeditionAction(()=>{if(starterOffer){if(selectedId!=0)for(int cls=0;cls<4;cls++)if(TacticalPrototypeRules.StarterWeapon(cls)==selectedId){store.SelectClass(cls);break;}expeditionTab=2;}else if(buyable)store.BuyWeapon(System.Guid.NewGuid().ToString("N"),selectedId);else store.Equip(expeditionWeaponSlot,selectedId);});
-            GUI.enabled = previous && selectedUsable && canConfigure;
-            int attachment = store.AttachmentFor(selectedId);
-            if (Button("组件：" + ExpeditionCatalog.Attachments[attachment] + "  ›", new Rect(x, bottom - 54, width, 33)))
-                ExpeditionAction(() => expeditionStore.SetAttachment(selectedId, (attachment + 1) % ExpeditionCatalog.Attachments.Length));
-            GUI.enabled = previous;
-            WeaponText(ExpeditionCatalog.AttachmentRules[attachment] + (store.IsTactical ? "；关外免费装配，行动中锁定。" : "；部署前可免费调整。"), new Rect(x, bottom - 15, width, 24), 12, Muted);
+            GUI.enabled=enabled&&canConfigure&&((usableSelected&&!equipped)||starter||(buyable&&profile.credits>=price));
+            string label=equipped?"已装备":usableSelected?"装备至 "+(expeditionWeaponSlot+1)+" 号槽":starter?"领取入门武器":buyable?"购买并装配 / "+price:"尚未解锁";
+            if(Button(label,new Rect(x+rotateWidth+12,controlY,width-rotateWidth-12,32),true))
+                ExpeditionAction(()=>{
+                    if(starter){if(selectedId!=0)for(int cls=0;cls<4;cls++)if(TacticalPrototypeRules.StarterWeapon(cls)==selectedId){store.SelectClass(cls);break;}expeditionTab=2;}
+                    else{if(buyable)store.BuyWeapon(System.Guid.NewGuid().ToString("N"),selectedId);if(store.CanEquip(selectedId))store.Equip(expeditionWeaponSlot,selectedId);}
+                });
+            GUI.enabled=enabled;
+        }
+        void DrawArmoryPreview(Rect rect,Texture texture)
+        {
+            Fill(rect,new Color(.045f,.080f,.098f));
+            WeaponTexture(rect,texture);
+            Text("装配预览",new Rect(rect.x+10,rect.y+8,rect.width-20,20),12,Muted);
         }
 
         void DrawInventoryWeaponCard(int slot, Rect card)

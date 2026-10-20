@@ -4,10 +4,11 @@ namespace SwapHunter
     // D1.1 implementation balance, versioned separately from save schemas.
     public static class TacticalPrototypeRules
     {
-        public const int Version=5, ClassCount=4, AssaultClass=0;
+        public const int Version=6, ClassCount=4, AssaultClass=0;
         public const int ShockSkillIndex=0,MobilitySkillIndex=1,FortifySkillIndex=2,ReloadSkillIndex=3,ScanSkillIndex=4,PrecisionSkillIndex=5,RemoteSkillIndex=6,DenialSkillIndex=7;
         public const int ShieldGeneralIndex=0,KnifeGeneralIndex=1;
-        public const int MedkitPrice=20,AmmoPrice=25,ArmorPrice=25,MedkitCarryLimit=2,AmmoMagazineCount=2,OptionalReward=40;
+        public const int MedkitPrice=20,AmmoPrice=25,ArmorPrice=25,MedkitCarryLimit=3,AmmoMagazineCount=2,OptionalReward=40;
+        public const int ConsumableSlotLimit=3, ConsumableTotalLimit=6;
         public const float MedkitHeal=40f,ArmorAmount=40f;
         public const string MobilitySkillId="rapid_mobility",ShieldSkillId="a_shield";
         public static readonly string[] ClassNames={"突击兵","重装兵","侦查兵","远程兵"};
@@ -58,7 +59,7 @@ namespace SwapHunter
         public static int ConsumablePrice(int type)
         {if(!ValidConsumable(type))throw new ArgumentOutOfRangeException(nameof(type));return type==0?MedkitPrice:type==1?AmmoPrice:ArmorPrice;}
         public static int ConsumableLimit(int type)
-        {if(!ValidConsumable(type))throw new ArgumentOutOfRangeException(nameof(type));return type==0?2:1;}
+        {if(!ValidConsumable(type))throw new ArgumentOutOfRangeException(nameof(type));return ConsumableSlotLimit;}
         public static int BaseReward(int level)
         {ValidateLevel(level);return 50;}
         public static int FirstClearExtra(int level)

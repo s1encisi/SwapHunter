@@ -122,26 +122,36 @@ namespace SwapHunter
         MissionLayout layout;
         EnemyActor owner;
         Bounds territory;
-        bool awaitingLanding, bossMovement;
-        public string GroupId { get; private set; }
-        public Vector3 CurrentCenter => territory.center;
-        public Vector3 Fallback => territory.ClosestPoint(transform.position);
-        public bool Allows(Vector3 destination) => bossMovement || awaitingLanding || territory.Contains(destination + Vector3.up * .15f);
-        public void Configure(MissionLayout layout, string groupId, bool fixedPost)
+        bool awaitingLanding,bossMovement,fixedStation;
+        public string GroupId{get;private set;}
+        public Vector3 CurrentCenter=>territory.center;
+        public Vector3 Fallback=>territory.ClosestPoint(transform.position);
+        public bool FixedPost=>fixedStation;
+        public bool Allows(Vector3 destination)
         {
-            this.layout = layout; GroupId = groupId; owner = GetComponent<EnemyActor>(); bossMovement = owner.kind == EnemyKind.Elite;
-            territory = layout.RegionAt(transform.position, fixedPost);
+            if(bossMovement||awaitingLanding||territory.Contains(destination+Vector3.up*.15f))return true;
+            if(fixedStation||!owner||!owner.tactical||!owner.tactical.HasPlayerMemory)return false;
+            // Ordinary squads can pursue through connected doors/corridors. The
+            // NavMesh path checks still own reachability; this is only a leash.
+            Vector3 fromHome=Vector3.ProjectOnPlane(destination-territory.center,Vector3.up);
+            return fromHome.magnitude<=Mathf.Max(48,Mathf.Max(territory.extents.x,territory.extents.z)+18);
+        }
+        public void Configure(MissionLayout layout,string groupId,bool fixedPost)
+        {
+            this.layout=layout;GroupId=groupId;owner=GetComponent<EnemyActor>();
+            bossMovement=owner.kind==EnemyKind.Elite;fixedStation=fixedPost;
+            territory=layout.RegionAt(transform.position,fixedPost);
         }
         public void RebaseAfterSwap()
         {
-            awaitingLanding = owner && owner.motion && owner.motion.Airborne;
-            territory = layout.RegionAt(transform.position, false);
-            if (DemoGame.I) DemoGame.I.Record("encounter_relocated", GroupId + " center=" + territory.center);
+            awaitingLanding=owner&&owner.motion&&owner.motion.Airborne;fixedStation=false;
+            territory=layout.RegionAt(transform.position,false);
+            if(DemoGame.I)DemoGame.I.Record("encounter_relocated",GroupId+" center="+territory.center);
         }
         void LateUpdate()
         {
-            if (!awaitingLanding || !owner || !owner.Alive || owner.motion && owner.motion.Airborne) return;
-            awaitingLanding = false; territory = layout.RegionAt(transform.position, false);
+            if(!awaitingLanding||!owner||!owner.Alive||owner.motion&&owner.motion.Airborne)return;
+            awaitingLanding=false;territory=layout.RegionAt(transform.position,false);
         }
     }
 

@@ -1,33 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace SwapHunter
 {
- public sealed partial class DemoGame
- {
-  Texture2D menuKeyArt;
-  void BrandedMenu()
-  {
-   if(!menuKeyArt)menuKeyArt=Resources.Load<Texture2D>("Brand/swaphunter-key-art-v05");
-   if(menuKeyArt)GUI.DrawTexture(FullScreenGuiRect,menuKeyArt,ScaleMode.ScaleAndCrop);
-   float left=62,width=Mathf.Min(510,viewWidth*.35f-55);
-   // Actual controls sit on the deliberately quiet side of the full illustrated composition.
-   Fill(new Rect(0,0,width+left+46,900),new Color(.009f,.023f,.044f,.27f));
-   Fill(new Rect(left,91,44,4),Cyan);
-   Text("SWAPHUNTER",new Rect(left,113,width,32),19,new Color(.64f,.87f,.89f));
-   Text("换位猎手",new Rect(left-5,165,width+35,105),74,Color.white);
-   Text("归航行动",new Rect(left,290,width+20,42),26,new Color(.76f,.95f,.95f));
-   Text("改变位置，把回来的路留给每个人。",new Rect(left,345,width+15,34),18,new Color(.68f,.77f,.81f));
-   if(Button("开始归航行动     →",new Rect(left,422,width,61),true))OpenHomecoming();
-   if(Button("逐步实战教学",new Rect(left,497,width,52)))StartTutorial();
-   if(Button("经典战役",new Rect(left,563,(width-12)/2,46)))StartRun();
-   if(Button("经典合约",new Rect(left+(width+12)/2,563,(width-12)/2,46)))OpenCampaignBoard();
-   bool checkpoint=RunStorage.Checkpoint>0;float y=623;
-   if(checkpoint){if(Button("继续战役检查点",new Rect(left,y,width,42)))StartRun(false,true);y+=54;}
-   if(Button("自由试招",new Rect(left,y,(width-12)/2,44)))StartRun(true);
-   if(Button("设置",new Rect(left+(width+12)/2,y,(width-12)/2,44)))OpenSettings();
-   if(Button("退出游戏",new Rect(left,y+57,width,42)))Application.Quit();
-   Text("Tab / 方向键选择 · Enter 确认",new Rect(left,837,width+30,24),14,new Color(.58f,.69f,.74f));
-   Text("FPS / 空间换位 / 高机动战斗",new Rect(viewWidth-475,790,415,30),18,new Color(.84f,.96f,.97f),TextAnchor.MiddleRight);
-   Text("v"+Application.version,new Rect(viewWidth-250,837,190,24),14,new Color(.63f,.74f,.78f),TextAnchor.MiddleRight);
-  }
- }
+    public sealed partial class DemoGame
+    {
+        Texture2D menuKeyArt;
+        void BrandedMenu()
+        {
+            if(!menuKeyArt)menuKeyArt=Resources.Load<Texture2D>("UI/Homecoming/menu-harbor-v2");
+            Fill(FullScreenGuiRect,Ink);
+            if(menuKeyArt)GUI.DrawTexture(FullScreenGuiRect,menuKeyArt,ScaleMode.ScaleAndCrop);
+            float left=Mathf.Max(64,viewWidth*.065f),width=Mathf.Min(440,viewWidth*.34f);
+            Fill(new Rect(0,FullScreenGuiRect.yMin,left+width+65,FullScreenGuiRect.height),new Color(.025f,.048f,.059f,.70f));
+            Text("SWAPHUNTER",new Rect(left,104,width,30),18,Amber);
+            Text("换位猎手",new Rect(left-4,167,width+45,100),72,Paper);
+            Text("归航行动",new Rect(left,286,width,48),31,Paper);
+            Text("把回来的路，留给每个人。",new Rect(left,352,width+20,40),19,new Color(.72f,.80f,.79f));
+            Fill(new Rect(left,414,width,1),new Color(.45f,.53f,.51f,.5f));
+            if(Button("开始行动    →",new Rect(left,464,width,64),true))OpenHomecoming();
+            if(Button("设置",new Rect(left,548,width,52)))OpenSettings();
+            if(Button("退出游戏",new Rect(left,620,width,52)))Application.Quit();
+            Text("归航行动 / 12 章完整旅程",new Rect(left,788,width+60,28),15,Muted);
+            Text("v"+Application.version,new Rect(viewWidth-220,840,160,24),13,new Color(.73f,.80f,.79f),TextAnchor.MiddleRight);
+        }
+    }
 }

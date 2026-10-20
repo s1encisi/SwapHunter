@@ -1,0 +1,3 @@
+# Verified with Python 3.11.14 on 2026-10-20; 88 WAVs reproduced byte-for-byte.
+numpy==1.26.4
+scipy==1.16.0

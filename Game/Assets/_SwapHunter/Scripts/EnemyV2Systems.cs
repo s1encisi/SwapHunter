@@ -86,7 +86,7 @@ namespace SwapHunter
   void Update()
   {
    var g=DemoGame.I;if(!g||!g.IsPlaying)return;if(!owner||!owner.Alive||owner.Silenced){Destroy(gameObject);return;}
-   if(!attached){Vector3 step=velocity*Time.deltaTime;if(CombatRay.Cast(transform.position,step.normalized,step.magnitude,owner.transform,out var h)){if(h.collider.GetComponentInParent<PlayerMotor>()){attached=true;g.Toast("牵引减速 · 绕柱断索 / Q拉开 / 打断控制者",2);}else{Destroy(gameObject);return;}}else transform.position+=step;if((life-=Time.deltaTime)<=0){Destroy(gameObject);return;}}
+   if(!attached){Vector3 step=velocity*Time.deltaTime;if(CombatRay.Cast(transform.position,step.normalized,step.magnitude,owner.transform,out var h)){if(h.collider.GetComponentInParent<PlayerMotor>()){attached=true;g.Toast("牵引减速 · 绕柱断索 / {key:6}拉开 / 打断控制者",2);}else{Destroy(gameObject);return;}}else transform.position+=step;if((life-=Time.deltaTime)<=0){Destroy(gameObject);return;}}
    else
    {
     transform.position=g.player.transform.position+Vector3.up*.8f;if((remaining-=Time.deltaTime)<=0){Destroy(gameObject);return;}

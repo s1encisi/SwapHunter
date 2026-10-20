@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace SwapHunter
@@ -92,8 +92,8 @@ namespace SwapHunter
             if(!IsPlaying||!player)return;var interaction=player.GetComponent<InteractionV2>();
             if(interaction&&!string.IsNullOrEmpty(interaction.Hint))
             {
-                float x=viewWidth*.5f-330;Text(interaction.Hint,new Rect(x,737,660,32),19,Cyan,TextAnchor.MiddleCenter);
-                if(interaction.Holding){Fill(new Rect(x,771,660,4),new Color(.1f,.2f,.25f));Fill(new Rect(x,771,660*interaction.Progress,4),Cyan);}
+                float x=viewWidth*.5f-330;Text(interaction.Hint,new Rect(x,609,660,32),19,Cyan,TextAnchor.MiddleCenter);
+                if(interaction.Holding){Fill(new Rect(x,643,660,4),new Color(.1f,.2f,.25f));Fill(new Rect(x,643,660*interaction.Progress,4),Cyan);}
             }
             var items=player.GetComponent<ConsumableUseV2>();if(!items)return;
             Text(KeyName(26)+" 道具："+items.CurrentName+" × "+items.CurrentCount+"   "+KeyName(27)+" 使用 / "+KeyName(19)+" 医疗",new Rect(32,550,560,30),19,Paper);

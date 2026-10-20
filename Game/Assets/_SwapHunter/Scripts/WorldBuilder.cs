@@ -272,7 +272,7 @@ namespace SwapHunter
     public sealed class WorldFontAtlas : MonoBehaviour
     {
         Font font; Material material;
-        public void Initialize(Font f, Material m) { font = f; material = m; Font.textureRebuilt += Refresh; }
+        public void Initialize(Font f, Material m) { font = f; material = m; Font.textureRebuilt += Refresh; KeyHintWorldLabel.Attach(GetComponent<TextMesh>()); }
         void Refresh(Font f) { if (f == font && material) material.mainTexture = font.material.mainTexture; }
         void OnDestroy() { Font.textureRebuilt -= Refresh; if (material) Destroy(material); }
     }

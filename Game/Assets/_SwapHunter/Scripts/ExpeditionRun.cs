@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -92,6 +92,7 @@ namespace SwapHunter
     expeditionMap=ExpeditionWorld.Build(this,level);world=expeditionMap.root;player.ResetAt(expeditionMap.spawn);
     var deployment=expeditionStore.Profile.deployment;
     player.SetLoadout(TacticalExpedition?deployment.primary:expeditionStore.Primary,TacticalExpedition?deployment.secondary:expeditionStore.Secondary);
+    if(TacticalExpedition&&player.meleeEquipment)player.meleeEquipment.ApplyDeploymentKnife(deployment.knifeId);
     foreach(int w in player.EquippedWeapons)if(ActiveExpeditionAttachment(w)==2)player.reserve[w]=Mathf.RoundToInt(player.reserve[w]*1.25f);
     // V2: each control region has authored finite supplies; no arbitrary half-reserve penalty.
     expeditionMedkits=TacticalExpedition?deployment.carriedConsumables[0]:Spec==1?3:2;expeditionAmmoPacks=TacticalExpedition?deployment.carriedConsumables[1]:1;expeditionArmorPacks=TacticalExpedition?deployment.carriedConsumables[2]:0;
@@ -230,7 +231,7 @@ namespace SwapHunter
    }
    try
    {
-    expeditionReceipt=expeditionStore.Settle(expeditionRun,success,expeditionBonus,runSeconds,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[0]-expeditionMedkits:0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[1]-expeditionAmmoPacks:0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[2]-expeditionArmorPacks:0,player.meleeEquipment?player.meleeEquipment.AttemptPickups:null,player.meleeEquipment?player.meleeEquipment.KnifeId:0);expeditionPending=false;
+    expeditionReceipt=expeditionStore.Settle(expeditionRun,success,expeditionBonus,runSeconds,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[0]-expeditionMedkits:0,TacticalExpedition&&success?Mathf.Max(0,expeditionStore.Profile.deployment.carriedConsumables[1]-expeditionAmmoPacks):0,TacticalExpedition&&success?expeditionStore.Profile.deployment.carriedConsumables[2]-expeditionArmorPacks:0,player.meleeEquipment?player.meleeEquipment.AttemptPickups:null,player.meleeEquipment?player.meleeEquipment.KnifeId:0);expeditionPending=false;
     expeditionInventory=false;expeditionAwaitingRetry=false;SetState(success?RunState.Victory:RunState.Dead);
     Record("expedition_settlement",JsonUtility.ToJson(expeditionReceipt));
     // mission_exit is intent; only a successfully persisted receipt reaches this snapshot.

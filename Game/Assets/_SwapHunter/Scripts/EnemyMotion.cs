@@ -9,7 +9,7 @@ namespace SwapHunter
  {
   EnemyActor owner;CharacterController capsule;NavMeshAgent agent;float fallingSpeed;
   public bool Airborne {get;private set;}
-  bool scripted;
+  bool scripted;float blockedSeconds;
   public void BeginScripted(){scripted=true;if(agent.enabled&&agent.isOnNavMesh){agent.isStopped=true;agent.ResetPath();}}
   public void EndScripted(){scripted=false;if(GroundAt(transform.position,out var p)){Airborne=false;if(!agent.enabled)agent.enabled=true;if(agent.isOnNavMesh){agent.Warp(p);agent.nextPosition=transform.position;agent.ResetPath();}}else{if(agent.enabled)agent.enabled=false;Airborne=true;fallingSpeed=0;}}
   public void Initialize(EnemyActor e,CharacterController c){owner=e;capsule=c;agent=e.agent;agent.updatePosition=false;agent.nextPosition=transform.position;}
@@ -96,7 +96,12 @@ namespace SwapHunter
    }
    if(!agent.enabled||!agent.isOnNavMesh)return;
    Vector3 wanted=agent.nextPosition-transform.position+Vector3.down*.06f;
+   Vector3 before=transform.position;
    capsule.Move(owner.ConstrainShieldMotion(wanted));
+   float actual=Vector3.ProjectOnPlane(transform.position-before,Vector3.up).magnitude;
+   bool trying=!agent.isStopped&&agent.hasPath&&agent.remainingDistance>agent.stoppingDistance+.3f;
+   blockedSeconds=trying&&actual<Time.deltaTime*.12f?blockedSeconds+Time.deltaTime:0;
+   if(blockedSeconds>1.25f&&owner.tactical){blockedSeconds=0;agent.ResetPath();owner.tactical.RequestReposition();}
    agent.nextPosition=transform.position;
   }
  }

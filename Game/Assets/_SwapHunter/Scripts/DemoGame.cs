@@ -99,6 +99,8 @@ namespace SwapHunter
             FireControlRelay.FeatureEnabled=Array.IndexOf(d2Args,"-d2NoRelay")<0;
             EnemyHazardAwareness.DecisionsEnabled=Array.IndexOf(d2Args,"-d2NoHazardAI")<0;
             if (RunStorage.IsDemonstration) { BeginDemonstration(); yield break; }
+            if(RunStorage.IsOctoberValidation){gameObject.AddComponent<OctoberRefinementQA>();yield break;}
+            if(RunStorage.IsOctoberCombatValidation){var qa=typeof(DemoGame).Assembly.GetType("SwapHunter.OctoberCombatQA");if(qa==null)throw new InvalidOperationException("October combat QA missing");gameObject.AddComponent(qa);yield break;}
             if(RunStorage.IsFocusValidation){gameObject.AddComponent<FocusRefinementQA>();yield break;}
             if(RunStorage.IsMapV2Validation){gameObject.AddComponent<MapV2QA>();yield break;}
             if(RunStorage.IsStoryD2Validation){gameObject.AddComponent<StoryD2QA>();yield break;}
@@ -223,7 +225,7 @@ namespace SwapHunter
             practice = training; totalKills = totalSwaps = totalHits = totalShots = deaths = 0; runSeconds = 0;
             tutorialMoved = tutorialShot = tutorialSwapped = false; hasCore = false;
             EnterStage(training ? 1 : resume ? Mathf.Clamp(RunStorage.Checkpoint, 0, 4) : 0, true);
-            SetState(RunState.Playing); Toast(training ? "自由试招 · 使用两种武器与换位组合，Esc 可退出" : "任务：穿过货运港，取得相位核心并撤离", 4);
+            SetState(RunState.Playing); Toast(training ? "自由试招 · 使用两种武器与换位组合，{key:16} 可退出" : "任务：穿过货运港，取得相位核心并撤离", 4);
         }
         public void EnterStage(int number, bool respawn)
         {
@@ -300,7 +302,7 @@ namespace SwapHunter
             if (!terminal) return false;
             if (stage == 0 && !(tutorialMoved && tutorialShot && tutorialSwapped)) { Toast("先完成移动、射击与换位校准", 2); return false; }
             if ((stage == 1 || stage == 3) && !combatComplete) { Toast("控制台仍被封锁 · 先处理当前部队", 2); return false; }
-            if (practice) { Toast("试招场会持续刷新敌人，Esc 可返回菜单", 2); return false; }
+            if (practice) { Toast("试招场会持续刷新敌人，{key:16} 可返回菜单", 2); return false; }
             terminal.Activate(); sound.Play("confirm"); Record("terminal", terminal.label);
             if (stage == 4) { SetState(RunState.Victory); RunStorage.Checkpoint = 0;  Record("victory", runSeconds.ToString("F2")); return true; }
             if (stage == 2)
@@ -330,12 +332,12 @@ namespace SwapHunter
         void OnApplicationFocus(bool focus) { if (!qaMode && !Application.isBatchMode) { AudioListener.pause = !focus && options.muteWhenUnfocused; if (!focus) HandleFocusLoss(); } }
         public void Toast(string message, float duration = 2) { toast = message; toastUntil = Time.unscaledTime + duration; }
         public bool ToastVisible => Time.unscaledTime < toastUntil;
-        public string Objective => D2TrialScenarioActive?D2TrialObjective:tutorialCourse&&tutorialCourse.Active?tutorialCourse.Instruction:expeditionActive ? ExpeditionObjective : campaignActive ? CampaignObjective : ObjectiveClassic;
+        public string Objective => D2TrialScenarioActive?D2TrialObjective:tutorialCourse&&tutorialCourse.Active?tutorialCourse.Instruction:expeditionActive ? (HomecomingTeachingActive?HomecomingTeachingInstruction:ExpeditionObjective) : campaignActive ? CampaignObjective : ObjectiveClassic;
         public string ObjectiveClassic
         {
             get
             {
-                if (practice) return "尝试换位抢高点、绕盾与两枪配合 · Esc 返回";
+                if (practice) return "尝试换位抢高点、绕盾与两枪配合 · {key:16} 返回";
                 if (stageComplete) return "通路已开启，沿发光边线向前推进";
                 if (stage == 0) return !tutorialMoved ? "使用移动按键前进 · 鼠标观察 · " + KeyName(5) + " 冲刺" : !tutorialShot ? KeyName(12) + " 射击前方训练机 · " + KeyName(7) + " 装填" : !tutorialSwapped ? "瞄准机器人或高台信标，按 " + KeyName(6) + " 交换位置" : "靠近前方控制台，按 " + KeyName(8) + " 开启出口";
                 if (stage == 1) return combatComplete ? "靠近区域末端控制台，按 " + KeyName(8) + " 解除封锁" : "处理两批守卫 · 抢占高台，避免停留在交叉火力中";

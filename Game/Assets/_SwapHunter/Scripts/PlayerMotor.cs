@@ -237,7 +237,7 @@ namespace SwapHunter
                 recoilAngles = Vector2.MoveTowards(recoilAngles, Vector2.zero, recoveryStep * (burstCount <= 3 ? 5 : 3.4f));
             }
             visualKick = Mathf.Lerp(visualKick, 0, 1 - Mathf.Exp(-20 * dt));
-            if(cycleSoundAt>0 && Time.time>=cycleSoundAt){cycleSoundAt=0;G.sound.Play("reload_bolt");}
+            if(cycleSoundAt>0 && Time.time>=cycleSoundAt){cycleSoundAt=0;G.sound.PlayWeapon(weapon,"reload_bolt");}
             if(charging && chargeRequiresHold && !G.Held(12))CancelFireSequence();
             Eye.localPosition=Vector3.Lerp(Eye.localPosition,Vector3.up*(IsCrouching?.98f:1.62f),1-Mathf.Exp(-18*dt));
             AdvanceFireSequence();
@@ -358,7 +358,7 @@ namespace SwapHunter
             if(!changed)return;if(meleeEquipment)meleeEquipment.Unequip();CancelConsumableV2();
             CancelFireSequence();SuspendReloadV2();ResetReloadPresentation();IsAiming=false;sprintLatched=IsSprinting=false;
             weapon=slot;ShowWeapon();ResumeReloadV2();nextShot=Mathf.Max(nextShot,Time.time+WeaponMotionV2.Get(weapon).readySeconds);
-            G.sound.Play("reload");
+            G.sound.PlayWeapon(weapon,"equip");
         }
         public bool Reload(){if(meleeEquipment&&meleeEquipment.Equipped)return false;CancelConsumableV2();return BeginReloadV2();}
         public bool AccelerateCurrentReload(float remainingMultiplier)=>AccelerateReloadV2(remainingMultiplier);
@@ -418,7 +418,7 @@ namespace SwapHunter
             if(classSkill)classSkill.EndForAttack("fire");
             float abilityMultiplier=classSkill?classSkill.ConsumePrecisionShot():1;
             float interval=1/Mathf.Max(.1f,Rate);nextShot=Time.time+interval;
-            G.sound.Play(def.sound);if(def.accent.Length>0)G.sound.Play(def.accent);
+            G.sound.PlayWeapon(weapon,"fire");EnemyTacticalAI.NotifyPlayerShot(Eye.position);
             if(def.mechanism==FireMechanism.Pump||def.mechanism==FireMechanism.BoltAction)cycleSoundAt=Time.time+interval*.48f;
             float spreadAngle=CurrentSpreadDegrees;
             int count=EffectiveWeaponStats.Read(weapon,G.config).Pellets;
@@ -454,6 +454,7 @@ namespace SwapHunter
                                     if(hitEnemy)
                                     {
                                         if(region!="头部")region=hitEnemy.LastHitRegionLabel;
+                                        PrecisionImpact.Spawn(endpoint,hitEnemy.LastHitRegion==EnemyHitRegion.Head);
                                         if(def.mechanism==FireMechanism.PhaseMark&&hitEnemy.Alive){hitEnemy.MarkPhase(5);region="相位标记";}
                                     }
                                     else region=result.receiverKind=="device"?"中继设备":"任务装置";
@@ -496,8 +497,9 @@ namespace SwapHunter
         public void ReportWeaponHit(bool killed,string region)
         {
             HitRegionLabel=region;blockFlash=0;
-            if(killed){killFlash=hitFlash=.25f;G.sound.Play("kill");}
-            else{hitFlash=.14f;G.sound.Play(region=="头部"?"head_hit":region=="四肢"?"limb_hit":"impact");}
+            bool head=region=="头部";
+            if(killed){killFlash=hitFlash=head?.32f:.25f;G.sound.Play(head?"head_kill":"kill");}
+            else{hitFlash=head?.32f:.14f;G.sound.Play(head?"head_hit":region=="四肢"?"limb_hit":"impact");}
         }
         public bool TrySetCrouch(bool crouch)
         {

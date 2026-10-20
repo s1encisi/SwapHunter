@@ -10,6 +10,7 @@ namespace SwapHunter
         static readonly Vector3 Origin=new Vector3(1060,-256,-1024);
         GameObject stage,model;Camera cameraView;Light key,fill;RenderTexture texture;
         int selected,built=-1;bool visible,dirty;float yaw,nextRender;Bounds bounds;
+        public bool AutoRotate = true;
         public RenderTexture Texture=>visible?texture:null;
         public string Error{get;private set;}="";
         public void Select(int id){if(selected!=id){selected=id;dirty=true;}}
@@ -34,6 +35,7 @@ namespace SwapHunter
                     model.transform.position-=bounds.center-Origin;
                     bounds=new Bounds(Vector3.zero,bounds.size);built=selected;yaw=0;dirty=true;
                 }
+                if(AutoRotate&&model){yaw=Mathf.Repeat(yaw+Time.unscaledDeltaTime*14,360);dirty=true;}
                 if(dirty&&Time.unscaledTime>=nextRender)
                 {
                     model.transform.localRotation=Quaternion.Euler(0,yaw,0);
@@ -59,7 +61,7 @@ namespace SwapHunter
             var data=cameraView.GetUniversalAdditionalCameraData();data.renderPostProcessing=false;data.renderShadows=false;
             key=MakeLight("Class key",new Color(1,.93f,.8f),3.1f,new Vector3(25,-35,0));
             fill=MakeLight("Class fill",new Color(.45f,.7f,1),1.2f,new Vector3(20,140,0));
-            texture=new RenderTexture(384,512,24,RenderTextureFormat.ARGB32){name="Class portrait",hideFlags=HideFlags.DontSave};texture.Create();
+            texture=new RenderTexture(768,1024,24,RenderTextureFormat.ARGB32){name="Class portrait",hideFlags=HideFlags.DontSave};texture.Create();
         }
         Light MakeLight(string name,Color color,float strength,Vector3 angle)
         {

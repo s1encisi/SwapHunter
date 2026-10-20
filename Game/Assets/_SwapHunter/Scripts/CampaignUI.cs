@@ -4,7 +4,7 @@ namespace SwapHunter
 {
     public sealed partial class DemoGame
     {
-        static readonly Color Amber = new Color(1, .70f, .34f), Panel = new Color(.045f, .075f, .095f, .98f);
+        static readonly Color Amber = new Color(.87f, .69f, .42f), Panel = new Color(.075f, .118f, .141f, .98f);
         void RuleLine(float x, float y, float width) { Fill(new Rect(x, y, width, 1), new Color(.20f, .30f, .34f)); }
         void CampaignBoardUI()
         {

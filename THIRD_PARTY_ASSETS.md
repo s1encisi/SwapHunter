@@ -34,3 +34,22 @@ George 在上一版只是候选；当前已转为实际使用。旧候选记录�
 共使用3首配乐、17个精选音效和1段环境循环，导入目录为 `Game/Assets/_SwapHunter/Resources/Audio/N1/`。三首曲目映射五种音乐状态，未另行声称有五首独立曲目。音乐保留立体声，短音效转单声道并按用途剪裁和降幅；爆炸由同一CC0素材包两段混合。无线电采用字幕与提示音，没有中文人物配音。游戏还保留适合特定动作的程序合成音，不将全部音效归为外部素材。
 
 这些音频的 CC0 许可不改变项目原创代码、剧情与配置的许可；保留作者署名不代表作者为项目背书。
+
+## 2026-10-20 枪械音效与命中反馈
+
+本次新增 88 段 48 kHz、16-bit、单声道音效，位于 `Game/Assets/_SwapHunter/Resources/Audio/Refinement/`：12 把武器各有 3 个射击变体、4 个装填／切枪事件，共 84 段；另有 4 段项目程序合成的躯干、肢体、头部命中及爆头击杀反馈。
+
+| 采用内容 | 来源与许可 | 处理及使用 |
+|---|---|---|
+| cg1、pistol、rifle、shotgun 枪响 | [Michel Baradari / apollo-music.de 原发布页](https://opengameart.org/content/chaingun-pistol-rifle-shotgun-shots)，[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | 切分、变调、均衡、分层、短反射和归一化，生成 36 段射击变体；部分能量武器另叠加项目合成声层 |
+| gunreload1、assaultriflereload1、shotguncock | [SpringySpringo 原发布页](https://opengameart.org/content/gun-reload-sounds)，[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 气枪装填录音按移除、装入、上膛和切枪事件切分，生成 48 段动作音效 |
+
+原始录音保存在 `Tools/AudioAuthoring/audio_sources/`，源文件与当前输出的 SHA-256 已纳入 JSON 台账。作者、原链接、许可及修改说明保存在 `Game/Assets/_SwapHunter/Resources/Audio/Refinement/CREDITS.txt`。发布构建时随包保留该说明；CC BY 3.0 枪响及其改编输出不改用项目 MIT 许可。
+
+生成工具、锁定依赖与部署步骤见 [音频制作说明](Tools/AudioAuthoring/README.md)。2026-10-20 在独立工作目录重新生成 88 个 WAV，与当前游戏资源逐字节一致；此项验证覆盖生成闭包与输出一致性，不代表人工听感评审。
+
+## 2026-10-20 模型细化与菜单背景
+
+十二枪继续使用既有 Quaternius 与 Kenney 合法来源，本次细化硬边、枪口内壁和机械细节，并修正双管枪准星与折管部件的绑定。当前 12 个 GLB 产物的哈希与字节数已更新；原始第三方源文件哈希保持不变。制作过程对应 `Tools/VisualAuthoring/refine_weapon_assets.py` 与 `fix_break_action_details.py`。
+
+`Game/Assets/_SwapHunter/Resources/UI/Homecoming/menu-harbor-v2.png` 为 2026-10-20 使用内置 imagegen 生成的港区概念背景，实际尺寸 **1672 × 941**，不是实机截图或下载的外部游戏素材。生成提示词请求了 2560 × 1440，但实际产物尺寸以上述 PNG 为准；完整提示词、实际尺寸与文件哈希保存在 JSON 台账的 `projectGeneratedAssets` 中。

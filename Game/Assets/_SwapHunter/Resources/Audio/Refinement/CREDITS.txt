@@ -1,0 +1,16 @@
+SwapHunter weapon audio refinement — 2026-10-20
+
+Gunshots: Michel Baradari / apollo-music.de, “Chaingun, pistol, rifle, shotgun shots”.
+Source: https://opengameart.org/content/chaingun-pistol-rifle-shotgun-shots
+License: Creative Commons Attribution 3.0 — https://creativecommons.org/licenses/by/3.0/
+Original files: cg1.wav, pistol.wav, rifle.wav, shotgun.wav.
+Changes: trimming, pitch variation, equalization, layering, short reflections, mono resampling and normalization.
+
+Reload and equip Foley: SpringySpringo, “Gun reload sounds”.
+Source: https://opengameart.org/content/gun-reload-sounds
+License: CC0 — https://creativecommons.org/publicdomain/zero/1.0/
+Original files: gunreload1.wav, assaultriflereload1.wav, shotguncock.wav (airsoft recordings).
+Changes: segmented into extraction, insertion, chamber and equip actions, pitch/EQ/level processing.
+
+Head/body hit feedback and energy layers: original procedural sounds authored for this project.
+No Counter-Strike audio or proprietary Valve assets are used.

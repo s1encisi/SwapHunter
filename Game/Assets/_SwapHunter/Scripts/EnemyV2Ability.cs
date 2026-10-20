@@ -25,7 +25,7 @@ namespace SwapHunter
   }
   void Clear(){if(warning)Destroy(warning.gameObject);if(beam)Destroy(beam.gameObject);if(owner&&owner.VisualRig)owner.VisualRig.SetAbilityPresentation(AbilityName,1,false);}
   void Stop(){if(owner.agent.enabled&&owner.agent.isOnNavMesh){owner.agent.isStopped=true;owner.agent.ResetPath();}}
-  bool Ready=>!owner.Silenced&&(!equipment||equipment.Alive)&&Time.time>=nextAt&&owner.tactical&&owner.tactical.HasPlayerMemory;
+  bool Ready=>owner.tactical&&!owner.tactical.IsPreparingGrenade&&!owner.Silenced&&(!equipment||equipment.Alive)&&Time.time>=nextAt&&owner.tactical.HasPlayerMemory;
   bool Begin(string name,float warningTime,float cooldown,string channel="pressure",int capacity=1)
   {
    if(!EnemySkillReservations.TryClaim(owner,channel,warningTime+1.5f,capacity))return false;
@@ -36,6 +36,7 @@ namespace SwapHunter
   public bool Tick(float dt)
   {
    if(!owner||!owner.Alive)return false;
+   if((Phase==EnemyAbilityPhase.Telegraph||Phase==EnemyAbilityPhase.Execute)&&owner.tactical.EvadingKnownDanger){Interrupt("known_hazard");return false;}
    if(owner.Silenced&&Phase==EnemyAbilityPhase.Telegraph)Interrupt("silence");
    if(Phase==EnemyAbilityPhase.Recover){Stop();clock-=dt;owner.VisualRig.SetAbilityPresentation(AbilityName,Progress,true);if(clock<=0){Phase=EnemyAbilityPhase.Ready;Clear();}return true;}
    if(Phase==EnemyAbilityPhase.Telegraph)
@@ -44,6 +45,9 @@ namespace SwapHunter
    if(!Ready)return false;float distance=Vector3.Distance(transform.position,owner.tactical.LastKnownFeet);
    if(owner.kind==EnemyKind.Engineer)return TryRepair();
    if(!owner.tactical.SeesPlayer)return false;
+   // Let the tactical controller finish its flank instead of resetting its path
+   // and cover selection on every blocked ability tick.
+   if(DirectionalBarrier.BlocksSegment(owner.MuzzlePosition,owner.tactical.PlayerTorso)&&owner.kind!=EnemyKind.Mortar&&owner.kind!=EnemyKind.Breacher)return false;
    switch(owner.kind)
    {
     case EnemyKind.Elite:return Begin("侧移压制",.7f,8,"command");

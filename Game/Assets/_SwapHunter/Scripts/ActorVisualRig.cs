@@ -47,6 +47,11 @@ namespace SwapHunter
         struct BonePose { public Transform bone; public Vector3 restPosition,fromPosition;public Quaternion restRotation,fromRotation; }
         BonePose[] bones=Array.Empty<BonePose>();
         Transform hips,head,chest,rightUpper,rightLower,rightHand,leftUpper,leftLower,leftHand;
+        Transform rightPalmMarker,leftPalmMarker;
+        Vector3 rightPalmLocal,leftPalmLocal;
+        Quaternion rightPalmFrameInHand,leftPalmFrameInHand;
+        public float FirearmPalmError=>weapon&&rightPalmMarker?Vector3.Distance(rightPalmMarker.position,WeaponMount.position):-1;
+        public float SupportPalmError=>weapon&&leftPalmMarker&&supportGrip?Vector3.Distance(leftPalmMarker.position,supportGrip.position):-1;
         Transform weapon,supportGrip,blade,bladeGrip,shield,shieldGrip;BoxCollider shieldProxy;
         Vector3 hipsRestInBody,aim,headHitOffset,torsoHitOffset;float bodyScale=1;bool hitMarkersReady;int observedPlayerShots;float speed,gait,hitLeft,shotLeft,shieldSeconds,bossWindup,bossSwing,shieldPoseOffset;
         bool displayOnly,shadowOnly,dead,stunned,grenadePreparing,shieldMelee,bossMelee,shotRestart;
@@ -101,6 +106,12 @@ namespace SwapHunter
             rightUpper=Bone(new[]{"UpperArm.R","RightArm","mixamorig:RightArm","upper_arm.R"});rightLower=Bone(new[]{"LowerArm.R","RightForeArm","mixamorig:RightForeArm","forearm.R"});
             leftUpper=Bone(new[]{"UpperArm.L","LeftArm","mixamorig:LeftArm","upper_arm.L"});leftLower=Bone(new[]{"LowerArm.L","LeftForeArm","mixamorig:LeftForeArm","forearm.L"});
             rightHand=mech?MechPalm(rightLower,".R"):Bone(new[]{"Fist.R","Hand.R","RightHand","mixamorig:RightHand","hand.R"});leftHand=mech?MechPalm(leftLower,".L"):Bone(new[]{"Fist.L","Hand.L","LeftHand","mixamorig:LeftHand","hand.L"});
+            rightPalmMarker=ImportedModels.Find(body.transform,"PalmContact_R");leftPalmMarker=ImportedModels.Find(body.transform,"PalmContact_L");
+            // Calibrate the authored closed hand in bind pose. Forward is the
+            // palm-facing direction; the thumb side is opposite on the two hands.
+            // A wrist bone origin is not a weapon contact point.
+            if(rightPalmMarker){rightPalmLocal=rightHand.InverseTransformPoint(rightPalmMarker.position);rightPalmFrameInHand=Quaternion.Inverse(rightHand.rotation)*Quaternion.LookRotation(transform.forward,-transform.right);}
+            if(leftPalmMarker){leftPalmLocal=leftHand.InverseTransformPoint(leftPalmMarker.position);leftPalmFrameInHand=Quaternion.Inverse(leftHand.rotation)*Quaternion.LookRotation(transform.forward,transform.right);}
             hipsRestInBody=body.transform.InverseTransformPoint(hips.position);
             authoredHeadHit=ImportedModels.Find(body.transform,"HeadHit");authoredChestHit=ImportedModels.Find(body.transform,"ChestHit");
             var unique=new HashSet<Transform>();foreach(var skin in body.GetComponentsInChildren<SkinnedMeshRenderer>(true)){skin.updateWhenOffscreen=true;foreach(var bone in skin.bones)if(bone)unique.Add(bone);}
@@ -145,10 +156,25 @@ namespace SwapHunter
         }
         public void ConfigureVariant(int archetype,int chapterBoss=-1)
         {
-            if(equipmentV2){equipmentV2.gameObject.SetActive(false);Destroy(equipmentV2.gameObject);}
+            if(equipmentV2){equipmentV2.ReleaseAttachments();equipmentV2.gameObject.SetActive(false);Destroy(equipmentV2.gameObject);}
             variantV2=archetype;bossChapterV2=chapterBoss;
             var node=new GameObject("MapV2 enemy equipment / "+archetype+" / "+chapterBoss);node.layer=Layers.Actor;node.transform.SetParent(transform,false);node.transform.localScale=Vector3.one*(owner?owner.Height/1.8f:1);
-            equipmentV2=node.AddComponent<EnemyV2VisualEquipment>();equipmentV2.Build(archetype,chapterBoss);
+            equipmentV2=node.AddComponent<EnemyV2VisualEquipment>();equipmentV2.Build(archetype,chapterBoss);equipmentV2.BindToSkeleton(this);
+            if(body&&!equipmentV2.MechanicalBody)
+            {
+                Color role=EnemyV2VisualEquipment.RoleColor(archetype);var block=new MaterialPropertyBlock();
+                foreach(var renderer in body.GetComponentsInChildren<Renderer>(true))
+                {
+                    var materials=renderer.sharedMaterials;
+                    for(int i=0;i<materials.Length;i++)
+                    {
+                        if(!materials[i])continue;string label=materials[i].name.ToLowerInvariant();
+                        if(!label.Contains("fabric")&&!label.Contains("weave")&&!label.Contains("ripstop")&&!label.Contains("armor")&&!label.Contains("ceramic")&&!label.Contains("composite")&&!label.Contains("identification"))continue;
+                        Color color=label.Contains("identification")?role:label.Contains("fabric")||label.Contains("weave")||label.Contains("ripstop")?Color.Lerp(new Color(.035f,.046f,.058f),role,.10f):Color.Lerp(new Color(.12f,.16f,.20f),role,.28f);
+                        renderer.GetPropertyBlock(block,i);block.SetColor("_BaseColor",color);renderer.SetPropertyBlock(block,i);block.Clear();
+                    }
+                }
+            }
             if(body)foreach(var renderer in body.GetComponentsInChildren<Renderer>(true))renderer.enabled=!equipmentV2.MechanicalBody;
             if(weapon)weapon.gameObject.SetActive(archetype!=0&&archetype!=10);
         }
@@ -178,7 +204,8 @@ namespace SwapHunter
         public void SetAim(Vector3 point){aim=point;}
         public void SetGrenadePreparing(bool value){grenadePreparing=value;}
         public void NotifyShot(){shotLeft=.18f;shotRestart=true;}
-        public void NotifyHit(){hitLeft=.18f;}
+        float headHitLeft;
+        public void NotifyHit(bool headshot=false){hitLeft=headshot?.28f:.18f;if(headshot)headHitLeft=.28f;}
         public void BeginDeath(){if(dead)return;dead=true;deathVisualTime=0;}
         public void SetShieldMelee(TacticalState state,float seconds){shieldMelee=true;shieldState=state;shieldSeconds=seconds;if(weapon)weapon.gameObject.SetActive(false);if(blade)blade.gameObject.SetActive(true);}
         public void DisableShieldMelee(){shieldMelee=false;if(blade)blade.gameObject.SetActive(false);if(weapon)weapon.gameObject.SetActive(true);}
@@ -249,6 +276,15 @@ namespace SwapHunter
             }
             if(head&&!dead){Vector3 local=transform.InverseTransformDirection(aim-head.position);float pitch=-Mathf.Atan2(local.y,new Vector2(local.x,local.z).magnitude)*Mathf.Rad2Deg;head.rotation=Quaternion.AngleAxis(Mathf.Clamp(pitch,-15,15),transform.right)*head.rotation;}
             if(owner&&hitMarkersReady)owner.AlignVisualHitRegions(this);
+            // Visual-only neck recoil is applied after the hit proxies were aligned.
+            // The next animation evaluation restores bones before gameplay alignment.
+            if(headHitLeft>0&&head&&!dead)
+            {
+                float age=.28f-headHitLeft;
+                float weight=Mathf.Sin(Mathf.Clamp01(age/.28f)*Mathf.PI);
+                head.localRotation*=Quaternion.Euler(-17*weight,0,7*weight);
+                headHitLeft=Mathf.Max(0,headHitLeft-dt);
+            }
             shotRestart=false;
         }
         void CalibrateHitMarkers()
@@ -300,18 +336,52 @@ namespace SwapHunter
                 shieldPoseOffset=Mathf.Max(prep,strike)*55;
             }
             else{shieldPoseOffset=0;wrist-=transform.forward*(shotLeft/.18f*.045f);}
-            SolveArm(rightUpper,rightLower,rightHand,wrist,transform.position+transform.right*.65f+transform.up*.95f);
-            Vector3 direction=aim-rightHand.position;if(direction.sqrMagnitude<.01f)direction=transform.forward;
-            WeaponMount.position=rightHand.position;WeaponMount.rotation=Quaternion.LookRotation(direction,transform.up);
+            bool firearmPalm=weapon&&!melee&&rightPalmMarker;
+            if(firearmPalm)
+            {
+                // Keep the established firearm mount and authored muzzle/sight
+                // geometry. Solve the wrist behind the real palm contact instead
+                // of displacing the firearm to the wrist bone.
+                Vector3 direction=aim-wrist;if(direction.sqrMagnitude<.01f)direction=transform.forward;
+                WeaponMount.position=wrist;WeaponMount.rotation=Quaternion.LookRotation(direction,transform.up);
+                Quaternion handRotation=WeaponMount.rotation*Quaternion.Inverse(rightPalmFrameInHand);
+                SolvePalm(rightUpper,rightLower,rightHand,rightPalmLocal,WeaponMount.position,handRotation,transform.position+transform.right*.65f+transform.up*.95f);
+            }
+            else
+            {
+                SolveArm(rightUpper,rightLower,rightHand,wrist,transform.position+transform.right*.65f+transform.up*.95f);
+                Vector3 direction=aim-rightHand.position;if(direction.sqrMagnitude<.01f)direction=transform.forward;
+                WeaponMount.position=rightHand.position;WeaponMount.rotation=Quaternion.LookRotation(direction,transform.up);
+            }
             handWeaponOffset=Quaternion.Inverse(rightHand.rotation)*WeaponMount.rotation;
             if(melee&&blade){FollowBlade(WeaponMount.rotation);handBladeOffset=Quaternion.Inverse(rightHand.rotation)*blade.rotation;}
             if(shield&&shield.gameObject.activeInHierarchy&&shieldGrip)SolveArm(leftUpper,leftLower,leftHand,shieldGrip.position,transform.position-transform.right*.7f+transform.up*.85f);
-            else if(!melee&&supportGrip)SolveArm(leftUpper,leftLower,leftHand,supportGrip.position,transform.position-transform.right*.65f+transform.up*.9f);
+            else if(!melee&&supportGrip)
+            {
+                if(leftPalmMarker)
+                {
+                    // Offhand cups the fore-end: palm normal faces upward and
+                    // slightly rearward; the thumb follows the barrel direction.
+                    Quaternion supportFrame=supportGrip.rotation*Quaternion.FromToRotation(Vector3.up,new Vector3(0,.45f,1).normalized)*Quaternion.Euler(0,180,0);
+                    SolvePalm(leftUpper,leftLower,leftHand,leftPalmLocal,supportGrip.position,supportFrame*Quaternion.Inverse(leftPalmFrameInHand),transform.position-transform.right*.65f+transform.up*.9f);
+                }
+                else SolveArm(leftUpper,leftLower,leftHand,supportGrip.position,transform.position-transform.right*.65f+transform.up*.9f);
+            }
             else if(shadowOnly)SolveArm(leftUpper,leftLower,leftHand,transform.TransformPoint(new Vector3(-.12f,1.14f,.60f)),transform.position-transform.right*.65f+transform.up*.9f);
         }
         void FollowBlade(Quaternion rotation)
         {
             blade.rotation=rotation;Vector3 gripLocal=blade.InverseTransformPoint(bladeGrip.position);blade.position=rightHand.position-blade.TransformVector(gripLocal);
+        }
+        static void SolvePalm(Transform upper,Transform lower,Transform hand,Vector3 palmLocal,Vector3 contact,Quaternion rotation,Vector3 hint)
+        {
+            Vector3 wrist=contact-rotation*Vector3.Scale(palmLocal,hand.lossyScale);
+            float length=Vector3.Distance(upper.position,lower.position)+Vector3.Distance(lower.position,hand.position);
+            Vector3 reach=wrist-upper.position;
+            // A bounded shoulder reach avoids stretching bones or leaving a palm
+            // floating on long rifle fore-ends. Animation restores this next frame.
+            if(reach.magnitude>length-.002f)upper.position+=reach.normalized*Mathf.Min(.08f,reach.magnitude-length+.002f);
+            SolveArm(upper,lower,hand,wrist,hint);hand.rotation=rotation;
         }
         static void SolveArm(Transform upper,Transform lower,Transform hand,Vector3 wanted,Vector3 hint)
         {

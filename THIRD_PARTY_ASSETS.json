@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedUtc": "2026-10-19T03:15:07.633965+00:00",
+  "updatedUtc": "2026-10-20T13:28:58.095026+00:00",
   "entries": [
     {
       "name": "Quaternius — Ultimate Modular Sci-Fi Pack (selected files)",
@@ -4320,7 +4320,7 @@
       "allowSource": true,
       "allowPlayer": true,
       "usedFor": "New weapon IDs 0..8 and phase blade (nine distinct gun bases plus Bayonet)",
-      "modifications": "Unit/axis normalization; real source mesh islands split into movable mechanisms; static groups merged. New project-authored ammunition/action handles/LMG feed/bipod/sight geometry. Upstream base colours retained; optical glass alpha adapted for FPS.",
+      "modifications": "Unit/axis normalization; real source mesh islands split into movable mechanisms; static groups merged. New project-authored ammunition/action handles/LMG feed/bipod/sight geometry. Upstream base colours retained; optical glass alpha adapted for FPS. October 20 refinement: softened hard edges, hollow barrel crowns, additional mechanical details and double-barrel front-sight/hinge attachment; gameplay markers retained. Tools/VisualAuthoring/refine_weapon_assets.py and fix_break_action_details.py record this pass.",
       "verification": "Actual Unity import/build and focused native model/route evidence are recorded in docs/models-final.zh-CN.md; source palette reports under Tools/VisualAuthoring",
       "files": [
         {
@@ -4390,48 +4390,48 @@
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_00.glb",
-          "sha256": "6ee88932d4530854a9cdeb64b1c19de4fe004b094853967f2c1ca73aaf8a09a2",
-          "bytes": 71096
+          "sha256": "caace9a031084686e77da7c62f6c9cb0ab6b74532a7e43600dfae4fd04b6ff9f",
+          "bytes": 177976
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_01.glb",
-          "sha256": "1a96c903f293faef7b3b1c301d5ec93deaa2f19bdbf63b6ab798103257341466",
-          "bytes": 55244
+          "sha256": "afeb74bf1ab6e720ee2a4715c8a6ab21efbe9c7d5871f0bee24478e004bf5dee",
+          "bytes": 222772
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_02.glb",
-          "sha256": "9b8a938fd252dff86494b2522e876fb13b2d7aab4220abb268796030766e1435",
-          "bytes": 134468
+          "sha256": "a8e722bc234d53c957d23c631ec15c1a6b7c49925bca0b06d355fddfb6a4862a",
+          "bytes": 239028
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_03.glb",
-          "sha256": "36327b65b97dd4ade65535834612af016e99e36616ac7d7c23b13564131b5daf",
-          "bytes": 112576
+          "sha256": "0ba07ef719e9fe278d3a32d62010b08d4b7e0293d493ad8940989be0a03eddc2",
+          "bytes": 215364
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_04.glb",
-          "sha256": "0fe4f8ca520a772fc1b3f83c984ebe544d0657cc349b757eecfa84dcba1f540d",
-          "bytes": 65144
+          "sha256": "f9e87c73023493e94bdfcb4707173f9311c99402aed9ade8c89fa8a29bf520c8",
+          "bytes": 166816
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_05.glb",
-          "sha256": "205e09867a7496042786c03160e2270e9e373a04c80e8909f42909d4be139a68",
-          "bytes": 66620
+          "sha256": "b531cf0ab66d62632663c6b91eccb1f3813e1df97a10678e0d9651b7197792c0",
+          "bytes": 171968
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_06.glb",
-          "sha256": "34983dacc065e721b48e59551a9631c2c9510e635c70708ead880b4061a424f5",
-          "bytes": 96148
+          "sha256": "50c125ba7377ab76656f1e99156eed2f5c856d9aa48c557360ba40fb32e57543",
+          "bytes": 201572
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_07.glb",
-          "sha256": "be145299dd45254b80c366e4714b260345df7666ac9390de0cfb1136834dcfbf",
-          "bytes": 104208
+          "sha256": "fd29e201b1116ce3df0bbbde40ca9cdd0e6842eddf2ee0f3c68d2a595bdd770a",
+          "bytes": 208524
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_08.glb",
-          "sha256": "53c639fdd3476ecab0d1975b6982c7a57cc21f0647433190715996a20d49d2b2",
-          "bytes": 114648
+          "sha256": "ccda042940ea5e623b59ae9d051f757aef67e5b5b80d48a417ed8b87320af5e0",
+          "bytes": 217036
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/phase_blade.glb",
@@ -4521,7 +4521,7 @@
       "allowSource": true,
       "allowPlayer": true,
       "usedFor": "New weapon IDs 9..11 using blaster-m/g/r; extra source kit parts retained as originals",
-      "modifications": "Original colormap included; three distinct new bodies adapted with project-authored grenade rounds, energy cells/coils and phase emitter; texture preserved and embedded in derivatives.",
+      "modifications": "Original colormap included; three distinct new bodies adapted with project-authored grenade rounds, energy cells/coils and phase emitter; texture preserved and embedded in derivatives. October 20 refinement: softened hard edges, hollow barrel crowns, additional mechanical details and double-barrel front-sight/hinge attachment; gameplay markers retained. Tools/VisualAuthoring/refine_weapon_assets.py and fix_break_action_details.py record this pass.",
       "verification": "Actual Unity import/build and focused native model/route evidence are recorded in docs/models-final.zh-CN.md; source palette reports under Tools/VisualAuthoring",
       "files": [
         {
@@ -4736,18 +4736,18 @@
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_09.glb",
-          "sha256": "836f15562ba2563f2ea91d56b5c53b258edd1f670bdcf47cbb539e62396da103",
-          "bytes": 62980
+          "sha256": "1d707ef32af6e0ffad84594dd750dbfa44443e45e3e963a726c4bbdba469dc4d",
+          "bytes": 159768
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_10.glb",
-          "sha256": "0a93eb1a189cda39966ed5eb2f8a5af379c2d61271f7a44330e43170e70ea614",
-          "bytes": 82476
+          "sha256": "dc6cdd5840e312e997a7cd350abd8cc48364dcee3048afe8004a77c90f8641d4",
+          "bytes": 186644
         },
         {
           "path": "Game/Assets/_SwapHunter/Resources/VisualV2/Weapons/weapon_11.glb",
-          "sha256": "325a04da6c6d1e6dc7d7f64fbc4c43a6a03ddce6be69a1185f1dfd49f30c6665",
-          "bytes": 55992
+          "sha256": "c1d25a0a9f9199f0e08723a22b4d8c2e33c9e878c2e4032b6c4f51130ec04638",
+          "bytes": 158376
         },
         {
           "path": "Tools/VisualAuthoring/Derived/WeaponsV2/weapon_09.blend",
@@ -5060,6 +5060,599 @@
           "originalFile": "footstep_concrete_001.ogg"
         }
       ]
+    },
+    {
+      "name": "October weapon gunshots — Michel Baradari",
+      "author": "Michel Baradari / apollo-music.de",
+      "license": "CC-BY-3.0",
+      "sourceUrl": "https://opengameart.org/content/chaingun-pistol-rifle-shotgun-shots",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "recordedDate": "2026-10-20",
+      "allowSource": true,
+      "allowPlayer": true,
+      "licenseFiles": [
+        "Tools/AudioAuthoring/audio_sources/shots/shots/info.txt",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/CREDITS.txt"
+      ],
+      "paths": [
+        "Tools/AudioAuthoring/audio_sources/shots/shots/cg1.wav",
+        "Tools/AudioAuthoring/audio_sources/shots/shots/pistol.wav",
+        "Tools/AudioAuthoring/audio_sources/shots/shots/rifle.wav",
+        "Tools/AudioAuthoring/audio_sources/shots/shots/shotgun.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_fire_c.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_fire_a.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_fire_b.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_fire_c.wav"
+      ],
+      "usedFor": "36 firing variants across 12 weapons, used by player and enemy firing presentation.",
+      "modifications": "Trimmed transients, mono 48 kHz resampling, pitch variation, EQ, low-frequency layers, short reflections, normalization and project-synthesized energy layers on applicable weapons.",
+      "distributionRequirement": "Retain Michel Baradari / apollo-music.de attribution, source URL, CC BY 3.0 license link and modification notice. CREDITS.txt accompanies the source; include its contents with the player distribution.",
+      "verification": "2026-10-20: 36 output WAVs reproduced byte-for-byte in an isolated directory with Python 3.11.14, NumPy 1.26.4 and SciPy 1.16.0. This does not establish listening quality.",
+      "files": [
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/shots/shots/cg1.wav",
+          "sha256": "a01e0fcb10f0df3620b862832c3fa4d42fd1003aef63b775d37edbb5b3adbc55",
+          "bytes": 101948
+        },
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/shots/shots/pistol.wav",
+          "sha256": "5b992d168ce138a53515ada2cf1b1ee26bd13534ccd587fda701b3d44056a1bb",
+          "bytes": 174952
+        },
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/shots/shots/rifle.wav",
+          "sha256": "6324903225b5637f1187fd93cfbcb0f359394b8c1f7881273ffe740d51a5b98f",
+          "bytes": 336800
+        },
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/shots/shots/shotgun.wav",
+          "sha256": "cd260e3585d718da342365d9d1050b1ee4575b4d031207ed41496593abd90861",
+          "bytes": 213500
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_fire_a.wav",
+          "sha256": "47f52be67a205c5815c37d7df1c5d11e0798971e6986141b4e904d7d2e30b407",
+          "bytes": 57644
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_fire_b.wav",
+          "sha256": "6e0e4cd4f4aa4c598998a44e3460811c12c6554466f89c6182c548688eaf03d9",
+          "bytes": 57644
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_fire_c.wav",
+          "sha256": "8409b60490f836c1a9110d9ce08355c1dee5eefdd1a59680760d7dacba24a7a9",
+          "bytes": 57644
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_fire_a.wav",
+          "sha256": "7337c2077efd0c8179df501d6dbec1b1fd8b493134f61207c3a86f1f8aba6512",
+          "bytes": 75884
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_fire_b.wav",
+          "sha256": "db515cedda0999405330402db659be72445fec94e322860e5b0380b37515f1c5",
+          "bytes": 75884
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_fire_c.wav",
+          "sha256": "71a55fcf9d86bfb83adda2d19979de485a92908d8b6e223d22ee6d42e96274bd",
+          "bytes": 75884
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_fire_a.wav",
+          "sha256": "128a6b56daddff4e0db203bfc58a6aa4b2cb5257cbc37daca69a6a1d4c9546fb",
+          "bytes": 61484
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_fire_b.wav",
+          "sha256": "50aa68397dbec33f8e79610ac02bfc04299bf25550270dc08b2e1e0905360364",
+          "bytes": 61484
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_fire_c.wav",
+          "sha256": "e6ba990a2bfbb0bdcf81bc6bd9fac0579a6bf21a35981b79ac223fe43c7d3438",
+          "bytes": 61484
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_fire_a.wav",
+          "sha256": "cd7b96eb89e704f7ec085005fa08d8a2f79f90bd83c1002856fb2094ab80afe4",
+          "bytes": 67244
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_fire_b.wav",
+          "sha256": "af6a0a55f625d9f70e8f13d17c05463dfea42882dfb4243358ae4086f63fc128",
+          "bytes": 67244
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_fire_c.wav",
+          "sha256": "52341347fd3c1ab1f0ed9fa4bb5d90349bb1332fa98b1bfe6c04d2d2b98fe65f",
+          "bytes": 67244
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_fire_a.wav",
+          "sha256": "0c7a49440db759435378b45407668daed6c4d9a990bb54cd9d6748f6770a4a4c",
+          "bytes": 48044
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_fire_b.wav",
+          "sha256": "8b41ca0e5e65709eb32af3c4a37d8d569847bf08a50809ab160a1286042a4ac4",
+          "bytes": 48044
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_fire_c.wav",
+          "sha256": "8f2a2b0de2c8f228e6bebfb70becda5efb297c8b61bfb0894e36f581ef4fd145",
+          "bytes": 48044
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_fire_a.wav",
+          "sha256": "95dffc4677af62ed43c329760493e1e086eea10ebe7702925771b5d4720d7c73",
+          "bytes": 78764
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_fire_b.wav",
+          "sha256": "277d7ea0ef9157acfde3b17d15b1e7d305894687a1ced4b36001f722ec8c1883",
+          "bytes": 78764
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_fire_c.wav",
+          "sha256": "48de385a08007aa2e018801fb34895f07a59e488f3b8f6b9d020f4604552a55d",
+          "bytes": 78764
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_fire_a.wav",
+          "sha256": "1c5c2dd222c3917699604e8d407308615f9a69583b1bc36c0296204d492fd85e",
+          "bytes": 71084
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_fire_b.wav",
+          "sha256": "92bb9f83de949309a5f3ceed5306e9b3e910c9c5650cb6b74713afc92264b63f",
+          "bytes": 71084
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_fire_c.wav",
+          "sha256": "9b6146ac95e474ecec2ed73b45719513f267772aa9503b8d3a04061bfffdd2cb",
+          "bytes": 71084
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_fire_a.wav",
+          "sha256": "5505b3dde0f98867692d0b05282bdd6751f98c8cc1a077ffacac9091ccb67cee",
+          "bytes": 90284
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_fire_b.wav",
+          "sha256": "588696f36088048b20922d9b931671f0489219e362852b7b7fa7196ba7a96c79",
+          "bytes": 90284
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_fire_c.wav",
+          "sha256": "e7c924ffae887631fe7611d31eede0ed93f3e370b3a901c3fc9eca01a7faf4ca",
+          "bytes": 90284
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_fire_a.wav",
+          "sha256": "cf1514d5964f83f0565fb83ff3de3a54628508d19816f05df3b8172d8310b40a",
+          "bytes": 64364
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_fire_b.wav",
+          "sha256": "26f7b20ed4f2d805dc661c64880251d076b7f43f32be6e463f1b94f1de07fff5",
+          "bytes": 64364
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_fire_c.wav",
+          "sha256": "ed77cbeb123926ee47633ab746be8f5adee24a237354717335718f9fd5b63afd",
+          "bytes": 64364
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_fire_a.wav",
+          "sha256": "c8e76cbe64ba2f0ba4325379a99c0c7f59b39ec29bb1555a38841885a23703d8",
+          "bytes": 83564
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_fire_b.wav",
+          "sha256": "e77e02a3420fbe68248b1220d2c77b0d8c568ce980a4428776720ba68ca9be79",
+          "bytes": 83564
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_fire_c.wav",
+          "sha256": "f5b6e6a28d1b63ef6b1b00154dec637836964aea179b9873ff0366c00ab4a680",
+          "bytes": 83564
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_fire_a.wav",
+          "sha256": "ed1bfb909b09e8889cfd3c08d0ddcd47dcf32592d0771c6de8daed1046116114",
+          "bytes": 76844
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_fire_b.wav",
+          "sha256": "ac986fdaf3f2f5ea2ca7451dc87f776690a35343324eb2123aab665bdd61db22",
+          "bytes": 76844
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_fire_c.wav",
+          "sha256": "30b3e7309a26b35e7be349674b8c076d8a70089e01637ab0d3222af75f017a0e",
+          "bytes": 76844
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_fire_a.wav",
+          "sha256": "a17059ccbcbab6bf70186b35998081599e791f17708c0c92adef5e232c14d531",
+          "bytes": 51884
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_fire_b.wav",
+          "sha256": "140f91862d359ecf81cbedd2ca704b33fe1c4ae8eb03595e5194c948ecb8f98b",
+          "bytes": 51884
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_fire_c.wav",
+          "sha256": "38dca4b68518eb354d14792e3ad01895aa10d53bcfd0dd466ad37c444f963dff",
+          "bytes": 51884
+        }
+      ]
+    },
+    {
+      "name": "October reload and equip Foley — SpringySpringo",
+      "author": "SpringySpringo",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/gun-reload-sounds",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "recordedDate": "2026-10-20",
+      "allowSource": true,
+      "allowPlayer": true,
+      "licenseFiles": [
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/CREDITS.txt"
+      ],
+      "paths": [
+        "Tools/AudioAuthoring/audio_sources/gunreload.wav",
+        "Tools/AudioAuthoring/audio_sources/riflereload.wav",
+        "Tools/AudioAuthoring/audio_sources/shotguncock.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_equip.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_reload_out.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_reload_in.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_reload_bolt.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_equip.wav"
+      ],
+      "sourceFileMapping": {
+        "gunreload.wav": "gunreload1.wav",
+        "riflereload.wav": "assaultriflereload1.wav",
+        "shotguncock.wav": "shotguncock.wav"
+      },
+      "usedFor": "48 reload/equip events: magazine removal, insertion, chambering and equip for 12 weapons.",
+      "modifications": "Airsoft recordings segmented by mechanical event, mono 48 kHz resampling, pitch/EQ/level processing.",
+      "verification": "2026-10-20: 48 output WAVs reproduced byte-for-byte in an isolated directory with Python 3.11.14, NumPy 1.26.4 and SciPy 1.16.0. This does not establish listening quality.",
+      "files": [
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/gunreload.wav",
+          "sha256": "685cac6a184e3cc3ec09a25b6ddb1d6feffd86d469778f339aa423d384035c50",
+          "bytes": 278572
+        },
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/riflereload.wav",
+          "sha256": "efb2d724d634eabe6ba8d3065686abca848bb7497d4d43a5e4aed5e5ea23016f",
+          "bytes": 274476
+        },
+        {
+          "path": "Tools/AudioAuthoring/audio_sources/shotguncock.wav",
+          "sha256": "33e007321ba83301c861aef573f2c40b70bc62f8f24c0164877e6dd123e24371",
+          "bytes": 83628
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_reload_out.wav",
+          "sha256": "e6885a144914e3a441464cfccc90de540e3a604234a606705c075e58a77eb57c",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_reload_in.wav",
+          "sha256": "d404f4b7e07c91d60894ef4d77ce53588d36eff7809b6d67c13d196dcb52ec4e",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_reload_bolt.wav",
+          "sha256": "33f0163cfe499cbf6c46e9f94d6c63c4252c60a2139e7a9508d88be7a68f2ebd",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_00_equip.wav",
+          "sha256": "33a63c1ceb0dac13559cb7d0e636ab884e8d427dadbe221bbe0fc9c6073b8901",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_reload_out.wav",
+          "sha256": "ac208fdd6818e70f78fab5f8bb6dd342d4e9a7bdcff1f2106e93a41d2fb11b19",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_reload_in.wav",
+          "sha256": "bdcb3e913c879f4fccd988da71a83e5ec3f1717ff4c29877c821a1928c2cd6f4",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_reload_bolt.wav",
+          "sha256": "4e53f6da15db3b56d46f81a200bc9d454ea4f8861de75cca484cb720d76f4473",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_01_equip.wav",
+          "sha256": "a02096a8f376b6c5c1a4dab32e1478d2cb1a6f37d56470febdd953edd13e4845",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_reload_out.wav",
+          "sha256": "aaa848a3b4263d0186bcfc2a28414f365dc83e3720b0f79dd5d05ff480581c8f",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_reload_in.wav",
+          "sha256": "7a17b1e9a898cd84a20dc23f252f45fbf6006f7c2f77f4eaffbb416f7be2d253",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_reload_bolt.wav",
+          "sha256": "8d7bbcd9e2987c47e5656797104b4f2482220fd58a76b71835275365708ffb68",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_02_equip.wav",
+          "sha256": "6b480dc7994f72f4b392840bd78b0fe6e05bc1c882c839f0a1a1cb3d7297adeb",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_reload_out.wav",
+          "sha256": "204cc85bad12338a377c4af9d0567d5147dde1474971ab23eb24b6182877fce6",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_reload_in.wav",
+          "sha256": "ef3fb58117eb10c02c9d1acaf8e6d41d6dd33bd8683a0e84b082b2e1d0393382",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_reload_bolt.wav",
+          "sha256": "b6f38c1762438586ce927c44991e2af9725d3afaab42715617a5d4a2256aefa9",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_03_equip.wav",
+          "sha256": "3655addedfd3e5e537f2b42c4f3d50f7ae960726addd88508142b6672e4c7802",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_reload_out.wav",
+          "sha256": "e6885a144914e3a441464cfccc90de540e3a604234a606705c075e58a77eb57c",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_reload_in.wav",
+          "sha256": "d404f4b7e07c91d60894ef4d77ce53588d36eff7809b6d67c13d196dcb52ec4e",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_reload_bolt.wav",
+          "sha256": "33f0163cfe499cbf6c46e9f94d6c63c4252c60a2139e7a9508d88be7a68f2ebd",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_04_equip.wav",
+          "sha256": "33a63c1ceb0dac13559cb7d0e636ab884e8d427dadbe221bbe0fc9c6073b8901",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_reload_out.wav",
+          "sha256": "ac208fdd6818e70f78fab5f8bb6dd342d4e9a7bdcff1f2106e93a41d2fb11b19",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_reload_in.wav",
+          "sha256": "bdcb3e913c879f4fccd988da71a83e5ec3f1717ff4c29877c821a1928c2cd6f4",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_reload_bolt.wav",
+          "sha256": "4e53f6da15db3b56d46f81a200bc9d454ea4f8861de75cca484cb720d76f4473",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_05_equip.wav",
+          "sha256": "a02096a8f376b6c5c1a4dab32e1478d2cb1a6f37d56470febdd953edd13e4845",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_reload_out.wav",
+          "sha256": "aaa848a3b4263d0186bcfc2a28414f365dc83e3720b0f79dd5d05ff480581c8f",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_reload_in.wav",
+          "sha256": "7a17b1e9a898cd84a20dc23f252f45fbf6006f7c2f77f4eaffbb416f7be2d253",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_reload_bolt.wav",
+          "sha256": "8d7bbcd9e2987c47e5656797104b4f2482220fd58a76b71835275365708ffb68",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_06_equip.wav",
+          "sha256": "6b480dc7994f72f4b392840bd78b0fe6e05bc1c882c839f0a1a1cb3d7297adeb",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_reload_out.wav",
+          "sha256": "1eda88287067c939ac1fe5492c316121a2d7a6b81a0113d9b7f95c87f6bd68cb",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_reload_in.wav",
+          "sha256": "b73ca058b35c8b6ff2aa75120f3c3bce203ac7750fac3a4edd4c1e94f9088af0",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_reload_bolt.wav",
+          "sha256": "fa83251bb78657866f84554768f00b130eadb08ca46b5266833a6cfe5cc3063f",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_07_equip.wav",
+          "sha256": "c7a76a2404f3d5a72c447b5487d669810ba9308589370d6fd9727b8916d05b74",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_reload_out.wav",
+          "sha256": "f6ba5502b6b6bfd25879fe0bf9d36d9541abba82d5729140ac518c43186f535c",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_reload_in.wav",
+          "sha256": "76273837809339ca50df94d5f2be70a735ba0a5854b7a8228c249660ae5cb84a",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_reload_bolt.wav",
+          "sha256": "fcf9d80075064ba1fd68784c26413a764ae00806e10c791e379e4ee2e2c68d0d",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_08_equip.wav",
+          "sha256": "78613577be00d9e4c5dc9034e0feaeaf128833951d911c68a0514ede0f1d52b4",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_reload_out.wav",
+          "sha256": "ac208fdd6818e70f78fab5f8bb6dd342d4e9a7bdcff1f2106e93a41d2fb11b19",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_reload_in.wav",
+          "sha256": "bdcb3e913c879f4fccd988da71a83e5ec3f1717ff4c29877c821a1928c2cd6f4",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_reload_bolt.wav",
+          "sha256": "477204bc0a88590467280f7bab5eaaf3bb6aa0066b7784cb8e44059cc2230931",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_09_equip.wav",
+          "sha256": "a02096a8f376b6c5c1a4dab32e1478d2cb1a6f37d56470febdd953edd13e4845",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_reload_out.wav",
+          "sha256": "aaa848a3b4263d0186bcfc2a28414f365dc83e3720b0f79dd5d05ff480581c8f",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_reload_in.wav",
+          "sha256": "7a17b1e9a898cd84a20dc23f252f45fbf6006f7c2f77f4eaffbb416f7be2d253",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_reload_bolt.wav",
+          "sha256": "8d7bbcd9e2987c47e5656797104b4f2482220fd58a76b71835275365708ffb68",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_10_equip.wav",
+          "sha256": "6b480dc7994f72f4b392840bd78b0fe6e05bc1c882c839f0a1a1cb3d7297adeb",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_reload_out.wav",
+          "sha256": "1eda88287067c939ac1fe5492c316121a2d7a6b81a0113d9b7f95c87f6bd68cb",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_reload_in.wav",
+          "sha256": "b73ca058b35c8b6ff2aa75120f3c3bce203ac7750fac3a4edd4c1e94f9088af0",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_reload_bolt.wav",
+          "sha256": "fa83251bb78657866f84554768f00b130eadb08ca46b5266833a6cfe5cc3063f",
+          "bytes": 46124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/gun_11_equip.wav",
+          "sha256": "c7a76a2404f3d5a72c447b5487d669810ba9308589370d6fd9727b8916d05b74",
+          "bytes": 46124
+        }
+      ]
     }
   ],
   "notAdopted": [],
@@ -5072,6 +5665,63 @@
       "bytes": 2206173,
       "status": "Acquired for evaluation only; not included in project runtime or public source payload",
       "findings": "20 authored animation clips, one skin, no external URI; existing programmatic actor pivots/collision footprint not replaced"
+    }
+  ],
+  "projectGeneratedAssets": [
+    {
+      "name": "October head/body hit feedback",
+      "origin": "Project-authored procedural audio; no third-party recording input.",
+      "license": "MIT (project code and synthesized output)",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/impact.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/limb_hit.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/head_hit.wav",
+        "Game/Assets/_SwapHunter/Resources/Audio/Refinement/head_kill.wav"
+      ],
+      "generator": "Tools/AudioAuthoring/build_refined_audio.py",
+      "verification": "2026-10-20: all four WAVs reproduced byte-for-byte using the documented dependencies.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/impact.wav",
+          "sha256": "c23534aa4880f3b0a5c5db9cace3a18e0b0176e940f0bdb192f141e5a4135a21",
+          "bytes": 13484
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/limb_hit.wav",
+          "sha256": "0b2a442d9955c1453d2b4643b347d3f805132b986af2d9b9508fa0b19913ab8a",
+          "bytes": 11564
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/head_hit.wav",
+          "sha256": "5a5fbe32275322e810413d88727d28fce192a835bbb58f38754697587ca68868",
+          "bytes": 22124
+        },
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/Audio/Refinement/head_kill.wav",
+          "sha256": "25c5b7c0088c3b14e7af67cc5ac33f3c78da808bc4d225fa25a4936e7fcf413e",
+          "bytes": 32684
+        }
+      ]
+    },
+    {
+      "name": "Homecoming main-menu harbor key art",
+      "origin": "Generated with the built-in imagegen tool for SwapHunter on 2026-10-20.",
+      "kind": "AI-generated concept illustration; not a gameplay screenshot or a downloaded third-party asset.",
+      "paths": [
+        "Game/Assets/_SwapHunter/Resources/UI/Homecoming/menu-harbor-v2.png"
+      ],
+      "actualWidth": 1672,
+      "actualHeight": 941,
+      "requestedWidth": 2560,
+      "requestedHeight": 1440,
+      "prompt": "Use case: stylized-concept. Asset type: high-definition 16:9 game main-menu background for an original near-future single-player tactical FPS called SwapHunter / Homecoming Operation. Produce a cinematic realistic industrial coastal harbor at blue-hour dawn after rain: immense weathered port gantry cranes, wet concrete dock, distant ocean and layered industrial silhouettes, a restrained amber beacon on a communications mast, subtle pale cyan phase-field rings around a remote facility on the RIGHT half of the composition. Authentic physically grounded materials, misty depth, slate blue-gray, sea green, aged metal, small warm amber highlights. Wide composition at eye level, sophisticated contemporary PC game key art, richly detailed but restrained. Keep the LEFT 40% dark and calm negative space for menu text, focal facility and warm light to the right, clear horizon and atmospheric depth. No people close-up, no text, no letters, no logos, no watermark, no UI, no frame. 2560x1440 landscape.",
+      "files": [
+        {
+          "path": "Game/Assets/_SwapHunter/Resources/UI/Homecoming/menu-harbor-v2.png",
+          "sha256": "66016d5a7478508e54b1d2039386e883f4edf094914959eb8f358351d2c5d51b",
+          "bytes": 2358087
+        }
+      ]
     }
   ]
 }

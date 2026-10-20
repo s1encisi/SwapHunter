@@ -112,7 +112,18 @@ def knife(i):
 
 # Character authored in Blender coordinates X mirror to Unity, front -Y, Z up.
 def human(name,variant=0,fp=False,body_only=False):
- clear();cloth=mat('Charcoal technical fabric',(.075,.093,.108),0,.87);plate=mat('Slate ceramic armor',(.16,.20,.23),.32,.42);trim=mat('Muted identification',(.07,.27,.33),.45,.34);skin=mat('Natural skin',(.48,.29,.19),0,.63);black=mat('Black rubber',(.023,.027,.030),.04,.75);visor=mat('Tinted visor',(.065,.13,.16),.65,.15);steel=mat('Equipment alloy',(.25,.28,.30),.72,.32)
+ clear()
+ # Original class identities are visible on the complete body, even without weapons.
+ palettes=[((.080,.096,.110),(.235,.280,.300),(.92,.34,.075)),
+           ((.038,.070,.125),(.120,.225,.370),(.28,.65,.94)),
+           ((.135,.175,.100),(.260,.300,.165),(.68,.72,.27)),
+           ((.100,.125,.145),(.53,.57,.57),(.74,.23,.17))]
+ cloth_rgb,plate_rgb,trim_rgb=palettes[variant]
+ cloth=mat(['Assault charcoal weave','Heavy navy padded fabric','Recon olive ripstop','Marksman graphite fabric'][variant],cloth_rgb,0,.87)
+ plate=mat(['Assault slate composite','Heavy cobalt armor','Recon olive light armor','Marksman pale ceramic'][variant],plate_rgb,.32,.42)
+ trim=mat('Class identification trim',trim_rgb,.15,.40);skin=mat('Natural skin',(.48,.29,.19),0,.63);black=mat('Black rubber',(.023,.027,.030),.04,.75);visor=mat('Tinted visor',(.065,.13,.16),.65,.15);steel=mat('Equipment alloy',(.25,.28,.30),.72,.32)
+ cloth_width=(.205,.235,.185,.195)[variant]
+
  bones={'Body':((0,0,.90),(0,0,1.04),None),'Chest':((0,0,1.04),(0,0,1.43),'Body'),'Neck':((0,0,1.43),(0,0,1.55),'Chest'),'Head':((0,0,1.55),(0,0,1.78),'Neck')}
  for side,sign in [('R',-1),('L',1)]:
   bones['UpperArm.'+side]=((sign*.235,0,1.44),(sign*.28,-.015,1.13),'Chest');bones['LowerArm.'+side]=((sign*.28,-.015,1.13),(sign*.29,-.05,.86),'UpperArm.'+side);bones['Fist.'+side]=((sign*.29,-.05,.86),(sign*.29,-.065,.76),'LowerArm.'+side)
@@ -124,8 +135,8 @@ def human(name,variant=0,fp=False,body_only=False):
    bones['Finger%d_mid.%s'%(f,side)]=(t1,t2,'Finger%d.%s'%(f,side))
    bones['Finger%d_tip.%s'%(f,side)]=(t2,t3,'Finger%d_mid.%s'%(f,side))
  if not fp:
-  sphere('Suit torso',(0,0,1.23),(.205,.118,.245),cloth,'Chest');sphere('Pelvic suit',(0,0,.95),(.158,.113,.135),cloth,'Body')
-  box('Chest armored plate',(0,-.112,1.29),(.315,.055,.285),plate,.035,'Chest');box('Rear plate',(0,.11,1.28),(.30,.060,.28),plate,.026,'Chest')
+  sphere('Suit torso',(0,0,1.23),(cloth_width,.118 if variant!=1 else .145,.245),cloth,'Chest');sphere('Pelvic suit',(0,0,.95),(.158,.113,.135),cloth,'Body')
+  box('Chest armored plate',(0,-.112,1.29),((.315,.380,.285,.300)[variant],.075 if variant==1 else .055,.285),plate,.035,'Chest');box('Rear plate',(0,.11,1.28),(.30,.060,.28),plate,.026,'Chest')
   rod('Collar',(0,0,1.435),(0,0,1.565),.061,cloth,'Neck');sphere('Human head',(0,-.005,1.655),(.084,.088,.116),skin,'Head')
   sphere('Helmet shell',(0,.008,1.683),(.093,.093,.113),plate,'Head');box('Upper visor frame',(0,-.085,1.685),(.156,.022,.025),black,.008,'Head');sphere('Visor',(0,-.084,1.656),(.077,.014,.037),visor,'Head')
   box('Chin strap',(0,-.067,1.575),(.096,.020,.022),black,.006,'Head')
@@ -156,14 +167,58 @@ def human(name,variant=0,fp=False,body_only=False):
    box('Boot '+side,(sign*.11,-.06,.083),(.118,.245,.155),black,.029,foot);box('Boot sole '+side,(sign*.11,-.066,.024),(.125,.252,.035),black,.009,foot)
    if variant==0:box('Leg assistance rail '+side,(sign*.18,.012,.36),(.028,.033,.30),steel,.006,shin)
  if not fp:
-  if variant==1:
-   for sign in (-1,1):box('Heavy shoulder wing',(sign*.27,0,1.45),(.15,.18,.09),plate,.022,'UpperArm.'+('R' if sign<0 else 'L'))
-   box('Heavy support pack',(0,.166,1.24),(.28,.115,.31),plate,.023,'Chest')
-  if variant==2:
-   box('Recon optic',(0,-.102,1.70),(.122,.038,.033),steel,.006,'Head');rod('Recon antenna',(.14,.12,1.39),(.14,.12,1.68),.006,steel,'Chest')
-  if variant==3:
+  if variant==0:
+   # Assault: compact plate carrier, amber rescue bars and athletic leg braces.
    for sign in (-1,1):
-    for z in (1.10,1.24,1.38):rod('Ordnance canister',(sign*.20,.14,z),(sign*.20,.20,z),.038,steel,'Chest')
+    side='R' if sign<0 else 'L'
+    box('Assault split chest wing',(sign*.145,-.13,1.31),(.055,.025,.20),trim,.007,'Chest')
+    box('Assault kneepad ID',(sign*.105,-.094,.54),(.064,.010,.023),trim,.003,'LowerLeg.'+side)
+    box('Assault upper-arm insignia',(sign*.307,-.025,1.37),(.012,.068,.055),trim,.004,'UpperArm.'+side)
+   box('Assault compact radio',(0,.164,1.35),(.17,.075,.20),steel,.014,'Chest')
+   rod('Assault radio aerial',(.07,.16,1.44),(.07,.16,1.57),.004,black,'Chest')
+  if variant==1:
+   # Heavy: broad layered shoulders, raised collar, armored skirt and full shins.
+   for sign in (-1,1):
+    side='R' if sign<0 else 'L'
+    box('Heavy outer shoulder guard',(sign*.295,0,1.435),(.175,.205,.13),plate,.028,'UpperArm.'+side)
+    box('Heavy shoulder identification',(sign*.315,-.105,1.43),(.106,.013,.034),trim,.006,'UpperArm.'+side)
+    box('Heavy armored collar',(sign*.10,-.015,1.47),(.080,.190,.10),plate,.016,'Chest')
+    box('Heavy segmented hip plate',(sign*.15,-.115,.925),(.14,.065,.17),plate,.018,'Body')
+    box('Heavy frontal shin plate',(sign*.11,-.054,.31),(.115,.045,.285),plate,.020,'LowerLeg.'+side)
+    box('Heavy thigh equipment pouch',(sign*.185,-.015,.79),(.09,.11,.15),cloth,.014,'UpperLeg.'+side)
+   box('Heavy reinforced abdomen',(0,-.137,1.10),(.27,.064,.14),plate,.022,'Chest')
+   box('Heavy support pack',(0,.196,1.24),(.32,.145,.35),plate,.023,'Chest')
+   for z in (1.17,1.25,1.33):box('Heavy pack heat vent',(0,.273,z),(.21,.011,.018),black,.003,'Chest')
+   box('Heavy brow visor',(0,-.102,1.685),(.176,.035,.052),steel,.008,'Head')
+  if variant==2:
+   # Recon: lightweight tapered body, sensor goggles, compact drone/radio pack.
+   box('Recon optic',(0,-.105,1.70),(.145,.045,.040),steel,.008,'Head')
+   for sign in (-1,1):
+    rod('Recon optic objective',(sign*.043,-.127,1.70),(sign*.043,-.145,1.70),.014,trim,'Head',32)
+    side='R' if sign<0 else 'L'
+    box('Recon flexible thigh pocket',(sign*.154,-.055,.775),(.068,.066,.12),cloth,.014,'UpperLeg.'+side)
+    box('Recon boot cuff ID',(sign*.11,-.04,.18),(.102,.130,.022),trim,.006,'LowerLeg.'+side)
+   box('Recon narrow sensor pack',(0,.151,1.30),(.19,.10,.25),cloth,.019,'Chest')
+   rod('Recon long flexible antenna',(.095,.15,1.39),(.11,.15,1.79),.0038,black,'Chest')
+   box('Recon forearm computer',(.29,-.080,1.03),(.082,.025,.095),steel,.010,'LowerArm.L')
+   box('Recon computer glass',(.29,-.096,1.04),(.062,.006,.054),trim,.004,'LowerArm.L')
+  if variant==3:
+   # Marksman: pale asymmetric shoulder mantle and long rangefinder gear.
+   box('Marksman reinforced shooting shoulder',(-.24,-.015,1.44),(.145,.17,.065),plate,.018,'UpperArm.R')
+   box('Marksman soft opposite shoulder',(.24,0,1.43),(.10,.15,.05),cloth,.014,'UpperArm.L')
+   box('Marksman left monocular mount',(.064,-.093,1.69),(.042,.05,.047),steel,.008,'Head')
+   rod('Marksman monocular lens',(.064,-.115,1.69),(.064,-.15,1.69),.019,visor,'Head',32)
+   box('Marksman rear equipment scabbard',(-.14,.16,1.10),(.105,.10,.51),cloth,.017,'Chest')
+   for z in (1.05,1.18,1.31):box('Marksman scabbard band',(-.14,.216,z),(.111,.014,.025),trim,.004,'Chest')
+   for sign in (-1,1):
+    side='R' if sign<0 else 'L'
+    box('Marksman ceramic shin strip',(sign*.11,-.06,.33),(.068,.025,.21),plate,.015,'LowerLeg.'+side)
+   box('Marksman rangefinder belt pouch',(.19,-.03,.99),(.095,.13,.085),steel,.012,'Body')
+   # Cloth mantle is a shaped surface, rigidly weighted to the moving chest.
+   verts=[(-.19,.095,1.45),(.18,.095,1.45),(-.205,.165,1.27),(.20,.165,1.27),(-.17,.18,.98),(.16,.18,1.02)]
+   mesh=bpy.data.meshes.new('Marksman mantle mesh');mesh.from_pydata(verts,[],[(0,1,3,2),(2,3,5,4)]);mesh.update()
+   mantle=bpy.data.objects.new('Marksman asymmetric field mantle',mesh);bpy.context.collection.objects.link(mantle);finish(mantle,mantle.name,cloth,'Chest')
+   solid=mantle.modifiers.new('Mantle fabric thickness','SOLIDIFY');solid.thickness=.007;bpy.context.view_layer.objects.active=mantle;bpy.ops.object.modifier_apply(modifier=solid.name)
  if fp:
   for o in list(bpy.context.scene.objects):
    if o.type=='MESH' and o.name.startswith(('Shoulder fabric ','Shoulder plate ')):bpy.data.objects.remove(o,do_unlink=True)

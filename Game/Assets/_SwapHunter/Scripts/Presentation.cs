@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -134,10 +134,12 @@ namespace SwapHunter
                 : id == "radio" ? "radio_in" : id == "step" ? "step_a" : id == "step_alt" ? "step_b" : id;
             return "Audio/N1/sfx_" + asset;
         }
-        int footstep;
+        int footstep,weaponVariation;
+        public int RefinedWeaponClipCount {get;private set;}
         AudioClip LoadEffect(string id)
         {
-            var clip = Resources.Load<AudioClip>(EffectResource(id));
+            var clip = Resources.Load<AudioClip>("Audio/Refinement/"+id);
+            if(!clip)clip = Resources.Load<AudioClip>(EffectResource(id));
             if (clip) { imported.Add(id); return clip; }
             clip = Render(id); generated.Add(clip); return clip;
         }
@@ -150,6 +152,17 @@ namespace SwapHunter
             foreach (string id in new[] { "rifle","shotgun","phase","impact","death","warning","explosion","confirm","shield","kill","reload","reload_out","reload_in","reload_bolt","empty","step","land","player_hit","surface","radio","radio_out","ui_click","ui_back","ui_error","objective","step_alt" }) clips[id] = LoadEffect(id);
             foreach (string id in new[] { "head_hit", "limb_hit", "vault", "crouch", "knife_swipe", "knife_throw", "knife_recall", "silence" }) clips[id] = LoadEffect(id);
             for (int w = 2; w < 12; w++) clips["weapon_" + w.ToString("00")] = LoadEffect("weapon_" + w.ToString("00"));
+            clips["head_kill"]=LoadEffect("head_kill");
+            for(int w=0;w<WeaponCatalog.Count;w++)
+            {
+                foreach(string evt in new[]{"fire_a","fire_b","fire_c","reload_out","reload_in","reload_bolt","equip"})
+                {
+                    string id="gun_"+w.ToString("00")+"_"+evt;
+                    var clip=Resources.Load<AudioClip>("Audio/Refinement/"+id);
+                    if(clip){clips[id]=clip;imported.Add(id);RefinedWeaponClipCount++;}
+                    else Debug.LogWarning("Weapon audio missing: "+id);
+                }
+            }
             for (int i = 0; i < Limit; i++)
             {
                 var go = new GameObject("Audio voice " + i); go.transform.SetParent(transform, false);
@@ -230,8 +243,10 @@ namespace SwapHunter
             }
             AudioClip clip=AudioClip.Create(id,data.Length,1,Rate,false); clip.SetData(data,0); return clip;
         }
-        static bool Feedback(string id) => id=="impact"||id=="kill"||id=="shield"||id=="confirm"||id=="head_hit"||id=="limb_hit";
-        static int Priority(string id) => id=="radio"?24:id=="warning"||id=="phase"||id=="player_hit"?32:id=="rifle"||id=="shotgun"||id=="kill"?64:(id=="step"||id=="step_alt")||id=="surface"?180:100;
+        public void PlayWeapon(int weapon,string evt,Vector3? at=null)
+        {string variant=evt=="fire"?"fire_"+(char)('a'+weaponVariation++%3):evt;string id="gun_"+weapon.ToString("00")+"_"+variant;if(clips.ContainsKey(id))Play(id,at);else Play(evt=="fire"?WeaponCatalog.Get(weapon).sound:evt=="equip"?"reload":evt,at);}
+        static bool Feedback(string id) => id=="impact"||id=="kill"||id=="shield"||id=="confirm"||id=="head_hit"||id=="head_kill"||id=="limb_hit";
+        static int Priority(string id) => id=="radio"?24:id=="warning"||id=="phase"||id=="player_hit"?32:id=="rifle"||id=="shotgun"||id=="kill"||id=="head_hit"||id=="head_kill"?48:id.StartsWith("gun_")?64:(id=="step"||id=="step_alt")||id=="surface"?180:100;
         public void Play(string id,Vector3? at=null)
         {
             if(!DemoGame.I)return;
@@ -243,7 +258,7 @@ namespace SwapHunter
             float volume=MixVolume(key); if(volume<=0)return;
             int pick=-1,same=0; float oldest=float.MaxValue;
             for(int i=0;i<Limit;i++){if(!voices[i].isPlaying){if(pick<0)pick=i;continue;}if(names[i]==key)same++;}
-            int max=at.HasValue&&id=="rifle"?8:id=="rifle"||id=="shotgun"?4:3;
+            int max=at.HasValue&&id=="rifle"?8:id=="rifle"||id=="shotgun"||id.StartsWith("gun_")?4:3;
             if(same>=max||pick<0)
             {
                 pick=-1;

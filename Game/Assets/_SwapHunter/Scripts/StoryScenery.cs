@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace SwapHunter
 {
  // Decorative rescue feedback lives under the attempt's world and adds no collision or objectives.
@@ -39,7 +39,7 @@ namespace SwapHunter
    if(level==4){if(game.MissionObjectiveComplete("a"))SetBeacon(0);if(game.MissionObjectiveComplete("b"))SetBeacon(1);}
    if(level==6){if(game.MissionObjectiveComplete("a"))SetBeacon(0);if(game.MissionObjectiveComplete("b"))SetBeacon(1);if(game.MissionObjectiveComplete("c"))SetBeacon(2);}
    if(game.ExpeditionMainComplete)SetBeacon(2);
-   bool sail=level>=8||(level==4&&(game.MissionObjectiveComplete("a")||game.MissionObjectiveComplete("b")));
+   bool sail=(level>=8&&level!=11)||(level==11&&game.ExpeditionMainComplete)||(level==4&&(game.MissionObjectiveComplete("a")||game.MissionObjectiveComplete("b")));
    if(sail&&boat){progress=Mathf.Min(1,progress+Time.deltaTime/80);boat.localPosition=boatOrigin+Vector3.forward*progress*30;}
   }
  }

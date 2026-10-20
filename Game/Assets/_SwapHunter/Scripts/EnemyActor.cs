@@ -232,7 +232,7 @@ namespace SwapHunter
             if(CombatRay.Cast(origin,(point-origin).normalized,Vector3.Distance(origin,point),transform,out var obstruction))
             {var ally=obstruction.collider.GetComponentInParent<EnemyActor>();if(ally&&ally!=this){MuzzleBlockedShots++;if(tactical)tactical.NotifyBlockedMuzzle();return;}}
             shotsFired++;if(FirstShotTime<0)FirstShotTime=Time.time;
-            Bolt.Spawn(this, origin, point - origin, speed, damage); G.sound.Play("rifle", origin);
+            Bolt.Spawn(this, origin, point - origin, speed, damage); G.sound.PlayWeapon(kind==EnemyKind.Sniper?7:kind==EnemyKind.Elite?8:0,"fire",origin);
             Shapes.Burst(origin, new Color(1, .64f, .25f), .12f);
         }
         void ClearLaser() { if (laser) Destroy(laser.gameObject); laser = null; }
@@ -312,7 +312,7 @@ namespace SwapHunter
             if (!Alive) return;
             float resourcesBefore=health+(boss?boss.Energy:0);
             if(boss)damage=boss.Absorb(damage);
-            health = Mathf.Max(0, health - damage); flashLeft = .12f;if(VisualRig)VisualRig.NotifyHit();
+            health = Mathf.Max(0, health - damage); flashLeft = LastHitRegion==EnemyHitRegion.Head?.20f:.10f;if(VisualRig)VisualRig.NotifyHit(LastHitRegion==EnemyHitRegion.Head);
             if(boss)boss.RefreshPhase();
             float effectiveDamage=Mathf.Max(0,resourcesBefore-health-(boss?boss.Energy:0));
             if(effectiveDamage>0&&ability)ability.NotifyHurt(effectiveDamage);

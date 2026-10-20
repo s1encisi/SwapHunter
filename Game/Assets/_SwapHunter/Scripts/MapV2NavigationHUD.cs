@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace SwapHunter {public sealed partial class DemoGame{
  static readonly string[] V2ShortTasks={
- "完成一次Q校准，处理指定守卫与本章小Boss","突破盾线，处理指定威胁后从货检口撤离","登上冷却井上层取通行件，击败本章小Boss",
+ "完成一次{key:6}校准，处理指定守卫与本章小Boss","突破盾线，处理指定威胁后从货检口撤离","登上冷却井上层取通行件，击败本章小Boss",
  "取回凭据，突破本章小Boss后撤离","取得双塔授权，击败火控小Boss后撤离","摧毁两处封锁装置，完成本章小Boss战",
  "任意顺序接通三座继电座，再通过本章小Boss","任取两份数据匣，再突破本章小Boss","取顶层核心，沿永久通道下撤并击败小Boss",
  "关闭三站切断未落地增援，再通过小Boss","取得维护权限；固定干扰可绕行，击败小Boss","先通过门卫，再完成双授权、核心与最终Boss"};
@@ -15,7 +15,7 @@ namespace SwapHunter {public sealed partial class DemoGame{
  else{
   bool miniPending=false;foreach(var m in mission.Members)if(!string.IsNullOrEmpty(m.group.miniBossId)&&!m.Defeated)miniPending=true;
   if(expeditionLevel==11&&miniPending){point=layout.MiniBossPosts[0]+Vector3.up;label="前厅 / 相位门卫";}
-  else if(mission.Definition.minimumSwaps>totalSwaps&&expeditionMap.anchors.Count>0){point=expeditionMap.anchors[0].AimPoint;label="校准目标 / 实际完成一次Q";}
+  else if(mission.Definition.minimumSwaps>totalSwaps&&expeditionMap.anchors.Count>0){point=expeditionMap.anchors[0].AimPoint;label="校准目标 / 实际完成一次{key:6}";}
   else{
    foreach(var n in expeditionMap.nodes){
     if(!n||!layout.TryObjective(n,out var id)||mission.ObjectiveComplete(id))continue;

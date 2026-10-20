@@ -45,32 +45,64 @@ namespace SwapHunter
             return false;
         }
 
-        bool TryMissionSpawn(Deployment entry, out Vector3 chosen)
+        bool DeploymentSpacing(Deployment entry,Vector3 point)
         {
-            chosen = entry.requested;
-            float radius = entry.kind == EnemyKind.Elite ? .45f : .36f;
-            float height = entry.kind == EnemyKind.Elite ? 2.1f : 1.8f;
-            int rings = entry.fixedPost ? 2 : 4;
-            for (int ring = 0; ring <= rings; ring++)
-                for (int k = 0; k < (ring == 0 ? 1 : 8); k++)
-                {
-                    Vector3 sample = entry.requested + new Vector3(Mathf.Cos(k * Mathf.PI / 4), 0, Mathf.Sin(k * Mathf.PI / 4)) * ring * .6f;
-                    if (!NavMesh.SamplePosition(sample, out var nav, .35f, NavMesh.AllAreas)) continue;
-                    // A tower role may shift within its platform, never to a ground
-                    // entrance. Occupied or unbaked platforms retain their budget.
-                    if (Mathf.Abs(nav.position.y - entry.requested.y) > (entry.fixedPost ? .25f : .55f)) continue;
-                    if (!EnemyMotion.GroundAt(nav.position, out var point) || !EnemyMotion.ClearVolume(point, radius, height)) continue;
-                    if (entry.kind == EnemyKind.Shield || entry.kind == EnemyKind.Elite)
-                        if (Physics.CheckSphere(point + Vector3.up, entry.kind == EnemyKind.Elite ? .94f : .82f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) continue;
-                    if (Vector3.Distance(point, player.transform.position) < 7) continue;
-                    bool occupied = false;
-                    foreach (var other in deployments)
-                        if (other != entry && other.located && Vector3.Distance(other.point, point) < 1.8f) { occupied = true; break; }
-                    if (occupied) continue;
-                    chosen = point; return true;
-                }
-            return false;
+            foreach(var other in deployments)
+                if(other!=entry&&other.located&&Vector3.Distance(other.point,point)<2.5f)return false;
+            foreach(var enemy in enemies)
+                if(enemy&&enemy.Alive&&Vector3.Distance(enemy.transform.position,point)<2.3f)return false;
+            return true;
         }
+        bool DeploymentPath(Deployment entry,Vector3 point,out float distance)
+        {
+            distance=Vector3.Distance(point,player.transform.position);
+            if(entry.fixedPost)return true;
+            if(!NavMesh.SamplePosition(player.transform.position,out var target,3,NavMesh.AllAreas))return false;
+            var path=new NavMeshPath();
+            if(!NavMesh.CalculatePath(point,target.position,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)return false;
+            distance=0;for(int i=1;i<path.corners.Length;i++)distance+=Vector3.Distance(path.corners[i-1],path.corners[i]);
+            return distance<110;
+        }
+        float DeploymentRoleScore(Deployment entry,Vector3 point,float pathDistance)
+        {
+            bool ranged=entry.kind==EnemyKind.Sniper||entry.kind==EnemyKind.Mortar||entry.kind==EnemyKind.Suppressor;
+            bool rush=entry.kind==EnemyKind.Shield||entry.kind==EnemyKind.Leaper||entry.kind==EnemyKind.Breacher;
+            float ideal=ranged?23:rush?10:16;
+            Vector3 delta=point-player.transform.position;
+            bool sight=!Physics.Linecast(point+Vector3.up*1.1f,player.Eye.position,Layers.WorldMask);
+            float score=-Mathf.Abs(delta.magnitude-ideal)*.4f-pathDistance*.035f;
+            score+=sight?(ranged?3:1):.7f;
+            // Prefer a different approach angle from already deployed teammates.
+            foreach(var other in enemies)
+            {
+                if(!other||!other.Alive||Vector3.Distance(point,other.transform.position)>12)continue;
+                Vector3 otherDelta=other.transform.position-player.transform.position;
+                score-=Mathf.Max(0,Vector3.Dot(delta.normalized,otherDelta.normalized))*.7f;
+            }
+            return score;
+        }
+        bool TryMissionSpawn(Deployment entry,out Vector3 chosen)
+        {
+            chosen=entry.requested;float best=float.NegativeInfinity;
+            float radius=entry.kind==EnemyKind.Elite?.45f:.36f,height=entry.kind==EnemyKind.Elite?2.1f:1.8f;
+            int rings=entry.fixedPost?2:4;
+            for(int ring=0;ring<=rings;ring++)
+                for(int k=0;k<(ring==0?1:12);k++)
+                {
+                    float angle=k*Mathf.PI/6;
+                    Vector3 sample=entry.requested+new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle))*ring*(entry.fixedPost?.6f:1.8f);
+                    if(!NavMesh.SamplePosition(sample,out var nav,.65f,NavMesh.AllAreas))continue;
+                    if(Mathf.Abs(nav.position.y-entry.requested.y)>(entry.fixedPost?.25f:.55f))continue;
+                    if(!EnemyMotion.GroundAt(nav.position,out var point)||!EnemyMotion.ClearVolume(point,radius,height))continue;
+                    if((entry.kind==EnemyKind.Shield||entry.kind==EnemyKind.Elite)&&Physics.CheckSphere(point+Vector3.up,entry.kind==EnemyKind.Elite?.94f:.82f,Layers.WorldMask,QueryTriggerInteraction.Ignore))continue;
+                    if(Vector3.Distance(point,player.transform.position)<7||!DeploymentSpacing(entry,point))continue;
+                    if(!DeploymentPath(entry,point,out float pathDistance))continue;
+                    float score=DeploymentRoleScore(entry,point,pathDistance)-Vector3.Distance(point,entry.requested)*(entry.fixedPost?3:.55f);
+                    if(score>best){best=score;chosen=point;}
+                }
+            return !float.IsNegativeInfinity(best);
+        }
+
         bool LocateDeployment(Deployment entry)
         {
             bool found = false;
@@ -96,9 +128,10 @@ namespace SwapHunter
                             bool duplicate = false;
                             foreach (var other in deployments)
                                 if (other != entry && other.located && Vector3.Distance(other.point, p) < 2) { duplicate = true; break; }
-                            if (duplicate) continue;
+                            if (duplicate || !DeploymentSpacing(entry,p)) continue;
+                            if(!DeploymentPath(entry,p,out float pathDistance))continue;
                             float front = Vector3.Dot(Vector3.ProjectOnPlane(delta, Vector3.up).normalized, player.transform.forward);
-                            float score = front * 3 - Vector3.Distance(p, entry.requested) * .45f;
+                            float score = DeploymentRoleScore(entry,p,pathDistance)+front*1.5f-Vector3.Distance(p,entry.requested)*.3f;
                             if (score > best) { best = score; chosen = p; found = true; }
                         }
             }
@@ -132,7 +165,7 @@ namespace SwapHunter
                 if (entry.remaining > 0) continue;
                 if (!entry.located) { LocateDeployment(entry); continue; }
                 float radius = entry.kind == EnemyKind.Elite ? .45f : .36f, height = entry.kind == EnemyKind.Elite ? 2.1f : 1.8f;
-                if (Vector3.Distance(entry.point, player.transform.position) < 4.5f || !EnemyMotion.ClearVolume(entry.point, radius, height))
+                if (Vector3.Distance(entry.point, player.transform.position) < 4.5f || !EnemyMotion.ClearVolume(entry.point, radius, height)||!DeploymentSpacing(entry,entry.point))
                 { entry.located = false; RemoveWarning(entry); LocateDeployment(entry); continue; }
                 var actor = EnemyActor.Spawn(entry.kind, entry.point, entry.arena);
                 if (!actor) { entry.located = false; RemoveWarning(entry); entry.remaining = .75f; continue; }

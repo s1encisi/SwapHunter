@@ -19,7 +19,7 @@ namespace SwapHunter
         protected virtual void OnDisable(){active.Remove(this);if(holding==this)CancelForAction();}
         public static IEnumerable<D2HoldInteraction> CandidatesForV2=>active;
         public static bool HasCandidate=>!InteractionV2.Active&&FindCandidate();
-        public static string Hint { get { var candidate=FindCandidate();return candidate?candidate.Prompt+" · 按住 E "+candidate.Duration.ToString("0.#")+"秒":""; } }
+        public static string Hint { get { var candidate=FindCandidate();return candidate?candidate.Prompt+" · 按住 {key:8} "+candidate.Duration.ToString("0.#")+"秒":""; } }
         public static float Progress=>holding?Mathf.Clamp01(elapsed/holding.Duration):0;
         public static bool Holding=>holding;
         public static void CancelForAction(){holding=null;elapsed=0;}
@@ -103,7 +103,7 @@ namespace SwapHunter
             facility.CoverOutput=Shapes.Box("展开的固定转场掩体",go.transform,facility.coverCenter,facility.coverSize,3,true,Layers.World);
             var obstacle=facility.CoverOutput.AddComponent<NavMeshObstacle>();obstacle.shape=NavMeshObstacleShape.Box;obstacle.size=Vector3.one;obstacle.carving=true;obstacle.carveOnlyStationary=true;facility.CoverOutput.SetActive(false);
             facility.MakeSocket(D2FacilityChoice.Cover,coverSocket,"北向掩护 / 增加转场遮蔽");facility.MakeSocket(D2FacilityChoice.Supply,supplySocket,"南侧补给 / 30生命 + 双枪各一匣");
-            facility.choiceLabel=D2WorldText.Create(go.transform,"搬运中央锚点后长按 E 通电\n本次仅选一项 · 搬走锚点仍保留",(coverSocket+supplySocket)/2+Vector3.up*2.5f,.3f);
+            facility.choiceLabel=D2WorldText.Create(go.transform,"搬运中央锚点后长按 {key:8} 通电\n本次仅选一项 · 搬走锚点仍保留",(coverSocket+supplySocket)/2+Vector3.up*2.5f,.3f);
             facility.supplyVisual=new GameObject("已解锁有限补给");facility.supplyVisual.transform.SetParent(go.transform,false);facility.supplyVisual.transform.position=supplySocket;
             FinalEnvironmentModels.Supply(facility.supplyVisual.transform,Vector3.zero);
             facility.MakeService(facility.supplyVisual.transform,false,new Vector3(-1.05f,0,-.7f));facility.MakeService(facility.supplyVisual.transform,true,new Vector3(1.05f,0,-.7f));
@@ -114,7 +114,7 @@ namespace SwapHunter
             var go=new GameObject(title);go.transform.SetParent(transform,false);go.transform.position=position;
             Shapes.Ring(go.transform,position+Vector3.up*.05f,1.1f,new Color(.2f,.8f,1),.06f);
             var socket=go.AddComponent<D2FacilitySocket>();socket.owner=this;socket.output=output;
-            D2WorldText.Create(go.transform,title+"\n锚点接入后 E 1.5秒",position+Vector3.up*1.55f,.3f);
+            D2WorldText.Create(go.transform,title+"\n锚点接入后 {key:8} 1.5秒",position+Vector3.up*1.55f,.3f);
         }
         void MakeService(Transform parent,bool ammo,Vector3 offset)
         {

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace SwapHunter
 {
@@ -32,11 +32,11 @@ namespace SwapHunter
             switch(skill)
             {
                 case 0:return "沿移动方向推进8米，约0.30秒；地面使用，碰撞停止，无无敌。\n冷却 "+(11-level)+"秒；击杀、换位或补给均不刷新。";
-                case 1:return "地面移速 +25%，持续 "+MobilitySeconds(level).ToString("0.0")+" 秒；不增加跳高。\n开枪、近战、投刀或引爆后结束；允许 Q。冷却 10 秒。";
+                case 1:return "地面移速 +25%，持续 "+MobilitySeconds(level).ToString("0.0")+" 秒；不增加跳高。\n开枪、近战、投刀或引爆后结束；允许 {key:6}。冷却 10 秒。";
                 case 2:return "固定半径 3 米阵地持续 4 秒，同层且无遮挡时减伤 "+(FortifyReduction(level)*100).ToString("0")+"%。\n离开失效，返回恢复；不减免地波等空间机制。冷却 16 秒。";
-                case 3:return "正在装填时使用，剩余时间减少 "+((1-ReloadRemaining(level))*100).ToString("0")+"%。\n不凭空补弹；Q 成功会中断未完成装填。冷却 14 秒。";
-                case 4:return "扫描 20 米内敌人的当前位置和朝向，持续 "+ScanSeconds(level).ToString("0")+" 秒。\n可显示遮挡后信息，不允许隔墙 Q。冷却 12 秒。";
-                case 5:return "4 秒准备窗口，下一发实际枪弹伤害 +"+(PrecisionBonus(level)*100).ToString("0")+"%。\n射空或命中盾也消耗，三连发只强化首发；可配合 Q。冷却 14 秒。";
+                case 3:return "正在装填时使用，剩余时间减少 "+((1-ReloadRemaining(level))*100).ToString("0")+"%。\n不凭空补弹；{key:6} 成功会中断未完成装填。冷却 14 秒。";
+                case 4:return "扫描 20 米内敌人的当前位置和朝向，持续 "+ScanSeconds(level).ToString("0")+" 秒。\n可显示遮挡后信息，不允许隔墙 {key:6}。冷却 12 秒。";
+                case 5:return "4 秒准备窗口，下一发实际枪弹伤害 +"+(PrecisionBonus(level)*100).ToString("0")+"%。\n射空或命中盾也消耗，三连发只强化首发；可配合 {key:6}。冷却 14 秒。";
                 case 6:return "投出一枚装置，0.5 秒后再次使用引爆，8 秒超时失效。\n3 米爆炸基准 "+RemoteDamage(level).ToString("0")+"，距离衰减、受墙阻挡且有自伤；结束后冷却 18 秒。";
                 case 7:return "瞄准 12 米内地面，3 米封锁区持续 4 秒，每秒 "+DenialDps(level).ToString("0")+" 伤害。\n每 0.25 秒按同层停留结算，受墙阻挡且伤及自己。冷却 18 秒。";
                 default:return "未装配职业技能";

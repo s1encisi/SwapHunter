@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -26,7 +26,7 @@ namespace SwapHunter
    new ExpeditionLevel(7,"回线仓区","任意两匣 · 分支选择","A仓窄廊、B仓长线、C仓折返。任意两匣即可撤离，第三匣成功带出+40。主线不依赖回刀。","仓区数据回收，支援轻机枪已解锁。",8,0),
    new ExpeditionLevel(8,"高塔回收","顶层核心 · 分层下撤","从顶层携核心向地面撤离。楼梯永久连通，回头不重复增援，上层活敌无需全清。","核心坐标确认，蓄能步枪已解锁。",10,0),
    new ExpeditionLevel(9,"持续封锁","有限预算 · 主动断援","关闭三个控制站取消对应未落地增援，已部署敌人不会消失。备弹减半、弹匣保留，仅一处场地补给。","后续增援切断，相位标记枪已解锁。",11,0),
-   new ExpeditionLevel(10,"反相设施","局部干扰 · 外环取核","取核心权限后沿外环撤离。两个干扰区独立可关；仅Q两端入场受限，无需关闭全部场区。","核心权限取得，封锁指挥官就在前方。",-1,0),
+   new ExpeditionLevel(10,"反相设施","局部干扰 · 外环取核","取核心权限后沿外环撤离。两个干扰区独立可关；仅{key:6}两端入场受限，无需关闭全部场区。","核心权限取得，封锁指挥官就在前方。",-1,0),
    new ExpeditionLevel(11,"核心突破","双高台授权 · Boss争位","取得双高台授权和地面核心，击败指挥官，从对侧撤离。随从同时至多两名，Boss死后撤销未部署随从。","核心回收成功，十二段空间行动完成。",-1,0)
   };
   static ExpeditionCatalog(){for(int i=0;i<Levels.Length;i++){Levels[i].brief=StoryContent.Chapters[i].brief;Levels[i].ending=StoryContent.Chapters[i].ending;}}
@@ -161,10 +161,10 @@ namespace SwapHunter
     if(types[i]==-1){if(counts[i]!=0)return false;}
     else if(!TacticalPrototypeRules.ValidConsumable(types[i])||counts[i]<1||counts[i]>TacticalPrototypeRules.ConsumableLimit(types[i]))return false;
    }
-   return types[0]<0||types[1]<0||types[0]!=types[1];
+   return true;
   }
   static int ItemCarry(ClassLoadout loadout,int type)
-  {for(int i=0;i<2;i++)if(loadout.itemTypes[i]==type)return loadout.itemCounts[i];return 0;}
+  {int total=0;for(int i=0;i<2;i++)if(loadout.itemTypes[i]==type)total+=loadout.itemCounts[i];return total;}
   static void SyncCompatibilityFields(ExpeditionProfile p)
   {
    if(p.version!=6)return;
@@ -214,12 +214,13 @@ namespace SwapHunter
    }
    var d=p.deployment;
    if(string.IsNullOrEmpty(p.activeRun)){if(d!=null)throw new InvalidDataException("非行动状态含有出发快照");return;}
-   if(d==null||d.runId!=p.activeRun||settledRuns.Contains(d.runId)||d.level!=p.activeLevel||d.classId!=p.activeClass||d.attempts<1||d.deaths<0||d.deaths>d.attempts||d.baseReward<0||d.firstReward<0||d.bonusReward<0||!ValidAttachments(d.attachments)||!ValidItems(d.itemTypes,d.itemCounts)||!ValidArray(d.inventoryConsumables,3,0,int.MaxValue)||!ValidArray(d.carriedConsumables,3,0,2)||!TacticalPrototypeRules.ClassCanUseWeapon(d.classId,d.primary)||!TacticalPrototypeRules.ClassCanUseWeapon(d.classId,d.secondary)||d.primary==d.secondary||!p.weapons[d.primary]||!p.weapons[d.secondary])throw new InvalidDataException("出发快照无效，保留原文件");
-   int cs=TacticalPrototypeRules.SkillIndex(d.classSkillId),gs=TacticalPrototypeRules.SkillIndex(d.tacticalSkillId,true);
+   if(d==null||d.runId!=p.activeRun||settledRuns.Contains(d.runId)||d.level!=p.activeLevel||d.classId!=p.activeClass||d.attempts<1||d.deaths<0||d.deaths>d.attempts||d.baseReward<0||d.firstReward<0||d.bonusReward<0||!ValidAttachments(d.attachments)||!ValidItems(d.itemTypes,d.itemCounts)||!ValidArray(d.inventoryConsumables,3,0,int.MaxValue)||!ValidArray(d.carriedConsumables,3,0,TacticalPrototypeRules.ConsumableTotalLimit)||!TacticalPrototypeRules.ClassCanUseWeapon(d.classId,d.primary)||!TacticalPrototypeRules.ClassCanUseWeapon(d.classId,d.secondary)||d.primary==d.secondary||!p.weapons[d.primary]||!p.weapons[d.secondary])throw new InvalidDataException("出发快照无效，保留原文件");
+   if(d.knifeId<0||d.knifeId>=6||!p.meleeKnives[d.knifeId])throw new InvalidDataException("出发近战刀具快照无效");
+    int cs=TacticalPrototypeRules.SkillIndex(d.classSkillId),gs=TacticalPrototypeRules.SkillIndex(d.tacticalSkillId,true);
    if(!TacticalPrototypeRules.ClassCanUseSkill(d.classId,cs)||gs<0||d.classSkillLevel<1||d.classSkillLevel>3||d.generalSkillLevel<1||d.generalSkillLevel>3||p.classSkillLevels[cs]!=d.classSkillLevel||p.generalLevels[gs]!=d.generalSkillLevel)throw new InvalidDataException("出发技能快照无效");
    for(int type=0;type<3;type++)
    {
-    int desired=0;for(int slot=0;slot<2;slot++)if(d.itemTypes[slot]==type)desired=d.itemCounts[slot];
+    int desired=0;for(int slot=0;slot<2;slot++)if(d.itemTypes[slot]==type)desired+=d.itemCounts[slot];
     if(d.inventoryConsumables[type]!=p.consumables[type]||d.carriedConsumables[type]!=Math.Min(desired,d.inventoryConsumables[type]))throw new InvalidDataException("出发库存快照无效");
    }
    if(d.medkits!=d.carriedConsumables[0]||d.ammoPacks!=d.carriedConsumables[1]||d.armorPacks!=d.carriedConsumables[2]||d.inventoryMedkits!=d.inventoryConsumables[0]||d.hasMobility!=(cs==1)||d.hasShield!=(gs==0))throw new InvalidDataException("出发快照字段不一致");
@@ -361,13 +362,13 @@ namespace SwapHunter
    else
    {
     if(!TacticalPrototypeRules.ValidConsumable(type)||count<0||count>TacticalPrototypeRules.ConsumableLimit(type))throw new InvalidOperationException("道具类型或携带量无效");
-    if(count==0)type=-1;else if(Loadout.itemTypes[1-slot]==type)throw new InvalidOperationException("两个道具槽不能选择相同类型");
+    if(count==0)type=-1;
    }
    var p=Copy();var l=p.classLoadouts[p.activeClass];l.itemTypes[slot]=type;l.itemCounts[slot]=count;Commit(p);
   }
   public void SetMedkitCarry(int quantity)
   {
-   RequireTactical();RequireIdle();if(quantity<0||quantity>2)throw new ArgumentOutOfRangeException(nameof(quantity));
+   RequireTactical();RequireIdle();if(quantity<0||quantity>TacticalPrototypeRules.ConsumableSlotLimit)throw new ArgumentOutOfRangeException(nameof(quantity));
    int slot=Array.IndexOf(Loadout.itemTypes,0);
    if(quantity==0){if(slot>=0)SetConsumableSlot(slot,-1,0);return;}
    if(slot<0)slot=Array.IndexOf(Loadout.itemTypes,-1);
@@ -418,7 +419,7 @@ namespace SwapHunter
    }
    p.credits=checked(p.credits+receipt.reward);p.activeRun="";p.receipts.Add(receipt);Commit(p);return receipt;
   }
-  public void EquipMeleeKnife(int id){RequireTactical();RequireIdle();if(id<0||id>=6||!Profile.meleeKnives[id])throw new InvalidOperationException("尚未拥有此刀具");var p=Copy();p.classLoadouts[p.activeClass].knifeId=id;Commit(p);}
+  public void EquipMeleeKnife(int id){RequireTactical();RequireIdle();if(id<0||id>=6||!Profile.meleeKnives[id])throw new InvalidOperationException("尚未拥有此刀具");var p=Copy();foreach(var preset in p.classLoadouts)preset.knifeId=id;Commit(p);}
   public void Equip(int slot,int weapon)
   {
    RequireIdle();if(slot<0||slot>1||!CanEquip(weapon))throw new InvalidOperationException("武器尚未拥有或不属于当前职业");var p=Copy();

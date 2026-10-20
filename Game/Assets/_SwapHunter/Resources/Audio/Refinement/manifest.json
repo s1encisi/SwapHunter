@@ -1,0 +1,1061 @@
+{
+  "date": "2026-10-20",
+  "clips": [
+    {
+      "id": "gun_00_fire_a",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 28800,
+      "sampleRate": 48000,
+      "seconds": 0.6,
+      "peak": 0.77,
+      "rms": 0.15405947679521112,
+      "sha256": "47f52be67a205c5815c37d7df1c5d11e0798971e6986141b4e904d7d2e30b407"
+    },
+    {
+      "id": "gun_00_fire_b",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 28800,
+      "sampleRate": 48000,
+      "seconds": 0.6,
+      "peak": 0.77,
+      "rms": 0.15175281920764094,
+      "sha256": "6e0e4cd4f4aa4c598998a44e3460811c12c6554466f89c6182c548688eaf03d9"
+    },
+    {
+      "id": "gun_00_fire_c",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 28800,
+      "sampleRate": 48000,
+      "seconds": 0.6,
+      "peak": 0.77,
+      "rms": 0.15622775186276144,
+      "sha256": "8409b60490f836c1a9110d9ce08355c1dee5eefdd1a59680760d7dacba24a7a9"
+    },
+    {
+      "id": "gun_00_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.049370094137015125,
+      "sha256": "e6885a144914e3a441464cfccc90de540e3a604234a606705c075e58a77eb57c"
+    },
+    {
+      "id": "gun_00_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.045698817545578134,
+      "sha256": "d404f4b7e07c91d60894ef4d77ce53588d36eff7809b6d67c13d196dcb52ec4e"
+    },
+    {
+      "id": "gun_00_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1458674826070045,
+      "sha256": "33f0163cfe499cbf6c46e9f94d6c63c4252c60a2139e7a9508d88be7a68f2ebd"
+    },
+    {
+      "id": "gun_00_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.042426441607910696,
+      "sha256": "33a63c1ceb0dac13559cb7d0e636ab884e8d427dadbe221bbe0fc9c6073b8901"
+    },
+    {
+      "id": "gun_01_fire_a",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 37920,
+      "sampleRate": 48000,
+      "seconds": 0.79,
+      "peak": 0.77,
+      "rms": 0.1653378205777789,
+      "sha256": "7337c2077efd0c8179df501d6dbec1b1fd8b493134f61207c3a86f1f8aba6512"
+    },
+    {
+      "id": "gun_01_fire_b",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 37920,
+      "sampleRate": 48000,
+      "seconds": 0.79,
+      "peak": 0.77,
+      "rms": 0.16634102308361418,
+      "sha256": "db515cedda0999405330402db659be72445fec94e322860e5b0380b37515f1c5"
+    },
+    {
+      "id": "gun_01_fire_c",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 37920,
+      "sampleRate": 48000,
+      "seconds": 0.79,
+      "peak": 0.77,
+      "rms": 0.16316522374544593,
+      "sha256": "71a55fcf9d86bfb83adda2d19979de485a92908d8b6e223d22ee6d42e96274bd"
+    },
+    {
+      "id": "gun_01_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.048073100056627974,
+      "sha256": "ac208fdd6818e70f78fab5f8bb6dd342d4e9a7bdcff1f2106e93a41d2fb11b19"
+    },
+    {
+      "id": "gun_01_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.043571727338383694,
+      "sha256": "bdcb3e913c879f4fccd988da71a83e5ec3f1717ff4c29877c821a1928c2cd6f4"
+    },
+    {
+      "id": "gun_01_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1426208547794444,
+      "sha256": "4e53f6da15db3b56d46f81a200bc9d454ea4f8861de75cca484cb720d76f4473"
+    },
+    {
+      "id": "gun_01_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04071029098141071,
+      "sha256": "a02096a8f376b6c5c1a4dab32e1478d2cb1a6f37d56470febdd953edd13e4845"
+    },
+    {
+      "id": "gun_02_fire_a",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 30720,
+      "sampleRate": 48000,
+      "seconds": 0.64,
+      "peak": 0.77,
+      "rms": 0.17747869544929493,
+      "sha256": "128a6b56daddff4e0db203bfc58a6aa4b2cb5257cbc37daca69a6a1d4c9546fb"
+    },
+    {
+      "id": "gun_02_fire_b",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 30720,
+      "sampleRate": 48000,
+      "seconds": 0.64,
+      "peak": 0.77,
+      "rms": 0.17355908966748237,
+      "sha256": "50aa68397dbec33f8e79610ac02bfc04299bf25550270dc08b2e1e0905360364"
+    },
+    {
+      "id": "gun_02_fire_c",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 30720,
+      "sampleRate": 48000,
+      "seconds": 0.64,
+      "peak": 0.77,
+      "rms": 0.17232558886771823,
+      "sha256": "e6ba990a2bfbb0bdcf81bc6bd9fac0579a6bf21a35981b79ac223fe43c7d3438"
+    },
+    {
+      "id": "gun_02_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04641522108951973,
+      "sha256": "aaa848a3b4263d0186bcfc2a28414f365dc83e3720b0f79dd5d05ff480581c8f"
+    },
+    {
+      "id": "gun_02_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.041921481855869386,
+      "sha256": "7a17b1e9a898cd84a20dc23f252f45fbf6006f7c2f77f4eaffbb416f7be2d253"
+    },
+    {
+      "id": "gun_02_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.12944303929367343,
+      "sha256": "8d7bbcd9e2987c47e5656797104b4f2482220fd58a76b71835275365708ffb68"
+    },
+    {
+      "id": "gun_02_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.040084298074192205,
+      "sha256": "6b480dc7994f72f4b392840bd78b0fe6e05bc1c882c839f0a1a1cb3d7297adeb"
+    },
+    {
+      "id": "gun_03_fire_a",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 33600,
+      "sampleRate": 48000,
+      "seconds": 0.7,
+      "peak": 0.77,
+      "rms": 0.14281759149434928,
+      "sha256": "cd7b96eb89e704f7ec085005fa08d8a2f79f90bd83c1002856fb2094ab80afe4"
+    },
+    {
+      "id": "gun_03_fire_b",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 33600,
+      "sampleRate": 48000,
+      "seconds": 0.7,
+      "peak": 0.77,
+      "rms": 0.14532595151637565,
+      "sha256": "af6a0a55f625d9f70e8f13d17c05463dfea42882dfb4243358ae4086f63fc128"
+    },
+    {
+      "id": "gun_03_fire_c",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 33600,
+      "sampleRate": 48000,
+      "seconds": 0.7,
+      "peak": 0.77,
+      "rms": 0.14366921514705888,
+      "sha256": "52341347fd3c1ab1f0ed9fa4bb5d90349bb1332fa98b1bfe6c04d2d2b98fe65f"
+    },
+    {
+      "id": "gun_03_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04373994302776403,
+      "sha256": "204cc85bad12338a377c4af9d0567d5147dde1474971ab23eb24b6182877fce6"
+    },
+    {
+      "id": "gun_03_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04126675812722887,
+      "sha256": "ef3fb58117eb10c02c9d1acaf8e6d41d6dd33bd8683a0e84b082b2e1d0393382"
+    },
+    {
+      "id": "gun_03_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.12983435141075728,
+      "sha256": "b6f38c1762438586ce927c44991e2af9725d3afaab42715617a5d4a2256aefa9"
+    },
+    {
+      "id": "gun_03_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.03854088267878432,
+      "sha256": "3655addedfd3e5e537f2b42c4f3d50f7ae960726addd88508142b6672e4c7802"
+    },
+    {
+      "id": "gun_04_fire_a",
+      "sources": [
+        "pistol.wav"
+      ],
+      "samples": 24000,
+      "sampleRate": 48000,
+      "seconds": 0.5,
+      "peak": 0.77,
+      "rms": 0.19687755745437177,
+      "sha256": "0c7a49440db759435378b45407668daed6c4d9a990bb54cd9d6748f6770a4a4c"
+    },
+    {
+      "id": "gun_04_fire_b",
+      "sources": [
+        "pistol.wav"
+      ],
+      "samples": 24000,
+      "sampleRate": 48000,
+      "seconds": 0.5,
+      "peak": 0.77,
+      "rms": 0.19298780070376167,
+      "sha256": "8b41ca0e5e65709eb32af3c4a37d8d569847bf08a50809ab160a1286042a4ac4"
+    },
+    {
+      "id": "gun_04_fire_c",
+      "sources": [
+        "pistol.wav"
+      ],
+      "samples": 24000,
+      "sampleRate": 48000,
+      "seconds": 0.5,
+      "peak": 0.77,
+      "rms": 0.191717301450654,
+      "sha256": "8f2a2b0de2c8f228e6bebfb70becda5efb297c8b61bfb0894e36f581ef4fd145"
+    },
+    {
+      "id": "gun_04_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.049370094137015125,
+      "sha256": "e6885a144914e3a441464cfccc90de540e3a604234a606705c075e58a77eb57c"
+    },
+    {
+      "id": "gun_04_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.045698817545578134,
+      "sha256": "d404f4b7e07c91d60894ef4d77ce53588d36eff7809b6d67c13d196dcb52ec4e"
+    },
+    {
+      "id": "gun_04_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1458674826070045,
+      "sha256": "33f0163cfe499cbf6c46e9f94d6c63c4252c60a2139e7a9508d88be7a68f2ebd"
+    },
+    {
+      "id": "gun_04_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.042426441607910696,
+      "sha256": "33a63c1ceb0dac13559cb7d0e636ab884e8d427dadbe221bbe0fc9c6073b8901"
+    },
+    {
+      "id": "gun_05_fire_a",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 39360,
+      "sampleRate": 48000,
+      "seconds": 0.82,
+      "peak": 0.77,
+      "rms": 0.17812060852562628,
+      "sha256": "95dffc4677af62ed43c329760493e1e086eea10ebe7702925771b5d4720d7c73"
+    },
+    {
+      "id": "gun_05_fire_b",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 39360,
+      "sampleRate": 48000,
+      "seconds": 0.82,
+      "peak": 0.77,
+      "rms": 0.17229674138624515,
+      "sha256": "277d7ea0ef9157acfde3b17d15b1e7d305894687a1ced4b36001f722ec8c1883"
+    },
+    {
+      "id": "gun_05_fire_c",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 39360,
+      "sampleRate": 48000,
+      "seconds": 0.82,
+      "peak": 0.77,
+      "rms": 0.17049434930208968,
+      "sha256": "48de385a08007aa2e018801fb34895f07a59e488f3b8f6b9d020f4604552a55d"
+    },
+    {
+      "id": "gun_05_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.048073100056627974,
+      "sha256": "ac208fdd6818e70f78fab5f8bb6dd342d4e9a7bdcff1f2106e93a41d2fb11b19"
+    },
+    {
+      "id": "gun_05_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.043571727338383694,
+      "sha256": "bdcb3e913c879f4fccd988da71a83e5ec3f1717ff4c29877c821a1928c2cd6f4"
+    },
+    {
+      "id": "gun_05_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1426208547794444,
+      "sha256": "4e53f6da15db3b56d46f81a200bc9d454ea4f8861de75cca484cb720d76f4473"
+    },
+    {
+      "id": "gun_05_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04071029098141071,
+      "sha256": "a02096a8f376b6c5c1a4dab32e1478d2cb1a6f37d56470febdd953edd13e4845"
+    },
+    {
+      "id": "gun_06_fire_a",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 35520,
+      "sampleRate": 48000,
+      "seconds": 0.74,
+      "peak": 0.77,
+      "rms": 0.16353459015930538,
+      "sha256": "1c5c2dd222c3917699604e8d407308615f9a69583b1bc36c0296204d492fd85e"
+    },
+    {
+      "id": "gun_06_fire_b",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 35520,
+      "sampleRate": 48000,
+      "seconds": 0.74,
+      "peak": 0.77,
+      "rms": 0.16391941043275937,
+      "sha256": "92bb9f83de949309a5f3ceed5306e9b3e910c9c5650cb6b74713afc92264b63f"
+    },
+    {
+      "id": "gun_06_fire_c",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 35520,
+      "sampleRate": 48000,
+      "seconds": 0.74,
+      "peak": 0.77,
+      "rms": 0.15974903761476011,
+      "sha256": "9b6146ac95e474ecec2ed73b45719513f267772aa9503b8d3a04061bfffdd2cb"
+    },
+    {
+      "id": "gun_06_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04641522108951973,
+      "sha256": "aaa848a3b4263d0186bcfc2a28414f365dc83e3720b0f79dd5d05ff480581c8f"
+    },
+    {
+      "id": "gun_06_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.041921481855869386,
+      "sha256": "7a17b1e9a898cd84a20dc23f252f45fbf6006f7c2f77f4eaffbb416f7be2d253"
+    },
+    {
+      "id": "gun_06_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.12944303929367343,
+      "sha256": "8d7bbcd9e2987c47e5656797104b4f2482220fd58a76b71835275365708ffb68"
+    },
+    {
+      "id": "gun_06_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.040084298074192205,
+      "sha256": "6b480dc7994f72f4b392840bd78b0fe6e05bc1c882c839f0a1a1cb3d7297adeb"
+    },
+    {
+      "id": "gun_07_fire_a",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 45120,
+      "sampleRate": 48000,
+      "seconds": 0.94,
+      "peak": 0.77,
+      "rms": 0.1616047218614496,
+      "sha256": "5505b3dde0f98867692d0b05282bdd6751f98c8cc1a077ffacac9091ccb67cee"
+    },
+    {
+      "id": "gun_07_fire_b",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 45120,
+      "sampleRate": 48000,
+      "seconds": 0.94,
+      "peak": 0.77,
+      "rms": 0.15724345898067357,
+      "sha256": "588696f36088048b20922d9b931671f0489219e362852b7b7fa7196ba7a96c79"
+    },
+    {
+      "id": "gun_07_fire_c",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 45120,
+      "sampleRate": 48000,
+      "seconds": 0.94,
+      "peak": 0.77,
+      "rms": 0.1548904631027543,
+      "sha256": "e7c924ffae887631fe7611d31eede0ed93f3e370b3a901c3fc9eca01a7faf4ca"
+    },
+    {
+      "id": "gun_07_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04363398380695727,
+      "sha256": "1eda88287067c939ac1fe5492c316121a2d7a6b81a0113d9b7f95c87f6bd68cb"
+    },
+    {
+      "id": "gun_07_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.041026782579317606,
+      "sha256": "b73ca058b35c8b6ff2aa75120f3c3bce203ac7750fac3a4edd4c1e94f9088af0"
+    },
+    {
+      "id": "gun_07_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1307630088553577,
+      "sha256": "fa83251bb78657866f84554768f00b130eadb08ca46b5266833a6cfe5cc3063f"
+    },
+    {
+      "id": "gun_07_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.03819138255253488,
+      "sha256": "c7a76a2404f3d5a72c447b5487d669810ba9308589370d6fd9727b8916d05b74"
+    },
+    {
+      "id": "gun_08_fire_a",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 32160,
+      "sampleRate": 48000,
+      "seconds": 0.67,
+      "peak": 0.77,
+      "rms": 0.1468732608247931,
+      "sha256": "cf1514d5964f83f0565fb83ff3de3a54628508d19816f05df3b8172d8310b40a"
+    },
+    {
+      "id": "gun_08_fire_b",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 32160,
+      "sampleRate": 48000,
+      "seconds": 0.67,
+      "peak": 0.77,
+      "rms": 0.1470081477929123,
+      "sha256": "26f7b20ed4f2d805dc661c64880251d076b7f43f32be6e463f1b94f1de07fff5"
+    },
+    {
+      "id": "gun_08_fire_c",
+      "sources": [
+        "cg1.wav"
+      ],
+      "samples": 32160,
+      "sampleRate": 48000,
+      "seconds": 0.67,
+      "peak": 0.77,
+      "rms": 0.1409502359135721,
+      "sha256": "ed77cbeb123926ee47633ab746be8f5adee24a237354717335718f9fd5b63afd"
+    },
+    {
+      "id": "gun_08_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04946691145385323,
+      "sha256": "f6ba5502b6b6bfd25879fe0bf9d36d9541abba82d5729140ac518c43186f535c"
+    },
+    {
+      "id": "gun_08_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.045749207324030206,
+      "sha256": "76273837809339ca50df94d5f2be70a735ba0a5854b7a8228c249660ae5cb84a"
+    },
+    {
+      "id": "gun_08_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.14515836589481823,
+      "sha256": "fcf9d80075064ba1fd68784c26413a764ae00806e10c791e379e4ee2e2c68d0d"
+    },
+    {
+      "id": "gun_08_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.042330284133484754,
+      "sha256": "78613577be00d9e4c5dc9034e0feaeaf128833951d911c68a0514ede0f1d52b4"
+    },
+    {
+      "id": "gun_09_fire_a",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 41760,
+      "sampleRate": 48000,
+      "seconds": 0.87,
+      "peak": 0.77,
+      "rms": 0.1839973026441475,
+      "sha256": "c8e76cbe64ba2f0ba4325379a99c0c7f59b39ec29bb1555a38841885a23703d8"
+    },
+    {
+      "id": "gun_09_fire_b",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 41760,
+      "sampleRate": 48000,
+      "seconds": 0.87,
+      "peak": 0.77,
+      "rms": 0.18502812323017798,
+      "sha256": "e77e02a3420fbe68248b1220d2c77b0d8c568ce980a4428776720ba68ca9be79"
+    },
+    {
+      "id": "gun_09_fire_c",
+      "sources": [
+        "shotgun.wav"
+      ],
+      "samples": 41760,
+      "sampleRate": 48000,
+      "seconds": 0.87,
+      "peak": 0.77,
+      "rms": 0.1768780416563674,
+      "sha256": "f5b6e6a28d1b63ef6b1b00154dec637836964aea179b9873ff0366c00ab4a680"
+    },
+    {
+      "id": "gun_09_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.048073100056627974,
+      "sha256": "ac208fdd6818e70f78fab5f8bb6dd342d4e9a7bdcff1f2106e93a41d2fb11b19"
+    },
+    {
+      "id": "gun_09_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.043571727338383694,
+      "sha256": "bdcb3e913c879f4fccd988da71a83e5ec3f1717ff4c29877c821a1928c2cd6f4"
+    },
+    {
+      "id": "gun_09_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1424294098875221,
+      "sha256": "477204bc0a88590467280f7bab5eaaf3bb6aa0066b7784cb8e44059cc2230931"
+    },
+    {
+      "id": "gun_09_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04071029098141071,
+      "sha256": "a02096a8f376b6c5c1a4dab32e1478d2cb1a6f37d56470febdd953edd13e4845"
+    },
+    {
+      "id": "gun_10_fire_a",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 38400,
+      "sampleRate": 48000,
+      "seconds": 0.8,
+      "peak": 0.77,
+      "rms": 0.15452023564047665,
+      "sha256": "ed1bfb909b09e8889cfd3c08d0ddcd47dcf32592d0771c6de8daed1046116114"
+    },
+    {
+      "id": "gun_10_fire_b",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 38400,
+      "sampleRate": 48000,
+      "seconds": 0.8,
+      "peak": 0.77,
+      "rms": 0.15494558031168543,
+      "sha256": "ac986fdaf3f2f5ea2ca7451dc87f776690a35343324eb2123aab665bdd61db22"
+    },
+    {
+      "id": "gun_10_fire_c",
+      "sources": [
+        "rifle.wav"
+      ],
+      "samples": 38400,
+      "sampleRate": 48000,
+      "seconds": 0.8,
+      "peak": 0.77,
+      "rms": 0.15085030400960278,
+      "sha256": "30b3e7309a26b35e7be349674b8c076d8a70089e01637ab0d3222af75f017a0e"
+    },
+    {
+      "id": "gun_10_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04641522108951973,
+      "sha256": "aaa848a3b4263d0186bcfc2a28414f365dc83e3720b0f79dd5d05ff480581c8f"
+    },
+    {
+      "id": "gun_10_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.041921481855869386,
+      "sha256": "7a17b1e9a898cd84a20dc23f252f45fbf6006f7c2f77f4eaffbb416f7be2d253"
+    },
+    {
+      "id": "gun_10_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.12944303929367343,
+      "sha256": "8d7bbcd9e2987c47e5656797104b4f2482220fd58a76b71835275365708ffb68"
+    },
+    {
+      "id": "gun_10_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.040084298074192205,
+      "sha256": "6b480dc7994f72f4b392840bd78b0fe6e05bc1c882c839f0a1a1cb3d7297adeb"
+    },
+    {
+      "id": "gun_11_fire_a",
+      "sources": [
+        "pistol.wav"
+      ],
+      "samples": 25920,
+      "sampleRate": 48000,
+      "seconds": 0.54,
+      "peak": 0.77,
+      "rms": 0.1689803367919564,
+      "sha256": "a17059ccbcbab6bf70186b35998081599e791f17708c0c92adef5e232c14d531"
+    },
+    {
+      "id": "gun_11_fire_b",
+      "sources": [
+        "pistol.wav"
+      ],
+      "samples": 25920,
+      "sampleRate": 48000,
+      "seconds": 0.54,
+      "peak": 0.77,
+      "rms": 0.16794978810303843,
+      "sha256": "140f91862d359ecf81cbedd2ca704b33fe1c4ae8eb03595e5194c948ecb8f98b"
+    },
+    {
+      "id": "gun_11_fire_c",
+      "sources": [
+        "pistol.wav"
+      ],
+      "samples": 25920,
+      "sampleRate": 48000,
+      "seconds": 0.54,
+      "peak": 0.77,
+      "rms": 0.164259807705257,
+      "sha256": "38dca4b68518eb354d14792e3ad01895aa10d53bcfd0dd466ad37c444f963dff"
+    },
+    {
+      "id": "gun_11_reload_out",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.04363398380695727,
+      "sha256": "1eda88287067c939ac1fe5492c316121a2d7a6b81a0113d9b7f95c87f6bd68cb"
+    },
+    {
+      "id": "gun_11_reload_in",
+      "sources": [
+        "riflereload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.041026782579317606,
+      "sha256": "b73ca058b35c8b6ff2aa75120f3c3bce203ac7750fac3a4edd4c1e94f9088af0"
+    },
+    {
+      "id": "gun_11_reload_bolt",
+      "sources": [
+        "shotguncock.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.1307630088553577,
+      "sha256": "fa83251bb78657866f84554768f00b130eadb08ca46b5266833a6cfe5cc3063f"
+    },
+    {
+      "id": "gun_11_equip",
+      "sources": [
+        "gunreload.wav"
+      ],
+      "samples": 23040,
+      "sampleRate": 48000,
+      "seconds": 0.48,
+      "peak": 0.77,
+      "rms": 0.03819138255253488,
+      "sha256": "c7a76a2404f3d5a72c447b5487d669810ba9308589370d6fd9727b8916d05b74"
+    },
+    {
+      "id": "impact",
+      "sources": [
+        "Original SwapHunter feedback synthesis"
+      ],
+      "samples": 6720,
+      "sampleRate": 48000,
+      "seconds": 0.14,
+      "peak": 0.77,
+      "rms": 0.13755752313978453,
+      "sha256": "c23534aa4880f3b0a5c5db9cace3a18e0b0176e940f0bdb192f141e5a4135a21"
+    },
+    {
+      "id": "limb_hit",
+      "sources": [
+        "Original SwapHunter feedback synthesis"
+      ],
+      "samples": 5760,
+      "sampleRate": 48000,
+      "seconds": 0.12,
+      "peak": 0.77,
+      "rms": 0.11803874371672535,
+      "sha256": "0b2a442d9955c1453d2b4643b347d3f805132b986af2d9b9508fa0b19913ab8a"
+    },
+    {
+      "id": "head_hit",
+      "sources": [
+        "Original SwapHunter feedback synthesis"
+      ],
+      "samples": 11040,
+      "sampleRate": 48000,
+      "seconds": 0.23,
+      "peak": 0.77,
+      "rms": 0.0921095975100898,
+      "sha256": "5a5fbe32275322e810413d88727d28fce192a835bbb58f38754697587ca68868"
+    },
+    {
+      "id": "head_kill",
+      "sources": [
+        "Original SwapHunter feedback synthesis"
+      ],
+      "samples": 16320,
+      "sampleRate": 48000,
+      "seconds": 0.34,
+      "peak": 0.77,
+      "rms": 0.0937582675108943,
+      "sha256": "25c5b7c0088c3b14e7af67cc5ac33f3c78da808bc4d225fa25a4936e7fcf413e"
+    }
+  ]
+}

@@ -1,40 +1,40 @@
-﻿using System;
+using System;
 using UnityEngine;
 namespace SwapHunter
 {
  public sealed partial class DemoGame
  {
-  static readonly Color PhaseBlue=new Color(.40f,.78f,1),Paper=new Color(.94f,.96f,1),PanelBlue=new Color(.035f,.07f,.14f);
+  static readonly Color PhaseBlue=new Color(.47f,.69f,.67f),Paper=new Color(.91f,.93f,.90f),PanelBlue=new Color(.075f,.118f,.141f);
   void ExpeditionChrome(string title,string sub)
   {
-   Fill(FullScreenGuiRect,new Color(.014f,.022f,.05f));
-   Fill(new Rect(0,0,18,900),PhaseBlue);Fill(new Rect(viewWidth-240,0,240,900),new Color(.035f,.10f,.22f));
-   Text("SWAPHUNTER / PHASE OPERATIONS",new Rect(48,29,650,30),16,PhaseBlue);
+   Fill(FullScreenGuiRect,Ink);
+   Fill(new Rect(48,181,viewWidth-96,1),new Color(.26f,.34f,.36f));
+   Text("SWAPHUNTER / HOMECOMING OPERATIONS",new Rect(48,29,650,30),16,PhaseBlue);
    Text(title,new Rect(44,75,viewWidth-300,66),45,Paper);
    Text(sub,new Rect(48,141,viewWidth-120,40),18,Muted);
   }
   void ExpeditionAction(Action action)
   {if(TrialSessionActive||TrialAccountReadBlocked)return;try{action();expeditionNotice="";sound.Play("confirm");}catch(Exception e){expeditionNotice=e.Message;sound.Play("warning");}}
-  public void SetExpeditionTabForReview(int tab) { expeditionTab = Mathf.Clamp(tab, 0, TacticalExpedition?5:3); }
+  public void SetExpeditionTabForReview(int tab) { expeditionTab = Mathf.Clamp(tab, 0, TacticalExpedition?4:3); }
   public bool DrawExpeditionScreen()
   {
    if(TacticalExpedition&&ExpeditionAwaitingRetry){DrawExpeditionOverlay();return true;}
    if(expeditionInventory&&expeditionActive){ExpeditionInventoryUI();return true;}
    if(!expeditionBoard||state!=RunState.Menu)return false;
-   string title=expeditionTab==0?"相位行动":expeditionTab==1?"武器装配":TacticalExpedition?(expeditionTab==2?"职业技能":expeditionTab==4?"配装路线":expeditionTab==5?"近战刀具":"补给采购"):"补给商店";
+   if(expeditionTab==5){expeditionTab=1;expeditionWeaponSlot=2;}
+   string title=expeditionTab==0?"相位行动":expeditionTab==1?"武器与近战装配":TacticalExpedition?(expeditionTab==2?"职业技能":expeditionTab==4?"配装路线":"补给采购"):"补给商店";
    ExpeditionChrome(title,TacticalExpedition?TacticalPrototypeRules.ClassNames[expeditionStore.Profile.activeClass]+" · 关外整备与采购 → 带着出发配置行动 → 成功结算信用点":"战斗 → 带回研究点 → 选择成长与装配 → 下一段行动");
    if(Button("主菜单",new Rect(viewWidth-195,40,145,47))){expeditionBoard=false;return true;}
    if(expeditionStore==null)
    {Text(expeditionNotice,new Rect(50,250,viewWidth-100,220),24);return true;}
    var p=expeditionStore.Profile;
    Text((TacticalExpedition?"信用点  ":"研究点  ")+p.credits+"    |    进度 "+Array.FindAll(p.cleared,v=>v).Length+" / 12",new Rect(viewWidth-570,102,515,35),21,Paper,TextAnchor.MiddleRight);
-   string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购","配装路线","近战刀具"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
+   string[] tabs=TacticalExpedition?new[]{"行动地图","武器装配","职业技能","补给采购","配装路线"}:new[]{"行动地图","武器装配","角色专精","战术工具"};
    float tabWidth=Mathf.Min(192,(viewWidth-260)/tabs.Length-10);for(int i=0;i<tabs.Length;i++)if(Button(tabs[i],new Rect(48+i*(tabWidth+10),200,tabWidth,47),expeditionTab==i))expeditionTab=i;
    if(Button("归航档案",new Rect(viewWidth-194,200,145,47)))OpenStoryArchive();
    if(expeditionTab==0)ExpeditionLevelsUI();else if(expeditionTab==1)ExpeditionWeaponsUI();
    else if(expeditionTab==2){if(TacticalExpedition)ExpeditionAssaultSkillsUI();else ExpeditionSpecializationUI();}
    else if(expeditionTab==4&&TacticalExpedition)DrawLoadoutRoutes();
-   else if(expeditionTab==5&&TacticalExpedition)DrawKnifeArmoryV2();
    else{if(TacticalExpedition)ExpeditionProcurementUI();else ExpeditionToolsUI();}
    string status=!string.IsNullOrEmpty(AttemptMetricsNotice)?AttemptMetricsNotice:expeditionNotice;
    if(!string.IsNullOrEmpty(status))Text(status,new Rect(49,840,viewWidth-100,46),18,new Color(1,.69f,.3f));
@@ -46,12 +46,12 @@ namespace SwapHunter
    for(int i=0;i<12;i++)
    {
     var level=ExpeditionCatalog.Levels[i];float x=48+(i%3)*(tile+10),y=271+(i/3)*132;
-    bool unlocked=i<=p.highestUnlocked;Fill(new Rect(x,y,tile,118),expeditionSelected==i?new Color(.055f,.24f,.48f):PanelBlue);
+    bool unlocked=i<=p.highestUnlocked;Fill(new Rect(x,y,tile,118),expeditionSelected==i?new Color(.16f,.25f,.27f):PanelBlue);
     Text((i+1).ToString("00")+"   "+(p.cleared[i]?"已完成":unlocked?"可部署":"未解锁"),new Rect(x+13,y+10,tile-26,26),15,unlocked?PhaseBlue:Muted);
     bool enabled=GUI.enabled;GUI.enabled=enabled&&unlocked;
     if(Button(level.name,new Rect(x+9,y+43,tile-18,46),expeditionSelected==i))expeditionSelected=i;
     GUI.enabled=enabled;
-    Text(i<4?"引导 / LEARN":i<8?"进阶 / COMBINE":"挑战 / MASTER",new Rect(x+13,y+93,tile-22,22),13,Muted);
+    Text(i==0?"剧情教学 / FIRST LANDING":i==11?"最终决战 / HOMECOMING":"归航行动 / FIELD OPERATION",new Rect(x+13,y+93,tile-22,22),13,Muted);
    }
    var selected=ExpeditionCatalog.Levels[expeditionSelected];var definition=MissionCatalog.Get(expeditionSelected);float rx=leftW+80,rw=viewWidth-rx-48;
    Fill(new Rect(rx,271,rw,523),PanelBlue);
@@ -179,9 +179,7 @@ namespace SwapHunter
    Text(TacticalPrototypeRules.ClassNames[cls],new Rect(portraitX+12,293,portraitWidth-24,34),25,Paper,TextAnchor.MiddleCenter);
    if(classPreview&&classPreview.Texture)GUI.DrawTexture(new Rect(portraitX+10,335,portraitWidth-20,376),classPreview.Texture,ScaleMode.ScaleToFit);
    else Text(classPreview&&!string.IsNullOrEmpty(classPreview.Error)?"角色预览暂不可用":"角色模型准备中",new Rect(portraitX+12,450,portraitWidth-24,40),17,Muted,TextAnchor.MiddleCenter);
-   if(Button("左转",new Rect(portraitX+12,727,67,36))&&classPreview)classPreview.Rotate(-30);
-   if(Button("复位",new Rect(portraitX+90,727,67,36))&&classPreview)classPreview.ResetView();
-   if(Button("右转",new Rect(portraitX+168,727,67,36))&&classPreview)classPreview.Rotate(30);
+   if(Button(classPreview&&classPreview.AutoRotate?"自动预览 · 开":"自动预览 · 关",new Rect(portraitX+12,727,portraitWidth-24,36))&&classPreview)classPreview.AutoRotate=!classPreview.AutoRotate;
    Text("职业技能 · 选择一项装配",new Rect(detailX,278,detailWidth,34),24,Paper);
    Text("按 "+KeyName(24)+" 使用；首次任选一项免费，第二项可独立购买。",new Rect(detailX,319,detailWidth,28),16,Muted);
    float card=(detailWidth-16)/2;
@@ -195,9 +193,8 @@ namespace SwapHunter
    bool selected=(general?store.EquippedGeneralSkill:store.EquippedClassSkill)==index;
    bool guarantee=general?!store.HasGeneralStarter:!store.HasSkillStarter;
    string name=(general?TacticalPrototypeRules.GeneralSkillNames:TacticalPrototypeRules.ClassSkillNames)[index];
-   DrawUiPanel(rect,selected);Text(name+"  "+(level>0?level+" / 3":"未拥有"),new Rect(rect.x+14,rect.y+12,rect.width-116,28),20,selected?PhaseBlue:Paper);
-   if(Button("试用",new Rect(rect.xMax-86,rect.y+12,72,30)))OpenSkillTrial(index,general);
-   string description=general?(index==0?"双方后→前可射，正面拦截 · 4秒\n冷却 "+(10-Mathf.Max(0,level-1))+" 秒":"3把逐投 / X全召回；普通身体处决\n精英84/66；2级沉默，3级范围沉默"):ClassSkillTuning.Describe(index,Mathf.Max(1,level));
+   DrawUiPanel(rect,selected);Text(name+"  "+(level>0?level+" / 3":"未拥有"),new Rect(rect.x+14,rect.y+12,rect.width-28,28),20,selected?PhaseBlue:Paper);
+   string description=general?(index==0?"双方后→前可射，正面拦截 · 4秒\n冷却 "+(10-Mathf.Max(0,level-1))+" 秒":"3把逐投 / {key:23} 全召回；普通身体处决\n精英84/66；2级沉默，3级范围沉默"):ClassSkillTuning.Describe(index,Mathf.Max(1,level));
    Text(description,new Rect(rect.x+14,rect.y+49,rect.width-28,general?51:102),16,Muted);
    float y=rect.yMax-53,w=(rect.width-36)/2;bool enabled=GUI.enabled;
    int cost=level==0?TacticalPrototypeRules.SkillBasePrice(index,general):level<3?TacticalPrototypeRules.SkillUpgradePrice(level):0;
@@ -226,7 +223,7 @@ namespace SwapHunter
     if(Button(store.Profile.credits>=price?"购买 1 个":"信用点不足",new Rect(x+18,450,width-36,42),true))ExpeditionAction(()=>store.BuyConsumable(Guid.NewGuid().ToString("N"),type));
    }
    GUI.enabled=enabled;
-   Text("出发携带 · 两槽不同类型 · 库存包含带入关卡的道具",new Rect(48,533,viewWidth-96,31),22,Paper);
+   Text("出发携带 · 每槽最多 3 个 · 同类堆叠或两类组合",new Rect(48,533,viewWidth-96,31),22,Paper);
    var loadout=store.Profile.classLoadouts[store.Profile.activeClass];float slotWidth=(viewWidth-112)/2;
    for(int i=0;i<2;i++)
    {
@@ -236,14 +233,14 @@ namespace SwapHunter
     float buttonWidth=(slotWidth-50)/4;
     for(int k=-1;k<3;k++)
     {
-     int choice=k;GUI.enabled=enabled&&choice!=type&&(choice<0||loadout.itemTypes[1-slot]!=choice);
+     int choice=k;GUI.enabled=enabled&&choice!=type;
      if(Button(choice<0?"空槽":TacticalPrototypeRules.ConsumableNames[choice],new Rect(x+16+(k+1)*(buttonWidth+6),637,buttonWidth,36),choice==type))
       ExpeditionAction(()=>store.SetConsumableSlot(slot,choice,choice<0?0:1));
     }
     GUI.enabled=enabled&&type>=0&&count>0;
     if(Button("－",new Rect(x+16,697,42,38)))ExpeditionAction(()=>store.SetConsumableSlot(slot,count<=1?-1:type,Mathf.Max(0,count-1)));
-    GUI.enabled=enabled;int actual=type<0?0:Mathf.Min(count,store.ConsumableStock(type));
-    Text("预设 "+count+" / 预计带入 "+actual,new Rect(x+75,703,slotWidth-145,30),18,Muted,TextAnchor.MiddleCenter);
+    GUI.enabled=enabled;int earlier=type>=0&&i>0&&loadout.itemTypes[0]==type?Mathf.Min(loadout.itemCounts[0],store.ConsumableStock(type)):0;int actual=type<0?0:Mathf.Min(count,Mathf.Max(0,store.ConsumableStock(type)-earlier));
+    Text("预设 "+count+" / 3 · 预计带入 "+actual,new Rect(x+75,703,slotWidth-145,30),18,Muted,TextAnchor.MiddleCenter);
     GUI.enabled=enabled&&type>=0&&count<TacticalPrototypeRules.ConsumableLimit(type);
     if(Button("＋",new Rect(x+slotWidth-58,697,42,38)))ExpeditionAction(()=>store.SetConsumableSlot(slot,type,count+1));
    }
@@ -252,8 +249,8 @@ namespace SwapHunter
   }
   string ConsumableDescription(int type)
   {
-   if(type==0)return "恢复 "+TacticalPrototypeRules.MedkitHeal.ToString("0")+" 生命 · 上限2个";
-   if(type==1)return "双枪各补 "+TacticalPrototypeRules.AmmoMagazineCount+" 匣备弹 · 上限1个";
+   if(type==0)return "恢复 "+TacticalPrototypeRules.MedkitHeal.ToString("0")+" 生命 · 每槽上限3个";
+   if(type==1)return "双枪各补 "+TacticalPrototypeRules.AmmoMagazineCount+" 匣备弹 · 每槽上限3个";
    return "获得 "+TacticalPrototypeRules.ArmorAmount.ToString("0")+" 临时护甲 · 未耗尽不叠加";
   }
   void DrawTacticalInventory()
@@ -267,13 +264,19 @@ namespace SwapHunter
    {
     float x=48+i*(width+48);int type=snapshot.itemTypes[i];
     DrawUiPanel(new Rect(x,479,width,217),true);
-    Text(type<0?"空道具槽":TacticalPrototypeRules.ConsumableNames[type]+" × "+remaining[type],new Rect(x+20,497,width-40,40),27,Paper);
-    if(type<0){Text("关外可选择两种不同道具",new Rect(x+20,556,width-40,35),18,Muted);continue;}
+    int slotRemaining=type<0?0:remaining[type];
+    if(type>=0&&snapshot.itemTypes[1-i]==type)
+    {
+     int used=Mathf.Max(0,snapshot.itemCounts[0]+snapshot.itemCounts[1]-remaining[type]);
+     slotRemaining=i==0?Mathf.Max(0,snapshot.itemCounts[0]-used):Mathf.Max(0,snapshot.itemCounts[1]-Mathf.Max(0,used-snapshot.itemCounts[0]));
+    }
+    Text(type<0?"空道具槽":TacticalPrototypeRules.ConsumableNames[type]+" × "+slotRemaining,new Rect(x+20,497,width-40,40),27,Paper);
+    if(type<0){Text("出发前可选择道具，每槽最多 3 个",new Rect(x+20,556,width-40,35),18,Muted);continue;}
     Text(ConsumableDescription(type),new Rect(x+20,549,width-40,53),18,Muted);
     bool useful=type==0?player.health<config.playerHealth:type==2?player.TemporaryArmor<=0:false;
     if(type==1)foreach(int id in player.EquippedWeapons)if(player.reserve[id]<ExpeditionReserveLimit(id))useful=true;
-    bool enabled=GUI.enabled;GUI.enabled=enabled&&remaining[type]>0&&useful&&!expeditionPending;
-    string reason=remaining[type]<=0?"已用完":!useful?(type==0?"生命已满":type==1?"备弹已满":"现有护甲未耗尽"):"使用";
+    bool enabled=GUI.enabled;GUI.enabled=enabled&&slotRemaining>0&&useful&&!expeditionPending;
+    string reason=slotRemaining<=0?"已用完":!useful?(type==0?"生命已满":type==1?"备弹已满":"现有护甲未耗尽"):"使用";
     if(Button(reason,new Rect(x+20,626,width-40,46),true)){BeginV2InventoryUse(type);}
     GUI.enabled=enabled;
    }

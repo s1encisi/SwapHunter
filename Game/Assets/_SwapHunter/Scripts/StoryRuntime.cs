@@ -25,10 +25,10 @@ namespace SwapHunter
   {
    storyLevel=expeditionLevel;storyEvents.Clear();storyQueue.Clear();storyTranscript.Clear();storyRadio=null;storyRadioLeft=0;
    if(RunStorage.IsDirectedTrial)return;
-   expeditionMap.root.gameObject.AddComponent<StoryScenery>().Build(this,storyLevel);StoryEmit("start");
+   expeditionMap.root.gameObject.AddComponent<StoryScenery>().Build(this,storyLevel);StoryEmit("start");BeginHomecomingTeaching();
    Record("story_attempt","N1 chapter="+(storyLevel+1));
   }
-  void ClearStoryAttempt(){storyLevel=-1;storyQueue.Clear();storyRadio=null;storyRadioLeft=0;}
+  void ClearStoryAttempt(){teachingStep=-1;HomecomingTrainingAmmoGrant=0;storyLevel=-1;storyQueue.Clear();storyRadio=null;storyRadioLeft=0;}
   void StoryEmit(string key)
   {
    if(storyLevel<0||RunStorage.IsDirectedTrial||!storyEvents.Add(key))return;
@@ -42,13 +42,14 @@ namespace SwapHunter
   {
    if(StoryModal)
    {
-    if((!qaMode||qaInputEnabled)&&KeyboardDevice!=null)
-    {if(KeyboardDevice.escapeKey.wasPressedThisFrame)CloseStoryModal();else if(storyCards!=null&&(KeyboardDevice.enterKey.wasPressedThisFrame||KeyboardDevice.numpadEnterKey.wasPressedThisFrame))NextStoryCard();}
+    if(Pressed(16))CloseStoryModal();
+    else if(storyCards!=null&&Pressed(29))NextStoryCard();
     return;
    }
    if(!expeditionActive||mission==null||!IsPlaying||RunStorage.IsDirectedTrial||storyLevel!=expeditionLevel)return;
-   if((!qaMode||qaInputEnabled)&&KeyboardDevice!=null)
-   {if(KeyboardDevice.f9Key.wasPressedThisFrame)SkipStoryRadio();if(KeyboardDevice.f10Key.wasPressedThisFrame){OpenStoryArchive(true);return;}}
+   if(Pressed(29))SkipStoryRadio();
+   if(Pressed(30)){OpenStoryArchive(true);return;}
+   TickHomecomingTeaching();
    if(storyLevel==0&&totalSwaps>0)StoryEmit("swap");
    if(storyLevel==1)foreach(var m in mission.Members)if(m.group.id=="first"&&m.Defeated){StoryEmit("first-guard");break;}
    if(storyLevel==2&&mission.RegionVisited("upper"))StoryEmit("region-upper");
@@ -62,7 +63,12 @@ namespace SwapHunter
     }
    }
    if(storyLevel==7){if(mission.CompletedObjectives>=2)StoryEmit("data-two");if(mission.CompletedObjectives>=3)StoryEmit("data-three");}
-   if(storyLevel==11)foreach(var m in mission.Members)if(m.group.id=="boss"&&m.Defeated){StoryEmit("boss-down");break;}
+   if(storyLevel==11)
+   {
+    foreach(var m in mission.Members)if(m.group.id=="boss"&&m.Defeated){StoryEmit("boss-down");break;}
+    if(player.transform.position.z>-6)StoryEmit("final-observation");
+    foreach(var enemy in enemies)if(enemy&&enemy.Alive){var encounter=enemy.GetComponent<BossEncounter>();if(encounter){if(encounter.Phase==BossPhase.Rifle)StoryEmit("final-rifle");if(encounter.Phase==BossPhase.Combined)StoryEmit("final-combined");}}
+   }
    if(mission.CanExtract)StoryEmit("ready");if(expeditionBonus)StoryEmit("bonus");
    if(storyRadio==null)AdvanceStoryRadio();else{storyRadioLeft-=Time.deltaTime;if(storyRadioLeft<=0)SkipStoryRadio();}
   }
@@ -85,10 +91,12 @@ namespace SwapHunter
   public void OpenStoryArchive(bool currentAttempt=false){storyReturnState=state;storyArchiveOpen=true;storyCards=null;storyScroll=Vector2.zero;storyArchiveChapter=currentAttempt?-2:-1;if(IsPlaying)SetState(RunState.Paused);}
   void DrawStoryRadio()
   {
-   if(!StoryRadioActive)return;float x=600,w=viewWidth-x-32;
-   Fill(new Rect(x,268,w,118),new Color(.012f,.035f,.055f,.94f));Fill(new Rect(x,268,4,118),Cyan);
-   Text("救援专线 / "+storyRadio.speaker,new Rect(x+20,278,w-40,22),17,Cyan);Text(storyRadio.text,new Rect(x+20,308,w-40,58),20,Paper);
-   Text("F9 下一句 · F10 通讯记录",new Rect(x+20,365,w-40,18),12,Muted,TextAnchor.MiddleRight);
+   DrawHomecomingTeaching();
+   if(!StoryRadioActive)return;float w=Mathf.Min(620,viewWidth-48),x=(viewWidth-w)*.5f;
+   Fill(new Rect(x,650,w,110),new Color(.025f,.042f,.050f,.94f));
+   Text("救援专线 / "+storyRadio.speaker,new Rect(x+18,660,w-36,20),15,Cyan);
+   Text(storyRadio.text,new Rect(x+18,685,w-36,52),18,Paper);
+   Text(KeyName(29)+" 下一句 · "+KeyName(30)+" 通讯记录",new Rect(x+18,740,w-36,15),12,Muted,TextAnchor.MiddleRight);
   }
   bool DrawStoryModal()
   {
@@ -101,12 +109,12 @@ namespace SwapHunter
     Text("岬湾港 / "+(storyCardEnding?"最后一班补给船":"救援通讯"),new Rect(x,178,w,32),18,Cyan);
     var line=storyCards[storyCardIndex];Text(line.speaker,new Rect(x,290,w,40),24,Cyan);Text(line.text,new Rect(x,354,w,245),29,Paper);
     Text((storyCardIndex+1)+" / "+storyCards.Length,new Rect(x,663,w,30),18,Muted);
-    if(Button(storyCardIndex+1==storyCards.Length?"继续行动 / Enter":"下一段 / Enter",new Rect(x,710,330,55),true))NextStoryCard();
-    if(Button("跳过阅读 / Esc",new Rect(x+354,710,290,55)))CloseStoryModal();
+    if(Button((storyCardIndex+1==storyCards.Length?"继续行动 / ":"下一段 / ")+KeyName(29),new Rect(x,710,330,55),true))NextStoryCard();
+    if(Button("跳过阅读 / "+KeyName(16),new Rect(x+354,710,290,55)))CloseStoryModal();
     Text("可在行动地图的“归航档案”中回看；阅读不推进行动时间。",new Rect(x,805,w,35),17,Muted);return true;
    }
-   Text("归航档案",new Rect(48,42,650,64),40,Paper);Text("已完成章节可回看全文 · 当前尝试只作临时通讯记录",new Rect(50,112,viewWidth-100,35),18,Muted);
-   if(Button("返回 / Esc",new Rect(viewWidth-235,42,185,49),true))CloseStoryModal();
+   Text("归航档案",new Rect(48,42,650,64),40,Paper);Text("按行动时间线回看人物、事件与完整结局 · 章节完成后归档",new Rect(50,112,viewWidth-100,35),18,Muted);
+   if(Button("返回 / "+KeyName(16),new Rect(viewWidth-235,42,185,49),true))CloseStoryModal();
    float navW=285,bodyX=366,bodyW=viewWidth-bodyX-50;
    if(Button("序章 / 行动背景",new Rect(48,177,navW,39),storyArchiveChapter==-1)){storyArchiveChapter=-1;storyScroll=Vector2.zero;}
    if(Button("本次通讯记录",new Rect(48,225,navW,39),storyArchiveChapter==-2)){storyArchiveChapter=-2;storyScroll=Vector2.zero;}
@@ -118,13 +126,13 @@ namespace SwapHunter
    }
    string heading;var display=new List<StoryLine>();
    if(storyArchiveChapter==-2){heading="本次通讯 / 不写入永久章节进度";display.AddRange(storyTranscript);}
-   else if(storyArchiveChapter<0){heading="归航行动 / 序章";display.AddRange(StoryContent.Prologue);}
+   else if(storyArchiveChapter<0){heading="归航行动 / 起因与人物";display.AddRange(StoryArchiveContent.Background);}
    else
    {
     int level=storyArchiveChapter;var chapter=StoryContent.Chapters[level];heading=chapter.subtitle;
-    display.Add(new StoryLine("brief","行动简报",chapter.brief));display.AddRange(chapter.lines);display.Add(new StoryLine("ending","行动结果",chapter.ending));
-    display.AddRange(level==11?StoryContent.Epilogue:StoryContent.Interlude(level));
-    if(level==7&&StoryAppendixUnlocked(7))display.Add(new StoryLine("optional","班组附件","第三份数据匣已成功带回。许宁留下的回程标注和班组交接信息已归档。"));
+    display.AddRange(StoryArchiveContent.Chapters[level]);
+    display.Add(new StoryLine("brief","本章行动路线",chapter.brief));
+    if(level==7&&StoryAppendixUnlocked(7))display.AddRange(StoryContent.OptionalRecording);
     if(level==11&&StoryOptionalComplete)display.AddRange(StoryContent.OptionalRecording);
    }
    Text(heading,new Rect(bodyX,178,bodyW,52),27,Cyan);textStyle.fontSize=22;textStyle.alignment=TextAnchor.UpperLeft;

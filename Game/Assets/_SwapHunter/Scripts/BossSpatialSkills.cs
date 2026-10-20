@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 namespace SwapHunter
 {
  public enum BossSkill { None, SweepLaser, Attraction, AdvantageSwap, GroundWave, SwapElbow, OmniFire }
@@ -109,10 +109,10 @@ namespace SwapHunter
    CurrentCast=new BossCastParameters(skill,Phase,skillTime);
    switch(skill)
    {
-    case BossSkill.SweepLaser:Warning="扫地激光 · 危险带已锁定，换位离开";zone=Shapes.Line(G.effects,skillCenter-Vector3.Cross(Vector3.up,skillForward)*15,skillCenter+Vector3.Cross(Vector3.up,skillForward)*15,Danger,.12f);break;
-    case BossSkill.Attraction:Warning="牵引场 · 换位离开橙色区域";zone=Shapes.Ring(G.effects,skillCenter,CurrentCast.radius,Danger,.09f);break;
-    case BossSkill.GroundWave:Warning="撼地波 · 沿坡道上高位，或换位/大跳；A盾无效";skillCenter=new Vector3(transform.position.x,groundY+.06f,transform.position.z);zone=Shapes.Ring(G.effects,skillCenter,2,Danger,.12f);break;
-    case BossSkill.OmniFire:Warning="全向火力 · A盾朝向指挥官，或进入掩体";zone=Shapes.Ring(G.effects,transform.position+Vector3.up*.1f,2.4f,Danger,.1f);break;
+    case BossSkill.SweepLaser:Warning="扫地激光 · 危险带已锁定，{key:6} 换位离开";zone=Shapes.Line(G.effects,skillCenter-Vector3.Cross(Vector3.up,skillForward)*15,skillCenter+Vector3.Cross(Vector3.up,skillForward)*15,Danger,.12f);break;
+    case BossSkill.Attraction:Warning="牵引场 · {key:6} 换位离开橙色区域";zone=Shapes.Ring(G.effects,skillCenter,CurrentCast.radius,Danger,.09f);break;
+    case BossSkill.GroundWave:Warning="撼地波 · 上黄色检修台，或 {key:6} 换位 / {key:4} 大跳；屏障无效";skillCenter=new Vector3(transform.position.x,groundY+.06f,transform.position.z);zone=Shapes.Ring(G.effects,skillCenter,2,Danger,.12f);break;
+    case BossSkill.OmniFire:Warning="全向火力 · {key:20} 屏障朝向指挥官，或进入实体掩体";zone=Shapes.Ring(G.effects,transform.position+Vector3.up*.1f,2.4f,Danger,.1f);break;
     default:Warning=skill==BossSkill.SwapElbow?"换位肘击 · 离开标记目标附近":"指挥官即将换位 · 观察橙色落点";zone=Shapes.Ring(G.effects,skillDestination+Vector3.up*.08f,CurrentCast.radius,Danger,.09f);pathPreview=Shapes.Line(G.effects,Owner.AimPoint,skillTarget.AimPoint,Danger,.06f);break;
    }
    RememberSpatialCast(skill);StopMotion();G.sound.Play("warning",transform.position);G.Record("boss_telegraph",skill+" center="+skillCenter+" seconds="+skillTime);return true;

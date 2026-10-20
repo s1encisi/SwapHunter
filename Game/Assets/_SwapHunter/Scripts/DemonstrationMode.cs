@@ -101,7 +101,7 @@ namespace SwapHunter
         void BeginDemonstration()
         {
             if(!RunStorage.IsDirectedTrial&&RunStorage.IsTacticalDemo&&Array.IndexOf(Environment.GetCommandLineArgs(),"-demoMenu")>=0)
-            {OpenExpeditionBoard();expeditionTab=RunStorage.IsFullPreview?5:2;Toast(DemonstrationSession.Badge+"；可自由选装备并前往行动地图。",6);
+            {expeditionBoard=false;campaignBoard=false;expeditionTab=0;SetState(RunState.Menu);
              if(RunStorage.IsFullPreview&&Array.IndexOf(Environment.GetCommandLineArgs(),"-previewSmoke")>=0)StartCoroutine(VerifyFullPreviewStartup());return;}
             Record("demonstration_seed", (RunStorage.IsDirectedTrial?"directed-trial-product-level="+DirectedTrialBootstrap.Request.level+";scenario="+DirectedTrialBootstrap.Request.scenario+";":RunStorage.IsTacticalDemo?"tactical-all-skills-level3;":"legacy;")+"all-weapons;knife-rank=3;no-completion-history;temporary-profile;chapter=" + (DemonstrationSession.Level + 1));
             if (!BeginExpedition(DemonstrationSession.Level))
@@ -122,7 +122,7 @@ namespace SwapHunter
         {public bool passed,allKnives,allChapters,allStory,allAppendices,noFakeRecords,allKnifeEquipments,allIconsRendered;public string screenshot,profilePath,settingsPath;}
         IEnumerator VerifyFullPreviewStartup()
         {
-            while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;yield return new WaitForSecondsRealtime(.4f);var p=expeditionStore.Profile;
+            while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;yield return new WaitForSecondsRealtime(.4f);OpenExpeditionBoard();expeditionTab=1;if(!GetComponent<KnifeArmoryPreviewV2>())gameObject.AddComponent<KnifeArmoryPreviewV2>();var p=expeditionStore.Profile;
             var report=new FullPreviewReport{allKnives=Array.TrueForAll(p.meleeKnives,x=>x),allChapters=p.highestUnlocked==11&&Array.TrueForAll(p.cleared,x=>x),noFakeRecords=p.receipts.Count==0&&Array.TrueForAll(p.bestSeconds,x=>x==0),allStory=true,allAppendices=true,allKnifeEquipments=true,profilePath=expeditionStore.SavePath,settingsPath=SettingsStore.FilePath,screenshot="full-content-preview.png"};
             for(int i=0;i<12;i++){report.allStory&=StoryChapterUnlocked(i);report.allAppendices&=StoryAppendixUnlocked(i);}
             int original=p.classLoadouts[p.activeClass].knifeId;for(int i=0;i<6;i++){expeditionStore.EquipMeleeKnife(i);report.allKnifeEquipments&=expeditionStore.Profile.classLoadouts[p.activeClass].knifeId==i;}expeditionStore.EquipMeleeKnife(original);

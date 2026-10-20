@@ -223,7 +223,8 @@ namespace SwapHunter
             if(rightCc0Arm==null||!rightGrip)return;
             rightCc0Arm.Solve(rightGrip.position,rightCc0Arm.GripRotation(rightGrip.rotation,Vector3.up),
                 Eye.TransformDirection(new Vector3(1,-1,-.2f)),1);SetKnifeFingers(1);
-            PoseIndexContactV2(weaponModels[weapon].TransformPoint(new Vector3(.008f,-.059f,-.052f)));
+            var trigger=ImportedModels.Find(weaponModels[weapon],"TriggerContact");
+            PoseIndexContactV2(trigger?trigger.position:weaponModels[weapon].TransformPoint(new Vector3(.008f,-.059f,-.052f)));
         }
         public float V2TriggerFingerError{get;private set;}
         void PoseIndexContactV2(Vector3 target)
@@ -254,7 +255,7 @@ namespace SwapHunter
         {
             for(int i=0;i<WeaponCatalog.Count;i++)
             {
-                firearmRestPositionV2[i]=weaponModels[i].localPosition;if(bolts[i])boltRestRotationV2[i]=bolts[i].localRotation;
+                firearmRestPositionV2[i]=weaponModels[i].localPosition;firearmRestRotationV2[i]=weaponModels[i].localRotation;if(bolts[i])boltRestRotationV2[i]=bolts[i].localRotation;
                 if(magazines[i])
                 {
                     magazineRestRotations[i]=magazines[i].localRotation;
@@ -264,7 +265,8 @@ namespace SwapHunter
                 }
                 supportGrips[i]=ImportedModels.Find(weaponModels[i],"SupportGrip");
                 primaryGrips[i]=ImportedModels.Find(weaponModels[i],"Grip");
-                if(primaryGrips[i])primaryGrips[i].position-=weaponModels[i].forward*.020f;
+                // Grip markers are authored on the handle surface. Offsetting a marker
+                // after calibration moves the palm away from its physical handle.
                 pumps[i]=ImportedModels.Find(weaponModels[i],"foregrip");if(pumps[i])pumpOrigins[i]=pumps[i].localPosition;
                 if(i==1&&pumps[i]&&supportGrips[i])supportGrips[i].SetParent(pumps[i],true);
                 string hingeName=i==5?"break_action":i==8?"feed_cover":i==9?"cylinder_hinge":"";
@@ -314,13 +316,26 @@ namespace SwapHunter
             if(pumps[i])pumps[i].localPosition=pumpOrigins[i];
             if(bolts[i]){bolts[i].localPosition=boltOrigins[i];bolts[i].localRotation=boltRestRotationV2[i];}
         }
-        float ReloadPoseWeight=>reloadLeft>0?PoseWindow(ReloadProgress,0,.12f,.88f,1):0;
+        float ReloadPoseWeight=>ReloadV2Pending||reloadLeft>0?PoseWindow(ReloadProgress,0,.12f,.88f,1):0;
         Vector3 ReloadPoseOffset=>(weapon==5?new Vector3(.035f,.025f,.075f):new Vector3(.035f,.065f,.08f))*ReloadPoseWeight;
-        Quaternion ReloadPoseRotation=>Quaternion.Euler((weapon==5?new Vector3(18,-16,-12):new Vector3(-8,-18,-24))*ReloadPoseWeight);
+        Quaternion ReloadPoseRotation=>Quaternion.Euler(ReloadAngle(weapon)*ReloadPoseWeight);
+        static Vector3 ReloadAngle(int id)
+        {
+            // Expose the relevant feed/action without turning the wrist through the gun.
+            switch(id){case 1:return new Vector3(-12,-9,-34);case 2:return new Vector3(-8,-28,-18);
+                case 5:return new Vector3(23,-12,-10);case 7:return new Vector3(-5,-11,-20);
+                case 8:return new Vector3(-15,-24,-12);case 9:return new Vector3(12,-16,-28);
+                case 10:return new Vector3(-6,-15,-20);case 11:return new Vector3(-8,-12,-18);
+                default:return new Vector3(-8,-18,-24);}
+        }
 
         void UpdateWeaponPresentation()
         {
             if(!presentationReady)return;
+            // The active held item owns both hand chains for the complete frame.
+            // Previously Update restored a rifle grip even while a knife was held;
+            // LateUpdate then repaired it, leaving an invalid intermediate pose.
+            if(meleeEquipment&&(meleeEquipment.Equipped||meleeEquipment.PickingUp||meleeEquipment.AttackActive))return;
             for(int i=0;i<WeaponCatalog.Count;i++)RestoreWeaponParts(i);
             ApplyFirearmMotionV2();ResetCc0Hands();PoseRightCc0Hand();
             if(supportGrips[weapon])PlaceSupportHand(supportGrips[weapon].position,1);
@@ -394,7 +409,7 @@ namespace SwapHunter
         void PlaceSupportHand(Vector3 target,float weight)
         {
             if(leftCc0Arm==null)return;
-            leftCc0Arm.Solve(target,leftCc0Arm.GripRotation(weaponRoot.rotation,new Vector3(0,.45f,1)),
+            leftCc0Arm.Solve(target,leftCc0Arm.GripRotation(supportGrips[weapon]?supportGrips[weapon].rotation:weaponRoot.rotation,new Vector3(0,.45f,1)),
                 Eye.TransformDirection(new Vector3(-1,-1,-.2f)),weight);
         }
         void PlaceReloadHand(Vector3 grip,Quaternion worldRotation,float weight)
@@ -414,7 +429,7 @@ namespace SwapHunter
             discardedMagazineCount++;
         }
         readonly Vector3[] firearmRestPositionV2=new Vector3[WeaponCatalog.Count];
-        readonly Quaternion[] boltRestRotationV2=new Quaternion[WeaponCatalog.Count];
+        readonly Quaternion[] boltRestRotationV2=new Quaternion[WeaponCatalog.Count],firearmRestRotationV2=new Quaternion[WeaponCatalog.Count];
         int visualWeaponV2=-1,lastCaseShotV2=-1;float visualSwitchAtV2;
         Transform tubeShellV2;
         float RemapReloadV2(float p)
@@ -429,7 +444,16 @@ namespace SwapHunter
             var profile=WeaponMotionV2.Get(weapon);float since=Time.time-lastShotAt;
             float impulse=since<.035f?Mathf.Clamp01(since/.035f):1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.035f,profile.recoilReturn,since));
             float entry=1-Mathf.SmoothStep(0,1,(Time.time-visualSwitchAtV2)/profile.readySeconds);
-            if(weaponModels[weapon])weaponModels[weapon].localPosition=firearmRestPositionV2[weapon]+new Vector3(.025f*entry,-.12f*entry,-profile.recoilTravel*impulse);
+            if(weaponModels[weapon])
+            {
+                // The whole weapon and its real grips share the same presentation
+                // transform. Camera recoil, dispersion, damage and fire clocks stay unchanged.
+                float heavy=weapon==1||weapon==5||weapon==7?1.35f:weapon==8||weapon==9?1.15f:weapon==4||weapon==11?.70f:1;
+                float side=shots%2==0?1:-1;
+                float settle=Mathf.Sin(Mathf.Clamp01((since-.035f)/profile.recoilReturn)*Mathf.PI)*impulse;
+                weaponModels[weapon].localPosition=firearmRestPositionV2[weapon]+new Vector3(.04f*entry+side*.0018f*settle,-.17f*entry+.003f*settle,-.10f*entry-profile.recoilTravel*impulse);
+                weaponModels[weapon].localRotation=firearmRestRotationV2[weapon]*Quaternion.Euler(24*entry-2.3f*heavy*impulse,10*entry+side*.25f*settle,-14*entry+side*.6f*settle);
+            }
             if(tubeShellV2)tubeShellV2.gameObject.SetActive(weapon==1&&ReloadV2Pending);
             float ejectAt=weapon==1?.35f:weapon==7?.56f:.035f;
             if(shots!=lastCaseShotV2&&since>=ejectAt&&since<ejectAt+.12f&&weapon<9&&weapon!=5){lastCaseShotV2=shots;EjectCaseV2();}

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SwapHunter
@@ -52,7 +52,7 @@ namespace SwapHunter
             var game = DemoGame.I;
             if (!game || !game.IsPlaying) return;
             if (id == "warning") warningUntil = Time.unscaledTime + .8f;
-            bool combat = id == "rifle" || id == "shotgun" || id.StartsWith("weapon_") || id == "explosion" || id == "player_hit";
+            bool combat = id == "rifle" || id == "shotgun" || (id.StartsWith("weapon_")||id.StartsWith("gun_")&&id.Contains("_fire_")) || id == "explosion" || id == "player_hit";
             if (!combat) return;
             if (at.HasValue && game.player && (at.Value - game.player.transform.position).sqrMagnitude > 40 * 40) return;
             combatUntil = Mathf.Max(combatUntil, Time.time + 6);

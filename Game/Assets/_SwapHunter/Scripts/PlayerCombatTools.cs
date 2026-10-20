@@ -55,7 +55,7 @@ namespace SwapHunter
   {
    if(!KnifeEquipped){G.Toast("当前通用技能槽未装配飞刀",2);return false;}
    if(!G.IsPlaying||owner.health<=0||owner.SwapActionsLocked||throwCooldown>0||owner.reloadLeft>0)return false;
-   int slot=-1;for(int i=0;i<3;i++)if(!knives[i]){slot=i;break;}if(slot<0){G.Toast("三把刀均在场 · 按X召回",2);return false;}
+   int slot=-1;for(int i=0;i<3;i++)if(!knives[i]){slot=i;break;}if(slot<0){G.Toast("三把刀均在场 · 按{key:23}召回",2);return false;}
    pose=poseDuration=.3f;throwingPose=true;throwCooldown=.65f;Throws++;knives[slot]=ThrownKnife.Launch(this,owner,owner.Eye.position,owner.Eye.forward,KnifeRank,true);
    if(owner.classSkill)owner.classSkill.EndForAttack("throw");
    G.sound.Play("knife_throw");G.Record("knife_throw","rank="+KnifeRank);return true;

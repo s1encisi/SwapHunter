@@ -7,11 +7,11 @@ namespace SwapHunter
   {
    if(!IsPlaying||!player)return;
    if(InteractionV2.Active)DrawV2InteractionContext();
-   if(D2HoldInteraction.HasCandidate)
+   if(D2HoldInteraction.HasCandidate&&!InteractionV2.Active)
    {
-    float x=viewWidth*.5f-295;Text(D2HoldInteraction.Hint,new Rect(x,737,590,32),19,Cyan,TextAnchor.MiddleCenter);
-    Fill(new Rect(x,771,590,4),new Color(.1f,.2f,.25f));
-    Fill(new Rect(x,771,590*Mathf.Clamp01(D2HoldInteraction.Progress),4),Cyan);
+    float x=viewWidth*.5f-295;Text(D2HoldInteraction.Hint,new Rect(x,609,590,32),19,Cyan,TextAnchor.MiddleCenter);
+    Fill(new Rect(x,643,590,4),new Color(.1f,.2f,.25f));
+    Fill(new Rect(x,643,590*Mathf.Clamp01(D2HoldInteraction.Progress),4),Cyan);
    }
    if(player.classSkill&&player.classSkill.ScanActive)
    {

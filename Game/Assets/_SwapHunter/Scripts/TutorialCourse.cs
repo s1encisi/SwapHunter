@@ -112,7 +112,7 @@ namespace SwapHunter
  public sealed partial class DemoGame
  {
   public TutorialCourse tutorialCourse;
-  public void StartTutorial(){StartRun(false);if(tutorialCourse)Destroy(tutorialCourse);tutorialCourse=gameObject.AddComponent<TutorialCourse>();tutorialCourse.Begin();}
+  public void StartTutorial(){OpenHomecoming();expeditionSelected=0;}
   bool DrawTutorialCompletion()
   {
    if(!tutorialCourse||!tutorialCourse.Completed||state!=RunState.Victory)return false;

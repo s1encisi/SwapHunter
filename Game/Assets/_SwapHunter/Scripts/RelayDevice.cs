@@ -61,11 +61,11 @@ namespace SwapHunter
             {
                 if(DemoGame.I)DemoGame.I.Record("relay_recovery_invalid_fallback",fallbackFeet.ToString());return;
             }
-            var go=new GameObject("可用火控设备 / 长按E回收");go.transform.SetParent(sceneRoot,false);go.transform.position=nav.position;
+            var go=new GameObject("可用火控设备 / 长按{key:8}回收");go.transform.SetParent(sceneRoot,false);go.transform.position=nav.position;
             Shapes.Box("Recovered equipment",go.transform,new Vector3(0,.28f,0),new Vector3(.65f,.45f,.45f),5);
             Shapes.Ring(go.transform,nav.position+Vector3.up*.04f,.65f,new Color(1,.7f,.2f),.045f);
             Recovery=go.AddComponent<RelayRecoveryPickup>();Recovery.Configure(Health);
-            D2WorldText.Create(go.transform,"可用设备 · 按住 E 2秒回收\n成功撤离才结算 +40",nav.position+Vector3.up*1.3f,.3f);
+            D2WorldText.Create(go.transform,"可用设备 · 按住 {key:8} 2秒回收\n成功撤离才结算 +40",nav.position+Vector3.up*1.3f,.3f);
             D2InteractionDriver.Ensure(sceneRoot);
             if(DemoGame.I)DemoGame.I.Record("relay_recovery_spawned","hp="+Health+";feet="+nav.position);
         }

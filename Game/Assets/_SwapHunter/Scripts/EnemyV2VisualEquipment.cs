@@ -9,6 +9,7 @@ namespace SwapHunter
         readonly Dictionary<string,Transform> points=new Dictionary<string,Transform>();
         readonly List<Transform> articulated=new List<Transform>();
         readonly List<Quaternion> rest=new List<Quaternion>();
+        readonly List<Transform> attached=new List<Transform>();
         ActorEquipmentResources owned; Material metal,armor,signal,rubber;int type,chapter;
         public bool MechanicalBody=>type==0||type==10||type==13||chapter==0||chapter==2||chapter==7||chapter==8||chapter==9;
         public Transform Weakpoint(string name)=>points.TryGetValue(name??"equipment",out var value)?value:points.TryGetValue("equipment",out value)?value:transform;
@@ -16,7 +17,9 @@ namespace SwapHunter
         {
             type=archetype;chapter=bossChapter;owned=gameObject.AddComponent<ActorEquipmentResources>();
             metal=Mat("Brushed equipment alloy",new Color(.28f,.33f,.36f),.75f,.35f);armor=Mat("Harbor security armor",new Color(.18f,.22f,.24f),.35f,.42f);signal=Mat("Visible equipment status",new Color(.93f,.36f,.12f),.25f,.32f);rubber=Mat("Equipment joint rubber",new Color(.035f,.045f,.05f),0,.78f);
-            if(bossChapter>=0){BuildBoss(bossChapter);return;}
+            signal.SetColor("_BaseColor",RoleColor(archetype));
+            armor.SetColor("_BaseColor",Color.Lerp(new Color(.12f,.16f,.20f),RoleColor(archetype),.28f));
+            if(bossChapter>=0){BuildBoss(bossChapter);AddIdentification(true);return;}
             switch(type)
             {
                 case 0: MachineCore(.19f,1.16f);Box("Training identification plate",new Vector3(0,1.24f,.18f),new Vector3(.25f,.12f,.035f),signal);Legs(false);Arm("Calibration sensor",.28f,1.35f);break;
@@ -34,8 +37,58 @@ namespace SwapHunter
                 case 12:for(int s=-1;s<=1;s+=2){Arm("Forearm tether launcher",s*.30f,1.17f);Coil("Tether reel",new Vector3(s*.16f,1.25f,-.21f),.10f);}Weak("equipment",new Vector3(.30f,1.17f,.13f));break;
                 case 13:MachineCore(.22f,1.05f);Legs(true);Cylinder("Suppression barrel sleeve",new Vector3(0,1.20f,.20f),new Vector3(0,1.20f,.63f),.085f,metal);Pack("Suppression ammo box",new Vector3(.30f,1.04f,0),new Vector3(.22f,.25f,.22f));Weak("equipment",new Vector3(.41f,1.04f,0));break;
             }
+            AddIdentification(false);
             if(!points.ContainsKey("equipment"))Weak("equipment",new Vector3(0,1.24f,-.20f));
         }
+        public static Color RoleColor(int id)
+        {
+            // Equipment shape carries role; these accents provide a second cue.
+            switch(id){case 0:return new Color(.38f,.79f,.81f);case 1:return new Color(.79f,.30f,.19f);
+                case 2:return new Color(.78f,.40f,.68f);case 3:return new Color(.93f,.66f,.20f);
+                case 4:return new Color(.62f,.43f,.86f);case 5:return new Color(.25f,.64f,.88f);
+                case 6:return new Color(.96f,.42f,.16f);case 7:return new Color(.82f,.21f,.18f);
+                case 8:return new Color(.85f,.62f,.28f);case 9:return new Color(.37f,.75f,.49f);
+                case 10:return new Color(.35f,.76f,.89f);case 11:return new Color(.64f,.39f,.94f);
+                case 12:return new Color(.80f,.76f,.27f);default:return new Color(.92f,.35f,.25f);}
+        }
+        void AddIdentification(bool boss)
+        {
+            if(MechanicalBody)
+            {
+                Box("Recessed machine front guard",new Vector3(0,1.12f,.167f),new Vector3(.23f,.12f,.028f),metal);
+                for(int j=0;j<3;j++)Box("Machine status slat",new Vector3(-.065f+j*.065f,1.13f,.188f),new Vector3(.035f,.055f,.008f),signal);
+                return;
+            }
+            Box("Role chest identification",new Vector3(0,1.36f,.159f),new Vector3(.18f,.043f,.018f),signal);
+            for(int side=-1;side<=1;side+=2)
+            {
+                Box("Role shoulder cap",new Vector3(side*.245f,1.435f,.012f),new Vector3(type==3||type==7?.18f:.12f,.065f,.15f),armor);
+                Box("Role upper-arm index",new Vector3(side*.297f,1.36f,.035f),new Vector3(.013f,.075f,.052f),signal);
+            }
+            if(type==2||type==4||type==11)Box("Role elevated sensor brow",new Vector3(0,1.715f,.086f),new Vector3(.15f,.04f,.045f),metal);
+            if(type==3||type==7)for(int side=-1;side<=1;side+=2)Box("Role heavy knee shield",new Vector3(side*.105f,.54f,.087f),new Vector3(.12f,.15f,.032f),armor);
+            if(type==9) {Box("Repair technician cross horizontal",new Vector3(.21f,1.25f,-.225f),new Vector3(.085f,.025f,.025f),signal);Box("Repair technician cross vertical",new Vector3(.21f,1.25f,-.225f),new Vector3(.025f,.085f,.025f),signal);}
+            if(boss)Box("Command crest",new Vector3(0,1.79f,0),new Vector3(.10f,.11f,.065f),signal);
+        }
+        public void BindToSkeleton(ActorVisualRig rig)
+        {
+            if(MechanicalBody||!rig||!rig.BodyRoot)return;
+            var roots=new List<Transform>();foreach(Transform child in transform)roots.Add(child);
+            foreach(var child in roots)
+            {
+                Vector3 point=transform.InverseTransformPoint(child.position);string name=child.name.ToLowerInvariant();
+                string side=point.x>=0?"R":"L";Transform bone=rig.Chest;
+                if(point.y>1.58f&&!name.Contains("antenna"))bone=rig.Head;
+                else if(point.y<.70f)bone=ImportedModels.Find(rig.BodyRoot,"LowerLeg."+side)??rig.Pelvis;
+                else if(point.y<1.05f&&!name.Contains("arm"))bone=rig.Pelvis;
+                else if(name.Contains("shoulder")||name.Contains("upper-arm"))bone=ImportedModels.Find(rig.BodyRoot,"UpperArm."+side)??rig.Chest;
+                else if(name.Contains("pivot")&&(name.Contains("forearm")||name.Contains("impact")||name.Contains("repair")))bone=ImportedModels.Find(rig.BodyRoot,"LowerArm."+side)??rig.Chest;
+                child.SetParent(bone,true);attached.Add(child);
+            }
+            for(int i=0;i<articulated.Count;i++)rest[i]=articulated[i].localRotation;
+        }
+        void OnDestroy(){foreach(var child in attached)if(child){child.gameObject.SetActive(false);Destroy(child.gameObject);}attached.Clear();}
+        public void ReleaseAttachments(){foreach(var child in attached)if(child)child.gameObject.SetActive(false);}
         void BuildBoss(int n)
         {
             switch(n)
@@ -70,7 +123,18 @@ namespace SwapHunter
         void Move(Transform t){articulated.Add(t);rest.Add(t.localRotation);}
         void Weak(string n,Vector3 p){var t=new GameObject("Weakpoint / "+n).transform;t.SetParent(transform,false);t.localPosition=p;points[n]=t;}
         Material Mat(string n,Color c,float m,float smooth){var s=Shader.Find("Universal Render Pipeline/Lit");var result=new Material(s){name=n};result.SetColor("_BaseColor",c);result.SetFloat("_Metallic",m);result.SetFloat("_Smoothness",smooth);owned.Add(result);return result;}
-        Transform Box(string name,Vector3 p,Vector3 size,Material material){var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.transform.SetParent(transform,false);go.transform.localPosition=p;go.transform.localScale=size;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());go.GetComponent<Renderer>().sharedMaterial=material;go.layer=gameObject.layer;return go.transform;}
+        Transform Box(string name,Vector3 p,Vector3 size,Material material)
+        {
+            // Chamfered armor has a readable edge highlight instead of a flat cube silhouette.
+            float x=size.x*.5f,y=size.y*.5f,z=size.z*.5f,b=Mathf.Min(size.x,size.y,size.z)*.18f;
+            Vector2[] cross={new Vector2(-x+b,-y),new Vector2(x-b,-y),new Vector2(x,-y+b),new Vector2(x,y-b),new Vector2(x-b,y),new Vector2(-x+b,y),new Vector2(-x,y-b),new Vector2(-x,-y+b)};
+            var vertices=new List<Vector3>();var triangles=new List<int>();
+            void Face(Vector3 a,Vector3 c,Vector3 d,Vector3 e){int start=vertices.Count;vertices.Add(a);vertices.Add(c);vertices.Add(d);vertices.Add(e);triangles.Add(start);triangles.Add(start+1);triangles.Add(start+2);triangles.Add(start);triangles.Add(start+2);triangles.Add(start+3);}
+            for(int i=0;i<8;i++){int j=(i+1)%8;Vector2 a=cross[i],c=cross[j];Face(new Vector3(a.x,a.y,-z),new Vector3(c.x,c.y,-z),new Vector3(c.x,c.y,z),new Vector3(a.x,a.y,z));}
+            for(int side=-1;side<=1;side+=2)for(int i=1;i<7;i++){int start=vertices.Count;vertices.Add(new Vector3(cross[0].x,cross[0].y,z*side));vertices.Add(new Vector3(cross[side>0?i:i+1].x,cross[side>0?i:i+1].y,z*side));vertices.Add(new Vector3(cross[side>0?i+1:i].x,cross[side>0?i+1:i].y,z*side));triangles.Add(start);triangles.Add(start+1);triangles.Add(start+2);}
+            var mesh=new Mesh{name="Role armor / "+name};mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();owned.Add(mesh);
+            var go=new GameObject(name);go.transform.SetParent(transform,false);go.transform.localPosition=p;go.AddComponent<MeshFilter>().sharedMesh=mesh;go.AddComponent<MeshRenderer>().sharedMaterial=material;go.layer=gameObject.layer;return go.transform;
+        }
         Transform Cylinder(string name,Vector3 p,Vector3 q,float r,Material material){var go=GameObject.CreatePrimitive(PrimitiveType.Cylinder);go.name=name;go.transform.SetParent(transform,false);go.transform.localPosition=(p+q)*.5f;go.transform.localRotation=Quaternion.FromToRotation(Vector3.up,q-p);go.transform.localScale=new Vector3(r*2,(q-p).magnitude*.5f,r*2);go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());go.GetComponent<Renderer>().sharedMaterial=material;go.layer=gameObject.layer;return go.transform;}
     }
 }

@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace SwapHunter
 {
     public sealed partial class DemoGame
     {
-        static readonly Color Cyan = new Color(.40f, .78f, 1f), Muted = new Color(.72f, .78f, .88f), Ink = new Color(.016f, .026f, .055f, .98f);
+        static readonly Color Cyan = new Color(.47f, .69f, .67f), Muted = new Color(.61f, .69f, .70f), Ink = new Color(.047f, .078f, .094f, .99f);
         GUIStyle textStyle, buttonStyle;
         float viewWidth, uiScaleFactor=1, uiOffsetY;
         Matrix4x4 lastUiMatrix=Matrix4x4.identity;
@@ -25,21 +25,21 @@ namespace SwapHunter
             textStyle = new GUIStyle(GUI.skin.label) { font = font, wordWrap = true, richText = false, clipping = TextClipping.Overflow };
             buttonStyle = new GUIStyle(GUI.skin.button) { font = font, fontSize = 20, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(20, 16, 8, 8) };
             buttonStyle.normal.background = Texture2D.whiteTexture; buttonStyle.hover.background = Texture2D.whiteTexture; buttonStyle.active.background = Texture2D.whiteTexture;
-            buttonStyle.hover.background = UITexture(new Color(.12f,.29f,.55f)); buttonStyle.active.background = UITexture(new Color(.08f,.39f,.94f));
+            buttonStyle.hover.background = UITexture(new Color(.20f,.29f,.31f)); buttonStyle.active.background = UITexture(new Color(.38f,.30f,.19f));
             buttonStyle.normal.textColor = Color.white; buttonStyle.hover.textColor = Color.white; buttonStyle.active.textColor = Color.white;
         }
         static Texture2D UITexture(Color color) { var t = new Texture2D(1,1); t.SetPixel(0,0,color); t.Apply(); return t; }
         void Fill(Rect r, Color color) { Color old = GUI.color; GUI.color = color; GUI.DrawTexture(r, Texture2D.whiteTexture); GUI.color = old; }
         void Text(string value, Rect r, int size = 20, Color? color = null, TextAnchor align = TextAnchor.UpperLeft)
         {
-            textStyle.fontSize = size; textStyle.normal.textColor = color ?? Color.white; textStyle.alignment = align; GUI.Label(r, value, textStyle);
+            textStyle.fontSize = size; textStyle.normal.textColor = color ?? Color.white; textStyle.alignment = align; GUI.Label(r, KeyHints.Resolve(value), textStyle);
         }
         // Shared by settings, campaign and expedition screens.
         void DrawUiPanel(Rect r, bool accent = false)
         {
-            Fill(r,new Color(.025f,.045f,.09f,.94f));
-            Fill(new Rect(r.x,r.y,r.width,1),new Color(.20f,.29f,.43f,.75f));
-            if(accent)Fill(new Rect(r.x,r.y,4,r.height),Cyan);
+            Fill(r,new Color(.075f,.118f,.141f,.97f));
+            Fill(new Rect(r.x,r.y,r.width,1),new Color(.28f,.36f,.38f,.75f));
+            if(accent)Fill(new Rect(r.x+16,r.y,Mathf.Min(48,r.width-32),2),Amber);
         }
         void SlashBand(Rect r, Color color, float angle)
         {
@@ -69,25 +69,25 @@ namespace SwapHunter
                 bool expeditionScreen=DrawExpeditionScreen();
                 if(!expeditionScreen)
                 {
-                    if(state==RunState.Menu){if(campaignBoard)CampaignBoardUI();else Menu();}
+                    if(state==RunState.Menu)Menu();
                     else if(state==RunState.Playing||state==RunState.Paused&&!settlementPending||state==RunState.Dead&&lastSettlement==null)Hud();
                     if(state==RunState.Paused||state==RunState.Dead||state==RunState.Victory){if(!DrawTutorialCompletion())Overlay();}
                 }
                 GUI.enabled=previousEnabled;
                 if(settingsOpen)Settings();
             }
-            finally { GUI.enabled=previousEnabled;DrawDirectedTrialUI();if(!RunStorage.IsDirectedTrial)DrawDemonstrationBadge(); GUI.enabled=previousEnabled;GUI.matrix=previous; }
+            finally { GUI.enabled=previousEnabled;DrawDirectedTrialUI();if(qaMode&&!RunStorage.IsDirectedTrial)DrawDemonstrationBadge(); GUI.enabled=previousEnabled;GUI.matrix=previous; }
         }
         void Menu(){BrandedMenu();}
         void Hud()
         {
             if (!player) return;
-            DrawUiPanel(new Rect(20,20,Mathf.Min(700,viewWidth*.49f),141),true);
+            float missionWidth=Mathf.Min(560,viewWidth*.46f);
+            DrawUiPanel(new Rect(24,20,missionWidth,105),true);
             DrawUiPanel(new Rect(viewWidth-302,22,282,88));
-            Fill(new Rect(32, 30, 5, 68), Cyan);
-            Text(expeditionActive?"相位行动  /  "+(expeditionLevel+1).ToString("00"):stage.ToString("00")+"  /  "+areaNames[stage],new Rect(49,29,540,28),16,Cyan);
-            Text(tutorialCourse&&tutorialCourse.Active?tutorialCourse.Title:expeditionActive ? ExpeditionTitle : campaignActive ? activeContract.name : stageNames[stage], new Rect(49, 57, 500, 40), 30);
-            Text(expeditionActive&&!D2TrialScenarioActive?V2HudObjective:Objective, new Rect(49, 109, Mathf.Min(644, viewWidth * .49f - 54), 60), 19, new Color(.84f, .90f, .92f));
+            Text(expeditionActive?"相位行动  /  "+(expeditionLevel+1).ToString("00"):stage.ToString("00")+"  /  "+areaNames[stage],new Rect(40,26,missionWidth-32,21),14,Cyan);
+            Text(tutorialCourse&&tutorialCourse.Active?tutorialCourse.Title:expeditionActive ? ExpeditionTitle : campaignActive ? activeContract.name : stageNames[stage], new Rect(40,47,missionWidth-32,33),26);
+            Text(expeditionActive&&!D2TrialScenarioActive?V2HudObjective:Objective,new Rect(40,82,missionWidth-32,37),16,new Color(.84f,.90f,.92f));
             Text(FormatTime(runSeconds), new Rect(viewWidth - 195, 32, 150, 35), 25, Color.white, TextAnchor.MiddleRight);
             if(expeditionActive) Text("指定必清 "+ExpeditionRequiredEnemies+" / 可遗留敌人 "+ExpeditionOptionalEnemies,new Rect(viewWidth-345,74,300,30),16,Muted,TextAnchor.MiddleRight);
             else if (AliveEnemies>0) Text("在场敌人  "+AliveEnemies,new Rect(viewWidth-275,74,230,30),16,Muted,TextAnchor.MiddleRight);
@@ -95,18 +95,16 @@ namespace SwapHunter
             float x = viewWidth / 2, y = 450;
             Color reticle = player.target && player.swapValidation.IsValid ? Cyan : Color.white;
             DrawCrosshair(x, y, options, player.CurrentSpreadDegrees);
-            if (player.hitFlash > 0 && options.hitMarkers) Text(player.killFlash > 0 ? "×" : "+", new Rect(x - 20, y - 27, 40, 54), 36, player.killFlash > 0 ? new Color(1, .67f, .24f) : Color.white, TextAnchor.MiddleCenter);
+            DrawPrecisionHitFeedback(x,y);
             if (player.blockFlash > 0)
             {
                 Fill(new Rect(x + 85, 432, 245, 36), new Color(.025f, .035f, .04f, .95f));
                 Text("格挡 · 未造成伤害", new Rect(x + 95, 434, 225, 32), 18, Amber, TextAnchor.MiddleCenter);
             }
-            if(player.hitFlash>0&&!string.IsNullOrEmpty(player.HitRegionLabel)&&options.hitMarkers)
-                Text(player.HitRegionLabel,new Rect(x+40,y-13,145,30),16,player.killFlash>0?Amber:Color.white);
             if (player.AimingAtShield)
             {
-                Fill(new Rect(x - 290, 704, 580, 39), new Color(.025f, .035f, .04f, .94f));
-                Text("盾牌不可击碎 · 绕侧，或 " + KeyName(6) + " 换位后转身射击身体", new Rect(x - 278, 709, 556, 30), 18, Amber, TextAnchor.MiddleCenter);
+                Fill(new Rect(x - 290, 579, 580, 33),new Color(.025f,.035f,.04f,.90f));
+                Text("盾牌不可击碎 · 绕侧，或 " + KeyName(6) + " 换位后转身射击身体",new Rect(x-278,581,556,29),17,Amber,TextAnchor.MiddleCenter);
             }
             if (player.target && player.target.Alive)
             {
@@ -148,11 +146,9 @@ namespace SwapHunter
             Fill(new Rect(abilityX + 17, 848, 244 * Mathf.Clamp01(1 - player.cooldown / Mathf.Max(.01f,CampaignCooldown*ExpeditionCooldownMultiplier)), 5), Cyan);
             if (ToastVisible)
             {
-                bool bossPresent=false;
-                foreach(var enemy in enemies)if(enemy&&enemy.Alive&&enemy.boss){bossPresent=true;break;}
-                Rect notice=bossPresent?new Rect(32,178,Mathf.Clamp(viewWidth-692,240,650),64):new Rect(x-350,campaignActive?273:195,700,53);
+                Rect notice=new Rect(24,246,Mathf.Min(550,viewWidth*.46f),60);
                 Fill(notice, new Color(.02f, .045f, .06f, .9f));
-                Text(toast, new Rect(notice.x+17,notice.y+10,notice.width-34,notice.height-20),bossPresent?18:19,Color.white,TextAnchor.MiddleCenter);
+                Text(toast,new Rect(notice.x+16,notice.y+9,notice.width-32,notice.height-18),17,Color.white,TextAnchor.MiddleLeft);
             }
             if (nearestTerminal && !nearestTerminal.activated)
                 Text(KeyName(8) + "  " + (stage == 2 ? "接通继电器" : stage == 3 ? "获取核心" : stage == 4 ? "确认撤离" : "启动控制台"), new Rect(x - 190, 609, 380, 38), 23, Cyan, TextAnchor.MiddleCenter);
@@ -160,7 +156,7 @@ namespace SwapHunter
             {
                 Vector3 direction = player.lastSwapTarget - player.transform.position;
                 float angle = Vector3.SignedAngle(player.transform.forward, Vector3.ProjectOnPlane(direction, Vector3.up), Vector3.up);
-                Text(Mathf.Abs(angle) > 110 ? "原目标在身后  ↶" : angle > 20 ? "原目标在右侧  →" : angle < -20 ? "←  原目标在左侧" : "原目标在前方", new Rect(x - 220, 666, 440, 32), 18, Cyan, TextAnchor.MiddleCenter);
+                Text(Mathf.Abs(angle) > 110 ? "原目标在身后  ↶" : angle > 20 ? "原目标在右侧  →" : angle < -20 ? "←  原目标在左侧" : "原目标在前方",new Rect(x-220,541,440,30),17,Cyan,TextAnchor.MiddleCenter);
             }
             if (player.hurtFlash > 0)
             {
@@ -173,9 +169,9 @@ namespace SwapHunter
             }
             if (player.phaseFlash > 0) { Color phase = new Color(.1f, 1, .8f, player.phaseFlash * 1.2f); Rect bounds=FullScreenGuiRect;Fill(new Rect(0,bounds.yMin,12,bounds.height),phase);Fill(new Rect(viewWidth-12,bounds.yMin,12,bounds.height),phase); }
             CampaignHudUI();DrawBossHud();DrawMiniBossV2Hud();DrawTacticsHud();DrawStoryRadio();DrawD2Context();DrawV2ObjectiveGuide();
-            if(!string.IsNullOrEmpty(player.ActionLabel))Text(player.ActionLabel,new Rect(33,738,330,32),18,Cyan);
+            if(!string.IsNullOrEmpty(player.ActionLabel))Text(player.ActionLabel,new Rect(32,752,400,22),15,Cyan);
             if(player.ChargeProgress>0){Fill(new Rect(x-72,y+35,144,4),new Color(.1f,.16f,.24f));Fill(new Rect(x-72,y+35,144*player.ChargeProgress,4),Cyan);}
-            Text(KeyName(10) + " / " + KeyName(11) + " 切枪     " + KeyName(7) + " 装填     Esc 暂停", new Rect(35, 875, 600, 22), 16, Muted, TextAnchor.MiddleLeft);
+            Text(KeyName(10) + " / " + KeyName(11) + " 切枪     " + KeyName(7) + " 装填     " + KeyName(16) + " 暂停", new Rect(35, 875, 600, 22), 16, Muted, TextAnchor.MiddleLeft);
         }
         void Overlay()
         {
@@ -191,7 +187,7 @@ namespace SwapHunter
             }
             if (lastSettlement != null && (state == RunState.Dead || state == RunState.Victory)) { CampaignSettlementUI(); return; }
             Fill(FullScreenGuiRect,new Color(.009f,.015f,.035f,.89f)); float x=Mathf.Max(60,viewWidth*.17f);
-            SlashBand(new Rect(viewWidth*.68f,-90,90,1100),new Color(.07f,.27f,.70f,.48f),-12);
+
             Fill(new Rect(x,183,52,5),state==RunState.Dead?Amber:Cyan);
             Text(state == RunState.Paused ? "暂停行动" : state == RunState.Dead ? "相位信号中断" : "撤离成功", new Rect(x, 224, 550, 73), 46, state == RunState.Dead ? new Color(1, .56f, .4f) : Color.white);
             Text(state == RunState.Paused ? "下一次换位，先想好落点。" : state == RunState.Dead ? "检查点已保留。观察威胁，换一个位置再来。" : "相位核心已回收。你带走了开火的位置。", new Rect(x, 312, 540, 65), 19, Muted);
@@ -209,7 +205,12 @@ namespace SwapHunter
             if (campaignActive && !string.IsNullOrEmpty(campaignNotice)) Text(campaignNotice, new Rect(x, bottom + 190, 560, 70), 17, Amber);
         }
         void Settings() { DrawSettingsV2(); }
-        public string KeyName(int i) => BindingInput.Label(options.actions!=null&&i>=0&&i<options.actions.Length&&options.actions[i]!=null?options.actions[i].primary:"").Replace("鼠标左键", "M1").Replace("鼠标右键", "M2").Replace("鼠标侧键 ", "M").Replace("鼠标中键", "M3");
+        public string KeyName(int i)
+        {
+            var binding=options.actions!=null&&i>=0&&i<options.actions.Length?options.actions[i]:null;
+            string code=binding==null?"":!string.IsNullOrEmpty(binding.primary)?binding.primary:binding.secondary;
+            return BindingInput.Label(code).Replace("鼠标左键","M1").Replace("鼠标右键","M2").Replace("鼠标侧键 ","M").Replace("鼠标中键","M3");
+        }
         static string FormatTime(float seconds) => ((int)seconds / 60).ToString("00") + ":" + ((int)seconds % 60).ToString("00");
     }
 }

@@ -156,3 +156,19 @@
 !/docs/focused-world-sources.zh-CN.md
 
 !/docs/balance-health-range-2026-10-19.zh-CN.md
+
+# October public overview and reproducible audio sources.
+!/docs/current-state-2026-10-20.zh-CN.md
+!/docs/media/october-main-menu.png
+!/docs/media/october-armory-melee.png
+!/docs/media/october-chapter1-final-hud.png
+!/Tools/AudioAuthoring/
+/Tools/AudioAuthoring/*
+!/Tools/AudioAuthoring/build_refined_audio.py
+!/Tools/AudioAuthoring/README.md
+!/Tools/AudioAuthoring/requirements.txt
+!/Tools/AudioAuthoring/audio_sources/
+/Tools/AudioAuthoring/audio_sources/*
+!/Tools/AudioAuthoring/audio_sources/*.wav
+!/Tools/AudioAuthoring/audio_sources/shots/
+!/Tools/AudioAuthoring/audio_sources/shots/**

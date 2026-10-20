@@ -15,6 +15,8 @@ namespace SwapHunter
   public float SilenceResistanceLeft=>Owner&&Owner.Silenced?0:Mathf.Max(0,silenceResistantUntil-Time.time);
   public int SilenceAcceptedCount {get;private set;}
   public int SilenceRejectedCount {get;private set;}
+  bool cityInterlock,portInterlock;
+  public int IsolatedPowerBranches => (cityInterlock?1:0)+(portInterlock?1:0);
   public bool TryReceiveSilence(float seconds)
   {
    if(seconds<=0)return false;
@@ -27,7 +29,7 @@ namespace SwapHunter
   DemoGame G=>DemoGame.I;
   public void Initialize(EnemyActor owner)
   {
-   Owner=owner;Energy=ShieldMaximum;Phase=BossPhase.EnergyMelee;Owner.maximumHealth=HealthMaximum;Owner.health=HealthMaximum;attackAt=Time.time+1.5f;CancelSpatialSkill();
+   Owner=owner;cityInterlock=portInterlock=false;Energy=ShieldMaximum;Phase=BossPhase.EnergyMelee;Owner.maximumHealth=HealthMaximum;Owner.health=HealthMaximum;attackAt=Time.time+1.5f;CancelSpatialSkill();
    Owner.InitializeBossPresentation();
    G.Record("boss_begin","Energy Shield "+ShieldMaximum+" -> HP "+HealthMaximum);
   }
@@ -66,7 +68,7 @@ namespace SwapHunter
   }
   public void Tick(float dt)
   {
-   RefreshPhase();if(Phase==BossPhase.Defeated||!Owner.Alive)return;ObserveSpatialTarget(dt);
+   RefreshPhase();if(Phase==BossPhase.Defeated||!Owner.Alive)return;CheckMaintenanceInterlocks();ObserveSpatialTarget(dt);
    meleeSwing=Mathf.Max(0,meleeSwing-dt);float elbowSwing=Skill==BossSkill.SwapElbow&&SkillStep==BossSkillStep.Execute&&SkillSeconds<.22f?1-SkillSeconds/.22f:0;
    Vector3 visualAim=Skill==BossSkill.Attraction&&(SkillStep==BossSkillStep.Telegraph||SkillStep==BossSkillStep.Execute)?DangerCenter+Vector3.up*1.2f:G.player.Eye.position;
    Vector3 facing=Vector3.ProjectOnPlane(visualAim-Owner.AimPoint,Vector3.up);
@@ -95,13 +97,31 @@ namespace SwapHunter
    if(Time.time<attackAt)return;
    if(melee)
    {
-    if(d.magnitude>2.9f)return;windup=.75f;meleePoint=G.player.transform.position;Warning="近战压迫 · 拉开距离或换位";
+    if(d.magnitude>2.9f)return;windup=.75f;meleePoint=G.player.transform.position;Warning="近战压迫 · 拉开距离或 {key:6} 换位";
     telegraph=Shapes.Ring(G.effects,transform.position+Vector3.up*.08f,3,new Color(1,.35f,.12f),.08f);G.sound.Play("warning",transform.position);
    }
    else if(Vector3.Dot(transform.forward,d.normalized)>.85f&&!Physics.Linecast(Owner.AimPoint,G.player.Eye.position,Layers.WorldMask))
    {
     Owner.ShootAt(G.player.transform.position+Vector3.up*(G.player.IsCrouching?.62f:1.05f),8,55);burst++;attackAt=Time.time+(burst>=3?1.7f:.25f);if(burst>=3)burst=0;
    }
+  }
+  void CheckMaintenanceInterlocks()
+  {
+   if(!G.expeditionActive||G.expeditionLevel!=11||G.mission==null)return;
+   Isolate("a",ref cityInterlock);Isolate("b",ref portInterlock);
+  }
+  void Isolate(string objective,ref bool isolated)
+  {
+   if(isolated||!G.MissionObjectiveComplete(objective))return;
+   isolated=true;
+   float drained=Mathf.Min(Energy,ShieldMaximum*.25f);
+   if(drained>0)Absorb(drained);
+   // Maintenance acts on the power supply. An already telegraphed attack still
+   // resolves consistently; the next basic burst waits for the isolation surge.
+   attackAt=Mathf.Max(attackAt,Time.time+1.4f);
+   if(burst==0&&SkillStep==BossSkillStep.Ready)nextSkillAt=Mathf.Max(nextSkillAt,Time.time+1.4f);
+   G.Record("boss_power_isolated",objective+";shieldDrained="+drained+";branches="+IsolatedPowerBranches);
+   G.Toast(objective=="a"?"城侧供能隔离 · 指挥官护盾失去一段外部供电":"港侧供能隔离 · 已打开后方维护退路",3);
   }
   public bool InterruptBasicBurst()
   {

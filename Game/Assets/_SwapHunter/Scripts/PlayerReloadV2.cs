@@ -34,25 +34,25 @@ namespace SwapHunter
         {
             var state=ReloadV2Current;if(state==null||!state.pending||state.suspended||preparing||IsVaulting)return;
             state.elapsed=Mathf.Min(state.total,state.elapsed+Mathf.Max(0,dt)*state.speed);
-            if(!state.soundOut&&state.elapsed>=state.total*.09375f){state.soundOut=true;G.sound.Play("reload_out");}
+            if(!state.soundOut&&state.elapsed>=state.total*.09375f){state.soundOut=true;G.sound.PlayWeapon(weapon,"reload_out");}
             if(state.pump)
             {
                 while(!state.finishing&&state.inserted<state.wanted&&state.elapsed>=.25f+(state.inserted+1)*.4f)
                 {
                     int take=Mathf.Min(1,Mathf.Min(Capacity(weapon)-ammo[weapon],reserve[weapon]));
                     if(take<=0){state.finishing=true;state.total=state.elapsed+.25f;break;}
-                    ammo[weapon]+=take;reserve[weapon]-=take;state.inserted++;state.committed=true;G.sound.Play("reload_in");G.Record("weapon_reload_shell",weapon+":"+state.inserted);
+                    ammo[weapon]+=take;reserve[weapon]-=take;state.inserted++;state.committed=true;G.sound.PlayWeapon(weapon,"reload_in");G.Record("weapon_reload_shell",weapon+":"+state.inserted);
                 }
             }
             else if(!state.committed&&state.elapsed>=state.total*ReloadV2CommitFraction(weapon))
             {
                 int take=Mathf.Min(Capacity(weapon)-ammo[weapon],reserve[weapon]);ammo[weapon]+=take;reserve[weapon]-=take;state.inserted=take;state.committed=true;
-                G.sound.Play("reload_in");G.Record("weapon_reload_commit",weapon+":"+take);
+                G.sound.PlayWeapon(weapon,"reload_in");G.Record("weapon_reload_commit",weapon+":"+take);
             }
             if(state.elapsed>=state.total)
             {
                 state.pending=false;state.suspended=false;reloadLeft=0;
-                if(state.empty||weapon==5||weapon==9)G.sound.Play("reload_bolt");G.Record("weapon_reload_complete",weapon+":"+state.inserted);ResetReloadPresentation();return;
+                if(state.empty||weapon==5||weapon==9)G.sound.PlayWeapon(weapon,"reload_bolt");G.Record("weapon_reload_complete",weapon+":"+state.inserted);ResetReloadPresentation();return;
             }
             SyncReloadV2(state);
         }

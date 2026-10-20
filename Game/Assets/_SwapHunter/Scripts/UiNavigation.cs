@@ -29,10 +29,10 @@ namespace SwapHunter
    bool hover=r.Contains(Event.current.mousePosition)&&enabled,focus=enabled&&uiFocus==id;
    if(Event.current.type==EventType.MouseDown&&Event.current.button==0&&hover){uiPressed=id;uiFocus=id;}
    bool down=enabled&&uiPressed==id&&(Event.current.type==EventType.MouseDown||MouseDevice!=null&&MouseDevice.leftButton.isPressed);
-   Color background=!enabled?new Color(.035f,.045f,.068f):down?new Color(.05f,.22f,.47f):hover||focus?new Color(.13f,.35f,.63f):primary?new Color(.07f,.31f,.90f):new Color(.055f,.080f,.13f);
+   Color background=!enabled?new Color(.07f,.10f,.12f):down?new Color(.31f,.27f,.20f):hover||focus?new Color(.20f,.30f,.32f):primary?new Color(.36f,.28f,.17f):new Color(.10f,.16f,.19f);
    GUI.enabled=true;Fill(r,background);
-   Fill(new Rect(r.x,r.y,hover||focus?5:2,r.height),primary||hover||focus?Cyan:new Color(.24f,.31f,.42f));
-   Fill(new Rect(r.x,r.yMax-1,r.width,focus?3:1),focus?Cyan:hover?Color.white:new Color(.18f,.24f,.34f));
+   Fill(new Rect(r.x,r.y,r.width,1),primary||hover||focus?Amber:new Color(.25f,.33f,.35f));
+   Fill(new Rect(r.x,r.yMax-1,r.width,focus?3:1),focus?Amber:hover?Paper:new Color(.21f,.29f,.31f));
    if(drawLabel)
    {
    int size=r.width<70?17:r.width<160?16:r.width<260?18:20;bool wrap=textStyle.wordWrap;if(r.width<70)textStyle.wordWrap=false;

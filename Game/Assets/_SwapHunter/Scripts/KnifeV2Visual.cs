@@ -60,14 +60,14 @@ namespace SwapHunter
                 // The held handle stays locked to the palm. Only the free handle opens
                 // through its real pin; the blade never closes into the gripping fingers.
                 float phase=Mathf.InverseLerp(.16f,.42f,PoseSeconds)*(1-Mathf.InverseLerp(.68f,.92f,PoseSeconds));phase=phase*phase*(3-2*phase);
-                if(hingeB)hingeB.localRotation=bRest;if(hingeA)hingeA.localRotation=aRest*Quaternion.AngleAxis(48*phase,Vector3.forward);
+                if(hingeB)hingeB.localRotation=bRest;if(hingeA)hingeA.localRotation=aRest*Quaternion.AngleAxis((42+28*Mathf.Sin(PoseSeconds*Mathf.PI*6))*phase,Vector3.forward);
                 if(latch)latch.localRotation=latchRest*Quaternion.AngleAxis(35*phase,Vector3.forward);OpenAmount=1;
             }
             // The holder positions this root; no autonomous rotation or ownership transfer occurs here.
             if(KnifeId==4)UpdateLanyard(turn);
         }
         public void ReleaseInspect()
-        {if(KnifeId!=3)return;if(hingeA)hingeA.localRotation=Quaternion.RotateTowards(hingeA.localRotation,aRest,620*Time.deltaTime);if(hingeB)hingeB.localRotation=Quaternion.RotateTowards(hingeB.localRotation,bRest,620*Time.deltaTime);if(latch)latch.localRotation=Quaternion.RotateTowards(latch.localRotation,latchRest,500*Time.deltaTime);OpenAmount=1;}
+        {if(KnifeId==4)UpdateLanyard(0);if(KnifeId!=3)return;if(hingeA)hingeA.localRotation=Quaternion.RotateTowards(hingeA.localRotation,aRest,620*Time.deltaTime);if(hingeB)hingeB.localRotation=Quaternion.RotateTowards(hingeB.localRotation,bRest,620*Time.deltaTime);if(latch)latch.localRotation=Quaternion.RotateTowards(latch.localRotation,latchRest,500*Time.deltaTime);OpenAmount=1;}
         void UpdateLanyard(float motion)
         {
             if(rope.Length==0){var all=GetComponentsInChildren<Transform>();var list=new System.Collections.Generic.List<Transform>();foreach(var t in all)if(t.name.StartsWith("Lanyard segment",StringComparison.Ordinal))list.Add(t);rope=list.ToArray();ropeRest=new Quaternion[rope.Length];for(int i=0;i<rope.Length;i++)ropeRest[i]=rope[i].localRotation;}

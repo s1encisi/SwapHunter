@@ -19,16 +19,16 @@ namespace SwapHunter
         readonly Dictionary<string, string> numberFields = new Dictionary<string, string>();
         GUIStyle inputStyle, smallButton, clearButtonStyle;
         internal GameOptions PendingOptions => settingsDraft;
-        internal void SelectSettingsTab(int tab) { settingsTab = Mathf.Clamp(tab, 0, 5); bindingCapture = -1; pendingConflict = -1; numberFields.Clear(); }
+        internal void SelectSettingsTab(int tab) { settingsTab = Mathf.Clamp(tab, 0, 5); bindingCapture = -1; pendingConflict = -1; numberFields.Clear(); CloseSettingsDropdown(); }
         internal void SetBindingScrollForReview(float y) { bindingScroll.y = Mathf.Max(0, y); }
         public void OpenSettings()
         {
-            RefreshDisplayChoices(); bindingScroll = Vector2.zero; resetConfirmation = false;
+            RefreshDisplayChoices(); bindingScroll = Vector2.zero; resetConfirmation = false; CloseSettingsDropdown();
             settingsOpen = true; settingsDraft = options.Clone(); numberFields.Clear(); settingsNotice = SettingsStore.LastWarning; bindingCapture = -1; pendingConflict = -1;
         }
         public void CancelSettings()
         {
-            settingsOpen = false; settingsDraft = null; bindingCapture = -1; pendingConflict = -1; resetConfirmation = false; numberFields.Clear();
+            CloseSettingsDropdown(); settingsOpen = false; settingsDraft = null; bindingCapture = -1; pendingConflict = -1; resetConfirmation = false; numberFields.Clear();
         }
         void RefreshDisplayChoices()
         {
@@ -68,6 +68,7 @@ namespace SwapHunter
         {
             if (settingsDraft == null) settingsDraft = options.Clone();
             var keyboard = KeyboardDevice; var mouse = MouseDevice;
+            if(UpdateSettingsDropdownInput())return;
             if (bindingCapture < 0)
             {
                 if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) CancelSettings();
@@ -116,21 +117,24 @@ namespace SwapHunter
             if (inputStyle == null)
             {
                 inputStyle = new GUIStyle(GUI.skin.textField) { font = font, fontSize = 17, alignment = TextAnchor.MiddleRight, padding = new RectOffset(8, 8, 3, 3) };
+                inputStyle.normal.background=UITexture(new Color(.10f,.16f,.19f));
+                inputStyle.focused.background=UITexture(new Color(.17f,.24f,.25f));
+                inputStyle.normal.textColor=Paper;inputStyle.focused.textColor=Color.white;
                 smallButton = new GUIStyle(buttonStyle) { fontSize = 16, padding = new RectOffset(12, 10, 2, 2) };
                 clearButtonStyle = new GUIStyle(smallButton) { alignment = TextAnchor.MiddleCenter, padding = new RectOffset(0,0,0,0), fontSize = 17 };
             }
-            Fill(FullScreenGuiRect, new Color(.015f,.022f,.045f,1));
+            Fill(FullScreenGuiRect, Ink);
+            ConsumeSettingsDropdownOutsideClick();
             bool outerEnabled = GUI.enabled;
-            GUI.enabled = outerEnabled && pendingConflict < 0 && !resetConfirmation && bindingCapture < 0;
-            float x = Mathf.Max(36, (viewWidth - 1240) / 2), width = Mathf.Min(1240, viewWidth - 72), cx = x + 222, cw = width - 222;
-            Fill(new Rect(0,0,14,900), Cyan);
-            Fill(new Rect(viewWidth-176,0,176,900), new Color(.025f,.055f,.13f));
-            Text("SETTINGS / 操作终端", new Rect(x, 29, 760, 30), 16, Cyan);
+            GUI.enabled = outerEnabled && pendingConflict < 0 && !resetConfirmation && bindingCapture < 0 && !SettingsDropdownOpen;
+            float x = Mathf.Max(48, (viewWidth - 1380) / 2), width = Mathf.Min(1380, viewWidth - 96), cx = x + 222, cw = width - 222;
+            Fill(new Rect(x,146,width,1),new Color(.26f,.34f,.36f));
+            Text("HOMECOMING / 控制台设置", new Rect(x, 29, 760, 30), 16, Cyan);
             Text("设置", new Rect(x-3, 68, 300, 62), 44);
             Text("调整后点击应用；取消会保留原设置。", new Rect(x+222, 98, 750, 32), 17, Muted);
             string[] tabs = { "鼠标与操作", "键位绑定", "画面与性能", "准星", "声音", "动作与难度" };
             for (int i = 0; i < tabs.Length; i++)
-                if (Button(tabs[i], new Rect(x, 173 + i * 65, 184, 51), settingsTab == i)) { settingsTab = i; bindingCapture = -1; pendingConflict = -1; bindingScroll = Vector2.zero; numberFields.Clear(); }
+                if (Button(tabs[i], new Rect(x, 173 + i * 65, 184, 51), settingsTab == i)) { settingsTab = i; bindingCapture = -1; pendingConflict = -1; bindingScroll = Vector2.zero; numberFields.Clear(); CloseSettingsDropdown(); }
             Fill(new Rect(cx - 20, 164, 1, 590), new Color(.22f,.31f,.35f));
             float col = (cw - 36) / 2;
             switch (settingsTab)
@@ -142,9 +146,9 @@ namespace SwapHunter
                     settingsDraft.aimSensitivity = Numeric("瞄准灵敏度倍率", settingsDraft.aimSensitivity, .2f, 1.5f, cx, 403, col);
                     settingsDraft.mouseDpi = Mathf.RoundToInt(Numeric("鼠标 DPI（用于估算）", settingsDraft.mouseDpi, 100, 32000, cx, 494, col, true));
                     settingsDraft.invertY = Toggle("反转 Y 轴", settingsDraft.invertY, cx + col + 36, 221, col);
-                    if (Button("瞄准方式：" + (settingsDraft.toggleAim ? "切换" : "按住"), new Rect(cx + col + 36, 293, col, 45))) settingsDraft.toggleAim = !settingsDraft.toggleAim;
-                    if (Button("冲刺方式：" + (settingsDraft.toggleSprint ? "切换" : "按住"), new Rect(cx + col + 36, 365, col, 45))) settingsDraft.toggleSprint = !settingsDraft.toggleSprint;
-                    if (Button("蹲伏方式：" + (settingsDraft.toggleCrouch ? "切换" : "按住"), new Rect(cx + col + 36, 437, col, 45))) settingsDraft.toggleCrouch = !settingsDraft.toggleCrouch;
+                    settingsDraft.toggleAim = ChoiceRow("瞄准方式",settingsDraft.toggleAim?1:0,new[]{"按住","切换"},cx+col+36,293,col)==1;
+                    settingsDraft.toggleSprint = ChoiceRow("冲刺方式",settingsDraft.toggleSprint?1:0,new[]{"按住","切换"},cx+col+36,365,col)==1;
+                    settingsDraft.toggleCrouch = ChoiceRow("蹲伏方式",settingsDraft.toggleCrouch?1:0,new[]{"按住","切换"},cx+col+36,437,col)==1;
                     float cm = 360f / (.04f * settingsDraft.sensitivity * settingsDraft.mouseDpi) * 2.54f;
                     Text("约 " + cm.ToString("F1") + " cm / 360°", new Rect(cx + col + 36, 528, col, 42), 27, Cyan);
                     Text("按所填 DPI 估算；请与鼠标实际 DPI 一致。\n鼠标增量不额外加入平滑或加速。", new Rect(cx + col + 36, 580, col, 115), 17, Muted);
@@ -174,18 +178,18 @@ namespace SwapHunter
                     break;
                 case 2:
                     Text("显示与性能",new Rect(cx,164,cw,40),25,Cyan);
-                    settingsDraft.windowMode=Cycle("显示模式",settingsDraft.windowMode,new[]{"窗口","无边框全屏"},cx,217,col);
+                    settingsDraft.windowMode=Choice("显示模式",settingsDraft.windowMode,new[]{"窗口","无边框全屏"},cx,217,col);
                     var monitorNames = new string[Mathf.Max(1,availableDisplays.Count)];
                     for(int i=0;i<monitorNames.Length;i++)monitorNames[i]=availableDisplays.Count==0?"当前显示器":(i+1)+" / "+availableDisplays[i].name;
-                    settingsDraft.displayIndex=Cycle("显示器",Mathf.Clamp(settingsDraft.displayIndex,0,monitorNames.Length-1),monitorNames,cx,303,col);
+                    settingsDraft.displayIndex=Choice("显示器",Mathf.Clamp(settingsDraft.displayIndex,0,monitorNames.Length-1),monitorNames,cx,303,col);
                     if(availableResolutions.Count==0)RefreshDisplayChoices();
                     string[] resolutionNames=new string[availableResolutions.Count];int selectedResolution=0;
                     for(int i=0;i<availableResolutions.Count;i++){var size=availableResolutions[i];resolutionNames[i]=size.x+" × "+size.y;if(size.x==settingsDraft.resolutionWidth&&size.y==settingsDraft.resolutionHeight)selectedResolution=i;}
-                    int nextResolution=Cycle("窗口分辨率",selectedResolution,resolutionNames,cx,389,col);
+                    int nextResolution=Choice("窗口分辨率",selectedResolution,resolutionNames,cx,389,col);
                     settingsDraft.resolutionWidth=availableResolutions[nextResolution].x;settingsDraft.resolutionHeight=availableResolutions[nextResolution].y;
-                    int nextQuality=Cycle("画质 / 阴影与特效",settingsDraft.quality,new[]{"简约","均衡","精细"},cx,475,col);
+                    int nextQuality=Choice("画质 / 阴影与特效",settingsDraft.quality,new[]{"简约","均衡","精细"},cx,475,col);
                     if(nextQuality!=settingsDraft.quality){settingsDraft.quality=nextQuality;settingsDraft.renderScale=new[]{.7f,.85f,1f}[nextQuality];numberFields.Clear();}
-                    settingsDraft.frameLimit=Cycle("帧率上限",settingsDraft.frameLimit,new[]{"60","120","144","240","不限"},cx,561,col);
+                    settingsDraft.frameLimit=Choice("帧率上限",settingsDraft.frameLimit,new[]{"60","120","144","240","不限"},cx,561,col);
                     settingsDraft.vSync=Toggle("垂直同步",settingsDraft.vSync,cx,657,col);
                     float rx=cx+col+36;
                     settingsDraft.fov=Numeric("垂直视野角度",settingsDraft.fov,50,85,rx,217,col);
@@ -203,7 +207,7 @@ namespace SwapHunter
                     settingsDraft.crosshairGap = Numeric("中心间隙", settingsDraft.crosshairGap, 1, 12, cx, 310, col);
                     settingsDraft.crosshairThickness = Numeric("线条粗细", settingsDraft.crosshairThickness, 1, 4, cx, 398, col);
                     settingsDraft.crosshairOpacity = Numeric("不透明度", settingsDraft.crosshairOpacity, .3f, 1, cx, 486, col);
-                    settingsDraft.crosshairColor = Cycle("颜色", settingsDraft.crosshairColor, new[] { "电蓝", "白色", "亮绿", "琥珀", "粉色" }, cx, 574, col);
+                    settingsDraft.crosshairColor = Choice("颜色", settingsDraft.crosshairColor, new[] { "电蓝", "白色", "亮绿", "琥珀", "粉色" }, cx, 574, col);
                     Fill(new Rect(cx + col + 36, 221, col, 205), new Color(.085f,.13f,.17f)); DrawCrosshair(cx + col + 36 + col / 2, 324, settingsDraft, 0);
                     settingsDraft.dynamicCrosshair = Toggle("动态显示精度变化", settingsDraft.dynamicCrosshair, cx + col + 36, 452, col);
                     settingsDraft.crosshairDot = Toggle("中心点", settingsDraft.crosshairDot, cx + col + 36, 518, col);
@@ -226,7 +230,7 @@ namespace SwapHunter
                     settingsDraft.weaponMotion=Numeric("武器晃动强度",settingsDraft.weaponMotion,0,1,cx,324,col);
                     settingsDraft.moveSpeedScale=Numeric("移动速度倍率",settingsDraft.moveSpeedScale,.75f,1.25f,cx,426,col);
                     settingsDraft.uiScale=Numeric("界面缩放（0.8–1.0）",settingsDraft.uiScale,.8f,1,cx,646,col);
-                    settingsDraft.difficulty=Cycle("难度",settingsDraft.difficulty,new[]{"轻松","标准","硬核"},cx+col+36,222,col);
+                    settingsDraft.difficulty=Choice("难度",settingsDraft.difficulty,new[]{"轻松","标准","硬核"},cx+col+36,222,col);
                     Text("降低晃动不会移除射击后坐力。\n\n移动、腾空和连续射击仍影响精度；蹲伏、点射和停步帮助控制弹着。",new Rect(cx+col+36,344,col,185),19,Muted);
                     Text("基础行走  "+(config.walkSpeed*settingsDraft.moveSpeedScale).ToString("F1")+" m/s    /    冲刺  "+(config.sprintSpeed*settingsDraft.moveSpeedScale).ToString("F1")+" m/s",new Rect(cx,564,cw,55),24,Cyan);
                     break;
@@ -249,6 +253,7 @@ namespace SwapHunter
                 Text("滚轮上下滑均受支持；占用时会提示交换。\nEsc取消捕获，完成后点击“应用并返回”。",new Rect(bx+30,450,580,70),17,Muted);
             }
             else if (resetConfirmation) Modal("恢复本页默认", "只重置当前页面，点击“应用并返回”后保存。", ResetSettingsTab, () => resetConfirmation = false);
+            else DrawSettingsDropdown();
         }
         bool SmallButton(string label, Rect rect)
         {
@@ -258,12 +263,17 @@ namespace SwapHunter
         {
             return Button("×", rect);
         }
-        bool Toggle(string label, bool value, float x, float y, float width) => Button(label + "   " + (value ? "开" : "关"), new Rect(x,y,width,45), value) ? !value : value;
-        int Cycle(string label, int value, string[] values, float x, float y, float width)
+        bool Toggle(string label, bool value, float x, float y, float width) => ChoiceRow(label,value?1:0,new[]{"关闭","开启"},x,y,width)==1;
+        int Choice(string label,int value,string[] values,float x,float y,float width)
         {
-            Text(label, new Rect(x,y,width,30),18,Muted);
-            value=Mathf.Clamp(value,0,values.Length-1);
-            return Button(values[value] + "    ›",new Rect(x,y+34,width,42)) ? (value+1)%values.Length : value;
+            Text(label,new Rect(x,y,width,30),18,Muted);
+            return SettingsDropdown(label,value,values,new Rect(x,y+34,width,42));
+        }
+        int ChoiceRow(string label,int value,string[] values,float x,float y,float width)
+        {
+            float captionWidth=Mathf.Min(width*.57f,270);
+            Text(label,new Rect(x,y,captionWidth-12,45),18,Paper,TextAnchor.MiddleLeft);
+            return SettingsDropdown(label,value,values,new Rect(x+captionWidth,y,width-captionWidth,45));
         }
         float Numeric(string label, float value, float min, float max, float x, float y, float width, bool integer = false)
         {
@@ -278,6 +288,11 @@ namespace SwapHunter
             }
             float slider=GUI.HorizontalSlider(new Rect(x,y+48,width,20),value,min,max);
             if(Mathf.Abs(slider-value)>.0001f){value=integer?Mathf.Round(slider):slider;numberFields[id]=value.ToString(integer?"F0":"F2",CultureInfo.InvariantCulture);}
+            Fill(new Rect(x,y+47,width,20),Ink);
+            float ratio=Mathf.InverseLerp(min,max,value);
+            Fill(new Rect(x,y+54,width,4),new Color(.22f,.29f,.31f));
+            Fill(new Rect(x,y+54,width*ratio,4),Cyan);
+            Fill(new Rect(x+(width-10)*ratio,y+49,10,14),GUI.enabled?Paper:Muted);
             return value;
         }
         void Modal(string title,string message,Action accept,Action cancel)
@@ -304,7 +319,7 @@ namespace SwapHunter
         }
         void DrawCrosshair(float x,float y,GameOptions settings,float spread)
         {
-            Color[] colors={Cyan,Color.white,new Color(.4f,1,.25f),new Color(1,.76f,.22f),new Color(1,.45f,.8f)};
+            Color[] colors={new Color(.4f,.78f,1),Color.white,new Color(.4f,1,.25f),new Color(1,.76f,.22f),new Color(1,.45f,.8f)};
             Color color=colors[settings.crosshairColor];color.a=settings.crosshairOpacity;
             float gap=settings.crosshairGap+(settings.dynamicCrosshair?Mathf.Min(22,spread*4):0),size=settings.crosshairSize,t=settings.crosshairThickness;
             Fill(new Rect(x-gap-size,y-t/2,size,t),color);Fill(new Rect(x+gap,y-t/2,size,t),color);

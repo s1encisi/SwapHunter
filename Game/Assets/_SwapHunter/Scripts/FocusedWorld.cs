@@ -3,8 +3,8 @@ namespace SwapHunter
 {
  public sealed class FocusTutorialGuide:MonoBehaviour
  {
-  public TextMesh text;int stage=-1;
-  void Update(){var g=DemoGame.I;if(!g||!g.IsPlaying||!text)return;int next=g.totalSwaps>0?2:g.totalShots>0?1:0;if(next==stage)return;stage=next;text.text=stage==0?"01  射击与持刀\n1 / 2 枪械 · R 装填\nE 取刀 · 3 持刀":stage==1?"02  交换两个位置\n瞄准锚点或训练机按 Q\n交换后回看原来的站位":"03  选择实战射角\n侧台守卫是指定目标\n从工房两侧接近监理";text.font.RequestCharactersInTexture(text.text,48);}
+  public TextMesh text;string last;
+  void Update(){var g=DemoGame.I;if(!g||!g.IsPlaying||!text)return;string next=g.HomecomingTeachingActive?g.HomecomingTeachingTitle+"\n"+g.HomecomingTeachingInstruction:"校准完成\n沿前方灯带离开检修站\n货检通道继续接收救援专线";if(next==last)return;last=next;text.text=next;text.font.RequestCharactersInTexture(next,48);}
  }
  public sealed class FocusSignFit:MonoBehaviour
  {
@@ -89,14 +89,20 @@ namespace SwapHunter
    FocusEnvironment.CoastalContext(root,0);FGround("滨海设备检疫站连续路面",48,92,32);FBoundary(24,-14,78);map.spawn=V(0,.04f,-7);
    // The first room presents one short firing lane, then a parallel exchange lane. The next spaces remain behind a real shutter.
    FBuilding("检疫站西侧设备库",V(-19,0,10),V(7,7,34));FBuilding("检疫站东侧计量间",V(19,0,8),V(7,7,30));FStructuralRoof(V(0,6,-5),V(28,.35f,14));
-   FWall("校准室北墙左翼",V(-10.5f,2.3f,30),V(15,4.6f,.45f));FWall("校准室北墙右翼",V(10.5f,2.3f,30),V(15,4.6f,.45f));FGate("$calibrated",V(0,0,30),6,"完成一次真实Q后，检验闸门开放");
+   FWall("校准室北墙左翼",V(-10.5f,2.3f,30),V(15,4.6f,.45f));FWall("校准室北墙右翼",V(10.5f,2.3f,30),V(15,4.6f,.45f));FGate("$calibrated",V(0,0,30),6,"完成一次 {key:6} 换位后，检验闸门开放");
    FocusEnvironment.Machine(root,"靶场后方弹道收集柜",V(-7,0,11),V(3.4f,2.6f,1.2f),"拦截靶后弹道，清楚定义第一条12米射线");FocusEnvironment.Machine(root,"相位计量设备",V(2,0,18),V(2.8f,1.1f,3),"分隔站位价值，留出左右回望角度");
    Spawn("calibration",0,V(-7,0,8),180,true);Spawn("calibration",1,V(7,0,15),180,true);Spawn("calibration",2,V(-10,0,23),180,true);Spawn("calibration",3,V(12,2.4f,23),200,true);Spawn("calibration",4,V(0,0,26),180,true);
    FPlatform("高差校准检修台",V(12,2.4f,23),8,8);FStairs(V(12,2.4f,19),2.4f);
    Anchor(V(5,.02f,8));Anchor(V(-4,.02f,22));Anchor(V(10.5f,2.42f,21));
    FBox("训练刀桌面",V(-5,.85f,-3),V(2,.16f,1.1f),FocusEnvironment.Steel);foreach(int s in new[]{-1,1})FBox("桌腿",V(-5+s*.7f,.4f,-3),V(.12f,.8f,.65f),FocusEnvironment.Steel);V2Knife(0,V(-5,.95f,-3));
-   var instructions=FSign("01  射击与持刀\n1 / 2 枪械 · R 装填\nE 取刀 · 3 持刀",V(-9,2.2f,-5),4,155);root.gameObject.AddComponent<FocusTutorialGuide>().text=instructions;
-   FSign("相位设备校准线\n交换的是两个位置\nQ后回看原站位",V(11,2.5f,8),3.8f,180);FSign("检验闸门后：实战区\n先选射角，再处理指定守卫",V(0,4.8f,29.7f),5,180);
+   var instructions=FSign("归航第一课\n沿地面箭头进入校准区\n救援专线正在接通",V(-9,2.2f,-5),4,155);root.gameObject.AddComponent<FocusTutorialGuide>().text=instructions;
+   FSign("相位设备校准线\n交换的是两个位置\n{key:6} 换位后回看原站位",V(11,2.5f,8),3.8f,180);FSign("检验闸门后：实战区\n先选射角，再处理指定守卫",V(0,4.8f,29.7f),5,180);
+   V2JumpPad.Create(root,V(12,0,3),V(12,2.4f,23));
+   FSign("高台救援练习\n{key:4} 投送 / 空中可 {key:6} 换位\n楼梯同样可以抵达",V(15,1.8f,3),3.6f,180,1.5f);
+   FSign("随身设备\n{key:24} 职业技能 / {key:26} 选择道具\n{key:27} 使用 / {key:7} 换弹",V(-12,2.0f,17),4.3f,150,1.6f);
+   FSign("近身与通用技能\n{key:21} 近战 / {key:25} 持刀\n{key:20} 屏障 · {key:22} 投刀 / {key:23} 召回",V(12,3.9f,26.7f),4.3f,180,1.6f);
+   for(int z=-4;z<27;z+=5){FBox("校准路线地面导向",V(0,.012f,z),V(.11f,.02f,2.6f),FocusEnvironment.HazardSteel,false);}
+   FBox("入口训练低掩体",V(-2,.55f,1),V(2.8f,1.1f,1.1f),FocusEnvironment.Concrete);
    FPlatform("侧台实战岗位",V(10,2.4f,35),8,8);FStairs(V(10,2.4f,39),2.4f,180);
    Spawn("combat",0,V(10,2.4f,35),200,true);Spawn("combat",1,V(-8,0,35),160);Region("combat",V(0,3,36),V(36,10,18));
    FocusEnvironment.Machine(root,"货检气动控制柜",V(0,0,36),V(3.2f,2.2f,2),"切断入口正中射线，两侧均有8—12米接近段");
@@ -144,6 +150,9 @@ namespace SwapHunter
    FocusEnvironment.Cylinder(root,"反应炉连续承压本体",V(0,12,80),7.8f,24,FocusEnvironment.Steel);foreach(float h in new[]{2f,7f,12f,17f,22f})FocusEnvironment.Cylinder(root,"反应炉加强环",V(0,h,80),8.1f,.45f,FocusEnvironment.PaintedSteel);
    FocusEnvironment.Pipe(root,V(-26,8.7f,34),V(-26,8.7f,77),.33f,FocusEnvironment.Steel);FocusEnvironment.Pipe(root,V(-26,8.7f,77),V(-7,8.7f,77),.33f,FocusEnvironment.Steel);FocusEnvironment.Pipe(root,V(28,9,44),V(28,9,78),.35f,FocusEnvironment.HazardSteel);FocusEnvironment.Pipe(root,V(28,9,78),V(7,9,78),.35f,FocusEnvironment.HazardSteel);
    foreach(var p in new[]{V(-26,0,34),V(-26,0,56),V(28,0,44),V(28,0,69)})FBox("真实管廊支架",p+Vector3.up*4.2f,V(.25f,8.4f,.25f),FocusEnvironment.Steel);
+   FSign("双侧确认后前往地面核心\n城侧与港侧分离，救援支路保持供电\n{key:8} 完成现场操作",V(0,2.8f,69),5.7f,180,1.7f);
+   FSign("撤离通道 →\n停机后前往临海维护出口\n不要封闭归航通道",V(-15,2.4f,71),4.4f,180,1.5f);
+   foreach(var route in new[]{V(-23,.018f,66),V(-23,.018f,70),V(-23,.018f,74)})FBox("最终撤离路线灯带",route,V(.14f,.03f,2.3f),FocusEnvironment.HazardSteel,false);
    var feedback=root.gameObject.AddComponent<FocusReactorFeedback>();feedback.leftIndicators=new[]{FBox("左授权供能指示",V(-17.7f,4.7f,36),V(.08f,.2f,1.8f),FocusEnvironment.HazardSteel,false).GetComponent<Renderer>()};feedback.rightIndicators=new[]{FBox("右授权供能指示",V(18.2f,2.7f,59),V(.08f,.2f,1.8f),FocusEnvironment.HazardSteel,false).GetComponent<Renderer>()};feedback.coreIndicators=new[]{FBox("反应炉状态面板",V(0,3.5f,71.9f),V(4,2,.08f),FocusEnvironment.HazardSteel,false).GetComponent<Renderer>()};
    FSign("左机房：遮蔽接近，绕行更长\n右管廊：射角更高，上行暴露\n黄色检修台可离开地面危险",V(8,1.3f,-5.65f),2.2f,0,1.0f);FocusEnvironment.Lamp(root,V(-15,0,-39));FocusEnvironment.Lamp(root,V(15,0,-10));FocusEnvironment.Lamp(root,V(-16,0,16));FocusEnvironment.Lamp(root,V(32,0,55));
    map.walkingCheckpoints.AddRange(new[]{V(0,0,-2),V(0,2,6),V(-24,3.2f,37),V(24,5,46),V(-12,1.4f,23),V(12,1.4f,41),V(-9,1.4f,57),V(0,0,64)});
