@@ -172,3 +172,6 @@
 !/Tools/AudioAuthoring/audio_sources/*.wav
 !/Tools/AudioAuthoring/audio_sources/shots/
 !/Tools/AudioAuthoring/audio_sources/shots/**
+
+# Current public release packaging with immutable player verification.
+!/Tools/package_release.py

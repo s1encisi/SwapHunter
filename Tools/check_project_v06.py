@@ -12,7 +12,7 @@ import subprocess
 import sys
 from urllib.parse import unquote
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 EDITOR = "6000.3.25f1"
 REQUIRED = (
     "Tools/ArtAuthoring/generate-assets.mjs",

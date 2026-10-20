@@ -12,7 +12,7 @@ namespace SwapHunter.Editor
 {
     public static class BuildDemo
     {
-        public const string Version = "0.6.0";
+        public const string Version = "0.7.0";
         const string ScenePath = "Assets/_SwapHunter/Scenes/SwapHunter.unity";
 
         // Builds the authored project as it is. Regeneration is an explicit Prepare step.
@@ -31,7 +31,7 @@ namespace SwapHunter.Editor
                 string[] args = Environment.GetCommandLineArgs();
                 int outputIndex = Array.IndexOf(args, "-buildOutput");
                 string output = Path.GetFullPath(outputIndex >= 0 && outputIndex + 1 < args.Length
-                    ? args[outputIndex + 1] : "../Builds/SwapHunter-v0.6.0/SwapHunter.exe");
+                    ? args[outputIndex + 1] : "../Builds/SwapHunter-v0.7.0/SwapHunter.exe");
                 string directory = Path.GetDirectoryName(output);
                 if (Directory.Exists(directory) && Directory.GetFileSystemEntries(directory).Length > 0)
                     throw new IOException("Existing build preserved. Choose a new empty output directory: " + directory);

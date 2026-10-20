@@ -4,7 +4,7 @@
 
 项目将射击、空间换位、职业技能与关卡目标结合：玩家通过改变双方位置重组射界、掩体关系和危险承担者，在资源约束下完成任务并撤离。系统覆盖关外配装、关内战斗、剧情推进与成长结算，重点关注规则一致性、敌人行为反馈和可追溯的状态管理。
 
-当前源码对应 **2026-10-20 归航行动更新**，包含 12 个章节、4 个职业、8 项职业技能、12 把枪械与 6 款近战刀具。最新内容可从源码运行；[v0.6.0 Windows 试玩包](https://github.com/s1encisi/SwapHunter/releases/tag/v0.6.0)为历史版本，未包含本轮全部更新。
+当前源码对应 **2026-10-20 归航行动更新**，包含 12 个章节、4 个职业、8 项职业技能、12 把枪械与 6 款近战刀具。[下载 v0.7.0 Windows 试玩包](https://github.com/s1encisi/SwapHunter/releases/download/v0.7.0/SwapHunter-v0.7.0-Windows-x64.zip) · [系统设计文档](https://github.com/s1encisi/SwapHunter/releases/download/v0.7.0/SwapHunter-System-Design-v0.7.0.docx) · [Release 说明](https://github.com/s1encisi/SwapHunter/releases/tag/v0.7.0)。
 
 ![归航行动主界面](docs/media/october-main-menu.png)
 
@@ -61,7 +61,7 @@
   -OutputDirectory 'Builds/SwapHunter-current'
 ```
 
-输出目录须为空。构建工具记录源码与程序集身份，保留已有构建；普通打开与构建无需 Node.js 或 Blender。包版本号沿用 `0.6.0`，具体内容以源码提交和 `build-identity.json` 为准。
+输出目录须为空。构建工具记录源码与程序集身份，保留已有构建；普通打开与构建无需 Node.js 或 Blender。当前发布版本为 `0.7.0`，具体源码提交与构建身份记录在 `build-identity.json`。
 
 独立演示模式可在构建目录运行：
 

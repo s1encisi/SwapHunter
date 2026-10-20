@@ -1,17 +1,17 @@
-﻿<#
+<#
 .SYNOPSIS
-构建独立的 SwapHunter v0.6.0 Windows 玩家，并记录源码与程序集身份。
+构建独立的 SwapHunter v0.7.0 Windows 玩家，并记录源码与程序集身份。
 .DESCRIPTION
 普通构建使用现有场景、材质和配置，不调用 Prepare。输出目录必须为空；旧构建不覆盖。
 构建前后比较 Game/Assets、Packages、ProjectSettings；若 Unity 改变源输入则保留产物并报错。
 .PARAMETER OutputDirectory
-新的输出目录。默认 Builds/SwapHunter-v0.6.0；重复候选请另选路径。
+新的输出目录。默认 Builds/SwapHunter-v0.7.0；重复候选请另选路径。
 .PARAMETER RunQA
 构建后运行 Core、Missions、Routes、Storage 和 Gunplay 后台检查。
 .EXAMPLE
 .\Tools\Build-Demo-v06.ps1 -EditorPath 'E:\Unity\6000.3.25f1\Editor\Unity.exe' -RunQA
 .EXAMPLE
-.\Tools\Build-Demo-v06.ps1 -OutputDirectory 'Builds/SwapHunter-v0.6.0-candidate02'
+.\Tools\Build-Demo-v06.ps1 -OutputDirectory 'Builds/SwapHunter-v0.7.0-candidate02'
 #>
 [CmdletBinding()]
 param(
@@ -25,7 +25,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'BuildSupport-v06.ps1')
 $root = Split-Path -Parent $PSScriptRoot
 $editor = Get-SwapHunterEditor $EditorPath
-if ([string]::IsNullOrWhiteSpace($OutputDirectory)) { $OutputDirectory = Join-Path $root 'Builds/SwapHunter-v0.6.0' }
+if ([string]::IsNullOrWhiteSpace($OutputDirectory)) { $OutputDirectory = Join-Path $root 'Builds/SwapHunter-v0.7.0' }
 elseif (-not [IO.Path]::IsPathRooted($OutputDirectory)) { $OutputDirectory = Join-Path $root $OutputDirectory }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 if ((Test-Path -LiteralPath $OutputDirectory) -and @(Get-ChildItem -LiteralPath $OutputDirectory -Force).Count -gt 0) {
@@ -49,7 +49,7 @@ Write-SwapHunterJson (Join-Path $evidence 'source-after.json') $after
 $buildPassed = -not $timedOut -and $process.ExitCode -eq 0 -and (Test-Path -LiteralPath $log) -and
     (Select-String -LiteralPath $log -Pattern '^SWAPHUNTER_BUILD=Succeeded' -Quiet)
 $identity = [ordered]@{
-    schemaVersion=1;version='0.6.0';status='Failed';startedUtc=$started.ToString('o')
+    schemaVersion=1;version='0.7.0';status='Failed';startedUtc=$started.ToString('o')
     completedUtc=[DateTime]::UtcNow.ToString('o');unityVersion='6000.3.25f1';target='StandaloneWindows64'
     development=[bool]$Development;sourceSha256=$before.sha256;sourceUnchanged=($before.sha256 -eq $after.sha256)
     gitCommit=$before.gitCommit;gitDirty=$before.gitDirty;gitChanges=$before.gitChanges
